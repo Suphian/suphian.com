@@ -1,5 +1,5 @@
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" width="150" height="150">
-  <rect width="150" height="150" fill="#ff0068"/>
-  <path d="M32.1,56.3v36.2h6.9V78.9h17.2v13.6h6.9V56.3h-6.9v16.1H39v-16.1H32.1z M74.5,56.3v36.2h25.3v-6.5H81.4V77.4h15.9v-6.5H81.4v-8.1h17.6v-6.5H74.5z M108.2,56.3v36.2h6.9V56.3H108.2z M58.5,106.9v6.9h6.9v-6.9H58.5z M77.9,106.9v6.9h6.9v-6.9H77.9z" fill="#ffffff"/>
+  <rect width="150" height="150" fill="#ff0095"/>
+  <text x="75" y="85" font-family="Arial, sans-serif" font-size="42" font-weight="bold" text-anchor="middle" fill="#000000">Huge</text>
 </svg>
