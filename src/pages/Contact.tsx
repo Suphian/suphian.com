@@ -162,12 +162,12 @@ const Contact = () => {
                   <div>
                     <h3 className="font-medium mb-1">LinkedIn</h3>
                     <a 
-                      href="https://linkedin.com/in/suphiantweel" 
+                      href="https://www.linkedin.com/in/suphian/" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      linkedin.com/in/suphiantweel
+                      linkedin.com/in/suphian
                     </a>
                   </div>
                 </div>

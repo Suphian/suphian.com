@@ -32,7 +32,7 @@ const Footer = () => {
               <Mail size={20} />
             </a>
             <a
-              href="https://linkedin.com/in/suphiantweel"
+              href="https://www.linkedin.com/in/suphian/"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors"
