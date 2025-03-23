@@ -51,7 +51,7 @@ const About = () => {
           
           <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg reveal" style={{ transitionDelay: "150ms" }}>
             <img
-              src="/headshot.jpg"
+              src="/lovable-uploads/46e934f3-cd5e-4751-ba02-c7fe6d5f16cc.png"
               alt="Suphian Tweel - Product Manager"
               className="w-full h-full object-cover object-center"
             />
