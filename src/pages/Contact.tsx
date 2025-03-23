@@ -177,12 +177,12 @@ const Contact = () => {
                   <div>
                     <h3 className="font-medium mb-1">GitHub</h3>
                     <a 
-                      href="https://github.com/suphiantweel" 
+                      href="https://github.com/Suphian" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      github.com/suphiantweel
+                      github.com/Suphian
                     </a>
                   </div>
                 </div>

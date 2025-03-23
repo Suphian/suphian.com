@@ -41,7 +41,7 @@ const Footer = () => {
               <Linkedin size={20} />
             </a>
             <a
-              href="https://github.com/suphiantweel"
+              href="https://github.com/Suphian"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors"
