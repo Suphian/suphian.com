@@ -1,3 +1,4 @@
+
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ButtonCustom } from "./ui/button-custom";
@@ -84,7 +85,7 @@ const Hero = () => {
             style={{ transitionDelay: "450ms" }}
           >
             <img
-              src="/lovable-uploads/46e934f3-cd5e-4751-ba02-c7fe6d5f16cc.png"
+              src="/lovable-uploads/2d62307e-30b1-43bd-b8b4-f6c4a28625b0.png"
               alt="Suphian Tweel - Product Manager"
               className="w-full h-full object-cover object-center"
             />
