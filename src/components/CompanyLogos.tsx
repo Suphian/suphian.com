@@ -35,7 +35,7 @@ const CompanyLogos = () => {
           <h2 className="heading-sm text-center text-muted-foreground mb-12">
             Companies I've worked with
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center justify-items-center">
             <div className="w-32 h-16 md:w-40 md:h-20 flex items-center justify-center grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
               <img
                 src="/youtube-logo.svg"
@@ -61,6 +61,13 @@ const CompanyLogos = () => {
               <img
                 src="/huge-logo.svg"
                 alt="Huge Inc logo"
+                className="max-w-full max-h-full"
+              />
+            </div>
+            <div className="w-32 h-16 md:w-40 md:h-20 flex items-center justify-center grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+              <img
+                src="/capitalg-logo.svg"
+                alt="CapitalG logo"
                 className="max-w-full max-h-full"
               />
             </div>
