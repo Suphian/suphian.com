@@ -1,2 +1,4 @@
 
-<!-- This is a placeholder. An actual SVG file would be uploaded here. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 30" width="108" height="30">
+  <path d="M0 29.5h6.3V17.8h8.9v11.6h6.3V.7h-6.3v11.6H6.3V.7H0v28.8zm26.4 0h17v-5.5H32.7v-6.8h9.5v-5.5h-9.5V6.2h10.7V.7H26.4v28.8zm21.9 0h16v-5.5H54.6V.7h-6.3v28.8zm20.2 0h6.3V17.8h8.9v11.6H90V.7h-6.3v11.6h-8.9V.7h-6.3v28.8zm27.8 0H108V.7h-11.7v28.8z" fill="#000"/>
+</svg>
