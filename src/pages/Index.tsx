@@ -5,12 +5,22 @@ import Hero from "@/components/Hero";
 import ProjectCard from "@/components/ProjectCard";
 import CompanyLogos from "@/components/CompanyLogos";
 import { ButtonCustom } from "@/components/ui/button-custom";
-import { ArrowRight } from "lucide-react";
-import { projects } from "@/lib/projects";
 import { initializeRevealAnimations } from "@/lib/animations";
 
 const Index = () => {
-  const featuredProjects = projects.slice(0, 4);
+  // Get only the specified featured projects by ID
+  const featuredProjectIds = [
+    "ai-powered-deal-enablement",
+    "duolingo-language-ai",
+    "digital-marketing-optimization"
+  ];
+  
+  // Import the projects and filter for the featured ones
+  const { projects } = require("@/lib/projects");
+  const featuredProjects = projects.filter(project => 
+    featuredProjectIds.includes(project.id)
+  );
+
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,10 +48,10 @@ const Index = () => {
 
           <div 
             ref={sectionRef} 
-            className="grid grid-cols-1 md:grid-cols-2 gap-6 reveal"
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 reveal"
             style={{ transitionDelay: "150ms" }}
           >
-            {featuredProjects.map((project, index) => (
+            {featuredProjects.map((project) => (
               <ProjectCard
                 key={project.id}
                 id={project.id}
