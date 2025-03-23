@@ -48,6 +48,18 @@ export const projects: Project[] = [
     image: "/project3.jpg",
     category: "Marketing Technology",
     stats: "38% CPA improvement • 25% higher conversions • 3x campaign capacity"
+  },
+  {
+    id: "zero-resource-machine-translation",
+    title: "Unlocking Zero-Resource Machine Translation",
+    description: "Contributed to research featured in the Google Research Blog on expanding Google Translate to 24 new languages by developing novel techniques for using monolingual data.",
+    challenge: "Traditional machine translation systems require large amounts of parallel data (text in both source and target languages), which is scarce or non-existent for many low-resource languages.",
+    role: "Contributed to the research team developing novel techniques for zero-resource machine translation, focusing on leveraging monolingual data to train translation models.",
+    approach: "Developed innovative methods to train translation models using only monolingual data. Implemented techniques for cross-lingual transfer learning and unsupervised machine translation to bridge the gap between languages with rich resources and those with limited data.",
+    outcome: "Expanded Google Translate to support 24 new languages spoken by more than 300 million people. Published research findings in the Google Research Blog, contributing to the field of low-resource machine translation.",
+    image: "/project4.jpg",
+    category: "AI Research",
+    stats: "24 new languages • 300M+ speakers reached • Published research"
   }
 ];
 

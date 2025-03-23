@@ -5,12 +5,12 @@ import Hero from "@/components/Hero";
 import ProjectCard from "@/components/ProjectCard";
 import CompanyLogos from "@/components/CompanyLogos";
 import { ButtonCustom } from "@/components/ui/button-custom";
-import { ArrowRight, FileText } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { projects } from "@/lib/projects";
 import { initializeRevealAnimations } from "@/lib/animations";
 
 const Index = () => {
-  const featuredProjects = projects.slice(0, 3);
+  const featuredProjects = projects.slice(0, 4);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const Index = () => {
 
           <div 
             ref={sectionRef} 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal"
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 reveal"
             style={{ transitionDelay: "150ms" }}
           >
             {featuredProjects.map((project, index) => (
@@ -67,43 +67,6 @@ const Index = () => {
 
       {/* Companies Section */}
       <CompanyLogos />
-
-      {/* Research Publication Section */}
-      <section className="py-16 bg-secondary/20">
-        <div className="container-custom">
-          <div className="flex flex-col items-center text-center mb-10 reveal">
-            <span className="tag mb-4">Research Publication</span>
-            <h2 className="heading-lg max-w-3xl text-balance">
-              Google Research Publication
-            </h2>
-          </div>
-
-          <div className="max-w-4xl mx-auto reveal" style={{ transitionDelay: "150ms" }}>
-            <div className="flex flex-col md:flex-row gap-8 items-center bg-background rounded-xl p-6 shadow-sm border border-border/60">
-              <div className="shrink-0 w-16 h-16 md:w-20 md:h-20 flex items-center justify-center bg-primary/10 rounded-full">
-                <FileText className="w-8 h-8 text-primary" />
-              </div>
-              
-              <div className="flex-1">
-                <h3 className="heading-sm mb-2">Unlocking Zero-Resource Machine Translation</h3>
-                <p className="paragraph mb-4">
-                  Contributed to research featured in the Google Research Blog on "Unlocking Zero-Resource Machine Translation," 
-                  expanding Google Translate to 24 new languages by developing novel techniques for using monolingual data.
-                </p>
-                <ButtonCustom variant="outline" size="sm" arrowIcon>
-                  <a 
-                    href="https://research.google/blog/unlocking-zero-resource-machine-translation-to-support-new-languages-in-google-translate/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                  >
-                    Read Publication
-                  </a>
-                </ButtonCustom>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="py-24 bg-primary text-primary-foreground">
