@@ -6,6 +6,7 @@ import ProjectCard from "@/components/ProjectCard";
 import CompanyLogos from "@/components/CompanyLogos";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { initializeRevealAnimations } from "@/lib/animations";
+import { projects } from "@/lib/projects";
 
 const Index = () => {
   // Get only the specified featured projects by ID
@@ -15,8 +16,7 @@ const Index = () => {
     "digital-marketing-optimization"
   ];
   
-  // Import the projects and filter for the featured ones
-  const { projects } = require("@/lib/projects");
+  // Filter for the featured projects
   const featuredProjects = projects.filter(project => 
     featuredProjectIds.includes(project.id)
   );
