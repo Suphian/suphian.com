@@ -81,13 +81,13 @@ const Hero = () => {
 
           <div
             ref={imageRef}
-            className="relative order-first md:order-last aspect-[4/5] md:aspect-square rounded-2xl overflow-hidden"
+            className="relative order-first md:order-last aspect-[4/5] md:aspect-square rounded-2xl overflow-hidden shadow-lg"
             style={{ transitionDelay: "450ms" }}
           >
             <img
               src="/headshot.jpg"
               alt="Suphian Tweel - Product Manager"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-transparent" />
           </div>

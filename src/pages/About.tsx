@@ -49,11 +49,11 @@ const About = () => {
             </div>
           </div>
           
-          <div className="relative aspect-square rounded-2xl overflow-hidden reveal" style={{ transitionDelay: "150ms" }}>
+          <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg reveal" style={{ transitionDelay: "150ms" }}>
             <img
               src="/headshot.jpg"
               alt="Suphian Tweel - Product Manager"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
             />
           </div>
         </div>
