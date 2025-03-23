@@ -50,6 +50,18 @@ export const projects: Project[] = [
     stats: "38% CPA improvement • 25% higher conversions • 3x campaign capacity"
   },
   {
+    id: "duolingo-language-ai",
+    title: "Duolingo AI Language Model",
+    description: "Led the development of advanced AI language models for Duolingo to enhance personalized learning paths and improve user engagement across multiple languages.",
+    challenge: "Duolingo needed to improve language learning efficacy by creating more personalized learning experiences while scaling across dozens of languages with varying amounts of available data.",
+    role: "Served as AI technical lead for the language model development team, working with linguists, product managers, and engineers to build and deploy language understanding systems.",
+    approach: "Developed multilingual transformer-based models to predict learner difficulties and optimize lesson sequencing. Created synthetic data generation pipelines to augment training data for low-resource languages. Implemented A/B testing framework to validate model improvements.",
+    outcome: "Increased lesson completion rates by 17% through better difficulty progression. Reduced error rates in grammar understanding by 23%. Successfully deployed models supporting 40+ languages, improving learning outcomes for millions of users.",
+    image: "/project5.jpg",
+    category: "EdTech & AI",
+    stats: "17% higher completion • 23% fewer errors • 40+ languages supported"
+  },
+  {
     id: "zero-resource-machine-translation",
     title: "Unlocking Zero-Resource Machine Translation",
     description: "Contributed to research featured in the Google Research Blog on expanding Google Translate to 24 new languages by developing novel techniques for using monolingual data.",
