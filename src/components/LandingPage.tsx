@@ -59,7 +59,7 @@ const LandingPage = () => {
         <img 
           src="/lovable-uploads/e95f9219-fcb6-4a0e-bd75-7d6c2000fb1b.png" 
           alt="Suphian Logo" 
-          className="h-16 md:h-24" // Increased from h-12 md:h-16 to h-16 md:h-24
+          className="h-16 md:h-24" 
         />
       </div>
 
@@ -74,14 +74,14 @@ const LandingPage = () => {
         
         <div className="space-y-4 text-content">
           <p className="text-2xl md:text-3xl lg:text-4xl font-montserrat font-bold">
-            I lead payments at <span className="text-youtubeRed">YouTube</span> for Music.
+            I'm a Product Manager leading payments at <span className="text-youtubeRed">YouTube</span>.
           </p>
           
-          <p className="text-2xl md:text-3xl lg:text-4xl font-montserrat">
-            Previously, I built delightful products and redesigned digital experiences for Hulu, Apple, Duolingo, Chewy.com, and SK-II.
+          <p className="text-2xl md:text-3xl lg:text-4xl font-montserrat font-bold">
+            Previously, I've redesigned digital experiences for Hulu, Apple, Duolingo, and Chewy.com.
           </p>
           
-          <p className="text-2xl md:text-3xl lg:text-4xl font-montserrat">
+          <p className="text-2xl md:text-3xl lg:text-4xl font-montserrat font-bold">
             I'm passionate about crafting elegant, data-driven products powered by thoughtful design and cutting-edge AI.
           </p>
         </div>
