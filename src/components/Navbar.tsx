@@ -12,6 +12,8 @@ const Navbar = () => {
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
+  
+  const isHomepage = location.pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +36,9 @@ const Navbar = () => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+  
+  // Don't display the navbar on homepage
+  if (isHomepage) return null;
 
   return (
     <header

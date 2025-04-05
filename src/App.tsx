@@ -28,11 +28,14 @@ const ScrollToTop = () => {
 const queryClient = new QueryClient();
 
 const AppContent = () => {
+  const location = useLocation();
+  const isHomepage = location.pathname === "/";
+  
   return (
     <>
       <ScrollToTop />
       <Navbar />
-      <main className="min-h-screen">
+      <main className={isHomepage ? "" : "min-h-screen"}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/projects" element={<Projects />} />
@@ -42,7 +45,7 @@ const AppContent = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      <Footer />
+      {!isHomepage && <Footer />}
     </>
   );
 };
