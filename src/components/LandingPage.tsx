@@ -72,17 +72,19 @@ const LandingPage = () => {
           <span className="ml-2 font-montserrat font-black">, I'm Suphian.</span>
         </h1>
         
-        <p className="text-2xl md:text-3xl lg:text-4xl font-montserrat font-bold mb-4">
-          I lead payments at <span className="text-youtubeRed">YouTube</span> for Music.
-        </p>
-        
-        <p className="text-xl md:text-2xl font-montserrat mb-4 text-primary/90">
-          Previously launched products at Hulu, Duolingo, and Chewy.com.
-        </p>
-        
-        <p className="text-lg md:text-xl font-montserrat text-primary/80 max-w-3xl">
-          I love solving complex problems with thoughtful design and data-driven insights.
-        </p>
+        <div className="space-y-4 text-content">
+          <p className="text-2xl md:text-3xl lg:text-4xl font-montserrat font-bold">
+            I lead payments at <span className="text-youtubeRed">YouTube</span> for Music.
+          </p>
+          
+          <p className="text-2xl md:text-3xl lg:text-4xl font-montserrat">
+            Previously, I built delightful products and redesigned digital experiences for Hulu, Apple, Duolingo, Chewy.com, and SK-II.
+          </p>
+          
+          <p className="text-2xl md:text-3xl lg:text-4xl font-montserrat">
+            I'm passionate about crafting elegant, data-driven products powered by thoughtful design and cutting-edge AI.
+          </p>
+        </div>
         
         <div className="mt-12 flex gap-4">
           <Link 
