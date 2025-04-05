@@ -54,12 +54,12 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden p-4">
-      {/* Logo in top-left corner */}
+      {/* Logo in top-left corner with increased size */}
       <div className="absolute top-6 left-6 md:top-10 md:left-10">
         <img 
           src="/lovable-uploads/e95f9219-fcb6-4a0e-bd75-7d6c2000fb1b.png" 
           alt="Suphian Logo" 
-          className="h-12 md:h-16"
+          className="h-16 md:h-24" // Increased from h-12 md:h-16 to h-16 md:h-24
         />
       </div>
 
