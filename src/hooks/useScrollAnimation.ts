@@ -6,7 +6,6 @@ interface UseScrollAnimationProps {
   transitionRef: RefObject<HTMLDivElement>;
   imageRef: RefObject<HTMLDivElement>;
   projectsTransitionRef: RefObject<HTMLDivElement>;
-  projectsImageRef: RefObject<HTMLDivElement>;
   landingRef: RefObject<HTMLDivElement>;
   projectsRef: RefObject<HTMLDivElement>;
 }
@@ -15,7 +14,6 @@ export const useScrollAnimation = ({
   transitionRef, 
   imageRef,
   projectsTransitionRef,
-  projectsImageRef,
   landingRef,
   projectsRef
 }: UseScrollAnimationProps) => {
@@ -68,20 +66,6 @@ export const useScrollAnimation = ({
         projectsTransitionRef.current.style.opacity = `${projectWaveOpacity}`;
         projectsTransitionRef.current.style.transform = `translateY(${projectWaveTranslateY}px)`;
       }
-      
-      // Apply transitions to projects image
-      if (projectsImageRef.current) {
-        // Start showing the second image as the projects section becomes visible
-        const projectsImageOpacity = Math.max(0, projectsOpacity - 0.3);
-        projectsImageRef.current.style.opacity = `${projectsImageOpacity}`;
-        
-        // Scale and move the image as we scroll to create parallax
-        if (projectsOpacity > 0.1) {
-          const scale = 0.9 + (projectsOpacity * 0.2);
-          const translateY = 30 - (projectsOpacity * 40);
-          projectsImageRef.current.style.transform = `translateY(${translateY}vh) scale(${scale})`;
-        }
-      }
     };
     
     window.addEventListener("scroll", handleScroll);
@@ -89,5 +73,5 @@ export const useScrollAnimation = ({
     handleScroll();
     
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [transitionRef, imageRef, projectsTransitionRef, projectsImageRef, landingRef, projectsRef]);
+  }, [transitionRef, imageRef, projectsTransitionRef, landingRef, projectsRef]);
 };

@@ -14,13 +14,11 @@ const ScrollTransition = ({ className = "", landingRef, projectsRef }: ScrollTra
   const transitionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const projectsTransitionRef = useRef<HTMLDivElement>(null);
-  const projectsImageRef = useRef<HTMLDivElement>(null);
   
   useScrollAnimation({ 
     transitionRef, 
     imageRef,
     projectsTransitionRef,
-    projectsImageRef,
     landingRef,
     projectsRef
   });
@@ -36,16 +34,6 @@ const ScrollTransition = ({ className = "", landingRef, projectsRef }: ScrollTra
         imageSrc="/lovable-uploads/6fbb55f2-ad2f-4646-9f3a-382f1ffc8c31.png"
         altText="Astronaut flying over mountains"
         zIndex={10}
-      />
-      
-      {/* Second parallax image for projects transition */}
-      <ParallaxImage
-        imageRef={projectsImageRef}
-        imageSrc="/lovable-uploads/920a7519-8137-4f39-a3fe-eb077e375f9b.png"
-        altText="Space exploration"
-        zIndex={25}
-        initialPosition="translateY(30vh) scale(0.9)"
-        className="opacity-0"
       />
       
       {/* Wave transition effect for landing -> projects */}
