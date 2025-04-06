@@ -35,6 +35,7 @@ const greetings = [
   { text: "Здрасти", lang: "Bulgarian" },
   { text: "Здраво", lang: "Serbian" },
   { text: "Bok", lang: "Croatian" },
+  { text: "Përshëndetje", lang: "Albanian" },
   { text: "Živjo", lang: "Slovenian" },
   { text: "Chào", lang: "Vietnamese" },
   { text: "สวัสดี", lang: "Thai" },
@@ -45,6 +46,8 @@ const greetings = [
   { text: "ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ", lang: "Punjabi" },
   { text: "سلام", lang: "Urdu" },
   { text: "سلام", lang: "Persian" },
+  { text: "வணக்கம்", lang: "Tamil" },
+  { text: "నమస్కారం", lang: "Telugu" },
   { text: "नमस्कार", lang: "Marathi" },
   { text: "નમસ્તે", lang: "Gujarati" },
   { text: "ನಮಸ್ಕಾರ", lang: "Kannada" },
@@ -60,6 +63,7 @@ const greetings = [
   { text: "გამარჯობა", lang: "Georgian" },
   { text: "Բարև", lang: "Armenian" },
   { text: "Hæ", lang: "Icelandic" },
+  { text: "Dia dhuit", lang: "Irish" },
   { text: "Shwmae", lang: "Welsh" },
   { text: "Halò", lang: "Scots Gaelic" },
   { text: "Bongu", lang: "Maltese" },
@@ -77,9 +81,11 @@ const greetings = [
   { text: "Aloha", lang: "Hawaiian" },
   { text: "Talofa", lang: "Samoan" },
   { text: "Bula", lang: "Fijian" },
+  { text: "Mālō e lelei", lang: "Tongan" },
   { text: "Saluton", lang: "Esperanto" },
   { text: "Bonjou", lang: "Haitian Creole" },
   { text: "Moien", lang: "Luxembourgish" },
+  { text: "Прывітанне", lang: "Belarusian" },
   { text: "Zdravo", lang: "Bosnian" },
   { text: "Здраво", lang: "Macedonian" },
   { text: "Slav", lang: "Kurdish" },
@@ -92,6 +98,7 @@ const greetings = [
   { text: "Hola", lang: "Catalan" },
   { text: "Ola", lang: "Galician" },
   { text: "Adieu", lang: "Occitan" },
+  { text: "Bonghjornu", lang: "Corsican" },
   { text: "Hoi", lang: "Frisian" },
   { text: "Allegra", lang: "Romansh" },
   { text: "سلام", lang: "Sindhi" },
@@ -181,7 +188,7 @@ const LandingPage = () => {
           </p>
           
           <p className="text-xl md:text-2xl lg:text-3xl font-montserrat font-bold">
-            Previously redesigned digital experiences for Hulu, Apple, Duolingo, and Chewy.com—passionate about crafting elegant, data-driven products powered by thoughtful design and cutting-edge AI.
+            Passionate about crafting exceptional digital experiences powered by data, design, and cutting-edge tech.
           </p>
         </div>
         
