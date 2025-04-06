@@ -40,10 +40,10 @@ const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
         // After enter animation completes, set to visible state
         setTimeout(() => {
           setAnimationState('visible');
-        }, 250); // Faster animation (250ms - half of 500ms)
-      }, 250); // Faster animation (250ms - half of 500ms)
+        }, 500); // Half of total animation time (1 second)
+      }, 500); // Half of total animation time (1 second)
       
-    }, 500); // Change greeting every half second
+    }, 1000); // Change greeting every 1 second
     
     return () => clearInterval(intervalId);
   }, [greetings]);

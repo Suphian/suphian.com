@@ -192,11 +192,11 @@
   }
   
   .greeting-animation-enter {
-    animation: fadeIn 0.3s forwards;
+    animation: fadeIn 0.5s forwards;
   }
   
   .greeting-animation-exit {
-    animation: fadeOut 0.3s forwards;
+    animation: fadeOut 0.5s forwards;
   }
 
   /* Hand-drawn wavy underline animation */
