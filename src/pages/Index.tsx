@@ -1,4 +1,3 @@
-
 import LandingPage from "@/components/LandingPage";
 import ScrollTransition from "@/components/ScrollTransition";
 import { useEffect, useRef } from "react";
@@ -10,65 +9,48 @@ import { ButtonCustom } from "@/components/ui/button-custom";
 import { initializeRevealAnimations } from "@/lib/animations";
 import RequestCVModal from "@/components/RequestCVModal";
 import { useState } from "react";
-
 const Index = () => {
   const landingRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const aboutSectionRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   useEffect(() => {
     // Reset scroll position when the component mounts
     window.scrollTo(0, 0);
-    
+
     // Add smooth scrolling to the body for this page only
     document.body.style.scrollBehavior = "smooth";
-    
+
     // Initialize reveal animations
     const cleanup = initializeRevealAnimations();
-    
     return () => {
       document.body.style.scrollBehavior = "auto";
       cleanup();
     };
   }, []);
-
-  return (
-    <div className="relative">
+  return <div className="relative">
       {/* Landing page with transition */}
       <div className="relative min-h-[200vh] bg-black">
         {/* Landing content wrapped in a ref - higher z-index to overlay the image */}
-        <div 
-          ref={landingRef}
-          className="min-h-screen flex flex-col transition-all duration-700 ease-out relative z-20"
-          style={{ 
-            willChange: "opacity, transform",
-            // Add a subtle backdrop filter to improve text readability over the image
-            backdropFilter: "blur(0px)",
-            WebkitBackdropFilter: "blur(0px)"
-          }}
-        >
+        <div ref={landingRef} className="min-h-screen flex flex-col transition-all duration-700 ease-out relative z-20" style={{
+        willChange: "opacity, transform",
+        // Add a subtle backdrop filter to improve text readability over the image
+        backdropFilter: "blur(0px)",
+        WebkitBackdropFilter: "blur(0px)"
+      }}>
           <LandingPage />
         </div>
         
         {/* Scroll transition elements */}
-        <ScrollTransition 
-          landingRef={landingRef} 
-          projectsRef={contentRef} 
-        />
+        <ScrollTransition landingRef={landingRef} projectsRef={contentRef} />
         
         {/* Content section - Hero with About Me */}
-        <div 
-          id="content-section" 
-          ref={contentRef}
-          className="relative bg-gradient-to-b from-black to-black/95 min-h-screen z-30"
-          style={{ 
-            opacity: 0, 
-            transform: "translateY(40px)", 
-            transition: "opacity 0.7s ease-out, transform 0.7s ease-out",
-            willChange: "opacity, transform"
-          }}
-        >
+        <div id="content-section" ref={contentRef} className="relative bg-gradient-to-b from-black to-black/95 min-h-screen z-30" style={{
+        opacity: 0,
+        transform: "translateY(40px)",
+        transition: "opacity 0.7s ease-out, transform 0.7s ease-out",
+        willChange: "opacity, transform"
+      }}>
           {/* About Me Hero section */}
           <Hero />
 
@@ -80,7 +62,7 @@ const Index = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                   {/* Left Content */}
                   <div className="flex flex-col space-y-6 reveal">
-                    <span className="tag mb-2">About Me</span>
+                    
                     <h1 className="heading-xl text-balance">
                       Explore my story
                     </h1>
@@ -91,12 +73,7 @@ const Index = () => {
                     
                     <div className="pt-4 flex flex-col space-y-6">
                       <ButtonCustom size="lg" arrowIcon>
-                        <a 
-                          href="https://notebooklm.google.com/notebook/2849175b-13a1-477d-ace3-9c3c593156a6/audio" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="flex items-center"
-                        >
+                        <a href="https://notebooklm.google.com/notebook/2849175b-13a1-477d-ace3-9c3c593156a6/audio" target="_blank" rel="noopener noreferrer" className="flex items-center">
                           <Headphones className="mr-2 h-5 w-5" />
                           Launch Notebook LLM
                         </a>
@@ -108,10 +85,7 @@ const Index = () => {
                       </div>
                       
                       <div>
-                        <ButtonCustom 
-                          variant="outline" 
-                          onClick={() => setIsModalOpen(true)}
-                        >
+                        <ButtonCustom variant="outline" onClick={() => setIsModalOpen(true)}>
                           Request My CV
                         </ButtonCustom>
                       </div>
@@ -119,12 +93,10 @@ const Index = () => {
                   </div>
                   
                   {/* Right Content - Astronaut Image */}
-                  <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg order-first md:order-last reveal" style={{ transitionDelay: "150ms" }}>
-                    <img
-                      src="/lovable-uploads/6fbb55f2-ad2f-4646-9f3a-382f1ffc8c31.png"
-                      alt="Astronaut wearing headphones"
-                      className="w-full h-full object-cover object-center"
-                    />
+                  <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg order-first md:order-last reveal" style={{
+                  transitionDelay: "150ms"
+                }}>
+                    <img src="/lovable-uploads/6fbb55f2-ad2f-4646-9f3a-382f1ffc8c31.png" alt="Astronaut wearing headphones" className="w-full h-full object-cover object-center" />
                     <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-transparent" />
                   </div>
                 </div>
@@ -189,22 +161,14 @@ const Index = () => {
                   <div className="bg-card p-8 rounded-xl border">
                     <h3 className="heading-sm mb-6">Core Values</h3>
                     <ul className="space-y-4">
-                      {[
-                        "User-first product development",
-                        "Data-driven decision making",
-                        "Inclusive and collaborative teamwork",
-                        "Continuous learning and adaptation",
-                        "Ethical technology implementation"
-                      ].map((value, index) => (
-                        <li key={index} className="flex items-center">
+                      {["User-first product development", "Data-driven decision making", "Inclusive and collaborative teamwork", "Continuous learning and adaptation", "Ethical technology implementation"].map((value, index) => <li key={index} className="flex items-center">
                           <div className="mr-3 bg-accent/20 rounded-full p-1">
                             <svg className="h-3 w-3 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                             </svg>
                           </div>
                           <span className="text-sm">{value}</span>
-                        </li>
-                      ))}
+                        </li>)}
                     </ul>
                   </div>
                 </div>
@@ -227,8 +191,6 @@ const Index = () => {
           <RequestCVModal open={isModalOpen} onOpenChange={setIsModalOpen} />
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
