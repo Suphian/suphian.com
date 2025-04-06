@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -52,9 +51,11 @@ const Navbar = () => {
       closeMenu();
       const section = document.getElementById(scrollTo);
       if (section) {
-        section.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
+        const offset = 100; // Adjust this value as needed
+        const topPosition = section.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({
+          top: topPosition,
+          behavior: "smooth"
         });
       }
     }
