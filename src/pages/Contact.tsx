@@ -211,7 +211,7 @@ const Contact = () => {
               {/* Astronaut Image - positioned below form */}
               <div className="mt-12 flex justify-center">
                 <img 
-                  src="/lovable-uploads/a5335e4d-afe3-4493-99db-7da1ad064428.png" 
+                  src="/lovable-uploads/9ecd33bc-76a0-4af2-a18c-c988cab8c7e9.png" 
                   alt="Astronaut illustration" 
                   className="w-auto h-auto max-h-64 object-contain transform scale-130"
                 />
@@ -271,7 +271,7 @@ const Contact = () => {
               
               <div className="p-6 rounded-xl border border-muted flex items-center justify-center">
                 <img 
-                  src="/lovable-uploads/a5335e4d-afe3-4493-99db-7da1ad064428.png" 
+                  src="/lovable-uploads/9ecd33bc-76a0-4af2-a18c-c988cab8c7e9.png" 
                   alt="Astronaut illustration" 
                   className="w-auto h-auto max-h-64 object-contain transform scale-130"
                 />
