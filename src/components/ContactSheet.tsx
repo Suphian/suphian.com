@@ -21,7 +21,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -84,18 +83,57 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
           
           {/* Form */}
           <div className="flex-grow p-6 md:p-8 overflow-y-auto">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium mb-2.5">Name</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Your name" 
+                              {...field} 
+                              className="h-12 rounded-none border-b border-t-0 border-l-0 border-r-0 px-0 bg-transparent focus-visible:ring-0 focus-visible:border-primary" 
+                            />
+                          </FormControl>
+                          <FormMessage className="mt-2" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium mb-2.5">Email</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="email" 
+                              placeholder="your.email@example.com" 
+                              {...field} 
+                              className="h-12 rounded-none border-b border-t-0 border-l-0 border-r-0 px-0 bg-transparent focus-visible:ring-0 focus-visible:border-primary" 
+                            />
+                          </FormControl>
+                          <FormMessage className="mt-2" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   <FormField
                     control={form.control}
-                    name="name"
+                    name="subject"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium mb-2.5">Name</FormLabel>
+                        <FormLabel className="text-sm font-medium mb-2.5">Subject</FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="Your name" 
+                            placeholder="What is this regarding?" 
                             {...field} 
                             className="h-12 rounded-none border-b border-t-0 border-l-0 border-r-0 px-0 bg-transparent focus-visible:ring-0 focus-visible:border-primary" 
                           />
@@ -107,69 +145,44 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
 
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="message"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium mb-2.5">Email</FormLabel>
+                        <FormLabel className="text-sm font-medium mb-2.5">Message</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="email" 
-                            placeholder="your.email@example.com" 
+                          <Textarea 
+                            placeholder="Your message here..." 
+                            className="min-h-[150px] rounded-none border-b border-t-0 border-l-0 border-r-0 px-0 bg-transparent focus-visible:ring-0 focus-visible:border-primary resize-none" 
                             {...field} 
-                            className="h-12 rounded-none border-b border-t-0 border-l-0 border-r-0 px-0 bg-transparent focus-visible:ring-0 focus-visible:border-primary" 
                           />
                         </FormControl>
                         <FormMessage className="mt-2" />
                       </FormItem>
                     )}
                   />
-                </div>
 
-                <FormField
-                  control={form.control}
-                  name="subject"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium mb-2.5">Subject</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="What is this regarding?" 
-                          {...field} 
-                          className="h-12 rounded-none border-b border-t-0 border-l-0 border-r-0 px-0 bg-transparent focus-visible:ring-0 focus-visible:border-primary" 
-                        />
-                      </FormControl>
-                      <FormMessage className="mt-2" />
-                    </FormItem>
-                  )}
+                  <button 
+                    type="submit" 
+                    className="wave-btn bg-accent text-white w-full h-14 mt-6 px-6 py-3 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group"
+                    disabled={form.formState.isSubmitting}
+                  >
+                    <span className="relative z-10 group-hover:text-black transition-colors duration-300 slide-up">
+                      {form.formState.isSubmitting ? "Sending..." : "Send Message"}
+                    </span>
+                    <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
+                  </button>
+                </form>
+              </Form>
+              
+              {/* Astronaut Image Section */}
+              <div className="hidden md:flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/a5335e4d-afe3-4493-99db-7da1ad064428.png" 
+                  alt="Astronaut illustration" 
+                  className="max-w-full max-h-72 object-contain"
                 />
-
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium mb-2.5">Message</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Your message here..." 
-                          className="min-h-[150px] rounded-none border-b border-t-0 border-l-0 border-r-0 px-0 bg-transparent focus-visible:ring-0 focus-visible:border-primary resize-none" 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage className="mt-2" />
-                    </FormItem>
-                  )}
-                />
-
-                <Button 
-                  type="submit" 
-                  className="w-full h-14 mt-6 bg-accent text-white hover:bg-accent/90 text-base transition-all duration-300"
-                  disabled={form.formState.isSubmitting}
-                >
-                  {form.formState.isSubmitting ? "Sending..." : "Send Message"}
-                </Button>
-              </form>
-            </Form>
+              </div>
+            </div>
           </div>
           
           {/* Footer with contact details */}

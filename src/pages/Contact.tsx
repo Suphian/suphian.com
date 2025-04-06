@@ -1,6 +1,5 @@
 
 import { useState, useEffect, FormEvent } from "react";
-import { ButtonCustom } from "@/components/ui/button-custom";
 import { Mail, Linkedin, Github } from "lucide-react";
 import { initializeRevealAnimations } from "@/lib/animations";
 import { useToast } from "@/hooks/use-toast";
@@ -128,13 +127,16 @@ const Contact = () => {
                 </div>
               </div>
               
-              <ButtonCustom 
+              <button 
                 type="submit" 
-                className="w-full" 
+                className="wave-btn bg-accent text-white w-full h-14 px-6 py-3 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Sending..." : "Send Message"}
-              </ButtonCustom>
+                <span className="relative z-10 group-hover:text-black transition-colors duration-300 slide-up">
+                  {isSubmitting ? "Sending..." : "Send Message"}
+                </span>
+                <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
+              </button>
             </form>
           </div>
 
@@ -188,12 +190,12 @@ const Contact = () => {
                 </div>
               </div>
               
-              <div className="bg-card p-6 rounded-xl border">
-                <h3 className="heading-sm mb-4">Response Time</h3>
-                <p className="text-sm text-muted-foreground">
-                  I typically respond to inquiries within 24-48 hours. For urgent matters, 
-                  please indicate so in your email subject line.
-                </p>
+              <div className="p-6 rounded-xl border border-muted flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/a5335e4d-afe3-4493-99db-7da1ad064428.png" 
+                  alt="Astronaut illustration" 
+                  className="max-h-48 object-contain"
+                />
               </div>
             </div>
           </div>
