@@ -17,6 +17,7 @@ interface RequestCVModalProps {
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
+  password: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -25,17 +26,27 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDownload, setShowDownload] = useState(false);
   const [validatedEmail, setValidatedEmail] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const { toast } = useToast();
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
+      password: "",
     },
   });
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
+    setPasswordError("");
+    
+    // Check password
+    if (data.password !== "spacesuit6367") {
+      setPasswordError("Incorrect password. Please try again or contact me via LinkedIn.");
+      setIsSubmitting(false);
+      return;
+    }
     
     try {
       // Send email notification using EmailJS
@@ -50,7 +61,7 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
       );
       
       toast({
-        title: "Email Verified!",
+        title: "Verification Successful!",
         description: "Your CV is ready to download.",
       });
       
@@ -97,6 +108,7 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
     form.reset();
     setValidatedEmail("");
     setShowDownload(false);
+    setPasswordError("");
     onOpenChange(false);
   };
 
@@ -107,7 +119,7 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
           <DialogTitle>Request My CV</DialogTitle>
           <DialogDescription>
             {!showDownload ? 
-              "Enter your email address below to request my CV." : 
+              "Please enter your email and the password to access my CV." : 
               "Thank you! You can now download my CV."
             }
           </DialogDescription>
@@ -134,12 +146,32 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
                 )}
               />
               
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Enter password" 
+                        type="password" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    {passwordError && (
+                      <p className="text-sm font-medium text-destructive">{passwordError}</p>
+                    )}
+                  </FormItem>
+                )}
+              />
+              
               <div className="flex justify-end">
                 <ButtonCustom 
                   type="submit" 
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Verifying..." : "Verify Email"}
+                  {isSubmitting ? "Verifying..." : "Access CV"}
                 </ButtonCustom>
               </div>
             </form>
