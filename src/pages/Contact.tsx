@@ -3,14 +3,19 @@ import { useState, useEffect, FormEvent } from "react";
 import { Mail, Linkedin, Github } from "lucide-react";
 import { initializeRevealAnimations } from "@/lib/animations";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     subject: "",
     message: ""
   });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -22,10 +27,43 @@ const Contact = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when field is edited
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+    
+    if (!formData.subject.trim()) {
+      newErrors.subject = "Subject is required";
+    }
+    
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) return;
+    
     setIsSubmitting(true);
     
     // Simulate form submission
@@ -37,6 +75,7 @@ const Contact = () => {
       setFormData({
         name: "",
         email: "",
+        phone: "",
         subject: "",
         message: ""
       });
@@ -62,68 +101,99 @@ const Contact = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
           {/* Contact Form */}
           <div className="reveal" style={{ transitionDelay: "150ms" }}>
-            <form onSubmit={handleSubmit} className="bg-card p-6 md:p-8 rounded-xl border">
+            <form onSubmit={handleSubmit} className="bg-card p-6 md:p-8 rounded-xl border max-w-[600px] mx-auto w-full">
               <h2 className="heading-md mb-6">Send Me a Message</h2>
               
-              <div className="space-y-4 mb-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium mb-1">
-                    Your Name
+              <div className="space-y-6 mb-6">
+                <div className="form-group">
+                  <label htmlFor="name" className="block text-sm font-medium mb-2">
+                    Your Name <span className="text-accent">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="name"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded-md border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                    required
+                    placeholder="John Doe"
+                    className={`w-full border ${errors.name ? 'border-accent' : 'focus:border-accent'} bg-background h-12 transition-colors`}
+                    aria-invalid={!!errors.name}
                   />
+                  {errors.name && (
+                    <p className="mt-1 text-sm font-medium text-accent">{errors.name}</p>
+                  )}
                 </div>
                 
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-1">
-                    Your Email
+                <div className="form-group">
+                  <label htmlFor="email" className="block text-sm font-medium mb-2">
+                    Your Email <span className="text-accent">*</span>
                   </label>
-                  <input
+                  <Input
                     type="email"
                     id="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded-md border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                    required
+                    placeholder="john@example.com"
+                    className={`w-full border ${errors.email ? 'border-accent' : 'focus:border-accent'} bg-background h-12 transition-colors`}
+                    aria-invalid={!!errors.email}
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-sm font-medium text-accent">{errors.email}</p>
+                  )}
+                </div>
+                
+                <div className="form-group">
+                  <label htmlFor="phone" className="block text-sm font-medium mb-2">
+                    Phone Number <span className="text-muted-foreground text-xs">(Optional)</span>
+                  </label>
+                  <Input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="+1 (555) 123-4567"
+                    className="w-full border focus:border-accent bg-background h-12 transition-colors"
                   />
                 </div>
                 
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium mb-1">
-                    Subject
+                <div className="form-group">
+                  <label htmlFor="subject" className="block text-sm font-medium mb-2">
+                    Subject <span className="text-accent">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="subject"
                     name="subject"
                     value={formData.subject}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded-md border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                    required
+                    placeholder="What's this about?"
+                    className={`w-full border ${errors.subject ? 'border-accent' : 'focus:border-accent'} bg-background h-12 transition-colors`}
+                    aria-invalid={!!errors.subject}
                   />
+                  {errors.subject && (
+                    <p className="mt-1 text-sm font-medium text-accent">{errors.subject}</p>
+                  )}
                 </div>
                 
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-1">
-                    Your Message
+                <div className="form-group">
+                  <label htmlFor="message" className="block text-sm font-medium mb-2">
+                    Your Message <span className="text-accent">*</span>
                   </label>
-                  <textarea
+                  <Textarea
                     id="message"
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    rows={4}
-                    className="w-full px-4 py-2 rounded-md border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                    required
+                    placeholder="Hey, what's up? Talk to me. Whether you're looking for a referral, have a new opportunity, or just want to chat tech, I'm open to collaborating or connecting."
+                    rows={5}
+                    className={`w-full border ${errors.message ? 'border-accent' : 'focus:border-accent'} bg-background min-h-[120px] transition-colors`}
+                    aria-invalid={!!errors.message}
                   />
+                  {errors.message && (
+                    <p className="mt-1 text-sm font-medium text-accent">{errors.message}</p>
+                  )}
                 </div>
               </div>
               
@@ -138,12 +208,12 @@ const Contact = () => {
                 <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
               </button>
               
-              {/* Astronaut Image - Now positioned below the button */}
-              <div className="mt-8 flex justify-center">
+              {/* Astronaut Image - positioned below form */}
+              <div className="mt-12 flex justify-center">
                 <img 
                   src="/lovable-uploads/a5335e4d-afe3-4493-99db-7da1ad064428.png" 
                   alt="Astronaut illustration" 
-                  className="max-h-48 md:max-h-52 object-contain"
+                  className="w-auto h-auto max-h-64 object-contain transform scale-130"
                 />
               </div>
             </form>
@@ -203,7 +273,7 @@ const Contact = () => {
                 <img 
                   src="/lovable-uploads/a5335e4d-afe3-4493-99db-7da1ad064428.png" 
                   alt="Astronaut illustration" 
-                  className="max-h-48 object-contain"
+                  className="w-auto h-auto max-h-64 object-contain transform scale-130"
                 />
               </div>
             </div>
