@@ -1,12 +1,15 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { ButtonCustom } from "./ui/button-custom";
 import { cn } from "@/lib/utils";
+import ContactSheet from "./ContactSheet";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const location = useLocation();
 
   const toggleMenu = () => setIsOpen(!isOpen);
@@ -28,12 +31,24 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
+    { name: "About", path: "/", scrollTo: "about-section" },
+    { name: "Leadership", path: "/", scrollTo: "leadership-section" },
+    { name: "Work", path: "/", scrollTo: "content-section" },
+    { name: "Press", path: "/contact" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleNavClick = (e: React.MouseEvent, scrollTo?: string) => {
+    if (scrollTo && isHomepage) {
+      e.preventDefault();
+      closeMenu();
+      const section = document.getElementById(scrollTo);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
 
   return (
     
@@ -57,18 +72,19 @@ const Navbar = () => {
                   to={link.path}
                   className={cn(
                     "link-underline py-2",
-                    isActive(link.path)
+                    isActive(link.path) && !link.scrollTo
                       ? "font-medium text-foreground"
                       : "text-muted-foreground hover:text-foreground"
                   )}
+                  onClick={(e) => handleNavClick(e, link.scrollTo)}
                 >
                   {link.name}
                 </Link>
               </li>
             ))}
             <li>
-              <ButtonCustom size="sm" arrowIcon>
-                <Link to="/contact">Let's Talk</Link>
+              <ButtonCustom size="sm" arrowIcon onClick={() => setContactOpen(true)}>
+                Contact Me
               </ButtonCustom>
             </li>
           </ul>
@@ -93,27 +109,31 @@ const Navbar = () => {
                     to={link.path}
                     className={cn(
                       "block py-2 px-4 rounded-md transition-colors",
-                      isActive(link.path)
+                      isActive(link.path) && !link.scrollTo
                         ? "font-medium bg-accent/10 text-foreground"
                         : "text-muted-foreground hover:bg-accent/10 hover:text-foreground"
                     )}
-                    onClick={closeMenu}
+                    onClick={(e) => handleNavClick(e, link.scrollTo)}
                   >
                     {link.name}
                   </Link>
                 </li>
               ))}
               <li className="pt-2">
-                <ButtonCustom className="w-full" arrowIcon>
-                  <Link to="/contact" onClick={closeMenu}>
-                    Let's Talk
-                  </Link>
+                <ButtonCustom className="w-full" arrowIcon onClick={() => {
+                  setContactOpen(true);
+                  closeMenu();
+                }}>
+                  Contact Me
                 </ButtonCustom>
               </li>
             </ul>
           </div>
         )}
       </div>
+      
+      {/* Contact Sheet */}
+      <ContactSheet open={contactOpen} onOpenChange={setContactOpen} />
     </header>
   );
 };

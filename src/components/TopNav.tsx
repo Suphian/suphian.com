@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Home, MapPin, MailOpen, Layers } from "lucide-react";
+import { Home, Layers, Star, FileText, MailOpen } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 interface NavItem {
@@ -15,54 +15,84 @@ const TopNav = () => {
   const [activeSection, setActiveSection] = useState<string>("home");
   const location = useLocation();
   const isHomePage = location.pathname === "/";
-  const isAboutPage = location.pathname === "/about";
-  const isContactPage = location.pathname === "/contact";
   
   const navItems: NavItem[] = [
     {
-      id: "home",
-      icon: Home,
-      label: "Home",
-      path: "/",
-    },
-    {
       id: "about",
-      icon: MapPin,
+      icon: Home,
       label: "About",
-      path: isAboutPage ? undefined : "/about",
-      sectionId: isAboutPage ? "about-section" : undefined,
-    },
-    {
-      id: "contact",
-      icon: MailOpen,
-      label: "Contact",
-      path: isContactPage ? undefined : "/contact",
-      sectionId: isContactPage ? "contact-section" : undefined,
+      sectionId: "about-section"
     },
     {
       id: "leadership",
       icon: Layers,
       label: "Leadership",
-      path: isAboutPage ? undefined : "/about#leadership-section",
-      sectionId: isAboutPage ? "leadership-section" : undefined,
+      sectionId: "leadership-section"
+    },
+    {
+      id: "work",
+      icon: Star,
+      label: "Work",
+      sectionId: "content-section"
+    },
+    {
+      id: "press",
+      icon: FileText,
+      label: "Press",
+      path: "/contact",
+    },
+    {
+      id: "contact",
+      icon: MailOpen,
+      label: "Contact",
+      path: "#contact",
+      sectionId: "contact-section",
     },
   ];
 
   useEffect(() => {
+    const handleScroll = () => {
+      // Get all sections
+      const sections = navItems
+        .filter(item => item.sectionId)
+        .map(item => {
+          const element = document.getElementById(item.sectionId!);
+          return { id: item.id, element };
+        })
+        .filter(item => item.element);
+      
+      if (sections.length === 0) return;
+      
+      // Find the section that is currently in view
+      const scrollPosition = window.scrollY + 100; // Add some offset
+      
+      for (const section of sections) {
+        if (!section.element) continue;
+        const sectionTop = section.element.offsetTop;
+        const sectionHeight = section.element.offsetHeight;
+        
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+          setActiveSection(section.id);
+          break;
+        }
+      }
+    };
+    
     if (isHomePage) {
-      setActiveSection("home");
-    } else if (isAboutPage) {
-      setActiveSection("about");
-    } else if (isContactPage) {
-      setActiveSection("contact");
+      window.addEventListener('scroll', handleScroll);
     }
-  }, [isHomePage, isAboutPage, isContactPage]);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isHomePage, navItems]);
 
   const handleClick = (item: NavItem) => {
     if (item.sectionId) {
       const section = document.getElementById(item.sectionId);
       if (section) {
         section.scrollIntoView({ behavior: "smooth", block: "start" });
+        setActiveSection(item.id);
       }
     }
   };
@@ -74,7 +104,7 @@ const TopNav = () => {
           {navItems.map((item) => (
             <li key={item.id}>
               <a
-                href={item.path}
+                href={item.path || `#${item.sectionId}`}
                 onClick={(e) => {
                   if (item.sectionId) {
                     e.preventDefault();

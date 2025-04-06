@@ -30,17 +30,14 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const location = useLocation();
   const isHomepage = location.pathname === "/";
-  const isAboutPage = location.pathname === "/about";
-  const hideNavigation = isHomepage || isAboutPage;
   
   return (
     <>
       <ScrollToTop />
-      {/* Only render Navbar on routes that aren't homepage or about page */}
-      {!hideNavigation && <Navbar />}
-      {!hideNavigation && <TopNav />}
+      <Navbar />
+      {isHomepage && <TopNav />}
       <Logo />
-      <main className={hideNavigation ? "" : "min-h-screen"}>
+      <main className="min-h-screen">
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
