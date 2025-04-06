@@ -4,7 +4,7 @@ export interface Greeting {
   lang: string;
 }
 
-// Filter out greetings that exceed 7 characters
+// Filtered greetings with no duplicates by text
 export const greetings: Greeting[] = [
   { text: "Hi", lang: "English" },
   { text: "سلام", lang: "Arabic" },
@@ -20,13 +20,9 @@ export const greetings: Greeting[] = [
   { text: "Cześć", lang: "Polish" },
   { text: "Hej", lang: "Swedish" },
   { text: "Hei", lang: "Norwegian" },
-  { text: "Hej", lang: "Danish" },
-  { text: "Hallo", lang: "Dutch" },
   { text: "Moi", lang: "Finnish" },
   { text: "Szia", lang: "Hungarian" },
   { text: "Ahoj", lang: "Czech" },
-  { text: "Ahoj", lang: "Slovak" },
-  { text: "Salut", lang: "Romanian" },
   { text: "Привіт", lang: "Ukrainian" },
   { text: "Labas", lang: "Lithuanian" },
   { text: "Sveiki", lang: "Latvian" },
@@ -39,9 +35,6 @@ export const greetings: Greeting[] = [
   { text: "Halo", lang: "Indonesian" },
   { text: "Hai", lang: "Malay" },
   { text: "হাই", lang: "Bengali" },
-  { text: "سلام", lang: "Urdu" },
-  { text: "سلام", lang: "Persian" },
-  { text: "Salam", lang: "Azerbaijani" },
   { text: "Բարև", lang: "Armenian" },
   { text: "Hæ", lang: "Icelandic" },
   { text: "Bongu", lang: "Maltese" },
@@ -50,25 +43,16 @@ export const greetings: Greeting[] = [
   { text: "Sannu", lang: "Hausa" },
   { text: "Salaam", lang: "Somali" },
   { text: "ሰላም", lang: "Amharic" },
-  { text: "Hallo", lang: "Afrikaans" },
   { text: "Molo", lang: "Xhosa" },
   { text: "Mhoro", lang: "Shona" },
   { text: "Aloha", lang: "Hawaiian" },
   { text: "Bula", lang: "Fijian" },
   { text: "Moien", lang: "Luxembourgish" },
   { text: "Zdravo", lang: "Bosnian" },
-  { text: "Здраво", lang: "Macedonian" },
   { text: "Slav", lang: "Kurdish" },
-  { text: "سلام", lang: "Pashto" },
-  { text: "Салом", lang: "Tajik" },
-  { text: "Salam", lang: "Turkmen" },
-  { text: "Салам", lang: "Kyrgyz" },
   { text: "Aluu", lang: "Greenlandic" },
   { text: "Kaixo", lang: "Basque" },
-  { text: "Hola", lang: "Catalan" },
   { text: "Ola", lang: "Galician" },
   { text: "Adieu", lang: "Occitan" },
-  { text: "Hoi", lang: "Frisian" },
-  { text: "سلام", lang: "Sindhi" },
-  { text: "Salama", lang: "Malagasy" }
+  { text: "Hoi", lang: "Frisian" }
 ];
