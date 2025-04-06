@@ -43,9 +43,9 @@ const SpacerBanner: React.FC<SpacerBannerProps> = ({ imageUrl }) => {
   return (
     <div 
       ref={containerRef}
-      className="w-full py-12 bg-black relative overflow-hidden"
+      className="w-full py-6 bg-black relative overflow-hidden"
     >
-      <div className="max-w-6xl w-full mx-auto px-4 relative" style={{ height: "70vh" }}>
+      <div className="max-w-6xl w-full mx-auto px-4 relative" style={{ height: "40vh" }}>
         {/* Main SUPH logo */}
         <img 
           src={imageUrl}
