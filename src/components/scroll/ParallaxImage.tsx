@@ -5,13 +5,14 @@ interface ParallaxImageProps {
   imageRef: RefObject<HTMLDivElement>;
   imageSrc: string;
   altText: string;
+  className?: string; // Added className prop for more flexibility
 }
 
-const ParallaxImage = ({ imageRef, imageSrc, altText }: ParallaxImageProps) => {
+const ParallaxImage = ({ imageRef, imageSrc, altText, className = "" }: ParallaxImageProps) => {
   return (
     <div 
       ref={imageRef} 
-      className="absolute inset-0 w-full h-full flex items-center justify-center transition-transform duration-300 ease-out transform-gpu"
+      className={`absolute inset-0 w-full h-full flex items-center justify-center transition-transform duration-300 ease-out transform-gpu ${className}`}
       style={{ zIndex: 20 }}
     >
       <img 

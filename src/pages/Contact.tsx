@@ -137,6 +137,15 @@ const Contact = () => {
                 </span>
                 <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
               </button>
+              
+              {/* Astronaut Image - Now positioned below the button */}
+              <div className="mt-8 flex justify-center">
+                <img 
+                  src="/lovable-uploads/a5335e4d-afe3-4493-99db-7da1ad064428.png" 
+                  alt="Astronaut illustration" 
+                  className="max-h-48 md:max-h-52 object-contain"
+                />
+              </div>
             </form>
           </div>
 
