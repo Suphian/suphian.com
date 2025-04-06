@@ -1,6 +1,8 @@
+
 import { useState, useEffect } from "react";
 import { Home, Layers, Star, FileText, MailOpen } from "lucide-react";
 import { useLocation } from "react-router-dom";
+
 interface NavItem {
   id: string;
   icon: React.ElementType;
@@ -8,10 +10,12 @@ interface NavItem {
   path?: string;
   sectionId?: string;
 }
+
 const TopNav = () => {
   const [activeSection, setActiveSection] = useState<string>("home");
   const location = useLocation();
   const isHomePage = location.pathname === "/";
+
   const navItems: NavItem[] = [{
     id: "about",
     icon: Home,
@@ -39,6 +43,7 @@ const TopNav = () => {
     path: "#contact",
     sectionId: "contact-section"
   }];
+
   useEffect(() => {
     const handleScroll = () => {
       // Get all sections
@@ -71,6 +76,7 @@ const TopNav = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [isHomePage, navItems]);
+
   const handleClick = (item: NavItem) => {
     if (item.sectionId) {
       const section = document.getElementById(item.sectionId);
@@ -83,10 +89,12 @@ const TopNav = () => {
       }
     }
   };
+
   return <nav className="fixed top-20 left-0 right-0 z-40 blur-backdrop border-b border-border/40 py-2">
       <div className="container-custom">
-        
+        {/* Content could be added here if needed in the future */}
       </div>
     </nav>;
 };
+
 export default TopNav;

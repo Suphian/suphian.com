@@ -27,7 +27,7 @@ const CallToAction = () => {
         <a 
           href="#about-section"
           onClick={scrollToProjects}
-          className="w-full sm:w-48 wave-btn bg-youtubeRed text-primary px-6 py-3 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group text-center"
+          className="w-full sm:w-56 wave-btn bg-youtubeRed text-primary px-6 py-4 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group text-center"
         >
           <span className="relative z-10 group-hover:text-black transition-colors duration-300">Start Here</span>
           <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
