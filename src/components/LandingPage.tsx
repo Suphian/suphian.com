@@ -35,6 +35,7 @@ const greetings = [
   { text: "Здрасти", lang: "Bulgarian" },
   { text: "Здраво", lang: "Serbian" },
   { text: "Bok", lang: "Croatian" },
+  { text: "Përshëndetje", lang: "Albanian" },
   { text: "Živjo", lang: "Slovenian" },
   { text: "Chào", lang: "Vietnamese" },
   { text: "สวัสดี", lang: "Thai" },
@@ -42,11 +43,15 @@ const greetings = [
   { text: "Halo", lang: "Indonesian" },
   { text: "Hai", lang: "Malay" },
   { text: "হাই", lang: "Bengali" },
+  { text: "ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ", lang: "Punjabi" },
   { text: "سلام", lang: "Urdu" },
+  { text: "سلام", lang: "Persian" },
   { text: "வணக்கம்", lang: "Tamil" },
   { text: "నమస్కారం", lang: "Telugu" },
   { text: "नमस्कार", lang: "Marathi" },
+  { text: "નમસ્તે", lang: "Gujarati" },
   { text: "ನಮಸ್ಕಾರ", lang: "Kannada" },
+  { text: "ආයුබෝවන්", lang: "Sinhala" },
   { text: "नमस्ते", lang: "Nepali" },
   { text: "မင်္ဂလာပါ", lang: "Burmese" },
   { text: "ສະບາຍດີ", lang: "Lao" },
@@ -76,6 +81,7 @@ const greetings = [
   { text: "Aloha", lang: "Hawaiian" },
   { text: "Talofa", lang: "Samoan" },
   { text: "Bula", lang: "Fijian" },
+  { text: "Mālō e lelei", lang: "Tongan" },
   { text: "Saluton", lang: "Esperanto" },
   { text: "Bonjou", lang: "Haitian Creole" },
   { text: "Moien", lang: "Luxembourgish" },
@@ -146,7 +152,7 @@ const LandingPage = () => {
         <img 
           src="/lovable-uploads/e95f9219-fcb6-4a0e-bd75-7d6c2000fb1b.png" 
           alt="Suphian Logo" 
-          className="h-[45px] md:h-[65px]"
+          className="h-[60px] md:h-[80px]"
         />
       </div>
 
