@@ -7,7 +7,7 @@ const Logo = () => {
       <img 
         src="/lovable-uploads/e95f9219-fcb6-4a0e-bd75-7d6c2000fb1b.png" 
         alt="Suphian Logo" 
-        className="h-[220px] md:h-[240px]"
+        className="h-[180px] md:h-[200px]"
       />
     </div>
   );
