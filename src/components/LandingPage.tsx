@@ -22,11 +22,7 @@ const LandingPage = () => {
         
         <div className="space-y-4 text-content">
           <p className="text-xl md:text-2xl lg:text-3xl font-montserrat font-bold">
-            Product Manager leading payments at YouTube.
-          </p>
-          
-          <p className="text-xl md:text-2xl lg:text-3xl font-montserrat font-bold">
-            Passionate about crafting exceptional digital experiences powered by data, design, and cutting-edge tech.
+            Product Manager leading payments at YouTube. Passionate about crafting exceptional digital experiences powered by data, design, and cutting-edge tech.
           </p>
         </div>
         
