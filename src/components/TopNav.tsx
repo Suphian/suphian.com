@@ -39,7 +39,7 @@ const TopNav = () => {
   }, {
     id: "contact",
     icon: MailOpen,
-    label: "Contact",
+    label: "Get in Touch",
     path: "#contact",
     sectionId: "contact-section"
   }];

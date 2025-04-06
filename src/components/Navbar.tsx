@@ -75,17 +75,13 @@ const Navbar = () => {
                 </Link>
               </li>)}
             <li>
-              <ButtonCustom 
-                size="sm" 
-                arrowIcon 
+              <a 
                 onClick={() => setContactOpen(true)}
-                className="wave-btn bg-primary text-primary-foreground hover:bg-primary/90"
+                className="w-full sm:w-auto wave-btn bg-youtubeRed text-primary px-6 py-4 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group text-center cursor-pointer"
               >
-                <span className="relative z-10 group-hover:text-black transition-colors duration-300 slide-up">
-                  Contact Me
-                </span>
-                <span className="absolute inset-0 bg-accent bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
-              </ButtonCustom>
+                <span className="relative z-10 group-hover:text-black transition-colors duration-300">Get in Touch</span>
+                <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
+              </a>
             </li>
           </ul>
 
@@ -104,19 +100,16 @@ const Navbar = () => {
                   </Link>
                 </li>)}
               <li className="pt-2">
-                <ButtonCustom 
-                  className="w-full wave-btn bg-primary text-primary-foreground hover:bg-primary/90" 
-                  arrowIcon 
+                <a 
+                  className="w-full wave-btn bg-youtubeRed text-primary px-6 py-4 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group text-center block cursor-pointer" 
                   onClick={() => {
                     setContactOpen(true);
                     closeMenu();
                   }}
                 >
-                  <span className="relative z-10 group-hover:text-black transition-colors duration-300 slide-up">
-                    Contact Me
-                  </span>
-                  <span className="absolute inset-0 bg-accent bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
-                </ButtonCustom>
+                  <span className="relative z-10 group-hover:text-black transition-colors duration-300">Get in Touch</span>
+                  <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
+                </a>
               </li>
             </ul>
           </div>}
