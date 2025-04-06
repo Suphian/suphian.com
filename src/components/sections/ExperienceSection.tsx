@@ -13,7 +13,7 @@ const ExperienceSection = () => {
       url: "https://blog.youtube/news-and-events/introducing-premium-lite/",
       title: "YouTube Premium Lite Launch"
     }, {
-      url: "https://blog.youtube/news-and-events/tall-updates-coming-to-shorts/",
+      url: "https://blog.youtube/inside-youtube/shorts-revenue-sharing-update/",
       title: "YouTube Shorts Updates"
     }, {
       url: "https://www.billboard.com/pro/youtube-fraud-royalties-scam-irs-latin-chenel-yenddi-mediamuv-adrev/",
