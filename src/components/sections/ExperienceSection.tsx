@@ -18,6 +18,9 @@ const ExperienceSection = () => {
     }, {
       url: "https://www.billboard.com/pro/youtube-fraud-royalties-scam-irs-latin-chenel-yenddi-mediamuv-adrev/",
       title: "Billboard: YouTube Fraud Detection"
+    }, {
+      url: "https://research.google/blog/unlocking-zero-resource-machine-translation-to-support-new-languages-in-google-translate/",
+      title: "Google Research: Zero-Resource Machine Translation"
     }]
   }, {
     period: "2018 - 2020",
