@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -140,6 +141,43 @@
   }
 
   .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Enhanced parallax animations */
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-15px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  .float-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .float-animation-slow {
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .float-animation-slower {
+    animation: float 10s ease-in-out infinite;
+  }
+
+  /* Staggered fade-in animation */
+  .staggered-fade-in > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+
+  .staggered-fade-in > *.active {
     opacity: 1;
     transform: translateY(0);
   }
