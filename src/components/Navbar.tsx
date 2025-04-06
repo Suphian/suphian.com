@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -51,7 +52,8 @@ const Navbar = () => {
       closeMenu();
       const section = document.getElementById(scrollTo);
       if (section) {
-        const offset = 100; // Adjust this value as needed
+        // Increased offset to prevent logo overlap with heading
+        const offset = 180; // Adjusted from 100 to 180
         const topPosition = section.getBoundingClientRect().top + window.pageYOffset - offset;
         window.scrollTo({
           top: topPosition,
