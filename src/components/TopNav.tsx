@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Home, Layers, Star, FileText, MailOpen } from "lucide-react";
 import { useLocation } from "react-router-dom";
@@ -20,34 +19,42 @@ const TopNav = () => {
   const isHomePage = location.pathname === "/";
   const [contactOpen, setContactOpen] = useState(false);
 
-  const navItems: NavItem[] = [{
-    id: "about",
-    icon: Home,
-    label: "About",
-    sectionId: "about-section"
-  }, {
-    id: "leadership",
-    icon: Layers,
-    label: "Leadership",
-    sectionId: "leadership-section"
-  }, {
-    id: "work",
-    icon: Star,
-    label: "Work",
-    sectionId: "content-section"
-  }, {
-    id: "press",
-    icon: FileText,
-    label: "Press",
-    path: "/contact"
-  }, {
-    id: "contact",
-    icon: MailOpen,
-    label: "Get in Touch",
-    action: () => setContactOpen(true)
-  }];
+  const navItems: NavItem[] = [
+    {
+      id: "about",
+      icon: Home,
+      label: "About",
+      sectionId: "about-section"
+    }, 
+    {
+      id: "leadership",
+      icon: Layers,
+      label: "Leadership",
+      sectionId: "leadership-section"
+    }, 
+    {
+      id: "work",
+      icon: Star,
+      label: "Work",
+      sectionId: "content-section"
+    }, 
+    {
+      id: "press",
+      icon: FileText,
+      label: "Press",
+      path: "/contact"
+    }, 
+    {
+      id: "contact",
+      icon: MailOpen,
+      label: "Get in Touch",
+      action: () => {
+        console.log("Opening contact sheet from TopNav");
+        setContactOpen(true);
+      }
+    }
+  ];
 
-  // Listen for custom event from the Start Here button
   useEffect(() => {
     const handleStartButtonClick = () => {
       setIsVisible(true);
@@ -61,12 +68,10 @@ const TopNav = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Check if user has scrolled beyond the initial viewport
       if (window.scrollY > window.innerHeight * 0.5) {
         setIsVisible(true);
       }
       
-      // Get all sections
       const sections = navItems.filter(item => item.sectionId).map(item => {
         const element = document.getElementById(item.sectionId!);
         return {
@@ -76,9 +81,7 @@ const TopNav = () => {
       }).filter(item => item.element);
       if (sections.length === 0) return;
 
-      // Find the section that is currently in view
-      const scrollPosition = window.scrollY + 100; // Add some offset
-
+      const scrollPosition = window.scrollY + 100;
       for (const section of sections) {
         if (!section.element) continue;
         const sectionTop = section.element.offsetTop;
@@ -89,15 +92,18 @@ const TopNav = () => {
         }
       }
     };
+    
     if (isHomePage) {
       window.addEventListener('scroll', handleScroll);
     }
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [isHomePage, navItems]);
 
   const handleClick = (item: NavItem) => {
+    console.log("Clicked item:", item.id);
     if (item.action) {
       item.action();
     } else if (item.sectionId) {
@@ -136,7 +142,13 @@ const TopNav = () => {
         </div>
       </nav>
       
-      <ContactSheet open={contactOpen} onOpenChange={setContactOpen} />
+      <ContactSheet 
+        open={contactOpen} 
+        onOpenChange={(open) => {
+          console.log("ContactSheet visibility changing to:", open);
+          setContactOpen(open);
+        }} 
+      />
     </>
   );
 };
