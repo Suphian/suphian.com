@@ -27,8 +27,8 @@ const ExperienceSection = () => {
     },
     {
       period: "2018 - 2020",
-      company: "Venture Advisor",
-      role: "CapitalG, Duolingo, Chewy",
+      company: "Google",
+      role: "Analytical Lead",
       description: "Served as an in-house analytics advisor for CapitalG portfolio companies and high-growth D2C brands. Led incrementality testing and optimization strategies to improve marketing efficiency and scale growth across platforms like Duolingo and Chewy.com.",
       links: [
         {
@@ -44,8 +44,8 @@ const ExperienceSection = () => {
     {
       period: "2014 - 2016",
       company: "Huge Inc",
-      role: "Digital Strategist",
-      description: "Specialized in site redesigns, A/B testing, and multivariate testing for high-impact brands. Helped improve UX and conversion for companies like Canada Goose, supporting their transition into the public markets, and delivered measurable lift for clients including Bain & Company.",
+      role: "Growth Marketing",
+      description: "Specialized in site redesigns, A/B testing, and multivariate testing for high-impact brands. Helped improve UX and conversion for companies like Canada Goose, supporting their transition into the public markets.",
       links: [
         {
           url: "https://www.baincapital.com/news/900-parkas-bains-canada-goose-goes-public",
@@ -81,7 +81,7 @@ const ExperienceSection = () => {
                   
                   {exp.links.length > 0 && (
                     <div className="mt-auto">
-                      <h4 className="text-xs uppercase text-muted-foreground font-medium tracking-wider mb-2">Related Links</h4>
+                      <h4 className="text-xs uppercase text-muted-foreground font-medium tracking-wider mb-2">Links</h4>
                       <div className="space-y-2">
                         {exp.links.map((link, linkIndex) => (
                           <a 
