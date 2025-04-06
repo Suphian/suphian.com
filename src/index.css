@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -80,6 +81,34 @@
 
   .blur-backdrop {
     @apply backdrop-blur-lg bg-black/80 supports-[backdrop-filter]:bg-black/80;
+  }
+
+  /* Wave animation for buttons */
+  @keyframes wave-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .wave-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    z-index: 1;
+  }
+
+  .wave-btn:hover {
+    background: linear-gradient(90deg, #FF3B30 0%, #FF5C45 50%, #FF3B30 100%);
+    background-size: 200% auto;
+    animation: wave-animation 1.5s ease infinite;
+    box-shadow: 0 5px 15px rgba(255, 59, 48, 0.4);
+    transform: translateY(-2px);
   }
 
   /* Scroll reveal animation */
