@@ -2,6 +2,7 @@
 import LandingPage from "@/components/LandingPage";
 import ScrollTransition from "@/components/ScrollTransition";
 import { useEffect, useRef } from "react";
+import Hero from "@/components/Hero";
 
 const Index = () => {
   const landingRef = useRef<HTMLDivElement>(null);
@@ -43,7 +44,7 @@ const Index = () => {
           projectsRef={contentRef} 
         />
         
-        {/* Content section */}
+        {/* Content section - About Me */}
         <div 
           id="content-section" 
           ref={contentRef}
@@ -55,7 +56,8 @@ const Index = () => {
             willChange: "opacity, transform"
           }}
         >
-          {/* Main content will go here */}
+          {/* About Me Hero section */}
+          <Hero />
         </div>
       </div>
     </div>
