@@ -24,6 +24,7 @@ type FormData = z.infer<typeof formSchema>;
 const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDownload, setShowDownload] = useState(false);
+  const [validatedEmail, setValidatedEmail] = useState("");
   const { toast } = useToast();
   
   const form = useForm<FormData>({
@@ -49,10 +50,11 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
       );
       
       toast({
-        title: "Success!",
+        title: "Email Verified!",
         description: "Your CV is ready to download.",
       });
       
+      setValidatedEmail(data.email);
       setShowDownload(true);
     } catch (error) {
       toast({
@@ -65,8 +67,35 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
     }
   };
 
+  const handleDownload = async () => {
+    try {
+      // Send notification that CV was downloaded
+      await emailjs.send(
+        'service_xre6x5d',
+        'template_98hg4qw',
+        {
+          email: validatedEmail,
+          message: `CV downloaded by ${validatedEmail}`,
+        },
+        'GR73acsP9JjNBN84T'
+      );
+      
+      // Create a link to download the CV
+      const link = document.createElement('a');
+      link.href = "/lovable-uploads/c8903b52-a5cf-463d-af25-b89f7e2d25f0.png";
+      link.download = "Suphian_Tweel_CV.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    } catch (error) {
+      console.error("Error sending download notification:", error);
+    }
+  };
+
   const handleClose = () => {
     form.reset();
+    setValidatedEmail("");
     setShowDownload(false);
     onOpenChange(false);
   };
@@ -110,7 +139,7 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
                   type="submit" 
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Processing..." : "Request CV"}
+                  {isSubmitting ? "Verifying..." : "Verify Email"}
                 </ButtonCustom>
               </div>
             </form>
@@ -134,15 +163,7 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
               
               <ButtonCustom
                 className="flex-1"
-                onClick={() => {
-                  // Create a link to download the CV
-                  const link = document.createElement('a');
-                  link.href = "/lovable-uploads/c8903b52-a5cf-463d-af25-b89f7e2d25f0.png";
-                  link.download = "Suphian_Tweel_CV.png";
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                }}
+                onClick={handleDownload}
               >
                 Download CV
               </ButtonCustom>
