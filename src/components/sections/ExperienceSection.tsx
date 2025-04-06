@@ -35,7 +35,7 @@ const ExperienceSection = () => {
       title: "Duolingo Series D Funding"
     }]
   }, {
-    period: "2014 - 2016",
+    period: "2014 - 2018",
     company: "Huge Inc",
     role: "Growth Marketing",
     description: "Specialized in site redesigns, A/B testing, and multivariate testing for high-impact brands. Helped improve UX and conversion for companies like Canada Goose, supporting their transition into the public markets.",
