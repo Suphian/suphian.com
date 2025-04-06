@@ -80,7 +80,7 @@ const Index = () => {
                       </ButtonCustom>
                       
                       <div className="flex items-center text-muted-foreground">
-                        <MapPin className="mr-2 h-5 w-5" />
+                        
                         <span>Currently located in New York City</span>
                       </div>
                       
