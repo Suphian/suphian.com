@@ -21,10 +21,10 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
         
         {/* Content Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          {/* Left Content - Bigger SUPH Branding Image */}
+          {/* Left Content - Bigger Astronaut Image */}
           <div className="relative flex flex-col space-y-4 reveal">
             <div className="aspect-square w-full mx-auto md:mx-0 rounded-2xl overflow-hidden shadow-lg bg-background">
-              <img src="/lovable-uploads/d847628a-13e4-46ae-8c3c-b0892222a5b9.png" alt="SUPH branding with astronaut" className="w-full h-full object-contain object-center" />
+              <img src="/lovable-uploads/9ecd33bc-76a0-4af2-a18c-c988cab8c7e9.png" alt="Astronaut wearing orange headphones" className="w-full h-full object-contain object-center" />
               <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-transparent" />
             </div>
             
