@@ -1,3 +1,4 @@
+
 import LandingPage from "@/components/LandingPage";
 import ScrollTransition from "@/components/ScrollTransition";
 import { useEffect, useRef } from "react";
@@ -9,11 +10,15 @@ import { ButtonCustom } from "@/components/ui/button-custom";
 import { initializeRevealAnimations } from "@/lib/animations";
 import RequestCVModal from "@/components/RequestCVModal";
 import { useState } from "react";
+import ContactSheet from "@/components/ContactSheet";
+
 const Index = () => {
   const landingRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const aboutSectionRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+  
   useEffect(() => {
     // Reset scroll position when the component mounts
     window.scrollTo(0, 0);
@@ -28,6 +33,7 @@ const Index = () => {
       cleanup();
     };
   }, []);
+  
   return <div className="relative">
       {/* Landing page with transition */}
       <div className="relative min-h-[200vh] bg-black">
@@ -180,8 +186,8 @@ const Index = () => {
                 <p className="paragraph max-w-2xl mx-auto mb-8">
                   I'm always open to discussing new projects, opportunities, or partnerships.
                 </p>
-                <ButtonCustom size="lg" arrowIcon>
-                  <a href="/contact">Get in Touch</a>
+                <ButtonCustom size="lg" arrowIcon onClick={() => setContactOpen(true)}>
+                  Get in Touch
                 </ButtonCustom>
               </section>
             </div>
@@ -189,6 +195,9 @@ const Index = () => {
           
           {/* CV Request Modal */}
           <RequestCVModal open={isModalOpen} onOpenChange={setIsModalOpen} />
+
+          {/* Contact Sheet */}
+          <ContactSheet open={contactOpen} onOpenChange={setContactOpen} />
         </div>
       </div>
     </div>;

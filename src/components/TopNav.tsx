@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Home, Layers, Star, FileText, MailOpen } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import ContactSheet from "./ContactSheet";
 
 interface NavItem {
   id: string;
@@ -9,6 +10,7 @@ interface NavItem {
   label: string;
   path?: string;
   sectionId?: string;
+  action?: () => void;
 }
 
 const TopNav = () => {
@@ -16,6 +18,7 @@ const TopNav = () => {
   const [isVisible, setIsVisible] = useState(false);
   const location = useLocation();
   const isHomePage = location.pathname === "/";
+  const [contactOpen, setContactOpen] = useState(false);
 
   const navItems: NavItem[] = [{
     id: "about",
@@ -41,8 +44,7 @@ const TopNav = () => {
     id: "contact",
     icon: MailOpen,
     label: "Get in Touch",
-    path: "#contact",
-    sectionId: "contact-section"
+    action: () => setContactOpen(true)
   }];
 
   // Listen for custom event from the Start Here button
@@ -96,7 +98,9 @@ const TopNav = () => {
   }, [isHomePage, navItems]);
 
   const handleClick = (item: NavItem) => {
-    if (item.sectionId) {
+    if (item.action) {
+      item.action();
+    } else if (item.sectionId) {
       const section = document.getElementById(item.sectionId);
       if (section) {
         section.scrollIntoView({
@@ -110,11 +114,31 @@ const TopNav = () => {
 
   if (!isVisible) return null;
 
-  return <nav className="fixed top-20 left-0 right-0 z-40 blur-backdrop border-b border-border/40 py-2">
-      <div className="container-custom text-primary">
-        {/* Content could be added here if needed in the future */}
-      </div>
-    </nav>;
+  return (
+    <>
+      <nav className="fixed top-20 left-0 right-0 z-40 blur-backdrop border-b border-border/40 py-2">
+        <div className="container-custom text-primary">
+          <ul className="flex justify-center space-x-8">
+            {navItems.map((item) => (
+              <li key={item.id}>
+                <button
+                  onClick={() => handleClick(item)}
+                  className={`flex items-center px-3 py-2 text-sm transition-colors hover:text-primary/80 ${
+                    activeSection === item.id ? "font-medium" : ""
+                  }`}
+                >
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+      
+      <ContactSheet open={contactOpen} onOpenChange={setContactOpen} />
+    </>
+  );
 };
 
 export default TopNav;
