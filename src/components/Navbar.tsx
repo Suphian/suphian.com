@@ -34,7 +34,7 @@ const Navbar = () => {
   }, {
     name: "Work",
     path: "/",
-    scrollTo: "experience-section" // Changed from "content-section" to "experience-section"
+    scrollTo: "experience-section"
   }];
 
   const isActive = (path: string) => location.pathname === path;
@@ -46,7 +46,7 @@ const Navbar = () => {
       const section = document.getElementById(scrollTo);
       if (section) {
         // Increased offset to prevent logo overlap with heading
-        const offset = 190; // Adjusted from 185 to 190
+        const offset = 190;
         const topPosition = section.getBoundingClientRect().top + window.pageYOffset - offset;
         window.scrollTo({
           top: topPosition,
@@ -63,7 +63,7 @@ const Navbar = () => {
           {/* Logo or branding could go here */}
           <div className="flex-1"></div>
 
-          {/* Desktop Navigation - moved to right */}
+          {/* Desktop Navigation only - no mobile nav */}
           <ul className="hidden md:flex space-x-8 items-center justify-end">
             {navLinks.map(link => <li key={link.name}>
                 <Link to={link.path} className={cn("link-underline py-2 text-primary", isActive(link.path) && !link.scrollTo ? "font-medium" : "hover:text-primary/80")} onClick={e => handleNavClick(e, link.scrollTo)}>
@@ -81,34 +81,13 @@ const Navbar = () => {
             </li>
           </ul>
 
-          {/* Mobile Menu Button - moved to right */}
-          <button className="md:hidden ml-auto flex items-center" onClick={toggleMenu} aria-label={isOpen ? "Close menu" : "Open menu"}>
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {/* The mobile menu button is still shown but doesn't open a menu anymore - it opens the contact sheet directly */}
+          <button className="md:hidden ml-auto flex items-center" 
+            onClick={() => setContactOpen(true)} 
+            aria-label="Contact">
+            <Menu size={24} />
           </button>
         </nav>
-
-        {/* Mobile Navigation */}
-        {isOpen && <div className="md:hidden absolute top-16 left-0 right-0 p-4 blur-backdrop border-b border-border/40 animate-fade-in">
-            <ul className="flex flex-col space-y-4 py-4">
-              {navLinks.map(link => <li key={link.name}>
-                  <Link to={link.path} className={cn("block py-2 px-4 rounded-md transition-colors text-primary", isActive(link.path) && !link.scrollTo ? "font-medium bg-accent/10" : "hover:bg-accent/10 hover:text-primary/80")} onClick={e => handleNavClick(e, link.scrollTo)}>
-                    {link.name}
-                  </Link>
-                </li>)}
-              <li className="pt-2">
-                <button 
-                  className="w-full wave-btn bg-primary text-background px-6 py-4 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group text-center" 
-                  onClick={() => {
-                    setContactOpen(true);
-                    closeMenu();
-                  }}
-                >
-                  <span className="relative z-10 group-hover:text-background transition-colors duration-300">Get in Touch</span>
-                  <span className="absolute inset-0 bg-youtubeRed bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
-                </button>
-              </li>
-            </ul>
-          </div>}
       </div>
       
       {/* Contact Sheet */}
