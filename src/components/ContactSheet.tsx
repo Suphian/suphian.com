@@ -194,11 +194,11 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                   <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
                 </button>
                 
-                {/* Astronaut Image - reverting back to original image */}
+                {/* Astronaut Image - using the running astronaut with orange moon */}
                 <div className="mt-12 flex justify-center">
                   <img 
-                    src="/lovable-uploads/9ecd33bc-76a0-4af2-a18c-c988cab8c7e9.png" 
-                    alt="Astronaut illustration" 
+                    src="/lovable-uploads/db2efd18-0555-427b-89b4-c5cae8a5a143.png" 
+                    alt="Astronaut with orange moon" 
                     className="w-auto h-auto max-h-64 object-contain transform scale-130"
                   />
                 </div>
