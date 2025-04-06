@@ -27,16 +27,28 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
               <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-transparent" />
             </div>
             
-            {/* Two buttons below astronaut image with consistent animation */}
-            <div className="flex flex-col space-y-3">
-              <ButtonCustom variant="outline" onClick={onRequestCV} className="w-full wave-btn">
-                Request CV
+            {/* Two buttons side by side below astronaut image with wave animation */}
+            <div className="flex gap-3 w-3/4 mx-auto md:mx-0">
+              <ButtonCustom 
+                variant="outline" 
+                onClick={onRequestCV} 
+                className="wave-btn flex-1"
+              >
+                Request My Resume
               </ButtonCustom>
               
-              <ButtonCustom variant="default" className="w-full wave-btn">
-                <a href="https://notebooklm.google.com/notebook/2849175b-13a1-477d-ace3-9c3c593156a6/audio" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
+              <ButtonCustom 
+                variant="default" 
+                className="wave-btn flex-1"
+              >
+                <a 
+                  href="https://notebooklm.google.com/notebook/2849175b-13a1-477d-ace3-9c3c593156a6/audio" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center justify-center"
+                >
                   <Headphones className="mr-2 h-5 w-5" />
-                  Listen to Notebook LLM
+                  Listen
                 </a>
               </ButtonCustom>
             </div>
