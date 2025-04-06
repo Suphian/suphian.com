@@ -13,7 +13,7 @@ const Index = () => {
   return (
     <div>
       <LandingPage />
-      <SpacerBanner imageUrl="/lovable-uploads/f6e8babc-8563-4fc8-b1a4-99176090137a.png" />
+      <SpacerBanner imageUrl="/lovable-uploads/3198b560-afb3-4595-a9cf-65b3e75eaf45.png" />
       <div id="projects-section">
         <Projects />
       </div>
