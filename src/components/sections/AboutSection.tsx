@@ -24,7 +24,7 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
           {/* Left Content - Bigger Astronaut Image */}
           <div className="relative flex flex-col space-y-4 reveal">
             <div className="aspect-square w-full mx-auto md:mx-0 rounded-2xl overflow-hidden shadow-lg">
-              <img src="/lovable-uploads/24178ae2-7999-4f91-9a29-81fbe5a02753.png" alt="Astronaut wearing red headphones" className="w-full h-full object-cover object-center" />
+              <img src="/lovable-uploads/b5feb4e9-6b23-421b-90ba-ffa4d4f48992.png" alt="Astronaut wearing red headphones" className="w-full h-full object-cover object-center" />
               <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-transparent" />
             </div>
             
