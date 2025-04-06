@@ -1,11 +1,14 @@
 
 import LandingPage from "@/components/LandingPage";
-import { projects } from "@/lib/projects";
+import Projects from "@/pages/Projects";
 
 const Index = () => {
   return (
     <div>
       <LandingPage />
+      <div id="projects-section">
+        <Projects />
+      </div>
     </div>
   );
 };

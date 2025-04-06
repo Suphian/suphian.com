@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AnimatedGreeting from "./AnimatedGreeting";
 import { greetings } from "@/data/greetings";
+import CallToAction from "./CallToAction";
 
 const LandingPage = () => {
   return (
@@ -22,22 +23,7 @@ const LandingPage = () => {
           </p>
         </div>
         
-        <div className="mt-12 flex gap-4">
-          <Link 
-            to="/projects" 
-            className="wave-btn bg-youtubeRed text-primary px-6 py-3 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group"
-          >
-            <span className="relative z-10 group-hover:text-black transition-colors duration-300">Learn More</span>
-            <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
-          </Link>
-          <Link 
-            to="/contact" 
-            className="border border-primary/30 text-primary px-6 py-3 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group"
-          >
-            <span className="relative z-10 group-hover:text-black transition-colors duration-300">Contact Me</span>
-            <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
-          </Link>
-        </div>
+        <CallToAction />
       </div>
     </div>
   );
