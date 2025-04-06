@@ -80,7 +80,7 @@ const Contact = () => {
       // Send email using EmailJS
       await emailjs.send(
         'service_xre6x5d',  // Your EmailJS service ID
-        'template_default', // Create a template and put ID here
+        'template_98hg4qw', // Your EmailJS template ID
         templateParams,
         'your_user_id'      // Your EmailJS user ID
       );
