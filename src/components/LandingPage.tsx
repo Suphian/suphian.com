@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AnimatedGreeting from "./AnimatedGreeting";
 import { greetings } from "@/data/greetings";
-import WavyUnderline from "./WavyUnderline";
 import Logo from "./Logo";
 
 const LandingPage = () => {
@@ -18,7 +17,6 @@ const LandingPage = () => {
           <span className="relative inline-block">
             <AnimatedGreeting greetings={greetings} />
             <span className="ml-2 font-montserrat font-black">, I'm Suphian.</span>
-            <WavyUnderline />
           </span>
         </h1>
         
