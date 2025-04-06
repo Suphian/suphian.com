@@ -15,7 +15,7 @@ const Logo = () => {
         <img 
           src="/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png" 
           alt="Suphian Logo" 
-          className="h-[108px] md:h-[135px]"
+          className="h-[97px] md:h-[122px]"
         />
       </Link>
     </div>
