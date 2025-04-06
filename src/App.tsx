@@ -13,6 +13,7 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Logo from "./components/Logo";
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -35,6 +36,7 @@ const AppContent = () => {
     <>
       <ScrollToTop />
       <Navbar />
+      <Logo />
       <main className={isHomepage ? "" : "min-h-screen"}>
         <Routes>
           <Route path="/" element={<Index />} />

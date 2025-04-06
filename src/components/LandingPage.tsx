@@ -3,14 +3,10 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AnimatedGreeting from "./AnimatedGreeting";
 import { greetings } from "@/data/greetings";
-import Logo from "./Logo";
 
 const LandingPage = () => {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden p-4">
-      {/* Logo component */}
-      <Logo />
-
       {/* Main content */}
       <div className="max-w-4xl">
         <h1 className="heading-xl mb-6 flex flex-wrap items-baseline relative">
