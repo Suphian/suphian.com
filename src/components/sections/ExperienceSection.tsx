@@ -92,7 +92,7 @@ const ExperienceSection = () => {
                             className="text-xs text-accent hover:text-accent/80 transition-colors flex items-center gap-2"
                           >
                             <ExternalLink size={12} />
-                            <span className="truncate">{link.url}</span>
+                            <span>{link.title}</span>
                           </a>
                         ))}
                       </div>
