@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -103,26 +104,6 @@
     animation: fade-slide-up 0.5s ease-out forwards;
     animation-delay: calc(var(--index, 0) * 0.1s);
     opacity: 0;
-  }
-
-  /* New animations for contact sheet staggered reveal */
-  .animate-item {
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-  }
-  
-  .animate-item.animate-fade-in {
-    animation: contactFadeIn 0.7s ease-out forwards;
-  }
-  
-  @keyframes contactFadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
 
   /* Wave animation for buttons */

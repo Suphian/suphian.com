@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,7 +40,6 @@ interface ContactSheetProps {
 
 const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
   const { toast } = useToast();
-  const formRef = useRef<HTMLDivElement>(null);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,20 +50,6 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
       message: "",
     },
   });
-
-  // Animation effect when sheet opens
-  useEffect(() => {
-    if (open && formRef.current) {
-      const formElements = formRef.current.querySelectorAll('.animate-item');
-      
-      formElements.forEach((element, index) => {
-        // Add a staggered delay based on the element's position
-        setTimeout(() => {
-          element.classList.add('animate-fade-in');
-        }, index * 100); // 100ms delay between each element
-      });
-    }
-  }, [open]);
 
   const onSubmit = (data: FormValues) => {
     // Simulate form submission with a delay
@@ -83,7 +68,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
       <SheetContent className="w-full sm:max-w-xl md:max-w-2xl p-0 overflow-y-auto border-l-0">
         <div className="h-full flex flex-col">
           {/* Header */}
-          <div className="p-6 md:p-8 border-b animate-item opacity-0">
+          <div className="p-6 md:p-8 border-b">
             <div className="flex justify-between items-center mb-2">
               <SheetTitle className="text-2xl md:text-3xl font-bold">Contact</SheetTitle>
             </div>
@@ -93,14 +78,14 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
           </div>
           
           {/* Form */}
-          <div ref={formRef} className="flex-grow p-6 md:p-8 overflow-y-auto">
+          <div className="flex-grow p-6 md:p-8 overflow-y-auto">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-[600px] mx-auto">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
-                    <FormItem className="space-y-2 animate-item opacity-0">
+                    <FormItem className="space-y-2">
                       <FormLabel className="text-sm font-medium">
                         Name <span className="text-accent">*</span>
                       </FormLabel>
@@ -120,7 +105,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                   control={form.control}
                   name="email"
                   render={({ field }) => (
-                    <FormItem className="space-y-2 animate-item opacity-0">
+                    <FormItem className="space-y-2">
                       <FormLabel className="text-sm font-medium">
                         Email <span className="text-accent">*</span>
                       </FormLabel>
@@ -141,7 +126,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                   control={form.control}
                   name="phone"
                   render={({ field }) => (
-                    <FormItem className="space-y-2 animate-item opacity-0">
+                    <FormItem className="space-y-2">
                       <FormLabel className="text-sm font-medium">
                         Phone Number <span className="text-muted-foreground text-xs">(Optional)</span>
                       </FormLabel>
@@ -162,7 +147,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                   control={form.control}
                   name="subject"
                   render={({ field }) => (
-                    <FormItem className="space-y-2 animate-item opacity-0">
+                    <FormItem className="space-y-2">
                       <FormLabel className="text-sm font-medium">
                         Subject <span className="text-accent">*</span>
                       </FormLabel>
@@ -182,7 +167,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                   control={form.control}
                   name="message"
                   render={({ field }) => (
-                    <FormItem className="space-y-2 animate-item opacity-0">
+                    <FormItem className="space-y-2">
                       <FormLabel className="text-sm font-medium">
                         Message <span className="text-accent">*</span>
                       </FormLabel>
@@ -200,7 +185,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
 
                 <button 
                   type="submit" 
-                  className="wave-btn bg-accent text-white w-full h-14 mt-8 px-6 py-3 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group animate-item opacity-0"
+                  className="wave-btn bg-accent text-white w-full h-14 mt-8 px-6 py-3 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group"
                   disabled={form.formState.isSubmitting}
                 >
                   <span className="relative z-10 group-hover:text-black transition-colors duration-300 slide-up">
@@ -210,7 +195,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                 </button>
                 
                 {/* Astronaut Image - positioned below the form */}
-                <div className="mt-12 flex justify-center animate-item opacity-0">
+                <div className="mt-12 flex justify-center">
                   <img 
                     src="/lovable-uploads/a5335e4d-afe3-4493-99db-7da1ad064428.png" 
                     alt="Astronaut illustration" 
@@ -222,7 +207,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
           </div>
           
           {/* Connect links - simplified, removing email */}
-          <div className="p-6 md:p-8 border-t bg-secondary/30 animate-item opacity-0">
+          <div className="p-6 md:p-8 border-t bg-secondary/30">
             <div className="flex space-x-4 justify-center">
               <a 
                 href="https://www.linkedin.com/in/suphian/"
