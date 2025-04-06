@@ -30,15 +30,11 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "Projects", path: "/projects" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
-  
-  // Don't display the navbar on homepage
-  if (isHomepage) return null;
 
   return (
     <header

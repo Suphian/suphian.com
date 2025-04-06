@@ -27,7 +27,7 @@ const CallToAction = () => {
     <>
       <div className="mt-12 flex gap-4">
         <Link 
-          to="/projects" 
+          to="/about" 
           onClick={scrollToProjects}
           className="wave-btn bg-youtubeRed text-primary px-6 py-3 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group"
         >
