@@ -74,15 +74,15 @@ const LandingPage = () => {
         
         <div className="space-y-4 text-content">
           <p className="text-xl md:text-2xl lg:text-3xl font-montserrat font-bold">
-            I'm a Product Manager leading payments at <span className="text-youtubeRed">YouTube</span>.
+            Product Manager leading payments at <span className="text-youtubeRed">YouTube</span>.
           </p>
           
           <p className="text-xl md:text-2xl lg:text-3xl font-montserrat font-bold">
-            Previously, I've redesigned digital experiences for Hulu, Apple, Duolingo, and Chewy.com.
+            Previously, redesigned digital experiences for Hulu, Apple, Duolingo, and Chewy.com.
           </p>
           
           <p className="text-xl md:text-2xl lg:text-3xl font-montserrat font-bold">
-            I'm passionate about crafting elegant, data-driven products powered by thoughtful design and cutting-edge AI.
+            Passionate about crafting elegant, data-driven products powered by thoughtful design and cutting-edge AI.
           </p>
         </div>
         
