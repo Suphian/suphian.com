@@ -17,7 +17,9 @@ const ContentSection = ({ onRequestCV, onContactClick }: ContentSectionProps) =>
         <AboutSection onRequestCV={onRequestCV} />
         <ExperienceSection />
         <LeadershipSection />
-        <ContactSection onContactClick={onContactClick} />
+        <div className="relative mt-16 overflow-hidden">
+          <ContactSection onContactClick={onContactClick} />
+        </div>
       </div>
     </div>
   );
