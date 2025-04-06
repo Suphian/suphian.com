@@ -13,6 +13,7 @@ interface NavItem {
 
 const TopNav = () => {
   const [activeSection, setActiveSection] = useState<string>("home");
+  const [isVisible, setIsVisible] = useState(false);
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
@@ -44,8 +45,25 @@ const TopNav = () => {
     sectionId: "contact-section"
   }];
 
+  // Listen for custom event from the Start Here button
+  useEffect(() => {
+    const handleStartButtonClick = () => {
+      setIsVisible(true);
+    };
+    
+    window.addEventListener('startButtonClicked', handleStartButtonClick);
+    return () => {
+      window.removeEventListener('startButtonClicked', handleStartButtonClick);
+    };
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => {
+      // Check if user has scrolled beyond the initial viewport
+      if (window.scrollY > window.innerHeight * 0.5) {
+        setIsVisible(true);
+      }
+      
       // Get all sections
       const sections = navItems.filter(item => item.sectionId).map(item => {
         const element = document.getElementById(item.sectionId!);
@@ -89,6 +107,8 @@ const TopNav = () => {
       }
     }
   };
+
+  if (!isVisible) return null;
 
   return <nav className="fixed top-20 left-0 right-0 z-40 blur-backdrop border-b border-border/40 py-2">
       <div className="container-custom text-primary">

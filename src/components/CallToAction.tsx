@@ -18,6 +18,9 @@ const CallToAction = () => {
         top: contentSection.offsetTop - 50,
         behavior: "smooth"
       });
+      
+      // Dispatch custom event to show the top nav
+      window.dispatchEvent(new Event('startButtonClicked'));
     }
   };
 
