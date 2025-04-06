@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -152,9 +151,9 @@
 
   /* Hand-drawn wavy underline animation */
   .wavy-underline {
-    stroke-dasharray: 280;
-    stroke-dashoffset: 280;
-    animation: draw 1s forwards;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw 1.5s forwards;
   }
   
   @keyframes draw {

@@ -4,27 +4,22 @@ import { Link } from "react-router-dom";
 import AnimatedGreeting from "./AnimatedGreeting";
 import { greetings } from "@/data/greetings";
 import WavyUnderline from "./WavyUnderline";
+import Logo from "./Logo";
 
 const LandingPage = () => {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden p-4">
-      {/* Logo in top-left corner with increased size */}
-      <div className="absolute top-6 left-6 md:top-10 md:left-10">
-        <img 
-          src="/lovable-uploads/e95f9219-fcb6-4a0e-bd75-7d6c2000fb1b.png" 
-          alt="Suphian Logo" 
-          className="h-[100px] md:h-[100px]"
-        />
-      </div>
+      {/* Logo component */}
+      <Logo />
 
       {/* Main content */}
       <div className="max-w-4xl">
         <h1 className="heading-xl mb-6 flex flex-wrap items-baseline relative">
-          <AnimatedGreeting greetings={greetings} />
-          <span className="ml-2 font-montserrat font-black">, I'm Suphian.</span>
-          
-          {/* Use the improved WavyUnderline component */}
-          <WavyUnderline />
+          <span className="relative inline-block">
+            <AnimatedGreeting greetings={greetings} />
+            <span className="ml-2 font-montserrat font-black">, I'm Suphian.</span>
+            <WavyUnderline />
+          </span>
         </h1>
         
         <div className="space-y-4 text-content">
