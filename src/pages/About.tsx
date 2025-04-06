@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { MapPin, Headphones } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
@@ -64,8 +63,8 @@ const About = () => {
             {/* Right Content - Astronaut Image */}
             <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg order-first md:order-last reveal" style={{ transitionDelay: "150ms" }}>
               <img
-                src="/lovable-uploads/b5feb4e9-6b23-421b-90ba-ffa4d4f48992.png"
-                alt="Astronaut with headphones"
+                src="/lovable-uploads/6fbb55f2-ad2f-4646-9f3a-382f1ffc8c31.png"
+                alt="Astronaut wearing headphones"
                 className="w-full h-full object-cover object-center"
               />
               <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-transparent" />

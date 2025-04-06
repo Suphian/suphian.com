@@ -24,7 +24,7 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
           {/* Left Content - Bigger Astronaut Image */}
           <div className="relative flex flex-col space-y-4 reveal">
             <div className="aspect-square w-full mx-auto md:mx-0 rounded-2xl overflow-hidden shadow-lg">
-              <img src="/lovable-uploads/b5feb4e9-6b23-421b-90ba-ffa4d4f48992.png" alt="Astronaut wearing red headphones" className="w-full h-full object-cover object-center" />
+              <img src="/lovable-uploads/24178ae2-7999-4f91-9a29-81fbe5a02753.png" alt="Astronaut wearing red headphones" className="w-full h-full object-cover object-center" />
               <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-transparent" />
             </div>
             
@@ -55,53 +55,42 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
             </div>
           </div>
           
-          {/* Right Content - New Bio with styled paragraphs */}
+          {/* Right Content - Bio with styled paragraphs */}
           <div className="flex flex-col space-y-6 reveal" style={{
             transitionDelay: "150ms"
-          }}>
-            {/* Visual separator element */}
-            <div className="flex items-center space-x-2 mb-2">
-              <div className="h-1 w-12 bg-accent rounded-full"></div>
-              <div className="h-1 w-6 bg-accent/60 rounded-full"></div>
-              <div className="h-1 w-3 bg-accent/30 rounded-full"></div>
-            </div>
-            
+          }}>            
             {/* Bio paragraphs with styled cards */}
             <div className="space-y-4">
-              <Card className="bg-secondary/40 border-0 overflow-hidden relative">
+              <Card className="bg-background border-0 overflow-hidden relative">
                 <CardContent className="p-4 sm:p-5">
                   <p className="paragraph">
                     I grew up between cultures — the kind of upbringing that teaches you to listen deeply, challenge assumptions, and speak multiple languages (including internet). I've spent my career working with founders, private equity, and corporate 9-to-5ers who want to do more than just ship — they want to shake things up.
                   </p>
                 </CardContent>
-                <div className="absolute top-0 left-0 w-1 h-full bg-accent"></div>
               </Card>
               
-              <Card className="bg-secondary/30 border-0 overflow-hidden relative">
+              <Card className="bg-background border-0 overflow-hidden relative">
                 <CardContent className="p-4 sm:p-5">
                   <p className="paragraph">
                     I think data science and AI aren't just the future — they're the foundation. I'm wired for first principles, allergic to fluff, and always looking for people who are smart, egoless, and unafraid to be wrong.
                   </p>
                 </CardContent>
-                <div className="absolute top-0 left-0 w-1 h-full bg-accent/80"></div>
               </Card>
               
-              <Card className="bg-secondary/20 border-0 overflow-hidden relative">
+              <Card className="bg-background border-0 overflow-hidden relative">
                 <CardContent className="p-4 sm:p-5">
                   <p className="paragraph">
                     My work spans e-commerce, consumer apps, and internal tools — often the kinds of products that challenge business-as-usual and deliver a smarter, more human way of doing things. What ties it all together is a singular goal: helping ambitious teams think bigger.
                   </p>
                 </CardContent>
-                <div className="absolute top-0 left-0 w-1 h-full bg-accent/60"></div>
               </Card>
               
-              <Card className="bg-secondary/10 border-0 overflow-hidden relative">
+              <Card className="bg-background border-0 overflow-hidden relative">
                 <CardContent className="p-4 sm:p-5">
                   <p className="paragraph">
                     Technology is going to remake everything — faster than most are ready for. But with the right mindset and a bias for clarity, we can build a future that's big enough for everyone.
                   </p>
                 </CardContent>
-                <div className="absolute top-0 left-0 w-1 h-full bg-accent/40"></div>
               </Card>
             </div>
           </div>
