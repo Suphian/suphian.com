@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Greeting } from "../data/greetings";
 
 interface AnimatedGreetingProps {
@@ -9,15 +9,32 @@ interface AnimatedGreetingProps {
 const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
   const [currentGreetingIndex, setCurrentGreetingIndex] = useState(0);
   const [animationState, setAnimationState] = useState<'entering' | 'visible' | 'exiting'>('visible');
+  const cycleCompleteRef = useRef(false);
   
   useEffect(() => {
+    // Find the index of "Hi" greeting to use at the end
+    const hiIndex = greetings.findIndex(greeting => greeting.text === "Hi");
+    
     const intervalId = setInterval(() => {
+      setCurrentGreetingIndex(prevIndex => {
+        const nextIndex = (prevIndex + 1) % greetings.length;
+        
+        // Check if we've gone through the entire array once
+        if (nextIndex === 0) {
+          cycleCompleteRef.current = true;
+          clearInterval(intervalId);
+          // Return the index for "Hi" or 0 if not found
+          return hiIndex !== -1 ? hiIndex : 0;
+        }
+        
+        return nextIndex;
+      });
+      
       // Start exit animation
       setAnimationState('exiting');
       
       // After exit animation completes, change greeting and start enter animation
       setTimeout(() => {
-        setCurrentGreetingIndex((prevIndex) => (prevIndex + 1) % greetings.length);
         setAnimationState('entering');
         
         // After enter animation completes, set to visible state
@@ -29,7 +46,7 @@ const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
     }, 500); // Change greeting every half second
     
     return () => clearInterval(intervalId);
-  }, [greetings.length]);
+  }, [greetings]);
   
   const currentGreeting = greetings[currentGreetingIndex];
   
