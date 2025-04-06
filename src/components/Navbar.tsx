@@ -53,7 +53,7 @@ const Navbar = () => {
       const section = document.getElementById(scrollTo);
       if (section) {
         // Increased offset to prevent logo overlap with heading
-        const offset = 185; // Adjusted from 180 to 185
+        const offset = 190; // Adjusted from 185 to 190
         const topPosition = section.getBoundingClientRect().top + window.pageYOffset - offset;
         window.scrollTo({
           top: topPosition,
