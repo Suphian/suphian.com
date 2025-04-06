@@ -31,7 +31,7 @@ const LandingPage = () => {
             to="/projects" 
             className="bg-youtubeRed text-primary px-6 py-3 rounded-md font-montserrat font-bold hover:bg-opacity-90 transition-all duration-300"
           >
-            View My Work
+            Learn More
           </Link>
           <Link 
             to="/contact" 
