@@ -2,8 +2,14 @@
 import LandingPage from "@/components/LandingPage";
 import Projects from "@/pages/Projects";
 import SpacerBanner from "@/components/SpacerBanner";
+import { useEffect } from "react";
 
 const Index = () => {
+  useEffect(() => {
+    // Reset scroll position when the component mounts
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div>
       <LandingPage />
