@@ -1,6 +1,5 @@
 
 import React from "react";
-import { X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +10,6 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
-  SheetClose,
 } from "@/components/ui/sheet";
 import {
   Form,
@@ -73,10 +71,6 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
           <div className="p-6 md:p-8 border-b">
             <div className="flex justify-between items-center mb-2">
               <SheetTitle className="text-2xl md:text-3xl font-bold">Contact</SheetTitle>
-              <SheetClose className="rounded-full p-2 hover:bg-secondary transition-colors">
-                <X className="h-5 w-5" />
-                <span className="sr-only">Close</span>
-              </SheetClose>
             </div>
             <SheetDescription className="text-base text-muted-foreground">
               Let's discuss your project or just say hello.
