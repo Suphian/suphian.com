@@ -22,9 +22,8 @@ const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
         // Check if we've gone through the entire array once
         if (nextIndex === 0) {
           cycleCompleteRef.current = true;
-          clearInterval(intervalId);
-          // Return the index for "Hi" or 0 if not found
-          return hiIndex !== -1 ? hiIndex : 0;
+          // Don't immediately jump to "Hi", just let the cycle complete naturally
+          // We'll handle the Hi transition after the cycle completes
         }
         
         return nextIndex;
@@ -35,6 +34,31 @@ const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
       
       // After exit animation completes, change greeting and start enter animation
       setTimeout(() => {
+        // Check if we've completed the cycle and should now transition to "Hi"
+        if (cycleCompleteRef.current) {
+          clearInterval(intervalId);
+          
+          // Wait for current animation to complete before switching to Hi
+          setTimeout(() => {
+            if (hiIndex !== -1) {
+              setAnimationState('exiting');
+              
+              // After exiting, set to Hi
+              setTimeout(() => {
+                setCurrentGreetingIndex(hiIndex);
+                setAnimationState('entering');
+                
+                // And finally back to visible
+                setTimeout(() => {
+                  setAnimationState('visible');
+                }, 500);
+              }, 500);
+            }
+          }, 500);
+          
+          return;
+        }
+        
         setAnimationState('entering');
         
         // After enter animation completes, set to visible state
