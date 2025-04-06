@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Home, Layers, Star, FileText, MailOpen } from "lucide-react";
 import { useLocation } from "react-router-dom";
@@ -72,6 +73,9 @@ const TopNav = () => {
         setIsVisible(true);
       }
       
+      // Only process sections when on the homepage
+      if (!isHomePage) return;
+      
       const sections = navItems.filter(item => item.sectionId).map(item => {
         const element = document.getElementById(item.sectionId!);
         return {
@@ -79,6 +83,7 @@ const TopNav = () => {
           element
         };
       }).filter(item => item.element);
+      
       if (sections.length === 0) return;
 
       const scrollPosition = window.scrollY + 100;
@@ -118,7 +123,8 @@ const TopNav = () => {
     }
   };
 
-  if (!isVisible) return null;
+  // Don't render if not on home page or not visible
+  if (!isVisible || !isHomePage) return null;
 
   return (
     <>

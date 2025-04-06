@@ -29,12 +29,14 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const location = useLocation();
+  // This is correct - we only need TopNav on the homepage
   const isHomepage = location.pathname === "/";
   
   return (
     <>
       <ScrollToTop />
       <Navbar />
+      {/* TopNav will only render on the homepage */}
       {isHomepage && <TopNav />}
       <Logo />
       <main className="min-h-screen">
