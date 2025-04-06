@@ -31,22 +31,7 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-border/40">
-          <div className="flex space-x-6 mb-4 md:mb-0">
-            <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Home
-            </Link>
-            <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              About
-            </Link>
-            <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Contact
-            </Link>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Suphian Tweel. All rights reserved.
-          </p>
-        </div>
+        
       </div>
     </footer>;
 };
