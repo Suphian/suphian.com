@@ -66,9 +66,24 @@ const LandingPage = () => {
       {/* Main content */}
       <div className="max-w-4xl">
         <h1 className="heading-xl mb-6 flex flex-wrap items-baseline">
-          <span className={`inline-block ${getAnimationClass()} ${getLanguageClass(currentGreeting.text)}`}>
-            {currentGreeting.text}
-          </span>
+          <div className="relative inline-flex">
+            <span className={`inline-block ${getAnimationClass()} ${getLanguageClass(currentGreeting.text)}`}>
+              {currentGreeting.text}
+            </span>
+            <div className="absolute bottom-[-8px] left-0 w-full">
+              <svg width="100%" height="8" className="overflow-visible">
+                <path 
+                  d="M0,2 Q30,5 60,2 T120,2 T180,2 T240,2" 
+                  fill="none" 
+                  stroke="#FF3B30" 
+                  strokeWidth="3" 
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="wavy-underline"
+                />
+              </svg>
+            </div>
+          </div>
           <span className="ml-2 font-montserrat font-black">, I'm Suphian.</span>
         </h1>
         
