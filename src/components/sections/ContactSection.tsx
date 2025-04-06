@@ -52,9 +52,9 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
       };
       
       // Send email using EmailJS
-      // You'll need to replace SERVICE_ID, TEMPLATE_ID, and USER_ID with your actual EmailJS credentials
+      // You'll need to replace TEMPLATE_ID and USER_ID with your actual EmailJS credentials
       await emailjs.send(
-        'default_service',  // Create a service and put ID here
+        'service_xre6x5d',  // Your EmailJS service ID
         'template_default', // Create a template and put ID here
         templateParams,
         'your_user_id'      // Your EmailJS user ID

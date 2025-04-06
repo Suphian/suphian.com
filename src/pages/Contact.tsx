@@ -1,3 +1,4 @@
+
 import { useState, useEffect, FormEvent } from "react";
 import { Mail, Linkedin, Github } from "lucide-react";
 import { initializeRevealAnimations } from "@/lib/animations";
@@ -78,7 +79,7 @@ const Contact = () => {
       
       // Send email using EmailJS
       await emailjs.send(
-        'default_service',  // Create a service and put ID here
+        'service_xre6x5d',  // Your EmailJS service ID
         'template_default', // Create a template and put ID here
         templateParams,
         'your_user_id'      // Your EmailJS user ID
