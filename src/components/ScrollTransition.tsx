@@ -31,8 +31,8 @@ const ScrollTransition = ({ className = "", landingRef, projectsRef }: ScrollTra
       {/* Parallax image that will slide under the text */}
       <ParallaxImage 
         imageRef={imageRef}
-        imageSrc="/lovable-uploads/9ecd33bc-76a0-4af2-a18c-c988cab8c7e9.png"
-        altText="Astronaut with orange headphones"
+        imageSrc="/lovable-uploads/75f08c75-ec0f-4cee-b3a2-db7b2ea15061.png"
+        altText="Astronaut running with moon"
         zIndex={5} // Lower z-index to ensure it stays behind text
       />
       
