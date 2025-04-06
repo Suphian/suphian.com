@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Greeting } from "../data/greetings";
+import { useIsMobile } from "../hooks/use-mobile";
 
 interface AnimatedGreetingProps {
   greetings: Greeting[];
@@ -9,6 +10,12 @@ interface AnimatedGreetingProps {
 const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
   const [currentGreetingIndex, setCurrentGreetingIndex] = useState(0);
   const [animationState, setAnimationState] = useState<'visible' | 'changing'>('visible');
+  const isMobile = useIsMobile();
+  
+  // Filter greetings based on device screen size
+  const filteredGreetings = isMobile 
+    ? greetings.filter(greeting => greeting.text.length <= 4)
+    : greetings;
   
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -17,16 +24,16 @@ const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
       
       // After animation completes, change to next greeting
       setTimeout(() => {
-        setCurrentGreetingIndex(prevIndex => (prevIndex + 1) % greetings.length);
+        setCurrentGreetingIndex(prevIndex => (prevIndex + 1) % filteredGreetings.length);
         setAnimationState('visible');
       }, 750); // Increased from 500ms to 750ms (half of 1.5s)
       
     }, 1500); // Changed from 1000ms to 1500ms (1.5 seconds)
     
     return () => clearInterval(intervalId);
-  }, [greetings.length]);
+  }, [filteredGreetings.length]);
   
-  const currentGreeting = greetings[currentGreetingIndex];
+  const currentGreeting = filteredGreetings[currentGreetingIndex] || greetings[0];
   
   const getAnimationClass = () => {
     return animationState === 'changing' ? 'greeting-animation-exit' : '';
