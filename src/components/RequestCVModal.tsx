@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
+import emailjs from 'emailjs-com';
 
 interface RequestCVModalProps {
   open: boolean;
@@ -22,6 +23,7 @@ type FormData = z.infer<typeof formSchema>;
 
 const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showDownload, setShowDownload] = useState(false);
   const { toast } = useToast();
   
   const form = useForm<FormData>({
@@ -34,19 +36,24 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     
-    // Simulate API call
     try {
-      // In a real implementation, you would connect this to an actual email service
-      // For now, we'll just simulate a successful submission after a short delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Send email notification using EmailJS
+      await emailjs.send(
+        'service_xre6x5d',
+        'template_98hg4qw',
+        {
+          email: data.email,
+          message: "CV requested",
+        },
+        'GR73acsP9JjNBN84T'
+      );
       
       toast({
         title: "Success!",
-        description: "Thanks! Your CV is on its way.",
+        description: "Your CV is ready to download.",
       });
       
-      form.reset();
-      onOpenChange(false);
+      setShowDownload(true);
     } catch (error) {
       toast({
         title: "Something went wrong",
@@ -58,46 +65,90 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
     }
   };
 
+  const handleClose = () => {
+    form.reset();
+    setShowDownload(false);
+    onOpenChange(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Request My CV</DialogTitle>
           <DialogDescription>
-            Enter your email address below and I'll send you my latest CV.
+            {!showDownload ? 
+              "Enter your email address below to request my CV." : 
+              "Thank you! You can now download my CV."
+            }
           </DialogDescription>
         </DialogHeader>
         
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="your.email@example.com" 
-                      type="email" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+        {!showDownload ? (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="your.email@example.com" 
+                        type="email" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="flex justify-end">
+                <ButtonCustom 
+                  type="submit" 
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Processing..." : "Request CV"}
+                </ButtonCustom>
+              </div>
+            </form>
+          </Form>
+        ) : (
+          <div className="flex flex-col items-center space-y-4">
+            <img 
+              src="/lovable-uploads/c8903b52-a5cf-463d-af25-b89f7e2d25f0.png" 
+              alt="CV Preview" 
+              className="w-full max-h-60 object-cover object-top rounded-md border" 
             />
             
-            <div className="flex justify-end">
-              <ButtonCustom 
-                type="submit" 
-                disabled={isSubmitting}
+            <div className="flex gap-4 w-full">
+              <ButtonCustom
+                variant="outline"
+                className="flex-1"
+                onClick={handleClose}
               >
-                {isSubmitting ? "Sending..." : "Send CV"}
+                Close
+              </ButtonCustom>
+              
+              <ButtonCustom
+                className="flex-1"
+                onClick={() => {
+                  // Create a link to download the CV
+                  const link = document.createElement('a');
+                  link.href = "/lovable-uploads/c8903b52-a5cf-463d-af25-b89f7e2d25f0.png";
+                  link.download = "Suphian_Tweel_CV.png";
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+              >
+                Download CV
               </ButtonCustom>
             </div>
-          </form>
-        </Form>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
