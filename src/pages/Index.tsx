@@ -121,7 +121,7 @@ const Index = () => {
                   {/* Right Content - Astronaut Image */}
                   <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg order-first md:order-last reveal" style={{ transitionDelay: "150ms" }}>
                     <img
-                      src="/lovable-uploads/6fbb55f2-ad2f-4646-9f3a-382f1ffc8c31.png"
+                      src="/lovable-uploads/20c05f6b-44fc-48c5-8d61-e5a55bc6bcb1.png"
                       alt="Astronaut wearing headphones"
                       className="w-full h-full object-cover object-center"
                     />
