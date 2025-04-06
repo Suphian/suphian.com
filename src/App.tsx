@@ -34,7 +34,8 @@ const AppContent = () => {
   return (
     <>
       <ScrollToTop />
-      <Navbar />
+      {/* Only render Navbar on non-homepage routes */}
+      {!isHomepage && <Navbar />}
       {!isHomepage && <TopNav />}
       <Logo />
       <main className={isHomepage ? "" : "min-h-screen"}>

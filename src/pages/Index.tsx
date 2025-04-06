@@ -1,12 +1,11 @@
 
 import LandingPage from "@/components/LandingPage";
-import Projects from "@/pages/Projects";
 import ScrollTransition from "@/components/ScrollTransition";
 import { useEffect, useRef } from "react";
 
 const Index = () => {
   const landingRef = useRef<HTMLDivElement>(null);
-  const projectsRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Reset scroll position when the component mounts
@@ -41,22 +40,22 @@ const Index = () => {
         {/* Scroll transition elements */}
         <ScrollTransition 
           landingRef={landingRef} 
-          projectsRef={projectsRef} 
+          projectsRef={contentRef} 
         />
         
-        {/* Projects section with enhanced transition effect */}
+        {/* Content section */}
         <div 
-          id="projects-section" 
-          ref={projectsRef}
+          id="content-section" 
+          ref={contentRef}
           className="relative bg-gradient-to-b from-black to-black/95 min-h-screen z-30"
           style={{ 
             opacity: 0, 
-            transform: "translateY(40px)", // Start from further down
+            transform: "translateY(40px)", 
             transition: "opacity 0.7s ease-out, transform 0.7s ease-out",
             willChange: "opacity, transform"
           }}
         >
-          <Projects />
+          {/* Main content will go here */}
         </div>
       </div>
     </div>
