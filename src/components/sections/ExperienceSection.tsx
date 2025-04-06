@@ -4,8 +4,8 @@ import React from "react";
 const ExperienceSection = () => {
   return (
     <section className="mb-20 reveal relative">
-      {/* Updated heading to be left-aligned instead of centered */}
-      <h2 className="heading-lg mb-12 text-left">Experience</h2>
+      {/* Updated heading to match the heading-xl class used in AboutSection */}
+      <h2 className="heading-xl mb-12 text-left">Experience</h2>
       
       {/* Added similar fade/transition overlay like the one used in scroll transitions */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/80 to-transparent opacity-50 -top-32 h-64 z-0"></div>
