@@ -37,19 +37,22 @@ export const useScrollAnimation = ({
         projectsTranslateY
       } = calculateScrollAnimationValues(scrollPosition, viewportHeight);
       
-      // Apply transitions to landing content with transforms
+      // Apply transitions to landing content - stays more visible
       if (landingRef.current) {
         landingRef.current.style.opacity = `${landingOpacity}`;
         landingRef.current.style.transform = `translateY(${landingTranslateY}px) scale(${landingScale})`;
       }
       
-      // Apply transitions to image with more dramatic movement
+      // Apply transitions to image with more dramatic parallax movement
       if (imageRef.current) {
         imageRef.current.style.opacity = `${imageOpacity}`;
         imageRef.current.style.transform = `translateY(${imageTranslateY}vh) scale(${imageScale})`;
+        // Adjust blur filter based on scroll to enhance depth
+        const blurAmount = Math.min(5, imageScale * 3); 
+        imageRef.current.style.filter = `blur(${blurAmount}px)`;
       }
       
-      // Apply transitions to wave
+      // Apply transitions to wave with smoother timing
       if (transitionRef.current) {
         transitionRef.current.style.opacity = `${waveOpacity}`;
         transitionRef.current.style.transform = `translateY(${waveTranslateY}px)`;

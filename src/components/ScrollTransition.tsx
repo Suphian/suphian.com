@@ -33,7 +33,7 @@ const ScrollTransition = ({ className = "", landingRef, projectsRef }: ScrollTra
         imageRef={imageRef}
         imageSrc="/lovable-uploads/6fbb55f2-ad2f-4646-9f3a-382f1ffc8c31.png"
         altText="Astronaut flying over mountains"
-        zIndex={10}
+        zIndex={5} // Lower z-index to ensure it stays behind text
       />
       
       {/* Wave transition effect for landing -> projects */}

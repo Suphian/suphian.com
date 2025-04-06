@@ -16,16 +16,17 @@ const ParallaxImage = ({
   altText, 
   className = "",
   zIndex = 10,
-  initialPosition = 'translateY(30vh) scale(0.9)'
+  initialPosition = 'translateY(40vh) scale(0.9)' // Start from lower position
 }: ParallaxImageProps) => {
   return (
     <div 
       ref={imageRef} 
       className={`fixed inset-0 w-full h-full flex items-center justify-center transition-transform duration-700 ease-out transform-gpu ${className}`}
       style={{ 
-        zIndex, // Lower z-index to position behind text
+        zIndex, // Positioned behind text
         opacity: 0,  // Start hidden
-        transform: initialPosition // Start position
+        transform: initialPosition, // Start from lower position
+        willChange: "transform, opacity, filter" // Performance optimization
       }} 
     >
       <img 

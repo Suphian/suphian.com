@@ -1,4 +1,3 @@
-
 /**
  * Calculates scroll-based animation values for a multi-stage transition
  * @param scrollPosition Current scroll position
@@ -10,21 +9,24 @@ export const calculateScrollAnimationValues = (
   viewportHeight: number
 ) => {
   // Define transition points relative to viewport height
-  const landingFadeOutStart = viewportHeight * 0.1;
-  const landingFadeOutEnd = viewportHeight * 0.5;
+  // Modified timing to keep landing visible longer
+  const landingFadeOutStart = viewportHeight * 0.4; // Start fading later
+  const landingFadeOutEnd = viewportHeight * 0.9;   // End fading later
   
-  const imageAppearStart = viewportHeight * 0.15; // Start earlier for overlap
-  const imageAppearEnd = viewportHeight * 0.6;
+  // Image transitions - appear sooner and stay longer
+  const imageAppearStart = viewportHeight * 0.1;    // Start earlier
+  const imageAppearEnd = viewportHeight * 0.4;      // Complete sooner
   
-  const imageFadeOutStart = viewportHeight * 0.7;
-  const imageFadeOutEnd = viewportHeight * 1.0;
+  const imageFadeOutStart = viewportHeight * 0.7;   // Start fading later
+  const imageFadeOutEnd = viewportHeight * 1.1;     // End fade later
   
-  const projectsAppearStart = viewportHeight * 0.9;
-  const projectsAppearEnd = viewportHeight * 1.2;
+  // Projects appear timing adjusted for smoother transition
+  const projectsAppearStart = viewportHeight * 0.8; // Start earlier
+  const projectsAppearEnd = viewportHeight * 1.2;   // Complete at same pace
 
   // Wave transition for projects section
-  const projectWaveAppearStart = viewportHeight * 0.8;
-  const projectWaveAppearEnd = viewportHeight * 1.1;
+  const projectWaveAppearStart = viewportHeight * 0.7; // Start earlier
+  const projectWaveAppearEnd = viewportHeight * 1.0;   // End sooner
 
   // Calculate progress for each stage (0 to 1)
   const landingProgress = calculateProgress(scrollPosition, landingFadeOutStart, landingFadeOutEnd);
@@ -41,15 +43,15 @@ export const calculateScrollAnimationValues = (
   const easedProjectWaveProgress = easeInOutCubic(projectWaveProgress);
 
   return {
-    // Landing text fade out and move up
-    landingOpacity: 1 - easedLandingProgress * 0.8, // Don't completely fade out for overlap
-    landingTranslateY: -40 * easedLandingProgress,
-    landingScale: 1 - (easedLandingProgress * 0.05),
+    // Landing text stays more visible for longer with subtler movement
+    landingOpacity: 1 - easedLandingProgress * 0.5,  // Only fade to 50% opacity
+    landingTranslateY: -20 * easedLandingProgress,   // Less vertical movement
+    landingScale: 1 - (easedLandingProgress * 0.03), // Less scaling
     
-    // Image transitions - slide from below and behind the text
+    // Image transitions - more dramatic parallax effect
     imageOpacity: calculateOpacityWithFadeInOut(easedImageAppearProgress, easedImageFadeOutProgress),
-    imageScale: 0.9 + (easedImageAppearProgress * 0.2), // Start smaller and grow
-    imageTranslateY: (30 - (easedImageAppearProgress * 50)) + (30 * easedImageFadeOutProgress), // Slide up then down
+    imageScale: 0.9 + (easedImageAppearProgress * 0.15), // Subtle scale
+    imageTranslateY: (40 - (easedImageAppearProgress * 60)) + (30 * easedImageFadeOutProgress), // Enhanced movement
     
     // Wave effect for main transition
     waveOpacity: easedImageAppearProgress * 0.4,
@@ -61,7 +63,7 @@ export const calculateScrollAnimationValues = (
     
     // Projects section fade in
     projectsOpacity: easedProjectsAppearProgress,
-    projectsTranslateY: 30 * (1 - easedProjectsAppearProgress), // Move up as it appears
+    projectsTranslateY: 40 * (1 - easedProjectsAppearProgress), // Start from lower
   };
 };
 

@@ -28,7 +28,12 @@ const Index = () => {
         <div 
           ref={landingRef}
           className="min-h-screen flex flex-col transition-all duration-700 ease-out relative z-20"
-          style={{ willChange: "opacity, transform" }}
+          style={{ 
+            willChange: "opacity, transform",
+            // Add a subtle backdrop filter to improve text readability over the image
+            backdropFilter: "blur(0px)",
+            WebkitBackdropFilter: "blur(0px)"
+          }}
         >
           <LandingPage />
         </div>
@@ -46,7 +51,7 @@ const Index = () => {
           className="relative bg-gradient-to-b from-black to-black/95 min-h-screen z-30"
           style={{ 
             opacity: 0, 
-            transform: "translateY(30px)", 
+            transform: "translateY(40px)", // Start from further down
             transition: "opacity 0.7s ease-out, transform 0.7s ease-out",
             willChange: "opacity, transform"
           }}
