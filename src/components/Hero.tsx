@@ -2,7 +2,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ButtonCustom } from "./ui/button-custom";
-import { ArrowRight } from "lucide-react";
 
 const Hero = () => {
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -71,7 +70,7 @@ const Hero = () => {
               style={{ transitionDelay: "300ms" }}
             >
               <ButtonCustom size="lg" arrowIcon>
-                <Link to="/projects">View My Projects</Link>
+                <Link to="/about">About Me</Link>
               </ButtonCustom>
               <ButtonCustom variant="outline" size="lg">
                 <Link to="/contact">Contact Me</Link>
