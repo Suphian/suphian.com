@@ -21,10 +21,11 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
         
         {/* Content Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          {/* Left Content - Astronaut Image with Red Headphones */}
+          {/* Left Content - Bigger Astronaut Image */}
           <div className="relative flex flex-col space-y-4 reveal">
-            <div className="aspect-square w-full mx-auto md:mx-0 rounded-2xl overflow-hidden shadow-lg bg-black">
-              <img src="/lovable-uploads/bd789261-ba65-4679-b8e8-21fd70d4ba3f.png" alt="Astronaut wearing red headphones" className="w-full h-full object-contain object-center" />
+            <div className="aspect-square w-full mx-auto md:mx-0 rounded-2xl overflow-hidden shadow-lg bg-background">
+              <img src="/lovable-uploads/46e934f3-cd5e-4751-ba02-c7fe6d5f16cc.png" alt="Astronaut wearing red headphones" className="w-full h-full object-contain object-center" />
+              <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-transparent" />
             </div>
             
             {/* Two buttons side by side below astronaut image with wave animation */}
@@ -59,7 +60,7 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
             transitionDelay: "150ms"
           }}>            
             {/* Bio paragraphs with styled cards - reduced space between cards */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Card className="bg-background border-0 overflow-hidden relative">
                 <CardContent className="p-4 sm:p-5">
                   <p className="paragraph">
