@@ -23,8 +23,8 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           {/* Left Content - Bigger Astronaut Image */}
           <div className="relative flex flex-col space-y-4 reveal">
-            <div className="aspect-square w-full mx-auto md:mx-0 rounded-2xl overflow-hidden shadow-lg">
-              <img src="/lovable-uploads/24178ae2-7999-4f91-9a29-81fbe5a02753.png" alt="Astronaut wearing red headphones" className="w-full h-full object-cover object-center" />
+            <div className="aspect-square w-full mx-auto md:mx-0 rounded-2xl overflow-hidden shadow-lg bg-background">
+              <img src="/lovable-uploads/46e934f3-cd5e-4751-ba02-c7fe6d5f16cc.png" alt="Astronaut wearing red headphones" className="w-full h-full object-contain object-center" />
               <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-transparent" />
             </div>
             
