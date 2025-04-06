@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import emailjs from 'emailjs-com';
 
 // Form validation schema
 const formSchema = z.object({
@@ -51,16 +52,41 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
     },
   });
 
-  const onSubmit = (data: FormValues) => {
-    // Simulate form submission with a delay
-    setTimeout(() => {
+  const onSubmit = async (data: FormValues) => {
+    try {
+      // Replace these parameters with your own EmailJS details
+      const templateParams = {
+        name: data.name,
+        email: data.email,
+        phone: data.phone || "Not provided",
+        subject: data.subject,
+        message: data.message,
+      };
+      
+      // Send email using EmailJS
+      // You'll need to replace SERVICE_ID, TEMPLATE_ID, and USER_ID with your actual EmailJS credentials
+      await emailjs.send(
+        'default_service',  // Create a service and put ID here
+        'template_default', // Create a template and put ID here
+        templateParams,
+        'your_user_id'      // Your EmailJS user ID
+      );
+      
       toast({
         title: "Message sent!",
         description: "Thank you for your message. I'll get back to you soon.",
       });
+      
       form.reset();
       onOpenChange(false);
-    }, 1000);
+    } catch (error) {
+      console.error("Failed to send email:", error);
+      toast({
+        title: "Something went wrong",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
