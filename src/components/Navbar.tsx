@@ -70,7 +70,7 @@ const Navbar = () => {
           {/* Desktop Navigation - moved to right */}
           <ul className="hidden md:flex space-x-8 items-center justify-end">
             {navLinks.map(link => <li key={link.name}>
-                <Link to={link.path} className={cn("link-underline py-2", isActive(link.path) && !link.scrollTo ? "font-medium text-foreground" : "text-muted-foreground hover:text-foreground")} onClick={e => handleNavClick(e, link.scrollTo)}>
+                <Link to={link.path} className={cn("link-underline py-2 text-primary", isActive(link.path) && !link.scrollTo ? "font-medium" : "hover:text-primary/80")} onClick={e => handleNavClick(e, link.scrollTo)}>
                   {link.name}
                 </Link>
               </li>)}
@@ -95,7 +95,7 @@ const Navbar = () => {
         {isOpen && <div className="md:hidden absolute top-16 left-0 right-0 p-4 blur-backdrop border-b border-border/40 animate-fade-in">
             <ul className="flex flex-col space-y-4 py-4">
               {navLinks.map(link => <li key={link.name}>
-                  <Link to={link.path} className={cn("block py-2 px-4 rounded-md transition-colors", isActive(link.path) && !link.scrollTo ? "font-medium bg-accent/10 text-foreground" : "text-muted-foreground hover:bg-accent/10 hover:text-foreground")} onClick={e => handleNavClick(e, link.scrollTo)}>
+                  <Link to={link.path} className={cn("block py-2 px-4 rounded-md transition-colors text-primary", isActive(link.path) && !link.scrollTo ? "font-medium bg-accent/10" : "hover:bg-accent/10 hover:text-primary/80")} onClick={e => handleNavClick(e, link.scrollTo)}>
                     {link.name}
                   </Link>
                 </li>)}

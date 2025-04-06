@@ -91,7 +91,7 @@ const TopNav = () => {
   };
 
   return <nav className="fixed top-20 left-0 right-0 z-40 blur-backdrop border-b border-border/40 py-2">
-      <div className="container-custom">
+      <div className="container-custom text-primary">
         {/* Content could be added here if needed in the future */}
       </div>
     </nav>;
