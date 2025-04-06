@@ -13,8 +13,8 @@ const Logo = () => {
     <div className="fixed top-6 left-6 md:top-10 md:left-10 z-50">
       <Link to="/">
         <img 
-          src="/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png" 
-          alt="Suphian Logo" 
+          src="/lovable-uploads/d847628a-13e4-46ae-8c3c-b0892222a5b9.png" 
+          alt="SUPH Logo" 
           className="h-[97px] md:h-[122px]"
         />
       </Link>
