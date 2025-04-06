@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -59,7 +58,7 @@ const LandingPage = () => {
         <img 
           src="/lovable-uploads/e95f9219-fcb6-4a0e-bd75-7d6c2000fb1b.png" 
           alt="Suphian Logo" 
-          className="h-[24px] md:h-[36px]" // Increased from 17.6px/26.4px to 24px/36px
+          className="h-[24px] md:h-[36px]"
         />
       </div>
 
@@ -93,11 +92,7 @@ const LandingPage = () => {
           </p>
           
           <p className="text-xl md:text-2xl lg:text-3xl font-montserrat font-bold">
-            Previously, redesigned digital experiences for Hulu, Apple, Duolingo, and Chewy.com.
-          </p>
-          
-          <p className="text-xl md:text-2xl lg:text-3xl font-montserrat font-bold">
-            Passionate about crafting elegant, data-driven products powered by thoughtful design and cutting-edge AI.
+            Previously redesigned digital experiences for Hulu, Apple, Duolingo, and Chewy.com—passionate about crafting elegant, data-driven products powered by thoughtful design and cutting-edge AI.
           </p>
         </div>
         
