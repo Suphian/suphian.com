@@ -34,7 +34,7 @@ const Navbar = () => {
   }, {
     name: "Work",
     path: "/",
-    scrollTo: "content-section"
+    scrollTo: "experience-section" // Changed from "content-section" to "experience-section"
   }];
 
   const isActive = (path: string) => location.pathname === path;

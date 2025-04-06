@@ -1,6 +1,8 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
+
 const ExperienceSection = () => {
   const experiences = [{
     period: "2020 - Present",
@@ -39,7 +41,8 @@ const ExperienceSection = () => {
       title: "Bain Capital: Canada Goose IPO"
     }]
   }];
-  return <section className="mb-20 reveal relative">
+  
+  return <section id="experience-section" className="mb-20 reveal relative">
       {/* Updated heading to match the heading-xl class used in AboutSection */}
       <h2 className="heading-xl mb-12 text-left">Experience</h2>
       
@@ -77,4 +80,5 @@ const ExperienceSection = () => {
       </div>
     </section>;
 };
+
 export default ExperienceSection;
