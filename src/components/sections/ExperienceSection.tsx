@@ -3,10 +3,14 @@ import React from "react";
 
 const ExperienceSection = () => {
   return (
-    <section className="mb-20 reveal">
-      <h2 className="heading-lg mb-12 text-center">My Experience</h2>
+    <section className="mb-20 reveal relative">
+      {/* Updated heading to be left-aligned instead of centered */}
+      <h2 className="heading-lg mb-12 text-left">Experience</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {/* Added similar fade/transition overlay like the one used in scroll transitions */}
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/80 to-transparent opacity-50 -top-32 h-64 z-0"></div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
         <div className="bg-card p-6 rounded-xl border hover:shadow-md transition-all">
           <span className="text-accent text-sm font-medium mb-2 block">2018 - Present</span>
           <h3 className="heading-sm mb-3">YouTube & Google</h3>
