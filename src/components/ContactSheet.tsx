@@ -212,34 +212,25 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
             </Form>
           </div>
           
-          {/* Footer with contact details */}
+          {/* Connect links - simplified, removing email */}
           <div className="p-6 md:p-8 border-t bg-secondary/30">
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium mb-2">Email</h3>
-                <a href="mailto:suph.tweel@gmail.com" className="text-accent hover:underline">
-                  suph.tweel@gmail.com
-                </a>
-              </div>
-              
-              <div className="flex space-x-4">
-                <a 
-                  href="https://www.linkedin.com/in/suphian/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  LinkedIn
-                </a>
-                <a 
-                  href="https://github.com/Suphian"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  GitHub
-                </a>
-              </div>
+            <div className="flex space-x-4 justify-center">
+              <a 
+                href="https://www.linkedin.com/in/suphian/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                LinkedIn
+              </a>
+              <a 
+                href="https://github.com/Suphian"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                GitHub
+              </a>
             </div>
           </div>
         </div>
