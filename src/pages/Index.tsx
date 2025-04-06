@@ -39,11 +39,11 @@ const Index = () => {
           projectsRef={projectsRef} 
         />
         
-        {/* Projects section with transition effect */}
+        {/* Projects section with enhanced transition effect */}
         <div 
           id="projects-section" 
           ref={projectsRef}
-          className="relative bg-black min-h-screen z-30"
+          className="relative bg-gradient-to-b from-black to-black/95 min-h-screen z-30"
           style={{ 
             opacity: 0, 
             transform: "translateY(30px)", 

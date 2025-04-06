@@ -13,10 +13,14 @@ interface ScrollTransitionProps {
 const ScrollTransition = ({ className = "", landingRef, projectsRef }: ScrollTransitionProps) => {
   const transitionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
+  const projectsTransitionRef = useRef<HTMLDivElement>(null);
+  const projectsImageRef = useRef<HTMLDivElement>(null);
   
   useScrollAnimation({ 
     transitionRef, 
     imageRef,
+    projectsTransitionRef,
+    projectsImageRef,
     landingRef,
     projectsRef
   });
@@ -31,10 +35,29 @@ const ScrollTransition = ({ className = "", landingRef, projectsRef }: ScrollTra
         imageRef={imageRef}
         imageSrc="/lovable-uploads/6fbb55f2-ad2f-4646-9f3a-382f1ffc8c31.png"
         altText="Astronaut flying over mountains"
+        zIndex={10}
       />
       
-      {/* Wave transition effect */}
-      <WaveTransition transitionRef={transitionRef} />
+      {/* Second parallax image for projects transition */}
+      <ParallaxImage
+        imageRef={projectsImageRef}
+        imageSrc="/lovable-uploads/920a7519-8137-4f39-a3fe-eb077e375f9b.png"
+        altText="Space exploration"
+        zIndex={25}
+        initialPosition="translateY(30vh) scale(0.9)"
+        className="opacity-0"
+      />
+      
+      {/* Wave transition effect for landing -> projects */}
+      <WaveTransition transitionRef={transitionRef} zIndex={15} />
+      
+      {/* Wave transition effect for projects section */}
+      <WaveTransition 
+        transitionRef={projectsTransitionRef} 
+        position="top" 
+        zIndex={30} 
+        className="rotate-180"
+      />
     </div>
   );
 };

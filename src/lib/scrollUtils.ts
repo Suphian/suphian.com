@@ -22,17 +22,23 @@ export const calculateScrollAnimationValues = (
   const projectsAppearStart = viewportHeight * 0.9;
   const projectsAppearEnd = viewportHeight * 1.2;
 
+  // Wave transition for projects section
+  const projectWaveAppearStart = viewportHeight * 0.8;
+  const projectWaveAppearEnd = viewportHeight * 1.1;
+
   // Calculate progress for each stage (0 to 1)
   const landingProgress = calculateProgress(scrollPosition, landingFadeOutStart, landingFadeOutEnd);
   const imageAppearProgress = calculateProgress(scrollPosition, imageAppearStart, imageAppearEnd);
   const imageFadeOutProgress = calculateProgress(scrollPosition, imageFadeOutStart, imageFadeOutEnd);
   const projectsAppearProgress = calculateProgress(scrollPosition, projectsAppearStart, projectsAppearEnd);
+  const projectWaveProgress = calculateProgress(scrollPosition, projectWaveAppearStart, projectWaveAppearEnd);
 
   // Apply easing functions for smoother transitions
   const easedLandingProgress = easeOutCubic(landingProgress);
   const easedImageAppearProgress = easeInOutCubic(imageAppearProgress);
   const easedImageFadeOutProgress = easeInCubic(imageFadeOutProgress);
   const easedProjectsAppearProgress = easeOutQuad(projectsAppearProgress);
+  const easedProjectWaveProgress = easeInOutCubic(projectWaveProgress);
 
   return {
     // Landing text fade out and move up
@@ -45,9 +51,13 @@ export const calculateScrollAnimationValues = (
     imageScale: 0.9 + (easedImageAppearProgress * 0.2), // Start smaller and grow
     imageTranslateY: (30 - (easedImageAppearProgress * 50)) + (30 * easedImageFadeOutProgress), // Slide up then down
     
-    // Wave effect
+    // Wave effect for main transition
     waveOpacity: easedImageAppearProgress * 0.4,
     waveTranslateY: 20 - (easedImageAppearProgress * 30),
+    
+    // Projects wave transition effect
+    projectWaveOpacity: easedProjectWaveProgress * 0.4,
+    projectWaveTranslateY: 20 - (easedProjectWaveProgress * 30),
     
     // Projects section fade in
     projectsOpacity: easedProjectsAppearProgress,

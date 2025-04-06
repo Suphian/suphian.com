@@ -5,6 +5,8 @@ import { calculateScrollAnimationValues } from "@/lib/scrollUtils";
 interface UseScrollAnimationProps {
   transitionRef: RefObject<HTMLDivElement>;
   imageRef: RefObject<HTMLDivElement>;
+  projectsTransitionRef: RefObject<HTMLDivElement>;
+  projectsImageRef: RefObject<HTMLDivElement>;
   landingRef: RefObject<HTMLDivElement>;
   projectsRef: RefObject<HTMLDivElement>;
 }
@@ -12,6 +14,8 @@ interface UseScrollAnimationProps {
 export const useScrollAnimation = ({ 
   transitionRef, 
   imageRef,
+  projectsTransitionRef,
+  projectsImageRef,
   landingRef,
   projectsRef
 }: UseScrollAnimationProps) => {
@@ -29,6 +33,8 @@ export const useScrollAnimation = ({
         imageTranslateY,
         waveOpacity,
         waveTranslateY,
+        projectWaveOpacity,
+        projectWaveTranslateY,
         projectsOpacity,
         projectsTranslateY
       } = calculateScrollAnimationValues(scrollPosition, viewportHeight);
@@ -56,6 +62,26 @@ export const useScrollAnimation = ({
         projectsRef.current.style.opacity = `${projectsOpacity}`;
         projectsRef.current.style.transform = `translateY(${projectsTranslateY}px)`;
       }
+      
+      // Apply transitions to projects wave
+      if (projectsTransitionRef.current) {
+        projectsTransitionRef.current.style.opacity = `${projectWaveOpacity}`;
+        projectsTransitionRef.current.style.transform = `translateY(${projectWaveTranslateY}px)`;
+      }
+      
+      // Apply transitions to projects image
+      if (projectsImageRef.current) {
+        // Start showing the second image as the projects section becomes visible
+        const projectsImageOpacity = Math.max(0, projectsOpacity - 0.3);
+        projectsImageRef.current.style.opacity = `${projectsImageOpacity}`;
+        
+        // Scale and move the image as we scroll to create parallax
+        if (projectsOpacity > 0.1) {
+          const scale = 0.9 + (projectsOpacity * 0.2);
+          const translateY = 30 - (projectsOpacity * 40);
+          projectsImageRef.current.style.transform = `translateY(${translateY}vh) scale(${scale})`;
+        }
+      }
     };
     
     window.addEventListener("scroll", handleScroll);
@@ -63,5 +89,5 @@ export const useScrollAnimation = ({
     handleScroll();
     
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [transitionRef, imageRef, landingRef, projectsRef]);
+  }, [transitionRef, imageRef, projectsTransitionRef, projectsImageRef, landingRef, projectsRef]);
 };

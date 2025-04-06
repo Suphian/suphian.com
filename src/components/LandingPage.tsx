@@ -8,9 +8,9 @@ import CallToAction from "./CallToAction";
 const LandingPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden p-4 bg-gradient-to-b from-background to-transparent">
-      {/* Main content with backdrop for better text visibility against the sliding image */}
+      {/* Main content with enhanced backdrop for better text visibility against the sliding image */}
       <div className="max-w-4xl relative z-20">
-        <div className="backdrop-blur-sm bg-background/30 rounded-xl p-6 md:p-8">
+        <div className="backdrop-blur-sm bg-background/50 rounded-xl p-6 md:p-8 shadow-xl">
           <h1 className="heading-xl mb-6 flex flex-wrap items-baseline relative">
             <span className="relative inline-block">
               <AnimatedGreeting greetings={greetings} />
