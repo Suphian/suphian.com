@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ProjectCard from "@/components/ProjectCard";
 import { projects } from "@/lib/projects";
 import { initializeRevealAnimations } from "@/lib/animations";
@@ -7,10 +7,33 @@ import { initializeRevealAnimations } from "@/lib/animations";
 const Projects = () => {
   const [filter, setFilter] = useState<string>("all");
   const categories = ["all", ...new Set(projects.map((project) => project.category))];
+  const headerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const cleanup = initializeRevealAnimations();
-    return cleanup;
+    
+    // Add scroll-triggered animation for the header
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("animate-slide-in");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "-50px 0px" }
+    );
+    
+    if (headerRef.current) {
+      observer.observe(headerRef.current);
+    }
+    
+    return () => {
+      cleanup();
+      if (headerRef.current) {
+        observer.unobserve(headerRef.current);
+      }
+    };
   }, []);
 
   const filteredProjects = filter === "all"
@@ -20,8 +43,11 @@ const Projects = () => {
   return (
     <div className="pt-28 pb-24">
       <div className="container-custom">
-        {/* Header */}
-        <div className="flex flex-col items-center text-center mb-16 reveal">
+        {/* Header with enhanced animation */}
+        <div 
+          ref={headerRef}
+          className="flex flex-col items-center text-center mb-16 reveal opacity-0 transform translate-y-8 transition-all duration-700"
+        >
           <span className="tag mb-4">Portfolio</span>
           <h1 className="heading-xl max-w-3xl text-balance mb-6">
             My Projects

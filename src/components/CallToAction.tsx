@@ -14,7 +14,11 @@ const CallToAction = () => {
       e.preventDefault();
       const projectsSection = document.getElementById("projects-section");
       if (projectsSection) {
-        projectsSection.scrollIntoView({ behavior: "smooth" });
+        // Using a smoother scroll with a slight offset
+        window.scrollTo({
+          top: projectsSection.offsetTop - 50,
+          behavior: "smooth"
+        });
       }
     }
   };

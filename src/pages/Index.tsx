@@ -1,6 +1,7 @@
 
 import LandingPage from "@/components/LandingPage";
 import Projects from "@/pages/Projects";
+import ScrollTransition from "@/components/ScrollTransition";
 import { useEffect } from "react";
 
 const Index = () => {
@@ -11,9 +12,10 @@ const Index = () => {
 
   return (
     <div className="relative">
-      {/* Landing page */}
-      <div className="relative bg-black">
+      {/* Landing page with transition */}
+      <div className="relative bg-black min-h-screen flex flex-col">
         <LandingPage />
+        <ScrollTransition className="z-10" />
       </div>
       
       {/* Projects section */}
