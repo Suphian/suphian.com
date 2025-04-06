@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import WavyUnderline from "@/components/WavyUnderline";
@@ -49,13 +50,12 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
         message: data.message,
       };
       
-      // Send email using EmailJS
-      // You'll need to replace USER_ID with your actual EmailJS user ID
+      // Send email using EmailJS with updated user ID
       await emailjs.send(
         'service_xre6x5d',  // Your EmailJS service ID
         'template_98hg4qw', // Your EmailJS template ID
         templateParams,
-        'your_user_id'      // Your EmailJS user ID
+        'GR73acsP9JjNBN84T'  // Updated EmailJS user ID
       );
       
       toast({

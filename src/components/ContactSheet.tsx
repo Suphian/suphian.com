@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -54,7 +53,6 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      // Replace these parameters with your own EmailJS details
       const templateParams = {
         name: data.name,
         email: data.email,
@@ -63,12 +61,11 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
         message: data.message,
       };
       
-      // Send email using EmailJS
       await emailjs.send(
         'service_xre6x5d',  // Your EmailJS service ID
         'template_98hg4qw', // Your EmailJS template ID
         templateParams,
-        'your_user_id'      // Your EmailJS user ID
+        'GR73acsP9JjNBN84T'  // Updated EmailJS user ID
       );
       
       toast({

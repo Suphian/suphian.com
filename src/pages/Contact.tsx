@@ -1,4 +1,3 @@
-
 import { useState, useEffect, FormEvent } from "react";
 import { Mail, Linkedin, Github } from "lucide-react";
 import { initializeRevealAnimations } from "@/lib/animations";
@@ -29,7 +28,6 @@ const Contact = () => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    // Clear error when field is edited
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
@@ -68,7 +66,6 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
-      // Replace these parameters with your own EmailJS details
       const templateParams = {
         name: formData.name,
         email: formData.email,
@@ -77,12 +74,11 @@ const Contact = () => {
         message: formData.message,
       };
       
-      // Send email using EmailJS
       await emailjs.send(
         'service_xre6x5d',  // Your EmailJS service ID
         'template_98hg4qw', // Your EmailJS template ID
         templateParams,
-        'your_user_id'      // Your EmailJS user ID
+        'GR73acsP9JjNBN84T'  // Updated EmailJS user ID
       );
       
       toast({
@@ -112,7 +108,6 @@ const Contact = () => {
   return (
     <div className="pt-28 pb-24">
       <div className="container-custom">
-        {/* Header */}
         <div className="flex flex-col items-center text-center mb-16 reveal">
           <span className="tag mb-4">Get in Touch</span>
           <h1 className="heading-xl max-w-3xl text-balance mb-6">
@@ -125,7 +120,6 @@ const Contact = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-          {/* Contact Form */}
           <div className="reveal" style={{ transitionDelay: "150ms" }}>
             <form onSubmit={handleSubmit} className="bg-card p-6 md:p-8 rounded-xl border max-w-[600px] mx-auto w-full">
               <h2 className="heading-md mb-6">Send Me a Message</h2>
@@ -234,7 +228,6 @@ const Contact = () => {
                 <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
               </button>
               
-              {/* Astronaut Image - positioned below form */}
               <div className="mt-12 flex justify-center">
                 <img 
                   src="/lovable-uploads/db2efd18-0555-427b-89b4-c5cae8a5a143.png" 
@@ -245,7 +238,6 @@ const Contact = () => {
             </form>
           </div>
 
-          {/* Contact Info */}
           <div className="reveal" style={{ transitionDelay: "300ms" }}>
             <div className="bg-secondary/30 p-6 md:p-8 rounded-xl">
               <h2 className="heading-md mb-6">Contact Information</h2>
