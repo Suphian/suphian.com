@@ -39,9 +39,6 @@ const Navbar = () => {
     name: "Work",
     path: "/",
     scrollTo: "content-section"
-  }, {
-    name: "Press",
-    path: "/contact"
   }];
 
   const isActive = (path: string) => location.pathname === path;
