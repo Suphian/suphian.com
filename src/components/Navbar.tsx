@@ -63,7 +63,7 @@ const Navbar = () => {
           {/* Logo or branding could go here */}
           <div className="flex-1"></div>
 
-          {/* Desktop Navigation only - no mobile nav */}
+          {/* Desktop Navigation only */}
           <ul className="hidden md:flex space-x-8 items-center justify-end">
             {navLinks.map(link => <li key={link.name}>
                 <Link to={link.path} className={cn("link-underline py-2 text-primary", isActive(link.path) && !link.scrollTo ? "font-medium" : "hover:text-primary/80")} onClick={e => handleNavClick(e, link.scrollTo)}>
@@ -81,12 +81,7 @@ const Navbar = () => {
             </li>
           </ul>
 
-          {/* The mobile menu button is still shown but doesn't open a menu anymore - it opens the contact sheet directly */}
-          <button className="md:hidden ml-auto flex items-center" 
-            onClick={() => setContactOpen(true)} 
-            aria-label="Contact">
-            <Menu size={24} />
-          </button>
+          {/* No mobile menu button at all */}
         </nav>
       </div>
       
