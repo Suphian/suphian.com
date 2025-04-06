@@ -31,10 +31,6 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
               </a>
             </ButtonCustom>
             
-            <div className="flex items-center text-muted-foreground">
-              <span>Currently located in New York City</span>
-            </div>
-            
             <div>
               <ButtonCustom variant="outline" onClick={onRequestCV}>
                 Request My CV
