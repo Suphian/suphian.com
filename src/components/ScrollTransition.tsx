@@ -23,11 +23,17 @@ const ScrollTransition = ({ className = "", landingRef, projectsRef }: ScrollTra
   
   return (
     <div className={`pointer-events-none ${className}`}>
+      {/* Background gradient overlay for smoother transitions */}
+      <div className="fixed inset-0 bg-gradient-to-b from-background via-background to-transparent opacity-70 z-0"></div>
+      
+      {/* Parallax image that will slide under the text */}
       <ParallaxImage 
         imageRef={imageRef}
         imageSrc="/lovable-uploads/6fbb55f2-ad2f-4646-9f3a-382f1ffc8c31.png"
         altText="Astronaut flying over mountains"
       />
+      
+      {/* Wave transition effect */}
       <WaveTransition transitionRef={transitionRef} />
     </div>
   );

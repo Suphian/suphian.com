@@ -22,29 +22,33 @@ export const useScrollAnimation = ({
       
       const {
         landingOpacity,
+        landingTranslateY,
+        landingScale,
         imageOpacity,
         imageScale,
         imageTranslateY,
+        waveOpacity,
+        waveTranslateY,
         projectsOpacity,
         projectsTranslateY
       } = calculateScrollAnimationValues(scrollPosition, viewportHeight);
       
-      // Apply transitions to landing content
+      // Apply transitions to landing content with transforms
       if (landingRef.current) {
         landingRef.current.style.opacity = `${landingOpacity}`;
-        landingRef.current.style.transform = `translateY(${landingOpacity * 20}px)`;
+        landingRef.current.style.transform = `translateY(${landingTranslateY}px) scale(${landingScale})`;
       }
       
-      // Apply transitions to image
+      // Apply transitions to image with more dramatic movement
       if (imageRef.current) {
         imageRef.current.style.opacity = `${imageOpacity}`;
-        imageRef.current.style.transform = `scale(${imageScale}) translateY(${imageTranslateY}px)`;
+        imageRef.current.style.transform = `translateY(${imageTranslateY}vh) scale(${imageScale})`;
       }
       
       // Apply transitions to wave
       if (transitionRef.current) {
-        transitionRef.current.style.opacity = `${imageOpacity * 0.3}`; // Keep the wave less visible
-        transitionRef.current.style.transform = `scale(${imageScale}) translateY(${imageTranslateY * 0.7}px)`;
+        transitionRef.current.style.opacity = `${waveOpacity}`;
+        transitionRef.current.style.transform = `translateY(${waveTranslateY}px)`;
       }
       
       // Apply transitions to projects section

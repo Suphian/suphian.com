@@ -12,8 +12,12 @@ const ParallaxImage = ({ imageRef, imageSrc, altText, className = "" }: Parallax
   return (
     <div 
       ref={imageRef} 
-      className={`fixed inset-0 w-full h-full flex items-center justify-center transition-all duration-500 ease-out transform-gpu ${className}`}
-      style={{ zIndex: 20, opacity: 0 }} // Start hidden
+      className={`fixed inset-0 w-full h-full flex items-center justify-center transition-transform duration-700 ease-out transform-gpu ${className}`}
+      style={{ 
+        zIndex: 10, // Lower z-index to position behind text
+        opacity: 0,  // Start hidden
+        transform: 'translateY(30vh) scale(0.9)' // Start from below
+      }} 
     >
       <img 
         src={imageSrc}
