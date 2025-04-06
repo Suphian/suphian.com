@@ -56,11 +56,11 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
           </div>
           
           {/* Right Content - Bio with styled paragraphs */}
-          <div className="flex flex-col space-y-6 reveal" style={{
+          <div className="flex flex-col reveal" style={{
             transitionDelay: "150ms"
           }}>            
-            {/* Bio paragraphs with styled cards */}
-            <div className="space-y-4">
+            {/* Bio paragraphs with styled cards - reduced space between cards */}
+            <div className="space-y-2">
               <Card className="bg-background border-0 overflow-hidden relative">
                 <CardContent className="p-4 sm:p-5">
                   <p className="paragraph">
