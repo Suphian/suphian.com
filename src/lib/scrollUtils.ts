@@ -1,3 +1,4 @@
+
 /**
  * Calculates scroll-based animation values for a multi-stage transition
  * @param scrollPosition Current scroll position
@@ -17,16 +18,16 @@ export const calculateScrollAnimationValues = (
   const imageAppearStart = viewportHeight * 0.1;    // Start earlier
   const imageAppearEnd = viewportHeight * 0.4;      // Complete sooner
   
-  const imageFadeOutStart = viewportHeight * 0.7;   // Start fading later
-  const imageFadeOutEnd = viewportHeight * 1.1;     // End fade later
+  const imageFadeOutStart = viewportHeight * 0.6;   // Start fading earlier (changed from 0.7)
+  const imageFadeOutEnd = viewportHeight * 0.9;     // End fade earlier (changed from 1.1)
   
-  // Projects appear timing adjusted for smoother transition
-  const projectsAppearStart = viewportHeight * 0.8; // Start earlier
-  const projectsAppearEnd = viewportHeight * 1.2;   // Complete at same pace
+  // Projects appear timing adjusted for smoother transition - now earlier
+  const projectsAppearStart = viewportHeight * 0.7; // Start earlier (changed from 0.8)
+  const projectsAppearEnd = viewportHeight * 1.0;   // Complete earlier (changed from 1.2)
 
-  // Wave transition for projects section
-  const projectWaveAppearStart = viewportHeight * 0.7; // Start earlier
-  const projectWaveAppearEnd = viewportHeight * 1.0;   // End sooner
+  // Wave transition for projects section - also earlier
+  const projectWaveAppearStart = viewportHeight * 0.6; // Start earlier (changed from 0.7)
+  const projectWaveAppearEnd = viewportHeight * 0.9;   // End sooner (changed from 1.0)
 
   // Calculate progress for each stage (0 to 1)
   const landingProgress = calculateProgress(scrollPosition, landingFadeOutStart, landingFadeOutEnd);
@@ -48,7 +49,7 @@ export const calculateScrollAnimationValues = (
     landingTranslateY: -20 * easedLandingProgress,   // Less vertical movement
     landingScale: 1 - (easedLandingProgress * 0.03), // Less scaling
     
-    // Image transitions - more dramatic parallax effect
+    // Image transitions - more dramatic parallax effect but clearer image
     imageOpacity: calculateOpacityWithFadeInOut(easedImageAppearProgress, easedImageFadeOutProgress),
     imageScale: 0.9 + (easedImageAppearProgress * 0.15), // Subtle scale
     imageTranslateY: (40 - (easedImageAppearProgress * 60)) + (30 * easedImageFadeOutProgress), // Enhanced movement
@@ -61,7 +62,7 @@ export const calculateScrollAnimationValues = (
     projectWaveOpacity: easedProjectWaveProgress * 0.4,
     projectWaveTranslateY: 20 - (easedProjectWaveProgress * 30),
     
-    // Projects section fade in
+    // Projects section fade in - now appears earlier
     projectsOpacity: easedProjectsAppearProgress,
     projectsTranslateY: 40 * (1 - easedProjectsAppearProgress), // Start from lower
   };

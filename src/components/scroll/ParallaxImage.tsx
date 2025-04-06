@@ -26,13 +26,14 @@ const ParallaxImage = ({
         zIndex, // Positioned behind text
         opacity: 0,  // Start hidden
         transform: initialPosition, // Start from lower position
-        willChange: "transform, opacity, filter" // Performance optimization
+        willChange: "transform, opacity" // Removed filter from willChange for clearer image
       }} 
     >
       <img 
         src={imageSrc}
         alt={altText}
         className="w-full max-w-6xl object-contain"
+        style={{ filter: "none" }} // Ensure no filter is applied
       />
     </div>
   );

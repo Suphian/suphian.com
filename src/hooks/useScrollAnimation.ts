@@ -43,13 +43,11 @@ export const useScrollAnimation = ({
         landingRef.current.style.transform = `translateY(${landingTranslateY}px) scale(${landingScale})`;
       }
       
-      // Apply transitions to image with more dramatic parallax movement
+      // Apply transitions to image with more dramatic parallax movement but no blur
       if (imageRef.current) {
         imageRef.current.style.opacity = `${imageOpacity}`;
         imageRef.current.style.transform = `translateY(${imageTranslateY}vh) scale(${imageScale})`;
-        // Adjust blur filter based on scroll to enhance depth
-        const blurAmount = Math.min(5, imageScale * 3); 
-        imageRef.current.style.filter = `blur(${blurAmount}px)`;
+        // Removed blur filter to make image clearer
       }
       
       // Apply transitions to wave with smoother timing
@@ -58,13 +56,13 @@ export const useScrollAnimation = ({
         transitionRef.current.style.transform = `translateY(${waveTranslateY}px)`;
       }
       
-      // Apply transitions to projects section
+      // Apply transitions to projects section - appears earlier now
       if (projectsRef.current) {
         projectsRef.current.style.opacity = `${projectsOpacity}`;
         projectsRef.current.style.transform = `translateY(${projectsTranslateY}px)`;
       }
       
-      // Apply transitions to projects wave
+      // Apply transitions to projects wave - appears earlier now
       if (projectsTransitionRef.current) {
         projectsTransitionRef.current.style.opacity = `${projectWaveOpacity}`;
         projectsTransitionRef.current.style.transform = `translateY(${projectWaveTranslateY}px)`;
