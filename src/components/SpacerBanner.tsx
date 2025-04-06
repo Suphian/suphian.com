@@ -7,17 +7,9 @@ interface SpacerBannerProps {
 
 const SpacerBanner: React.FC<SpacerBannerProps> = ({ imageUrl }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   
   useEffect(() => {
-    // Parallax scroll effect
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    
     // Intersection observer for animation
     const observer = new IntersectionObserver(
       (entries) => {
@@ -33,34 +25,61 @@ const SpacerBanner: React.FC<SpacerBannerProps> = ({ imageUrl }) => {
     }
     
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       if (containerRef.current) {
         observer.unobserve(containerRef.current);
       }
     };
   }, []);
 
+  // Text to animate with staggered reveal
+  const text = "SUPH DESIGN";
+  const letters = text.split("");
+
   return (
     <div 
       ref={containerRef}
-      className="w-full py-6 bg-black relative overflow-hidden"
+      className="w-full py-4 bg-black relative overflow-hidden"
     >
-      <div className="max-w-6xl w-full mx-auto px-4 relative" style={{ height: "150vh" }}>
-        {/* Main SUPH logo */}
-        <img 
-          src={imageUrl}
-          alt="SUPH logo" 
-          className={`absolute object-contain transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
-          style={{ 
-            left: '50%',
-            top: '50%',
-            transform: `translate(-50%, -50%) translateY(${scrollY * -0.1}px)`,
-            maxWidth: '90%',
-            maxHeight: '90%',
-            width: 'auto',
-            height: 'auto'
-          }}
-        />
+      <div className="max-w-6xl mx-auto px-4 h-[30vh] flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
+          {/* Staggered text animation */}
+          <div className="overflow-hidden">
+            <div className="flex">
+              {letters.map((letter, index) => (
+                <div 
+                  key={index} 
+                  className="overflow-hidden"
+                >
+                  <span 
+                    className="inline-block transform heading-xl text-6xl md:text-8xl lg:text-9xl"
+                    style={{ 
+                      transitionDelay: `${index * 0.05}s`,
+                      transform: isVisible ? 'translateY(0)' : 'translateY(100%)',
+                      opacity: isVisible ? 1 : 0,
+                      transition: 'transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1), opacity 0.6s cubic-bezier(0.215, 0.61, 0.355, 1)'
+                    }}
+                  >
+                    {letter === " " ? <span>&nbsp;</span> : letter}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Original image with fade-in animation */}
+          <img 
+            src={imageUrl}
+            alt="SUPH logo" 
+            className="mt-8 transition-all duration-1000"
+            style={{ 
+              maxWidth: '80%',
+              maxHeight: '15vh',
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 0.8s ease 0.6s, transform 0.8s ease 0.6s'
+            }}
+          />
+        </div>
       </div>
     </div>
   );
