@@ -85,6 +85,7 @@ const greetings = [
   { text: "Saluton", lang: "Esperanto" },
   { text: "Bonjou", lang: "Haitian Creole" },
   { text: "Moien", lang: "Luxembourgish" },
+  { text: "Прывітанне", lang: "Belarusian" },
   { text: "Zdravo", lang: "Bosnian" },
   { text: "Здраво", lang: "Macedonian" },
   { text: "Slav", lang: "Kurdish" },
@@ -97,6 +98,7 @@ const greetings = [
   { text: "Hola", lang: "Catalan" },
   { text: "Ola", lang: "Galician" },
   { text: "Adieu", lang: "Occitan" },
+  { text: "Bonghjornu", lang: "Corsican" },
   { text: "Hoi", lang: "Frisian" },
   { text: "Allegra", lang: "Romansh" },
   { text: "سلام", lang: "Sindhi" },
@@ -152,7 +154,7 @@ const LandingPage = () => {
         <img 
           src="/lovable-uploads/e95f9219-fcb6-4a0e-bd75-7d6c2000fb1b.png" 
           alt="Suphian Logo" 
-          className="h-[60px] md:h-[80px]"
+          className="h-[100px] md:h-[100px]"
         />
       </div>
 
