@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -6,14 +5,12 @@ import { Headphones } from "lucide-react";
 import { ButtonCustom } from "./ui/button-custom";
 
 const Hero = () => {
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const paragraphRef = useRef<HTMLParagraphElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const elements = [headingRef.current, paragraphRef.current, buttonsRef.current, imageRef.current];
+    const elements = [buttonsRef.current, imageRef.current];
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -40,15 +37,7 @@ const Hero = () => {
     <section className="pt-28 pb-16 md:pt-36 md:pb-24">
       <div className="container-custom">
         <div className="flex flex-col space-y-8 max-w-4xl">
-          <h1 ref={headingRef} className="heading-xl text-balance mb-4">
-            Product Manager at YouTube
-          </h1>
-          
-          <p ref={paragraphRef} className="paragraph text-lg md:text-xl mb-6">
-            Product Manager leading payments at YouTube. Passionate about crafting exceptional experiences powered by data, design, and cutting-edge tech.
-          </p>
-          
-          {/* Mobile-friendly buttons */}
+          {/* Buttons section preserved */}
           <div ref={buttonsRef} className="flex flex-col sm:flex-row gap-4">
             <ButtonCustom 
               variant="outline" 
@@ -75,7 +64,7 @@ const Hero = () => {
         </div>
         
         <div ref={imageRef} className="mt-12">
-          {/* You can add a hero image here if needed */}
+          {/* Image placeholder preserved */}
         </div>
       </div>
     </section>
