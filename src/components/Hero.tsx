@@ -41,7 +41,7 @@ const Hero = () => {
       <div className="container-custom">
         <div className="flex flex-col space-y-8 max-w-4xl">
           <h1 ref={headingRef} className="heading-xl text-balance mb-4">
-            Welcome to my portfolio
+            Product Manager at YouTube
           </h1>
           
           <p ref={paragraphRef} className="paragraph text-lg md:text-xl mb-6">
