@@ -37,7 +37,6 @@ const Hero = () => {
     <section className="pt-28 pb-16 md:pt-36 md:pb-24">
       <div className="container-custom">
         <div className="flex flex-col space-y-8 max-w-4xl">
-          {/* Buttons section preserved */}
           <div ref={buttonsRef} className="flex flex-col sm:flex-row gap-4">
             <ButtonCustom 
               variant="outline" 
@@ -64,7 +63,7 @@ const Hero = () => {
         </div>
         
         <div ref={imageRef} className="mt-12">
-          {/* Image placeholder preserved */}
+          
         </div>
       </div>
     </section>
