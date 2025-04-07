@@ -16,8 +16,7 @@ interface RequestCVModalProps {
 }
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().optional(),
+  password: z.string().min(1, { message: "Password is required" }),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -25,14 +24,12 @@ type FormData = z.infer<typeof formSchema>;
 const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDownload, setShowDownload] = useState(false);
-  const [validatedEmail, setValidatedEmail] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const { toast } = useToast();
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
       password: "",
     },
   });
@@ -49,13 +46,13 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
     }
     
     try {
-      // Send email notification using EmailJS
+      // Send email notification using EmailJS (using generic email since no user email collected)
       await emailjs.send(
         'service_xre6x5d',
         'template_98hg4qw',
         {
-          email: data.email,
-          message: "CV requested",
+          email: "cv-accessed@portfolio.com", // Generic identifier
+          message: "CV accessed with password",
         },
         'GR73acsP9JjNBN84T'
       );
@@ -65,7 +62,6 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
         description: "Your CV is ready to download.",
       });
       
-      setValidatedEmail(data.email);
       setShowDownload(true);
     } catch (error) {
       toast({
@@ -85,8 +81,8 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
         'service_xre6x5d',
         'template_98hg4qw',
         {
-          email: validatedEmail,
-          message: `CV downloaded by ${validatedEmail}`,
+          email: "cv-downloaded@portfolio.com", // Generic identifier
+          message: "CV downloaded by someone",
         },
         'GR73acsP9JjNBN84T'
       );
@@ -106,7 +102,6 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
 
   const handleClose = () => {
     form.reset();
-    setValidatedEmail("");
     setShowDownload(false);
     setPasswordError("");
     onOpenChange(false);
@@ -119,7 +114,7 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
           <DialogTitle>Request My CV</DialogTitle>
           <DialogDescription>
             {!showDownload ? 
-              "Please enter your email and the password to access my CV." : 
+              "Please enter the password to access my CV." : 
               "Thank you! You can now download my CV."
             }
           </DialogDescription>
@@ -128,24 +123,6 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
         {!showDownload ? (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="your.email@example.com" 
-                        type="email" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
               <FormField
                 control={form.control}
                 name="password"
@@ -162,6 +139,7 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
                     {passwordError && (
                       <p className="text-sm font-medium text-destructive">{passwordError}</p>
                     )}
+                    <FormMessage />
                   </FormItem>
                 )}
               />
