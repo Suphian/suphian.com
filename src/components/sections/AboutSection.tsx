@@ -1,6 +1,7 @@
 
 import React, { useRef } from "react";
 import { Headphones } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -10,6 +11,7 @@ interface AboutSectionProps {
 
 const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
   const aboutSectionRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   return (
     <section id="about-section" ref={aboutSectionRef} className="mb-20">
@@ -35,7 +37,7 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
                 onClick={onRequestCV} 
                 className="wave-btn flex-1"
               >
-                Request My Resume
+                {isMobile ? "Download CV" : "Request My Resume"}
               </ButtonCustom>
               
               <ButtonCustom 
@@ -49,7 +51,7 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
                   className="flex items-center justify-center whitespace-nowrap"
                 >
                   <Headphones className="mr-2 h-5 w-5" />
-                  Notebook LLM Podcast
+                  {isMobile ? "Listen" : "Notebook LLM Podcast"}
                 </a>
               </ButtonCustom>
             </div>
