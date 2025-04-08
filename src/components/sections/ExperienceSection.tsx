@@ -45,6 +45,9 @@ const ExperienceSection = () => {
     }, {
       url: "https://workingnotworking.com/projects/112837-hulu-redesign",
       title: "Hulu Redesign Project"
+    }, {
+      url: "https://elephant.is/case-study/beats/",
+      title: "Apple: Beats Case Study"
     }]
   }];
   
