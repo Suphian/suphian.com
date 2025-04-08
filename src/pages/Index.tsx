@@ -54,8 +54,16 @@ const Index = () => {
       {/* Projects Section with Parallax Images */}
       <section id="projects-section" ref={projectsSectionRef} className="relative py-24 md:py-32 bg-background/50">
         {/* Background Parallax Images */}
-        <ParallaxImage imageSrc="/lovable-uploads/b5feb4e9-6b23-421b-90ba-ffa4d4f48992.png" className="hidden md:block w-64 h-64 absolute -top-20 -left-20 opacity-15 blur-sm" speed={0.3} direction="down" />
-        <ParallaxImage imageSrc="/lovable-uploads/f6e8babc-8563-4fc8-b1a4-99176090137a.png" className="hidden md:block w-80 h-80 absolute bottom-20 -right-32 opacity-15 blur-sm" speed={0.2} direction="up" />
+        <ParallaxImage 
+          imageSrc="/lovable-uploads/b5feb4e9-6b23-421b-90ba-ffa4d4f48992.png" 
+          className="hidden md:block w-64 h-64 absolute -top-20 -left-20 opacity-15 blur-sm" 
+          altText="Background shape 1"
+        />
+        <ParallaxImage 
+          imageSrc="/lovable-uploads/f6e8babc-8563-4fc8-b1a4-99176090137a.png" 
+          className="hidden md:block w-80 h-80 absolute bottom-20 -right-32 opacity-15 blur-sm" 
+          altText="Background shape 2"
+        />
       </section>
 
       {/* Contact Section */}
