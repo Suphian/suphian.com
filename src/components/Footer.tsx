@@ -25,7 +25,7 @@ const Footer = () => {
           </div>
           
           <div className="flex space-x-4">
-            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=suph.tweel@gmail.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors" aria-label="Email">
+            <a href="mailto:suph.tweel@gmail.com" className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors" aria-label="Email">
               <Mail size={20} />
             </a>
             <a href="https://www.linkedin.com/in/suphian/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors" aria-label="LinkedIn">

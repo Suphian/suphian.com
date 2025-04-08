@@ -20,48 +20,47 @@ interface ContactSectionProps {
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email"),
-  message: z.string().min(10, "Message must be at least 10 characters")
+  message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
-const ContactSection = ({
-  onContactClick
-}: ContactSectionProps) => {
+const ContactSection = ({ onContactClick }: ContactSectionProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
-      message: ""
-    }
+      message: "",
+    },
   });
-  
+
   const handleSubmit = async (data: FormData) => {
     setIsSubmitting(true);
+    
     try {
       // Replace these parameters with your own EmailJS details
       const templateParams = {
         name: data.name,
         email: data.email,
-        message: data.message
+        message: data.message,
       };
-
+      
       // Send email using EmailJS with updated user ID
       await emailjs.send(
-        'service_xre6x5d', // Your EmailJS service ID
+        'service_xre6x5d',  // Your EmailJS service ID
         'template_98hg4qw', // Your EmailJS template ID
-        templateParams, 
-        'GR73acsP9JjNBN84T' // Updated EmailJS user ID
+        templateParams,
+        'GR73acsP9JjNBN84T'  // Updated EmailJS user ID
       );
       
       toast({
         title: "Message sent!",
-        description: "Thank you for your message. I'll get back to you soon."
+        description: "Thank you for your message. I'll get back to you soon.",
       });
       
       form.reset();
@@ -71,100 +70,100 @@ const ContactSection = ({
       toast({
         title: "Something went wrong",
         description: "Please try again later.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
-    <section id="contact-section" className="py-16 md:py-24 bg-background">
-      <div className="container-custom">
-        <div className="text-center mb-16">
-          <span className="tag mb-4">Contact</span>
-          <h2 className="heading-xl mb-6">Get in Touch</h2>
-          <p className="paragraph max-w-2xl mx-auto">
-            Have a project in mind or want to chat about AI and payment innovations? I'm always open to new opportunities and collaborations.
-          </p>
-        </div>
-        
-        <div className="flex justify-center">
-          <ButtonCustom 
-            onClick={() => setIsOpen(true)}
-            className="bg-primary text-background px-8 py-4 text-lg"
-          >
-            Send me a message
-          </ButtonCustom>
-        </div>
-        
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogHeader>
-              <DialogTitle>Send me a message</DialogTitle>
-              <DialogDescription>
-                Fill out the form below and I'll get back to you as soon as possible.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Your name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="your.email@example.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Message</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Tell me about your project or inquiry" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <div className="flex justify-end">
-                  <ButtonCustom 
-                    type="submit" 
-                    disabled={isSubmitting} 
-                    className="bg-primary text-background"
-                  >
-                    {isSubmitting ? "Sending..." : "Send Message"}
-                  </ButtonCustom>
-                </div>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
-      </div>
+    <section id="contact-section" className="text-center reveal py-16 relative">
+      <h2 className="heading-lg mb-6 relative inline-block">
+        Let's Connect
+        <WavyUnderline />
+      </h2>
+      <p className="paragraph max-w-2xl mx-auto mb-8">
+        I'm always open to discussing new projects, opportunities, or partnerships.
+      </p>
+      <button 
+        onClick={() => setIsOpen(true)}
+        className="w-full sm:w-auto wave-btn bg-primary text-background px-6 py-4 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group text-center"
+      >
+        <span className="relative z-10 group-hover:text-background transition-colors duration-300">Get in Touch</span>
+        <span className="absolute inset-0 bg-youtubeRed bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
+      </button>
+      
+      {/* Contact Form Dialog */}
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Get in Touch</DialogTitle>
+            <DialogDescription>
+              Send me a message and I'll get back to you as soon as possible.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Your name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="your.email@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Message</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="What would you like to discuss?" 
+                        className="min-h-[120px]" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="flex justify-end pt-2">
+                <ButtonCustom 
+                  type="submit" 
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Sending..." : "Send Message"}
+                </ButtonCustom>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
