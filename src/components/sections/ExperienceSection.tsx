@@ -42,6 +42,9 @@ const ExperienceSection = () => {
     links: [{
       url: "https://www.baincapital.com/news/900-parkas-bains-canada-goose-goes-public",
       title: "Bain Capital: Canada Goose IPO"
+    }, {
+      url: "https://workingnotworking.com/projects/112837-hulu-redesign",
+      title: "Hulu Redesign Project"
     }]
   }];
   
