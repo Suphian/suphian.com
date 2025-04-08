@@ -2,7 +2,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Headphones } from "lucide-react";
 import { ButtonCustom } from "./ui/button-custom";
 
 const Hero = () => {
@@ -36,12 +35,10 @@ const Hero = () => {
     };
   }, []);
 
-  // Add return statement with JSX
   return (
     <div className="py-20 container-custom">
       <div className="flex flex-col md:flex-row items-center justify-between gap-10">
         <div className="w-full md:w-1/2">
-          <h1 className="heading-xl mb-6">Welcome</h1>
           <p className="paragraph mb-8">
             Explore my portfolio and discover my work in product management and technology.
           </p>
