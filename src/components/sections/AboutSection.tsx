@@ -32,28 +32,28 @@ const AboutSection = ({ onRequestCV }: AboutSectionProps) => {
             
             {/* Two buttons side by side below astronaut image with wave animation */}
             <div className="flex gap-3 w-full mx-auto md:mx-0">
-              <ButtonCustom 
-                variant="outline" 
+              <button 
                 onClick={onRequestCV} 
-                className="wave-btn flex-1"
+                className="wave-btn flex-1 bg-secondary text-foreground px-4 py-2 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group"
               >
-                {isMobile ? "Download CV" : "Request My Resume"}
-              </ButtonCustom>
+                <span className="relative z-10 group-hover:text-background transition-colors duration-300">
+                  {isMobile ? "Download CV" : "Request My Resume"}
+                </span>
+                <span className="absolute inset-0 bg-accent bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
+              </button>
               
-              <ButtonCustom 
-                variant="default" 
-                className="wave-btn flex-1"
-              >
+              <button className="wave-btn flex-1 bg-primary text-background px-4 py-2 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group">
                 <a 
                   href="https://notebooklm.google.com/notebook/2849175b-13a1-477d-ace3-9c3c593156a6/audio" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="flex items-center justify-center whitespace-nowrap"
+                  className="flex items-center justify-center whitespace-nowrap relative z-10 group-hover:text-primary-foreground transition-colors duration-300"
                 >
                   <Headphones className="mr-2 h-5 w-5" />
                   {isMobile ? "Listen" : "Notebook LLM Podcast"}
                 </a>
-              </ButtonCustom>
+                <span className="absolute inset-0 bg-youtubeRed bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
+              </button>
             </div>
           </div>
           
