@@ -37,7 +37,7 @@ const ExperienceSection = () => {
   }, {
     period: "2014 - 2018",
     company: "Huge Inc",
-    role: "Growth Marketing",
+    role: "Growth Marketing Analyst",
     description: "Specialized in site redesigns, A/B testing, and multivariate testing for high-impact brands. Helped improve UX and conversion for companies like Hulu, Apple and AMC Theaters.",
     links: [{
       url: "https://www.baincapital.com/news/900-parkas-bains-canada-goose-goes-public",
