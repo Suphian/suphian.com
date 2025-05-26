@@ -1,13 +1,12 @@
 
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { WaveButton } from "@/components/ui/wave-button";
 import ContactSheet from "./ContactSheet";
 
 const CallToAction = () => {
   const location = useLocation();
-  const isHomepage = location.pathname === "/";
   const [contactOpen, setContactOpen] = useState(false);
   const isMobile = useIsMobile();
 
@@ -15,13 +14,11 @@ const CallToAction = () => {
     e.preventDefault();
     const contentSection = document.getElementById("content-section");
     if (contentSection) {
-      // Using a smoother scroll with a slight offset
       window.scrollTo({
         top: contentSection.offsetTop - 50,
         behavior: "smooth"
       });
       
-      // Dispatch custom event to show the top nav
       window.dispatchEvent(new Event('startButtonClicked'));
     }
   };
@@ -29,16 +26,14 @@ const CallToAction = () => {
   return (
     <>
       <div className="mt-12 flex gap-4">
-        <a 
-          href="#about-section"
+        <WaveButton
+          variant="youtube"
+          size="lg"
           onClick={scrollToProjects}
-          className="w-full sm:w-56 wave-btn bg-youtubeRed text-primary px-6 py-4 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group text-center"
+          className="w-full sm:w-56 text-center"
         >
-          <span className="relative z-10 group-hover:text-black transition-colors duration-300">
-            {isMobile ? "Start" : "Start Here"}
-          </span>
-          <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
-        </a>
+          {isMobile ? "Start" : "Start Here"}
+        </WaveButton>
       </div>
 
       <ContactSheet open={contactOpen} onOpenChange={setContactOpen} />

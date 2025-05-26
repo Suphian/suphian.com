@@ -2,6 +2,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import './styles/animations.css';
 
 @layer base {
   :root {
@@ -106,52 +107,20 @@
     opacity: 0;
   }
 
-  /* Wave animation for buttons */
-  @keyframes wave-animation {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-  .wave-btn {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    z-index: 1;
-  }
-
-  .wave-btn:hover {
-    background: linear-gradient(90deg, #FF3B30 0%, #FF5C45 50%, #FF3B30 100%);
-    background-size: 200% auto;
-    animation: wave-animation 1.5s ease infinite;
-    box-shadow: 0 5px 15px rgba(255, 59, 48, 0.4);
-    transform: translateY(-2px);
-  }
-
   /* Button slide-up animation */
-  .wave-btn .slide-up,
   .contact-btn .slide-up {
     transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
   }
 
-  .wave-btn:hover .slide-up,
   .contact-btn:hover .slide-up {
     transform: translateY(-100%);
   }
 
   /* Button gradient slide-up animation */
-  .wave-btn span:last-child,
   .contact-btn span:last-child {
     transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
   }
 
-  .wave-btn:hover span:last-child,
   .contact-btn:hover span:last-child {
     transform: translateY(0) !important;
   }
@@ -163,43 +132,6 @@
 
   input:focus::placeholder, textarea:focus::placeholder {
     @apply text-accent/70;
-  }
-
-  /* Scroll reveal animation */
-  .reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  }
-
-  .reveal.active {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Enhanced parallax animations */
-  @keyframes float {
-    0% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-15px);
-    }
-    100% {
-      transform: translateY(0px);
-    }
-  }
-
-  .float-animation {
-    animation: float 6s ease-in-out infinite;
-  }
-
-  .float-animation-slow {
-    animation: float 8s ease-in-out infinite;
-  }
-
-  .float-animation-slower {
-    animation: float 10s ease-in-out infinite;
   }
 
   /* Staggered fade-in animation */
