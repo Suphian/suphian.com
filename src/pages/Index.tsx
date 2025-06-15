@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import LandingPage from "@/components/LandingPage";
 import ScrollTransition from "@/components/ScrollTransition";
@@ -29,6 +28,14 @@ const Index = () => {
     };
   }, []);
   
+  // Handles workflow when user clicks "Get in Touch" in the modal
+  const handleGetInTouchFromModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => {
+      setContactOpen(true);
+    }, 250); // matches the modal exit animation
+  };
+
   return (
     <div className="relative">
       {/* Landing page with transition */}
@@ -70,8 +77,12 @@ const Index = () => {
             onContactClick={() => setContactOpen(true)} 
           />
           
-          {/* CV Request Modal */}
-          <RequestCVModal open={isModalOpen} onOpenChange={setIsModalOpen} />
+          {/* CV Request Modal - now with onGetInTouch prop */}
+          <RequestCVModal 
+            open={isModalOpen}
+            onOpenChange={setIsModalOpen}
+            onGetInTouch={handleGetInTouchFromModal}
+          />
 
           {/* Contact Sheet */}
           <ContactSheet open={contactOpen} onOpenChange={setContactOpen} />
