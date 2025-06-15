@@ -23,12 +23,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import supabase from "@/integrations/supabase/client";
 
-// Form validation schema
+// Update validation: remove subject
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
   phone: z.string().optional(),
-  subject: z.string().min(2, "Subject must be at least 2 characters."),
   message: z.string().min(10, "Message must be at least 10 characters."),
 });
 
@@ -47,7 +46,6 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
       name: "",
       email: "",
       phone: "",
-      subject: "",
       message: "",
     },
   });
@@ -59,7 +57,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
           name: data.name,
           email: data.email,
           phone: data.phone || null,
-          subject: data.subject,
+          subject: "Contact Form Submission",
           message: data.message,
         }
       ]);
@@ -67,11 +65,12 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
         throw error;
       }
 
-      // Notify via edge function (better error handling)
+      // Notify via edge function with fixed subject
       try {
         const { data: notifyData, error: notifyError } = await supabase.functions.invoke("notify-contact-submit", {
           body: {
             ...data,
+            subject: "Contact Form Submission",
             source: "ContactSheet",
           },
         });
@@ -105,7 +104,6 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-xl md:max-w-2xl p-0 overflow-y-auto border-l-0">
         <div className="h-full flex flex-col">
-          {/* Header */}
           <div className="p-6 md:p-8 border-b">
             <div className="flex justify-between items-center mb-2">
               <SheetTitle className="text-2xl md:text-3xl font-bold">Contact</SheetTitle>
@@ -114,8 +112,6 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
               Let's discuss your project or just say hello.
             </SheetDescription>
           </div>
-          
-          {/* Form */}
           <div className="flex-grow p-6 md:p-8 overflow-y-auto">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-[600px] mx-auto">
@@ -183,26 +179,6 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
 
                 <FormField
                   control={form.control}
-                  name="subject"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel className="text-sm font-medium">
-                        Subject <span className="text-accent">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="What's this about?" 
-                          {...field} 
-                          className="h-12 border focus:border-accent transition-colors" 
-                        />
-                      </FormControl>
-                      <FormMessage className="text-accent" />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
                   name="message"
                   render={({ field }) => (
                     <FormItem className="space-y-2">
@@ -232,7 +208,6 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                   <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
                 </button>
                 
-                {/* Astronaut Image - using the running astronaut with orange moon */}
                 <div className="mt-12 flex justify-center">
                   <img 
                     src="/lovable-uploads/db2efd18-0555-427b-89b4-c5cae8a5a143.png" 
@@ -243,8 +218,6 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
               </form>
             </Form>
           </div>
-          
-          {/* Connect links */}
           <div className="p-6 md:p-8 border-t bg-secondary/30">
             <div className="flex space-x-4 justify-center">
               <a 

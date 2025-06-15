@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import WavyUnderline from "@/components/WavyUnderline";
@@ -48,7 +47,7 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
           name: data.name,
           email: data.email,
           message: data.message,
-          subject: "Contact (Modal Form)",
+          subject: "Contact Form Submission",
           phone: null,
         }
       ]);
@@ -61,7 +60,7 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
         const { data: notifyData, error: notifyError } = await supabase.functions.invoke("notify-contact-submit", {
           body: {
             ...data,
-            subject: "Contact (Modal Form)",
+            subject: "Contact Form Submission",
             phone: null,
             source: "ContactSectionModal"
           }
@@ -82,9 +81,7 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
 
       form.reset();
 
-      // Close modal, then open ContactSheet side panel
       setIsOpen(false);
-      // Use a small timeout to ensure modal is fully closed before opening side panel
       setTimeout(() => {
         onContactClick();
       }, 250);
@@ -121,7 +118,6 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
         <span className="absolute inset-0 bg-youtubeRed bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
       </button>
       
-      {/* Contact Form Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -199,4 +195,3 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
 };
 
 export default ContactSection;
-

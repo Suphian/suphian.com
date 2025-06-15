@@ -33,11 +33,12 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const body = await req.json();
-    // Sanitize all potentially unsafe fields
+    // Sanitize input fields
     const name = escapeHTML(body.name ?? "");
     const email = escapeHTML(body.email ?? "");
     const phone = escapeHTML(body.phone ?? "");
-    const subject = escapeHTML(body.subject ?? "");
+    // SUBJECT NO LONGER PROVIDED BY FORM: use fixed string
+    const subject = "Contact Form Submission";
     const messageRaw: string = typeof body.message === "string" ? body.message : "";
     const message = escapeHTML(messageRaw).replace(/\n/g, "<br/>");
     const source = escapeHTML(body.source ?? "");
@@ -53,17 +54,16 @@ const handler = async (req: Request): Promise<Response> => {
     const html = `
       <h2>New Contact Form Submission</h2>
       ${contactInfoHtml}
-      <p><strong>Subject:</strong> ${subject}</p>
       <p><strong>Message:</strong><br/>${message}</p>
       <hr />
       <p>Submission Source: ${source || "Unknown"}</p>
     `;
 
-    // Updated "from" address to your verified domain
+    // Send notification to site owner
     const emailResponse = await resend.emails.send({
       from: "Contact Notification <hi@suphian.com>",
       to: ["suph.tweel@gmail.com"],
-      subject: subject ? `Contact Form: ${subject}` : "New Contact Submission",
+      subject,
       html,
       reply_to: email ? email : undefined,
     });
@@ -74,12 +74,6 @@ const handler = async (req: Request): Promise<Response> => {
       // Use custom HTML template provided by user
       const thankYouHtml = `
 <!DOCTYPE html>
-<!--
-  Responsive thank-you email – Dark theme + subtle gradient background
-  Variables:
-    - \${name}
-    - \${message}
--->
 <html lang="en" style="margin:0;padding:0;background:linear-gradient(135deg,#101014 0%,#1f223d 50%,#2d1b55 100%);">
 <head>
   <meta charset="UTF-8" />
@@ -92,9 +86,7 @@ const handler = async (req: Request): Promise<Response> => {
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#000000;">
     <tr>
       <td align="center" style="padding:72px 16px;">
-        <!-- Card -->
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:640px;background:#000000;border:1px solid #222326;border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,.55);overflow:hidden;">
-          <!-- Hero -->
           <tr>
             <td style="padding:56px 48px 40px 48px;text-align:center;background:#000000;">
               <img src="https://raw.githubusercontent.com/Suphian/suphiansite/main/u1327668621_logo_SUPH_--chaos_15_--ar_23_--profile_aa8enny_--st_b2040bf7-71f1-4263-bf3e-422f9561d81e.png" width="140" alt="Running astronaut illustration" style="display:block;margin:0 auto 28px auto;border-radius:12px;" />
@@ -103,13 +95,11 @@ const handler = async (req: Request): Promise<Response> => {
               </h1>
             </td>
           </tr>
-          <!-- Body -->
           <tr>
             <td style="padding:44px 48px 32px 48px;text-align:left;">
               <p style="margin:2px 0 16px 0;">
                 Your message just completed its orbit and landed in my inbox. Expect a reply within 1–2 business days.
               </p>
-              <!-- Quoted message -->
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 36px 0;">
                 <tr>
                   <td style="padding:24px 28px;background:#0A0A0A;border-left:4px solid #FF4B2B;border-radius:10px;font-style:italic;font-size:15px;line-height:1.5;color:#D1D5DB;">
@@ -117,7 +107,6 @@ const handler = async (req: Request): Promise<Response> => {
                   </td>
                 </tr>
               </table>
-              <!-- CTA -->
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto 28px auto;">
                 <tr>
                   <td align="center" bgcolor="#FF4B2B" style="border-radius:10px;">
@@ -125,7 +114,6 @@ const handler = async (req: Request): Promise<Response> => {
                   </td>
                 </tr>
               </table>
-              <!-- Social -->
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;">
                 <tr>
                   <td style="padding:0 8px;">
@@ -138,7 +126,6 @@ const handler = async (req: Request): Promise<Response> => {
               </table>
             </td>
           </tr>
-          <!-- Footer -->
           <tr>
             <td style="padding:28px 48px;background:#0B0C0D;border-top:1px solid #222326;text-align:center;font-size:13px;line-height:1.45;color:#6B7280;">
               © ${new Date().getFullYear()} Suphian Tweel • New York, NY
@@ -148,7 +135,6 @@ const handler = async (req: Request): Promise<Response> => {
       </td>
     </tr>
   </table>
-  <!-- Mobile tweaks -->
   <style>
     @media (prefers-color-scheme: dark) {
       body { background:#000000 !important; color:#E5E7EB !important; }

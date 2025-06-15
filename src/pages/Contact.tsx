@@ -11,7 +11,6 @@ const Contact = () => {
     name: "",
     email: "",
     phone: "",
-    subject: "",
     message: ""
   });
 
@@ -27,7 +26,6 @@ const Contact = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
@@ -35,25 +33,17 @@ const Contact = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
     }
-    
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-    
-    if (!formData.subject.trim()) {
-      newErrors.subject = "Subject is required";
-    }
-    
     if (!formData.message.trim()) {
       newErrors.message = "Message is required";
     }
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -71,7 +61,7 @@ const Contact = () => {
           name: formData.name,
           email: formData.email,
           phone: formData.phone || null,
-          subject: formData.subject,
+          subject: "Contact Form Submission",
           message: formData.message,
         }
       ]);
@@ -79,11 +69,11 @@ const Contact = () => {
         throw error;
       }
 
-      // Edge function call for notification, with full logging and supabase invoke
       try {
         const { data: notifyData, error: notifyError } = await supabase.functions.invoke("notify-contact-submit", {
           body: {
             ...formData,
+            subject: "Contact Form Submission",
             source: "ContactPage",
           }
         });
@@ -105,7 +95,6 @@ const Contact = () => {
         name: "",
         email: "",
         phone: "",
-        subject: "",
         message: ""
       });
     } catch (error) {
@@ -191,25 +180,6 @@ const Contact = () => {
                     placeholder="+1 (555) 123-4567"
                     className="w-full border focus:border-accent bg-background h-12 transition-colors"
                   />
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="subject" className="block text-sm font-medium mb-2">
-                    Subject <span className="text-accent">*</span>
-                  </label>
-                  <Input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    placeholder="What's this about?"
-                    className={`w-full border ${errors.subject ? 'border-accent' : 'focus:border-accent'} bg-background h-12 transition-colors`}
-                    aria-invalid={!!errors.subject}
-                  />
-                  {errors.subject && (
-                    <p className="mt-1 text-sm font-medium text-accent">{errors.subject}</p>
-                  )}
                 </div>
                 
                 <div className="form-group">
