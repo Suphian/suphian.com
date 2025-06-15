@@ -12,7 +12,8 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
-  "Content-Security-Policy": "default-src 'self'; img-src *; script-src 'none'; object-src 'none'",
+  // Improved CSP for more restriction
+  "Content-Security-Policy": "default-src 'self'; img-src 'self' data: https://raw.githubusercontent.com https://suphian.com; script-src 'none'; object-src 'none'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'",
   "X-Frame-Options": "DENY",
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "no-referrer",

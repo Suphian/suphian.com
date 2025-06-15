@@ -117,35 +117,39 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
           To request my CV, please fill out this form and mention in your message that you're requesting my resume.
         </span>
       </p>
-      <button 
+      <button
         onClick={() => setIsOpen(true)}
         className="w-full sm:w-auto wave-btn bg-primary text-background px-6 py-4 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group text-center"
+        aria-haspopup="dialog"
+        aria-controls="contact-dialog"
+        aria-label="Open contact form dialog"
       >
         <span className="relative z-10 group-hover:text-background transition-colors duration-300">Get in Touch</span>
         <span className="absolute inset-0 bg-youtubeRed bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
       </button>
-      
+
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md" id="contact-dialog" role="dialog" aria-modal="true">
           <DialogHeader>
-            <DialogTitle>Get in Touch</DialogTitle>
+            <DialogTitle tabIndex={0}>Get in Touch</DialogTitle>
             <DialogDescription>
-              Send me a message and I'll get back to you as soon as possible. 
+              Send me a message and I'll get back to you as soon as possible.
               <span className="block mt-1 text-accent font-medium">
                 If you're requesting my CV, please mention it in your message!
               </span>
             </DialogDescription>
           </DialogHeader>
-          
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
               {/* Honeypot field */}
-              <input 
+              <input
                 type="text"
                 tabIndex={-1}
                 autoComplete="off"
                 style={{ display: 'none' }}
                 {...form.register("website")}
+                aria-hidden="true"
               />
               <FormField
                 control={form.control}
@@ -154,13 +158,13 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your name" {...field} maxLength={72} />
+                      <Input placeholder="Your name" {...field} maxLength={72} aria-required="true" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="email"
@@ -168,13 +172,13 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="your.email@example.com" {...field} maxLength={160} />
+                      <Input type="email" placeholder="your.email@example.com" {...field} maxLength={160} aria-required="true" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="message"
@@ -182,22 +186,25 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
                   <FormItem>
                     <FormLabel>Message</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="What would you like to discuss?" 
-                        className="min-h-[120px]" 
+                      <Textarea
+                        placeholder="What would you like to discuss?"
+                        className="min-h-[120px]"
                         {...field}
                         maxLength={2500}
+                        aria-required="true"
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <div className="flex justify-end pt-2">
-                <ButtonCustom 
-                  type="submit" 
+                <ButtonCustom
+                  type="submit"
                   disabled={isSubmitting}
+                  aria-busy={isSubmitting}
+                  aria-label={isSubmitting ? "Sending..." : "Send Message"}
                 >
                   {isSubmitting ? "Sending..." : "Send Message"}
                 </ButtonCustom>
