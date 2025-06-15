@@ -13,6 +13,10 @@ const chipOptions = [
   {
     label: "Tech chat",
     text: "I saw your talk on payments infrastructure and would like to exchange ideas on data modeling."
+  },
+  {
+    label: "Request Resume",
+    text: "Could you please share your latest resume with me? Thank you!"
   }
 ];
 
