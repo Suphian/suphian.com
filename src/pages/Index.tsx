@@ -33,7 +33,24 @@ const Index = () => {
     setIsModalOpen(false);
     setTimeout(() => {
       setContactOpen(true);
-    }, 125); // faster transition from modal to side panel
+      window.trackEvent?.("open_contact_sheet", {
+        label: "Open ContactSheet via CV Modal",
+        page: window.location.pathname,
+        fromModal: true,
+      });
+    }, 125);
+  };
+
+  // Track every time ContactSheet is opened from Index
+  const handleContactOpenChange = (open: boolean) => {
+    setContactOpen(open);
+    if (open) {
+      window.trackEvent?.("open_contact_sheet", {
+        page: window.location.pathname,
+        label: "Open ContactSheet",
+        source: "IndexMainContent",
+      });
+    }
   };
 
   return (
@@ -73,19 +90,36 @@ const Index = () => {
 
           {/* Content Sections */}
           <ContentSection 
-            onRequestCV={() => setIsModalOpen(true)} 
-            onContactClick={() => setContactOpen(true)} 
+            onRequestCV={() => {
+              setIsModalOpen(true);
+              window.trackEvent?.("open_cv_modal", {
+                label: "Request CV",
+                page: window.location.pathname,
+                source: "IndexHeroContent",
+              });
+            }} 
+            onContactClick={() => {
+              handleContactOpenChange(true);
+            }} 
           />
           
           {/* CV Request Modal - now with onGetInTouch prop */}
           <RequestCVModal 
             open={isModalOpen}
-            onOpenChange={setIsModalOpen}
+            onOpenChange={(open) => {
+              setIsModalOpen(open);
+              if (!open) {
+                window.trackEvent?.("close_cv_modal", {
+                  page: window.location.pathname,
+                  source: "Index",
+                });
+              }
+            }}
             onGetInTouch={handleGetInTouchFromModal}
           />
 
           {/* Contact Sheet */}
-          <ContactSheet open={contactOpen} onOpenChange={setContactOpen} />
+          <ContactSheet open={contactOpen} onOpenChange={handleContactOpenChange} />
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Headphones } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -11,11 +10,31 @@ interface ActionButtonsProps {
 const ActionButtons = ({ onRequestCV }: ActionButtonsProps) => {
   const isMobile = useIsMobile();
 
+  // Add analytics for both buttons
+  const handleRequestCV = () => {
+    window.trackEvent?.("hero_cta_click", {
+      label: isMobile ? "Download CV" : "Request My Resume",
+      page: window.location.pathname,
+      source: "HeroSection",
+      type: "request_cv",
+    });
+    onRequestCV();
+  };
+
+  const handleListen = () => {
+    window.trackEvent?.("hero_cta_click", {
+      label: isMobile ? "Listen" : "Notebook LLM Podcast",
+      page: window.location.pathname,
+      source: "HeroSection",
+      type: "listen_podcast",
+    });
+  };
+
   return (
     <div className="flex gap-3 w-full mx-auto md:mx-0">
       <WaveButton 
         variant="secondary" 
-        onClick={onRequestCV} 
+        onClick={handleRequestCV} 
         className="flex-1 text-center"
       >
         {isMobile ? "Download CV" : "Request My Resume"}
@@ -27,6 +46,7 @@ const ActionButtons = ({ onRequestCV }: ActionButtonsProps) => {
           target="_blank" 
           rel="noopener noreferrer" 
           className="flex items-center justify-center whitespace-nowrap w-full h-full"
+          onClick={handleListen}
         >
           <Headphones className="mr-2 h-5 w-5" />
           {isMobile ? "Listen" : "Notebook LLM Podcast"}
