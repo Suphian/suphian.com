@@ -5,7 +5,7 @@ import { ButtonCustom } from "@/components/ui/button-custom";
 interface RequestCVModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onGetInTouch?: () => void; // New prop
+  onGetInTouch: () => void; // Now REQUIRED
 }
 
 /**
@@ -16,12 +16,10 @@ interface RequestCVModalProps {
 const RequestCVModal = ({ open, onOpenChange, onGetInTouch }: RequestCVModalProps) => {
   const handleGetInTouch = () => {
     onOpenChange(false);
-    if (onGetInTouch) {
-      // Give time for modal to transition out (optional, for UX)
-      setTimeout(() => {
-        onGetInTouch();
-      }, 250);
-    }
+    // Give time for modal to transition out (for UX)
+    setTimeout(() => {
+      onGetInTouch();
+    }, 250);
   };
 
   return (
