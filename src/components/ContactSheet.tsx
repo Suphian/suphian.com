@@ -243,10 +243,10 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                       <FormControl>
                         <>
                           <Textarea
+                            {...field}
                             id="message"
                             placeholder="Hey, what's up? Talk to me. Whether you're looking for a referral, have a new opportunity, or just want to chat tech, I'm open to collaborating or connecting."
                             className="min-h-[150px] border focus:border-accent resize-none"
-                            {...field}
                           />
                           {/* CHIP BAR moved to a new component */}
                           <ContactChipsBar textareaId="message" />
