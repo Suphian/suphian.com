@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
@@ -62,12 +61,6 @@ const handler = async (req: Request): Promise<Response> => {
       // Custom confirmation HTML using firstName
       const thankYouHtml = `
 <!DOCTYPE html>
-<!--
-  Responsive thank-you email
-  • Gradient background (charcoal → midnight violet)
-  • Tight headline-to-body spacing (margin-top:4px)
-  • Uses \${firstName} (already stripped to first token) + \${message}
--->
 <html lang="en" style="margin:0;padding:0;
   background:linear-gradient(135deg,#101014 0%,#1b1e2f 50%,#2d1b55 100%);">
 <head>
@@ -93,7 +86,7 @@ const handler = async (req: Request): Promise<Response> => {
               <img src="https://raw.githubusercontent.com/Suphian/suphiansite/main/u1327668621_logo_SUPH_--chaos_15_--ar_23_--profile_aa8enny_--st_b2040bf7-71f1-4263-bf3e-422f9561d81e.png"
                    width="140" alt="Running astronaut illustration"
                    style="display:block;margin:0 auto 28px auto;border-radius:12px;">
-              <h1 style="margin:0;font-size:28px;line-height:1.3;font-weight:700;
+              <h1 style="margin:0 0 4px 0;font-size:28px;line-height:1.3;font-weight:700;
                          letter-spacing:-0.4px;color:#FFFFFF;">
                 Thanks for reaching out${firstName ? `, ${firstName}` : ""}!
               </h1>
@@ -101,7 +94,7 @@ const handler = async (req: Request): Promise<Response> => {
           </tr>
           <tr>
             <td style="padding:44px 48px 32px 48px;text-align:left;">
-              <p style="margin:4px 0 16px 0;color:#FFFFFF;font-size:16px;line-height:1.55;font-weight:500;">
+              <p style="margin:0 0 16px 0;color:#FFFFFF;font-size:16px;line-height:1.55;font-weight:500;">
                 Your message just completed its orbit and landed in my inbox. Expect a reply within 1–2 business days.
               </p>
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
@@ -193,4 +186,3 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 serve(handler);
-
