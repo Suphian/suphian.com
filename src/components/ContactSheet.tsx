@@ -129,32 +129,6 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
     }
   };
 
-  // The imperative chip logic: can be safely inside useEffect after render
-  React.useEffect(() => {
-    const chipBar = document.getElementById("chipBar");
-    if (!chipBar) return;
-    function onChipClick(e: MouseEvent) {
-      const target = e.target as HTMLElement;
-      if (!target.classList.contains("chip")) return;
-      const ta = document.getElementById("message") as HTMLTextAreaElement;
-      if (!ta) return;
-      if (target.textContent === "Random") {
-        ta.value = COUNT_OF_MONTE_CRISTO_QUOTES[Math.floor(Math.random()*COUNT_OF_MONTE_CRISTO_QUOTES.length)];
-        // Since field not "controlled", manually trigger input event for react-hook-form:
-        ta.dispatchEvent(new Event('input', { bubbles: true }));
-      } else {
-        const fillText = target.getAttribute("data-text");
-        if (fillText) {
-          ta.value = fillText;
-          ta.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-      }
-      ta.focus();
-    }
-    chipBar.addEventListener("click", onChipClick);
-    return () => chipBar.removeEventListener("click", onChipClick);
-  }, [open]);
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-xl md:max-w-2xl p-0 overflow-y-auto border-l-0">
@@ -248,8 +222,9 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                             placeholder="Hey, what's up? Talk to me. Whether you're looking for a referral, have a new opportunity, or just want to chat tech, I'm open to collaborating or connecting."
                             className="min-h-[150px] border focus:border-accent resize-none"
                           />
-                          {/* CHIP BAR moved to a new component */}
-                          <ContactChipsBar textareaId="message" />
+                          {/* CHIP BAR moved to a new component.
+                              Pass the onChange and value so chip selects sync with react-hook-form */}
+                          <ContactChipsBar textareaId="message" onChange={field.onChange} value={field.value} />
                         </>
                       </FormControl>
                       <FormMessage className="text-accent" />

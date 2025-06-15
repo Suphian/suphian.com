@@ -1,4 +1,3 @@
-
 import React from "react";
 import { COUNT_OF_MONTE_CRISTO_QUOTES } from "@/utils/MonteCristoQuotes";
 
@@ -19,31 +18,39 @@ const chipOptions = [
 
 interface ContactChipsBarProps {
   textareaId: string;
+  onChange?: (value: string) => void;
+  value?: string;
 }
 
-const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId }) => {
+const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId, onChange, value }) => {
   // Use event delegation but scoped to this component's div
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     if (!target.classList.contains("chip")) return;
-    const ta = document.getElementById(textareaId) as HTMLTextAreaElement | null;
-    if (!ta) return;
 
+    // Compose the message
+    let newValue: string | undefined;
     if (target.textContent === "Random") {
-      // Pick a random quote
       const idx = Math.floor(Math.random() * COUNT_OF_MONTE_CRISTO_QUOTES.length);
       const quote = COUNT_OF_MONTE_CRISTO_QUOTES[idx];
       const authorLine = "Alexandre Dumas, Count of Monte Cristo";
-      ta.value = `"${quote}"\n— ${authorLine}`;
-      ta.dispatchEvent(new Event('input', { bubbles: true }));
+      newValue = `"${quote}"\n— ${authorLine}`;
     } else {
-      const fillText = target.getAttribute("data-text");
-      if (fillText) {
-        ta.value = fillText;
+      newValue = target.getAttribute("data-text") || "";
+    }
+
+    // If using controlled form, call onChange
+    if (onChange && typeof newValue === "string") {
+      onChange(newValue);
+    } else {
+      // Fallback: update textarea directly for non-form uses
+      const ta = document.getElementById(textareaId) as HTMLTextAreaElement | null;
+      if (ta && typeof newValue === "string") {
+        ta.value = newValue;
         ta.dispatchEvent(new Event('input', { bubbles: true }));
+        ta.focus();
       }
     }
-    ta.focus();
   };
 
   return (
@@ -65,4 +72,3 @@ const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId }) => {
 };
 
 export default ContactChipsBar;
-
