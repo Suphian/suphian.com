@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -37,6 +36,35 @@ interface ContactSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+const COUNT_OF_MONTE_CRISTO_QUOTES = [
+  // A short selection for demo; expand with more for production.
+  "All human wisdom is contained in these two words – Wait and Hope.",
+  "How did I escape? With difficulty. How did I plan this moment? With pleasure.",
+  "He who has felt the deepest grief is best able to experience supreme happiness.",
+  "I am not proud, but I am happy; and happiness blinds, I think, more than pride.",
+  "Hatred is blind, rage carries you away, and he who pours out vengeance runs the risk of tasting a bitter draught.",
+  "Life is a storm, my young friend. You will bask in the sunlight one moment, be shattered on the rocks the next.",
+  "In prosperity prudence, in adversity patience.",
+  "Your life story is in your own hands; mold it wisely.",
+  "I have not led a wise life, but I have often been saved by a kind word or a warm smile.",
+    // Add more if desired
+];
+
+const chipOptions = [
+  {
+    label: "Referral request",
+    text: "I'd love a referral for your team – here’s a bit about me…"
+  },
+  {
+    label: "Job opportunity",
+    text: "We have a PM opening that seems aligned with your background. Are you open to chat?"
+  },
+  {
+    label: "Tech chat",
+    text: "I saw your talk on payments infrastructure and would like to exchange ideas on data modeling."
+  }
+];
 
 const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
   const { toast } = useToast();
@@ -99,6 +127,32 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
       });
     }
   };
+
+  // The imperative chip logic: can be safely inside useEffect after render
+  React.useEffect(() => {
+    const chipBar = document.getElementById("chipBar");
+    if (!chipBar) return;
+    function onChipClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      if (!target.classList.contains("chip")) return;
+      const ta = document.getElementById("message") as HTMLTextAreaElement;
+      if (!ta) return;
+      if (target.textContent === "Random") {
+        ta.value = COUNT_OF_MONTE_CRISTO_QUOTES[Math.floor(Math.random()*COUNT_OF_MONTE_CRISTO_QUOTES.length)];
+        // Since field not "controlled", manually trigger input event for react-hook-form:
+        ta.dispatchEvent(new Event('input', { bubbles: true }));
+      } else {
+        const fillText = target.getAttribute("data-text");
+        if (fillText) {
+          ta.value = fillText;
+          ta.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }
+      ta.focus();
+    }
+    chipBar.addEventListener("click", onChipClick);
+    return () => chipBar.removeEventListener("click", onChipClick);
+  }, [open]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -186,11 +240,29 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                         Message <span className="text-accent">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="Hey, what's up? Talk to me. Whether you're looking for a referral, have a new opportunity, or just want to chat tech, I'm open to collaborating or connecting." 
-                          className="min-h-[150px] border focus:border-accent resize-none" 
-                          {...field} 
-                        />
+                        <>
+                          <Textarea
+                            id="message"
+                            placeholder="Hey, what's up? Talk to me. Whether you're looking for a referral, have a new opportunity, or just want to chat tech, I'm open to collaborating or connecting."
+                            className="min-h-[150px] border focus:border-accent resize-none"
+                            {...field}
+                          />
+                          {/* CHIP BAR */}
+                          <div id="chipBar" className="chips mt-2">
+                            {chipOptions.map(opt => (
+                              <span
+                                className="chip"
+                                data-text={opt.text}
+                                key={opt.label}
+                                tabIndex={0}
+                                role="button"
+                              >
+                                {opt.label}
+                              </span>
+                            ))}
+                            <span className="chip" tabIndex={0} role="button">Random</span>
+                          </div>
+                        </>
                       </FormControl>
                       <FormMessage className="text-accent" />
                     </FormItem>

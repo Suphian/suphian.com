@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -212,5 +211,27 @@
     to {
       stroke-dashoffset: 0;
     }
+  }
+
+  /* === ContactSheet chips styling === */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .chip {
+    background: #26262c;
+    color: #f3f4f6;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+    user-select: none;
+  }
+  .chip:hover, .chip:focus {
+    background: #32323a;
+    outline: none;
   }
 }
