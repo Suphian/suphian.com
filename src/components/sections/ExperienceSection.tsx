@@ -36,7 +36,7 @@ const ExperienceSection = () => {
   }, {
     period: "2014 - 2018",
     company: "Huge Inc",
-    role: "Senior Product Analyst (Growth & Marketing)",
+    role: "Senior Product Analyst",
     description: "Specialized in site redesigns, A/B testing, and multivariate testing for high-impact brands. Helped improve UX and conversion for companies like Hulu, Apple and AMC Theaters.",
     links: [{
       url: "https://www.baincapital.com/news/900-parkas-bains-canada-goes-public",
