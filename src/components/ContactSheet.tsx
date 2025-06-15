@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import emailjs from 'emailjs-com';
+import { supabase } from "@/integrations/supabase/client";
 
 // Form validation schema
 const formSchema = z.object({
@@ -53,30 +53,28 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const templateParams = {
-        name: data.name,
-        email: data.email,
-        phone: data.phone || "Not provided",
-        subject: data.subject,
-        message: data.message,
-      };
-      
-      await emailjs.send(
-        'service_xre6x5d',  // Your EmailJS service ID
-        'template_98hg4qw', // Your EmailJS template ID
-        templateParams,
-        'GR73acsP9JjNBN84T'  // Updated EmailJS user ID
-      );
-      
+      const { error } = await supabase.from("contact_submissions").insert([
+        {
+          name: data.name,
+          email: data.email,
+          phone: data.phone || null,
+          subject: data.subject,
+          message: data.message,
+        }
+      ]);
+      if (error) {
+        throw error;
+      }
+
       toast({
         title: "Message sent!",
         description: "Thank you for your message. I'll get back to you soon.",
       });
-      
+
       form.reset();
       onOpenChange(false);
-    } catch (error) {
-      console.error("Failed to send email:", error);
+    } catch (error: any) {
+      console.error("Failed to send form submission to Supabase:", error);
       toast({
         title: "Something went wrong",
         description: "Please try again later.",
@@ -228,7 +226,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
             </Form>
           </div>
           
-          {/* Connect links - simplified, removing email */}
+          {/* Connect links */}
           <div className="p-6 md:p-8 border-t bg-secondary/30">
             <div className="flex space-x-4 justify-center">
               <a 

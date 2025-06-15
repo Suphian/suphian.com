@@ -4,7 +4,7 @@ import { initializeRevealAnimations } from "@/lib/animations";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import emailjs from 'emailjs-com';
+import supabase from "@/integrations/supabase/client";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -60,32 +60,30 @@ const Contact = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
-      const templateParams = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone || "Not provided",
-        subject: formData.subject,
-        message: formData.message,
-      };
-      
-      await emailjs.send(
-        'service_xre6x5d',  // Your EmailJS service ID
-        'template_98hg4qw', // Your EmailJS template ID
-        templateParams,
-        'GR73acsP9JjNBN84T'  // Updated EmailJS user ID
-      );
-      
+      const { error } = await supabase.from("contact_submissions").insert([
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          subject: formData.subject,
+          message: formData.message,
+        }
+      ]);
+      if (error) {
+        throw error;
+      }
+
       toast({
         title: "Message sent!",
         description: "Thank you for your message. I'll get back to you soon.",
       });
-      
+
       setFormData({
         name: "",
         email: "",
@@ -94,7 +92,7 @@ const Contact = () => {
         message: ""
       });
     } catch (error) {
-      console.error("Failed to send email:", error);
+      console.error("Failed to send form submission to Supabase:", error);
       toast({
         title: "Something went wrong",
         description: "Please try again later.",

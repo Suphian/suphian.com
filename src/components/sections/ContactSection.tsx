@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
-import emailjs from 'emailjs-com';
+import supabase from "@/integrations/supabase/client";
 
 interface ContactSectionProps {
   onContactClick: () => void;
@@ -40,32 +40,31 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
 
   const handleSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-    
+
     try {
-      // Replace these parameters with your own EmailJS details
-      const templateParams = {
-        name: data.name,
-        email: data.email,
-        message: data.message,
-      };
-      
-      // Send email using EmailJS with updated user ID
-      await emailjs.send(
-        'service_xre6x5d',  // Your EmailJS service ID
-        'template_98hg4qw', // Your EmailJS template ID
-        templateParams,
-        'GR73acsP9JjNBN84T'  // Updated EmailJS user ID
-      );
-      
+      // Store submission in Supabase
+      const { error } = await supabase.from("contact_submissions").insert([
+        {
+          name: data.name,
+          email: data.email,
+          message: data.message,
+          subject: "Contact (Modal Form)",
+          phone: null,
+        }
+      ]);
+      if (error) {
+        throw error;
+      }
+
       toast({
         title: "Message sent!",
         description: "Thank you for your message. I'll get back to you soon.",
       });
-      
+
       form.reset();
       setIsOpen(false);
     } catch (error) {
-      console.error("Failed to send email:", error);
+      console.error("Failed to send form submission to Supabase:", error);
       toast({
         title: "Something went wrong",
         description: "Please try again later.",
