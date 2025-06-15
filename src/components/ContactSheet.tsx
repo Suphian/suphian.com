@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import supabase from "@/integrations/supabase/client";
+import ContactChipsBar from "./ContactChipsBar";
 
 // Update validation: remove subject
 const formSchema = z.object({
@@ -247,21 +248,8 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                             className="min-h-[150px] border focus:border-accent resize-none"
                             {...field}
                           />
-                          {/* CHIP BAR */}
-                          <div id="chipBar" className="chips mt-2">
-                            {chipOptions.map(opt => (
-                              <span
-                                className="chip"
-                                data-text={opt.text}
-                                key={opt.label}
-                                tabIndex={0}
-                                role="button"
-                              >
-                                {opt.label}
-                              </span>
-                            ))}
-                            <span className="chip" tabIndex={0} role="button">Random</span>
-                          </div>
+                          {/* CHIP BAR moved to a new component */}
+                          <ContactChipsBar textareaId="message" />
                         </>
                       </FormControl>
                       <FormMessage className="text-accent" />
