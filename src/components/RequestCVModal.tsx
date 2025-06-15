@@ -5,6 +5,7 @@ import { ButtonCustom } from "@/components/ui/button-custom";
 interface RequestCVModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onGetInTouch?: () => void; // New prop
 }
 
 /**
@@ -12,13 +13,19 @@ interface RequestCVModalProps {
  * they should fill out the Get in Touch form on the site.
  * The download and preview features have been removed for security.
  */
-const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
-  const handleClose = () => {
+const RequestCVModal = ({ open, onOpenChange, onGetInTouch }: RequestCVModalProps) => {
+  const handleGetInTouch = () => {
     onOpenChange(false);
+    if (onGetInTouch) {
+      // Give time for modal to transition out (optional, for UX)
+      setTimeout(() => {
+        onGetInTouch();
+      }, 250);
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md text-center">
         <DialogHeader>
           <DialogTitle>Request My CV</DialogTitle>
@@ -29,11 +36,11 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
 
         <div className="flex flex-col items-center space-y-6">
           <ButtonCustom
-            variant="outline"
+            variant="default"
             className="w-full"
-            onClick={handleClose}
+            onClick={handleGetInTouch}
           >
-            Close
+            Get in Touch
           </ButtonCustom>
         </div>
       </DialogContent>
@@ -42,3 +49,4 @@ const RequestCVModal = ({ open, onOpenChange }: RequestCVModalProps) => {
 };
 
 export default RequestCVModal;
+

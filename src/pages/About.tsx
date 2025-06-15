@@ -4,9 +4,11 @@ import { MapPin, Headphones } from "lucide-react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import { initializeRevealAnimations } from "@/lib/animations";
 import RequestCVModal from "@/components/RequestCVModal";
+import ContactSheet from "@/components/ContactSheet";
 
 const About = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false); // New state for contact sheet
   const aboutSectionRef = useRef<HTMLDivElement>(null);
   const leadershipSectionRef = useRef<HTMLDivElement>(null);
 
@@ -14,6 +16,10 @@ const About = () => {
     const cleanup = initializeRevealAnimations();
     return cleanup;
   }, []);
+
+  const handleGetInTouchFromModal = () => {
+    setIsContactOpen(true);
+  };
 
   return (
     <div className="pt-28 pb-24">
@@ -159,16 +165,23 @@ const About = () => {
           <p className="paragraph max-w-2xl mx-auto mb-8">
             I'm always open to discussing new projects, opportunities, or partnerships.
           </p>
-          <ButtonCustom size="lg" arrowIcon>
-            <a href="/contact">Get in Touch</a>
+          <ButtonCustom size="lg" arrowIcon onClick={() => setIsContactOpen(true)}>
+            Get in Touch
           </ButtonCustom>
         </section>
       </div>
       
       {/* CV Request Modal */}
-      <RequestCVModal open={isModalOpen} onOpenChange={setIsModalOpen} />
+      <RequestCVModal 
+        open={isModalOpen} 
+        onOpenChange={setIsModalOpen} 
+        onGetInTouch={handleGetInTouchFromModal}
+      />
+      {/* Contact Sheet */}
+      <ContactSheet open={isContactOpen} onOpenChange={setIsContactOpen} />
     </div>
   );
 };
 
 export default About;
+
