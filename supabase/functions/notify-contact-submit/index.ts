@@ -10,6 +10,17 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+// Simple HTML escaping function
+function escapeHTML(str: string): string {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -17,15 +28,16 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const body = await req.json();
-    const {
-      name = "",
-      email = "",
-      phone = "",
-      subject = "",
-      message = "",
-      source = "",
-    } = body;
-
+    // Sanitize all potentially unsafe fields
+    const name = escapeHTML(body.name ?? "");
+    const email = escapeHTML(body.email ?? "");
+    const phone = escapeHTML(body.phone ?? "");
+    const subject = escapeHTML(body.subject ?? "");
+    // For message, escape, then only allow explicit newlines to become <br>
+    const messageRaw: string = typeof body.message === "string" ? body.message : "";
+    const message = escapeHTML(messageRaw).replace(/\n/g, "<br/>");
+    const source = escapeHTML(body.source ?? "");
+  
     const html = `
       <h2>New Contact Form Submission</h2>
       <p><strong>Name:</strong> ${name}</p>
@@ -36,7 +48,7 @@ const handler = async (req: Request): Promise<Response> => {
           : ""
       }
       <p><strong>Subject:</strong> ${subject}</p>
-      <p><strong>Message:</strong><br/>${message.replace(/\n/g, "<br/>")}</p>
+      <p><strong>Message:</strong><br/>${message}</p>
       <hr />
       <p>Submission Source: ${source || "Unknown"}</p>
     `;
@@ -66,3 +78,4 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 serve(handler);
+
