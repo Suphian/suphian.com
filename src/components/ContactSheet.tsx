@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   Sheet,
@@ -6,20 +7,8 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import ContactForm from "./ContactForm";
 import ContactChipsBar from "./ContactChipsBar";
-import { useContactForm, contactFormSchema, ContactFormData } from "@/hooks/useContactForm";
-import { chipOptions } from "@/utils/contactFormConstants";
 
 interface ContactSheetProps {
   open: boolean;
@@ -27,70 +16,6 @@ interface ContactSheetProps {
 }
 
 const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
-  const { toast } = useToast();
-  const form = useForm<FormValues & { website?: string }>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-      website: "",
-    },
-  });
-
-  const onSubmit = async (data: FormValues & { website?: string }) => {
-    try {
-      if (data.website && data.website.trim().length > 0) {
-        toast({
-          title: "Submission blocked",
-          description: "Bot detected.",
-          variant: "destructive",
-        });
-        return;
-      }
-      const { error } = await supabase.from("contact_submissions").insert([
-        {
-          name: data.name,
-          email: data.email,
-          phone: data.phone || null,
-          subject: "Contact Form Submission",
-          message: data.message,
-        }
-      ]);
-      if (error) throw error;
-      try {
-        const { data: notifyData, error: notifyError } = await supabase.functions.invoke("notify-contact-submit", {
-          body: {
-            ...data,
-            subject: "Contact Form Submission",
-            source: "ContactSheet",
-          },
-        });
-        if (notifyError) {
-          console.error("Edge function error:", notifyError);
-        }
-      } catch (ex) {
-        console.error("Failed to call edge function from ContactSheet:", ex);
-      }
-
-      toast({
-        title: "Message sent!",
-        description: "Thank you for your message. I'll get back to you soon.",
-      });
-
-      form.reset();
-      onOpenChange(false);
-    } catch (error: any) {
-      console.error("Failed to send form submission to Supabase:", error);
-      toast({
-        title: "Something went wrong",
-        description: "Please try again later.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent 
