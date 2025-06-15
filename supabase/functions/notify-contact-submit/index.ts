@@ -76,13 +76,13 @@ const handler = async (req: Request): Promise<Response> => {
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
-      <td align="center" style="padding:72px 16px;">
+      <td align="center" style="padding:32px 16px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
                style="max-width:640px;background:#000000;
                border:1px solid #222326;border-radius:16px;
                box-shadow:0 12px 48px rgba(0,0,0,.55);overflow:hidden;">
           <tr>
-            <td style="padding:56px 48px 40px 48px;text-align:center;background:#000000;">
+            <td style="padding:32px 48px 24px 48px;text-align:center;background:#000000;">
               <img src="https://raw.githubusercontent.com/Suphian/suphiansite/main/u1327668621_logo_SUPH_--chaos_15_--ar_23_--profile_aa8enny_--st_b2040bf7-71f1-4263-bf3e-422f9561d81e.png"
                    width="140" alt="Running astronaut illustration"
                    style="display:block;margin:0 auto 28px auto;border-radius:12px;">
@@ -93,7 +93,7 @@ const handler = async (req: Request): Promise<Response> => {
             </td>
           </tr>
           <tr>
-            <td style="padding:44px 48px 32px 48px;text-align:left;">
+            <td style="padding:16px 48px 32px 48px;text-align:left;">
               <p style="margin:0 0 16px 0;color:#FFFFFF;font-size:16px;line-height:1.55;font-weight:500;">
                 Your message just completed its orbit and landed in my inbox. Expect a reply within 1–2 business days.
               </p>
