@@ -1,8 +1,4 @@
 import React from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "@/hooks/use-toast";
 import {
   Sheet,
   SheetContent,
@@ -20,68 +16,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import supabase from "@/integrations/supabase/client";
 import ContactForm from "./ContactForm";
 import ContactChipsBar from "./ContactChipsBar";
-
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(2, "Name must be at least 2 characters.")
-    .max(72, "Name must be 72 characters or less."),
-  email: z
-    .string()
-    .email("Please enter a valid email address.")
-    .max(160, "Email must be 160 characters or less."),
-  phone: z
-    .string()
-    .max(48, "Phone must be 48 characters or less.")
-    .regex(
-      /^(\+?\d{1,4}[\s-]?)?((\(\d{3,}\))|\d{3,})[\s-]?\d{3,}[\s-]?\d{4,}$/,
-      "Please enter a valid phone number."
-    )
-    .optional()
-    .or(z.literal("")),
-  message: z
-    .string()
-    .min(10, "Message must be at least 10 characters.")
-    .max(2500, "Message too long (max 2500 chars)."),
-  website: z.string().max(0, "Bot submission detected.").optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { useContactForm, contactFormSchema, ContactFormData } from "@/hooks/useContactForm";
+import { chipOptions } from "@/utils/contactFormConstants";
 
 interface ContactSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-const COUNT_OF_MONTE_CRISTO_QUOTES = [
-  "All human wisdom is contained in these two words – Wait and Hope.",
-  "How did I escape? With difficulty. How did I plan this moment? With pleasure.",
-  "He who has felt the deepest grief is best able to experience supreme happiness.",
-  "I am not proud, but I am happy; and happiness blinds, I think, more than pride.",
-  "Hatred is blind, rage carries you away, and he who pours out vengeance runs the risk of tasting a bitter draught.",
-  "Life is a storm, my young friend. You will bask in the sunlight one moment, be shattered on the rocks the next.",
-  "In prosperity prudence, in adversity patience.",
-  "Your life story is in your own hands; mold it wisely.",
-  "I have not led a wise life, but I have often been saved by a kind word or a warm smile.",
-];
-
-const chipOptions = [
-  {
-    label: "Referral request",
-    text: "I'd love a referral for your team – here’s a bit about me…"
-  },
-  {
-    label: "Job opportunity",
-    text: "We have a PM opening that seems aligned with your background. Are you open to chat?"
-  },
-  {
-    label: "Tech chat",
-    text: "I saw your talk on payments infrastructure and would like to exchange ideas on data modeling."
-  }
-];
 
 const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
   const { toast } = useToast();

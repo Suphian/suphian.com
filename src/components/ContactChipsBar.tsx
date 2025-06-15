@@ -1,24 +1,6 @@
-import React from "react";
-import { COUNT_OF_MONTE_CRISTO_QUOTES } from "@/utils/MonteCristoQuotes";
 
-const chipOptions = [
-  {
-    label: "Referral request",
-    text: "I'd love a referral for your team – here’s a bit about me…"
-  },
-  {
-    label: "Job opportunity",
-    text: "We have a PM opening that seems aligned with your background. Are you open to chat?"
-  },
-  {
-    label: "Tech chat",
-    text: "I saw your talk on payments infrastructure and would like to exchange ideas on data modeling."
-  },
-  {
-    label: "Request Resume",
-    text: "Could you please share your latest resume with me? Thank you!"
-  }
-];
+import React from "react";
+import { COUNT_OF_MONTE_CRISTO_QUOTES, chipOptions } from "@/utils/contactFormConstants";
 
 interface ContactChipsBarProps {
   textareaId: string;
@@ -27,12 +9,10 @@ interface ContactChipsBarProps {
 }
 
 const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId, onChange, value }) => {
-  // Use event delegation but scoped to this component's div
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     if (!target.classList.contains("chip")) return;
 
-    // Compose the message
     let newValue: string | undefined;
     if (target.textContent === "Random") {
       const idx = Math.floor(Math.random() * COUNT_OF_MONTE_CRISTO_QUOTES.length);
@@ -43,11 +23,9 @@ const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId, onChange,
       newValue = target.getAttribute("data-text") || "";
     }
 
-    // If using controlled form, call onChange
     if (onChange && typeof newValue === "string") {
       onChange(newValue);
     } else {
-      // Fallback: update textarea directly for non-form uses
       const ta = document.getElementById(textareaId) as HTMLTextAreaElement | null;
       if (ta && typeof newValue === "string") {
         ta.value = newValue;
