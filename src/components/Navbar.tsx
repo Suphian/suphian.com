@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -25,15 +24,18 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [{
-    name: "About",
-    path: "/",
-    scrollTo: "about-section"
-  }, {
-    name: "Work",
-    path: "/",
-    scrollTo: "experience-section"
-  }];
+  const navLinks = [
+    {
+      name: "About",
+      path: "/",
+      scrollTo: "about-section"
+    },
+    {
+      name: "Work",
+      path: "/",
+      scrollTo: "experience-section"
+    }
+  ];
 
   const isActive = (path: string) => location.pathname === path;
 
