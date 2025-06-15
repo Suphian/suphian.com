@@ -8,7 +8,9 @@ import ContactSheet from "@/components/ContactSheet";
 
 const About = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isContactOpen, setIsContactOpen] = useState(false); // New state for contact sheet
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [pendingContactSheet, setPendingContactSheet] = useState(false);
+
   const aboutSectionRef = useRef<HTMLDivElement>(null);
   const leadershipSectionRef = useRef<HTMLDivElement>(null);
 
@@ -17,8 +19,17 @@ const About = () => {
     return cleanup;
   }, []);
 
+  // When the modal closes and pendingContactSheet is true, open contact sheet
+  useEffect(() => {
+    if (!isModalOpen && pendingContactSheet) {
+      setIsContactOpen(true);
+      setPendingContactSheet(false);
+    }
+  }, [isModalOpen, pendingContactSheet]);
+
   const handleGetInTouchFromModal = () => {
-    setIsContactOpen(true);
+    setPendingContactSheet(true);
+    setIsModalOpen(false);
   };
 
   return (
@@ -184,4 +195,3 @@ const About = () => {
 };
 
 export default About;
-
