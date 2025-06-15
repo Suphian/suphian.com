@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
@@ -37,10 +36,10 @@ const ExperienceSection = () => {
   }, {
     period: "2014 - 2018",
     company: "Huge Inc",
-    role: "Growth Marketing Analyst",
+    role: "Senior Product Analyst (Growth & Marketing)",
     description: "Specialized in site redesigns, A/B testing, and multivariate testing for high-impact brands. Helped improve UX and conversion for companies like Hulu, Apple and AMC Theaters.",
     links: [{
-      url: "https://www.baincapital.com/news/900-parkas-bains-canada-goose-goes-public",
+      url: "https://www.baincapital.com/news/900-parkas-bains-canada-goes-public",
       title: "Bain Capital: Canada Goose IPO"
     }, {
       url: "https://workingnotworking.com/projects/112837-hulu-redesign",
