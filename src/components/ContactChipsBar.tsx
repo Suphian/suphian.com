@@ -1,3 +1,4 @@
+
 import React from "react";
 import { COUNT_OF_MONTE_CRISTO_QUOTES } from "@/utils/MonteCristoQuotes";
 
@@ -32,10 +33,8 @@ const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId }) => {
       // Pick a random quote
       const idx = Math.floor(Math.random() * COUNT_OF_MONTE_CRISTO_QUOTES.length);
       const quote = COUNT_OF_MONTE_CRISTO_QUOTES[idx];
-      // Simulate a random page number from 1–600
-      const page = Math.floor(Math.random() * 600) + 1;
       const authorLine = "Alexandre Dumas, Count of Monte Cristo";
-      ta.value = `"${quote}"\n— ${authorLine}, page ${page}`;
+      ta.value = `"${quote}"\n— ${authorLine}`;
       ta.dispatchEvent(new Event('input', { bubbles: true }));
     } else {
       const fillText = target.getAttribute("data-text");
@@ -66,3 +65,4 @@ const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId }) => {
 };
 
 export default ContactChipsBar;
+
