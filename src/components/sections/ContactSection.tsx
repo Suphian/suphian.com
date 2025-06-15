@@ -81,7 +81,14 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
       });
 
       form.reset();
+
+      // Close modal, then open ContactSheet side panel
       setIsOpen(false);
+      // Use a small timeout to ensure modal is fully closed before opening side panel
+      setTimeout(() => {
+        onContactClick();
+      }, 250);
+
     } catch (error) {
       console.error("Failed to send form submission to Supabase:", error);
       toast({
@@ -192,3 +199,4 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
 };
 
 export default ContactSection;
+
