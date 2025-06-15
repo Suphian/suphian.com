@@ -28,8 +28,15 @@ const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId }) => {
     if (!target.classList.contains("chip")) return;
     const ta = document.getElementById(textareaId) as HTMLTextAreaElement | null;
     if (!ta) return;
+
     if (target.textContent === "Random") {
-      ta.value = COUNT_OF_MONTE_CRISTO_QUOTES[Math.floor(Math.random() * COUNT_OF_MONTE_CRISTO_QUOTES.length)];
+      // Pick a random quote
+      const idx = Math.floor(Math.random() * COUNT_OF_MONTE_CRISTO_QUOTES.length);
+      const quote = COUNT_OF_MONTE_CRISTO_QUOTES[idx];
+      // Simulate a random page number from 1–600
+      const page = Math.floor(Math.random() * 600) + 1;
+      const author = "Alexandre Dumas";
+      ta.value = `"${quote}"\n— ${author}, page ${page}`;
       ta.dispatchEvent(new Event('input', { bubbles: true }));
     } else {
       const fillText = target.getAttribute("data-text");
@@ -60,3 +67,4 @@ const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId }) => {
 };
 
 export default ContactChipsBar;
+
