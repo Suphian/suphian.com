@@ -14,33 +14,27 @@ export type Database = {
           created_at: string
           email: string
           id: string
-          is_cv_request: boolean
           message: string
           name: string
           phone: string | null
-          status: string
           subject: string | null
         }
         Insert: {
           created_at?: string
           email: string
           id?: string
-          is_cv_request?: boolean
           message: string
           name: string
           phone?: string | null
-          status?: string
           subject?: string | null
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
-          is_cv_request?: boolean
           message?: string
           name?: string
           phone?: string | null
-          status?: string
           subject?: string | null
         }
         Relationships: []
