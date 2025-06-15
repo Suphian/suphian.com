@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import WavyUnderline from "@/components/WavyUnderline";
@@ -84,7 +83,10 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
         <WavyUnderline />
       </h2>
       <p className="paragraph max-w-2xl mx-auto mb-8">
-        I'm always open to discussing new projects, opportunities, or partnerships.
+        I'm always open to discussing new projects, opportunities, or partnerships.<br />
+        <span className="font-semibold text-accent">
+          To request my CV, please fill out this form and mention in your message that you're requesting my resume.
+        </span>
       </p>
       <button 
         onClick={() => setIsOpen(true)}
@@ -100,7 +102,10 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
           <DialogHeader>
             <DialogTitle>Get in Touch</DialogTitle>
             <DialogDescription>
-              Send me a message and I'll get back to you as soon as possible.
+              Send me a message and I'll get back to you as soon as possible. 
+              <span className="block mt-1 text-accent font-medium">
+                If you're requesting my CV, please mention it in your message!
+              </span>
             </DialogDescription>
           </DialogHeader>
           
