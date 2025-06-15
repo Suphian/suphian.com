@@ -1,12 +1,22 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
+// In-memory rate limit map (per edge function instance)
+const rateLimitMap = new Map<string, { count: number; ts: number }>();
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute window
+const RATE_LIMIT_MAX = 3; // Max 3 submissions per window per IP
+
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
+  "Content-Security-Policy": "default-src 'self'; img-src *; script-src 'none'; object-src 'none'",
+  "X-Frame-Options": "DENY",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "no-referrer",
+  "Permissions-Policy": "geolocation=(), microphone=()",
 };
 
 function escapeHTML(str: string): string {
@@ -19,24 +29,61 @@ function escapeHTML(str: string): string {
     .replace(/'/g, "&#39;");
 }
 
+const getClientIp = (req: Request): string => {
+  // For edge functions, check X-Forwarded-For from proxy/CDN
+  const ip =
+    req.headers.get("x-forwarded-for") ||
+    req.headers.get("cf-connecting-ip") || // Cloudflare
+    "unknown";
+  return ip;
+};
+
 const handler = async (req: Request): Promise<Response> => {
+  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const ip = getClientIp(req);
+
+  // Rate limit logic per IP
+  const now = Date.now();
+  let user = rateLimitMap.get(ip);
+  if (!user || now > user.ts + RATE_LIMIT_WINDOW_MS) {
+    // Reset quota for window
+    rateLimitMap.set(ip, { count: 1, ts: now });
+  } else if (user.count >= RATE_LIMIT_MAX) {
+    // Too many requests
+    return new Response(
+      JSON.stringify({ error: "Too many submissions. Please wait a minute and try again." }),
+      { status: 429, headers: corsHeaders }
+    );
+  } else {
+    user.count++;
+    rateLimitMap.set(ip, user);
+  }
+
   try {
     const body = await req.json();
-    // Sanitized fields
-    const nameRaw = body.name ?? "";
-    const name = escapeHTML(nameRaw);
-    // Extract first name
-    const firstName = name.split(" ")[0]; // If name is empty, will be ""
-    const email = escapeHTML(body.email ?? "");
-    const messageRaw: string = typeof body.message === "string" ? body.message : "";
-    const message = escapeHTML(messageRaw).replace(/\n/g, "<br/>");
-    const source = escapeHTML(body.source ?? "");
+    // Honeypot: if 'website' field is present and filled, block submission
+    if (body.website && body.website.trim().length > 0) {
+      return new Response(
+        JSON.stringify({ error: "Bot detected. Submission blocked." }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
 
-    // Notification to site owner
+    // Sanitized fields with length limits
+    const nameRaw = String(body.name ?? "").slice(0, 72);
+    const name = escapeHTML(nameRaw);
+    const firstName = name.split(" ")[0];
+    const email = escapeHTML((body.email ?? "").slice(0, 160));
+    // Limit message size as well
+    const messageRaw: string = typeof body.message === "string" ? body.message.slice(0, 2500) : "";
+    const message = escapeHTML(messageRaw).replace(/\n/g, "<br/>");
+    const source = escapeHTML((body.source ?? "").slice(0, 48));
+
+    // Notification to site owner (keep other logic unchanged)
     const html = `
       <h2>New Contact Form Submission</h2>
       <p><strong>Name:</strong> ${name}</p>
@@ -55,10 +102,9 @@ const handler = async (req: Request): Promise<Response> => {
       reply_to: email ? email : undefined,
     });
 
-    // Send confirmation to submitter (if email provided)
+    // Send confirmation to submitter (if email provided) -- unchanged, but enforce maxLength
     let confirmEmailResponse: any = null;
     if (email) {
-      // Custom confirmation HTML using firstName
       const thankYouHtml = `
 <!DOCTYPE html>
 <html lang="en" style="margin:0;padding:0;
@@ -69,11 +115,8 @@ const handler = async (req: Request): Promise<Response> => {
   <title>Thanks for reaching out</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-
-<body style="margin:0;padding:0;
-  background:linear-gradient(135deg,#101014 0%,#1b1e2f 50%,#2d1b55 100%);
+<body style="margin:0;padding:0;background:linear-gradient(135deg,#101014 0%,#1b1e2f 50%,#2d1b55 100%);
   font-family:'Inter',Arial,sans-serif;color:#F9FAFB;">
-
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
       <td align="center" style="padding:32px 16px;">
@@ -156,7 +199,6 @@ const handler = async (req: Request): Promise<Response> => {
 </body>
 </html>
       `;
-
       confirmEmailResponse = await resend.emails.send({
         from: "Contact Notification <hi@suphian.com>",
         to: [email],
@@ -174,6 +216,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
     );
   } catch (error: any) {
+    // Only log errors server-side
     console.error("Notify Contact Submit error:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
@@ -186,3 +229,16 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 serve(handler);
+
+/**
+ * NOTE:
+ * For full Content Security Policy enforcement, consider setting HTTP headers
+ * at the CDN/hosting level, e.g.:
+ * - Strict-Transport-Security
+ * - Content-Security-Policy
+ * - X-Frame-Options
+ * - X-Content-Type-Options
+ * - Referrer-Policy
+ * - Permissions-Policy
+ * The above code adds some of these as demo, but production should use hosting config.
+ */

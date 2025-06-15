@@ -23,12 +23,29 @@ import { Textarea } from "@/components/ui/textarea";
 import supabase from "@/integrations/supabase/client";
 import ContactChipsBar from "./ContactChipsBar";
 
-// Update validation: remove subject
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters."),
-  email: z.string().email("Please enter a valid email address."),
-  phone: z.string().optional(),
-  message: z.string().min(10, "Message must be at least 10 characters."),
+  name: z
+    .string()
+    .min(2, "Name must be at least 2 characters.")
+    .max(72, "Name must be 72 characters or less."),
+  email: z
+    .string()
+    .email("Please enter a valid email address.")
+    .max(160, "Email must be 160 characters or less."),
+  phone: z
+    .string()
+    .max(48, "Phone must be 48 characters or less.")
+    .regex(
+      /^(\+?\d{1,4}[\s-]?)?((\(\d{3,}\))|\d{3,})[\s-]?\d{3,}[\s-]?\d{4,}$/,
+      "Please enter a valid phone number."
+    )
+    .optional()
+    .or(z.literal("")),
+  message: z
+    .string()
+    .min(10, "Message must be at least 10 characters.")
+    .max(2500, "Message too long (max 2500 chars)."),
+  website: z.string().max(0, "Bot submission detected.").optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -39,7 +56,6 @@ interface ContactSheetProps {
 }
 
 const COUNT_OF_MONTE_CRISTO_QUOTES = [
-  // A short selection for demo; expand with more for production.
   "All human wisdom is contained in these two words – Wait and Hope.",
   "How did I escape? With difficulty. How did I plan this moment? With pleasure.",
   "He who has felt the deepest grief is best able to experience supreme happiness.",
@@ -49,7 +65,6 @@ const COUNT_OF_MONTE_CRISTO_QUOTES = [
   "In prosperity prudence, in adversity patience.",
   "Your life story is in your own hands; mold it wisely.",
   "I have not led a wise life, but I have often been saved by a kind word or a warm smile.",
-    // Add more if desired
 ];
 
 const chipOptions = [
@@ -69,18 +84,27 @@ const chipOptions = [
 
 const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
   const { toast } = useToast();
-  const form = useForm<FormValues>({
+  const form = useForm<FormValues & { website?: string }>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
       phone: "",
       message: "",
+      website: "",
     },
   });
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: FormValues & { website?: string }) => {
     try {
+      if (data.website && data.website.trim().length > 0) {
+        toast({
+          title: "Submission blocked",
+          description: "Bot detected.",
+          variant: "destructive",
+        });
+        return;
+      }
       const { error } = await supabase.from("contact_submissions").insert([
         {
           name: data.name,
@@ -90,11 +114,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
           message: data.message,
         }
       ]);
-      if (error) {
-        throw error;
-      }
-
-      // Notify via edge function with fixed subject
+      if (error) throw error;
       try {
         const { data: notifyData, error: notifyError } = await supabase.functions.invoke("notify-contact-submit", {
           body: {
@@ -105,8 +125,6 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
         });
         if (notifyError) {
           console.error("Edge function error:", notifyError);
-        } else {
-          console.log("Edge function success:", notifyData);
         }
       } catch (ex) {
         console.error("Failed to call edge function from ContactSheet:", ex);
@@ -144,6 +162,13 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
           <div className="flex-grow p-6 md:p-8 overflow-y-auto">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-[600px] mx-auto">
+                <input
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  style={{ display: 'none' }}
+                  {...form.register("website")}
+                />
                 <FormField
                   control={form.control}
                   name="name"
@@ -157,6 +182,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                           placeholder="Your name" 
                           {...field} 
                           className="h-12 border focus:border-accent transition-colors" 
+                          maxLength={72}
                         />
                       </FormControl>
                       <FormMessage className="text-accent" />
@@ -178,6 +204,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                           placeholder="your.email@example.com" 
                           {...field} 
                           className="h-12 border focus:border-accent transition-colors" 
+                          maxLength={160}
                         />
                       </FormControl>
                       <FormMessage className="text-accent" />
@@ -199,6 +226,8 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                           placeholder="+1 (555) 123-4567" 
                           {...field} 
                           className="h-12 border focus:border-accent transition-colors" 
+                          maxLength={48}
+                          pattern="^(\+?\d{1,4}[\s-]?)?((\(\d{3,}\))|\d{3,})[\s-]?\d{3,}[\s-]?\d{4,}$"
                         />
                       </FormControl>
                       <FormMessage className="text-accent" />
@@ -221,9 +250,8 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                             id="message"
                             placeholder="Hey, what's up? Talk to me. Whether you're looking for a referral, have a new opportunity, or just want to chat tech, I'm open to collaborating or connecting."
                             className="min-h-[150px] border focus:border-accent resize-none"
+                            maxLength={2500}
                           />
-                          {/* CHIP BAR moved to a new component.
-                              Pass the onChange and value so chip selects sync with react-hook-form */}
                           <ContactChipsBar textareaId="message" onChange={field.onChange} value={field.value} />
                         </>
                       </FormControl>

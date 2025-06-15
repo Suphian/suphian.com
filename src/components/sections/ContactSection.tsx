@@ -17,9 +17,10 @@ interface ContactSectionProps {
 
 // Form validation schema
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+  name: z.string().min(2, "Name must be at least 2 characters").max(72, "Name must be 72 characters or less."),
+  email: z.string().email("Please enter a valid email").max(160, "Email must be 160 characters or less."),
+  message: z.string().min(10, "Message must be at least 10 characters").max(2500, "Message too long (max 2500 chars)."),
+  website: z.string().max(0, "Bot submission detected.").optional(), // honeypot
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -35,10 +36,19 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
       name: "",
       email: "",
       message: "",
+      website: "",
     },
   });
 
   const handleSubmit = async (data: FormData) => {
+    if (data.website && data.website.trim().length > 0) {
+      toast({
+        title: "Submission blocked",
+        description: "Bot detected.",
+        variant: "destructive"
+      });
+      return;
+    }
     setIsSubmitting(true);
 
     try {
@@ -51,11 +61,8 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
           phone: null,
         }
       ]);
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
-      // notify edge function (with visible error logging)
       try {
         const { data: notifyData, error: notifyError } = await supabase.functions.invoke("notify-contact-submit", {
           body: {
@@ -66,11 +73,11 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
           }
         });
         if (notifyError) {
+          // Only log errors, not regular flow
           console.error("Edge function error:", notifyError);
-        } else {
-          console.log("Edge function success:", notifyData);
         }
       } catch (ex) {
+        // Only log errors
         console.error("Failed to call edge function from ContactSection:", ex);
       }
 
@@ -80,13 +87,13 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
       });
 
       form.reset();
-
       setIsOpen(false);
       setTimeout(() => {
         onContactClick();
       }, 250);
 
     } catch (error) {
+      // Only log critical errors
       console.error("Failed to send form submission to Supabase:", error);
       toast({
         title: "Something went wrong",
@@ -132,6 +139,14 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
           
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+              {/* Honeypot field */}
+              <input 
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                style={{ display: 'none' }}
+                {...form.register("website")}
+              />
               <FormField
                 control={form.control}
                 name="name"
@@ -139,7 +154,7 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your name" {...field} />
+                      <Input placeholder="Your name" {...field} maxLength={72} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -153,7 +168,7 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="your.email@example.com" {...field} />
+                      <Input type="email" placeholder="your.email@example.com" {...field} maxLength={160} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -170,7 +185,8 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
                       <Textarea 
                         placeholder="What would you like to discuss?" 
                         className="min-h-[120px]" 
-                        {...field} 
+                        {...field}
+                        maxLength={2500}
                       />
                     </FormControl>
                     <FormMessage />
