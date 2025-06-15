@@ -33,7 +33,7 @@ const Index = () => {
     setIsModalOpen(false);
     setTimeout(() => {
       setContactOpen(true);
-    }, 250); // matches the modal exit animation
+    }, 125); // faster transition from modal to side panel
   };
 
   return (
