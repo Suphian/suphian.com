@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
@@ -55,9 +56,9 @@ const handler = async (req: Request): Promise<Response> => {
       <p>Submission Source: ${source || "Unknown"}</p>
     `;
 
-    // All contact fields are now passed as variables in the HTML email.
+    // Updated "from" address to your verified domain
     const emailResponse = await resend.emails.send({
-      from: "Contact Notification <onboarding@resend.dev>",
+      from: "Contact Notification <hi@suphian.com>",
       to: ["suph.tweel@gmail.com"], // your recipient email
       subject: subject ? `Contact Form: ${subject}` : "New Contact Submission",
       html,
@@ -81,3 +82,4 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 serve(handler);
+
