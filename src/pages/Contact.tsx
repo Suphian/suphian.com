@@ -79,15 +79,22 @@ const Contact = () => {
         throw error;
       }
 
-      // Edge function call for notification
-      fetch("https://ujughujunixnwlmtdsxd.supabase.co/functions/v1/notify-contact-submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          source: "ContactPage",
-        })
-      }).catch(() => {});
+      // Edge function call for notification, with full logging and supabase invoke
+      try {
+        const { data: notifyData, error: notifyError } = await supabase.functions.invoke("notify-contact-submit", {
+          body: {
+            ...formData,
+            source: "ContactPage",
+          }
+        });
+        if (notifyError) {
+          console.error("Edge function error:", notifyError);
+        } else {
+          console.log("Edge function success:", notifyData);
+        }
+      } catch (ex) {
+        console.error("Failed to call edge function from Contact page:", ex);
+      }
 
       toast({
         title: "Message sent!",

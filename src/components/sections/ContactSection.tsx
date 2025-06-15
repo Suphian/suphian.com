@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import WavyUnderline from "@/components/WavyUnderline";
@@ -55,17 +56,24 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
         throw error;
       }
 
-      // notify edge function (no UI impact)
-      fetch("https://ujughujunixnwlmtdsxd.supabase.co/functions/v1/notify-contact-submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          subject: "Contact (Modal Form)",
-          phone: null,
-          source: "ContactSectionModal"
-        })
-      }).catch(() => {});
+      // notify edge function (with visible error logging)
+      try {
+        const { data: notifyData, error: notifyError } = await supabase.functions.invoke("notify-contact-submit", {
+          body: {
+            ...data,
+            subject: "Contact (Modal Form)",
+            phone: null,
+            source: "ContactSectionModal"
+          }
+        });
+        if (notifyError) {
+          console.error("Edge function error:", notifyError);
+        } else {
+          console.log("Edge function success:", notifyData);
+        }
+      } catch (ex) {
+        console.error("Failed to call edge function from ContactSection:", ex);
+      }
 
       toast({
         title: "Message sent!",

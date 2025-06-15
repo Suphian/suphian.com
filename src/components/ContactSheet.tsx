@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -66,15 +67,22 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
         throw error;
       }
 
-      // Notify via edge function (ignore failures for user experience)
-      fetch("https://ujughujunixnwlmtdsxd.supabase.co/functions/v1/notify-contact-submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          source: "ContactSheet",
-        })
-      }).catch((e) => {});
+      // Notify via edge function (better error handling)
+      try {
+        const { data: notifyData, error: notifyError } = await supabase.functions.invoke("notify-contact-submit", {
+          body: {
+            ...data,
+            source: "ContactSheet",
+          },
+        });
+        if (notifyError) {
+          console.error("Edge function error:", notifyError);
+        } else {
+          console.log("Edge function success:", notifyData);
+        }
+      } catch (ex) {
+        console.error("Failed to call edge function from ContactSheet:", ex);
+      }
 
       toast({
         title: "Message sent!",
