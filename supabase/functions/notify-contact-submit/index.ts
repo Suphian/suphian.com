@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
@@ -37,25 +36,29 @@ const handler = async (req: Request): Promise<Response> => {
     const messageRaw: string = typeof body.message === "string" ? body.message : "";
     const message = escapeHTML(messageRaw).replace(/\n/g, "<br/>");
     const source = escapeHTML(body.source ?? "");
-  
-    const html = `
-      <h2>New Contact Form Submission</h2>
+
+    // Build contact info block
+    let contactInfoHtml = `
       <p><strong>Name:</strong> ${name}</p>
       <p><strong>Email:</strong> ${email}</p>
-      ${
-        phone
-          ? `<p><strong>Phone:</strong> ${phone}</p>`
-          : ""
-      }
+    `;
+    if (phone) {
+      contactInfoHtml += `<p><strong>Phone:</strong> ${phone}</p>`;
+    }
+
+    const html = `
+      <h2>New Contact Form Submission</h2>
+      ${contactInfoHtml}
       <p><strong>Subject:</strong> ${subject}</p>
       <p><strong>Message:</strong><br/>${message}</p>
       <hr />
       <p>Submission Source: ${source || "Unknown"}</p>
     `;
 
+    // All contact fields are now passed as variables in the HTML email.
     const emailResponse = await resend.emails.send({
       from: "Contact Notification <onboarding@resend.dev>",
-      to: ["suph.tweel@gmail.com"],
+      to: ["suph.tweel@gmail.com"], // your recipient email
       subject: subject ? `Contact Form: ${subject}` : "New Contact Submission",
       html,
       reply_to: email ? email : undefined
@@ -78,4 +81,3 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 serve(handler);
-
