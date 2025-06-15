@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import supabase from "@/integrations/supabase/client";
+import ContactForm from "./ContactForm";
 import ContactChipsBar from "./ContactChipsBar";
 
 const formSchema = z.object({
@@ -166,125 +167,13 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
             </SheetDescription>
           </div>
           <div className="flex-grow p-6 md:p-8 overflow-y-auto">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-[600px] mx-auto" aria-labelledby="contact-desc">
-                {/* Honeypot field */}
-                <input
-                  type="text"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  style={{ display: 'none' }}
-                  {...form.register("website")}
-                  aria-hidden="true"
-                />
-                {/* Name */}
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel className="text-sm font-medium">
-                        Name <span className="text-accent">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Your name"
-                          {...field}
-                          className="h-12 border focus:border-accent transition-colors"
-                          maxLength={72}
-                          aria-required="true"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-accent" />
-                    </FormItem>
-                  )}
-                />
-                {/* Email */}
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel className="text-sm font-medium">
-                        Email <span className="text-accent">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="your.email@example.com"
-                          {...field}
-                          className="h-12 border focus:border-accent transition-colors"
-                          maxLength={160}
-                          aria-required="true"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-accent" />
-                    </FormItem>
-                  )}
-                />
-                {/* Phone */}
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel className="text-sm font-medium">
-                        Phone Number <span className="text-muted-foreground text-xs">(Optional)</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="tel"
-                          placeholder="+1 (555) 123-4567"
-                          {...field}
-                          className="h-12 border focus:border-accent transition-colors"
-                          maxLength={48}
-                          pattern="^(\+?\\d{1,4}[\\s-]?)?((\\(\\d{3,}\\))|\\d{3,})[\\s-]?\\d{3,}[\\s-]?\\d{4,}$"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-accent" />
-                    </FormItem>
-                  )}
-                />
-                {/* Message */}
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel className="text-sm font-medium">
-                        Message <span className="text-accent">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <>
-                          <Textarea
-                            {...field}
-                            id="message"
-                            placeholder="Hey, what's up? Talk to me. Whether you're looking for a referral, have a new opportunity, or just want to chat tech, I'm open to collaborating or connecting."
-                            className="min-h-[150px] border focus:border-accent resize-none"
-                            maxLength={2500}
-                            aria-required="true"
-                          />
-                          {/* Lazy-load chips bar if far down the page */}
-                          <ContactChipsBar textareaId="message" onChange={field.onChange} value={field.value} />
-                        </>
-                      </FormControl>
-                      <FormMessage className="text-accent" />
-                    </FormItem>
-                  )}
-                />
-                <button
-                  type="submit"
-                  className="wave-btn bg-accent text-white w-full h-14 mt-8 px-6 py-3 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group"
-                  disabled={form.formState.isSubmitting}
-                  aria-busy={form.formState.isSubmitting}
-                  aria-label={form.formState.isSubmitting ? "Sending..." : "Send Message"}
-                >
-                  <span className="relative z-10 group-hover:text-black transition-colors duration-300 slide-up">
-                    {form.formState.isSubmitting ? "Sending..." : "Send Message"}
-                  </span>
-                  <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
-                </button>
-
+            <ContactForm
+              showPhone
+              source="ContactSheet"
+              showChips
+              chipsBarComponent={<ContactChipsBar textareaId="message" />}
+              onSubmitted={() => onOpenChange(false)}
+              extraFields={
                 <div className="mt-12 flex justify-center">
                   <img
                     src="/lovable-uploads/db2efd18-0555-427b-89b4-c5cae8a5a143.png"
@@ -293,8 +182,8 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
                     loading="lazy"
                   />
                 </div>
-              </form>
-            </Form>
+              }
+            />
           </div>
           <div className="p-6 md:p-8 border-t bg-secondary/30">
             <div className="flex space-x-4 justify-center">

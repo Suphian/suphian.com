@@ -10,6 +10,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import supabase from "@/integrations/supabase/client";
+import ContactForm from "@/components/ContactForm";
 
 interface ContactSectionProps {
   onContactClick: () => void;
@@ -127,7 +128,6 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
         <span className="relative z-10 group-hover:text-background transition-colors duration-300">Get in Touch</span>
         <span className="absolute inset-0 bg-youtubeRed bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
       </button>
-
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-md" id="contact-dialog" role="dialog" aria-modal="true">
           <DialogHeader>
@@ -139,78 +139,15 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
               </span>
             </DialogDescription>
           </DialogHeader>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-              {/* Honeypot field */}
-              <input
-                type="text"
-                tabIndex={-1}
-                autoComplete="off"
-                style={{ display: 'none' }}
-                {...form.register("website")}
-                aria-hidden="true"
-              />
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Your name" {...field} maxLength={72} aria-required="true" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="your.email@example.com" {...field} maxLength={160} aria-required="true" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Message</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="What would you like to discuss?"
-                        className="min-h-[120px]"
-                        {...field}
-                        maxLength={2500}
-                        aria-required="true"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex justify-end pt-2">
-                <ButtonCustom
-                  type="submit"
-                  disabled={isSubmitting}
-                  aria-busy={isSubmitting}
-                  aria-label={isSubmitting ? "Sending..." : "Send Message"}
-                >
-                  {isSubmitting ? "Sending..." : "Send Message"}
-                </ButtonCustom>
-              </div>
-            </form>
-          </Form>
+          <ContactForm
+            source="ContactSectionModal"
+            onSubmitted={() => {
+              setIsOpen(false);
+              setTimeout(() => {
+                onContactClick();
+              }, 250);
+            }}
+          />
         </DialogContent>
       </Dialog>
     </section>
