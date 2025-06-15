@@ -42,7 +42,6 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
     setIsSubmitting(true);
 
     try {
-      // Store submission in Supabase
       const { error } = await supabase.from("contact_submissions").insert([
         {
           name: data.name,
@@ -55,6 +54,18 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
       if (error) {
         throw error;
       }
+
+      // notify edge function (no UI impact)
+      fetch("https://ujughujunixnwlmtdsxd.supabase.co/functions/v1/notify-contact-submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          subject: "Contact (Modal Form)",
+          phone: null,
+          source: "ContactSectionModal"
+        })
+      }).catch(() => {});
 
       toast({
         title: "Message sent!",

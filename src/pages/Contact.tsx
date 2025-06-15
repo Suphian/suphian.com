@@ -79,6 +79,16 @@ const Contact = () => {
         throw error;
       }
 
+      // Edge function call for notification
+      fetch("https://ujughujunixnwlmtdsxd.supabase.co/functions/v1/notify-contact-submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          source: "ContactPage",
+        })
+      }).catch(() => {});
+
       toast({
         title: "Message sent!",
         description: "Thank you for your message. I'll get back to you soon.",
