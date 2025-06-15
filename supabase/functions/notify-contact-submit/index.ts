@@ -33,12 +33,10 @@ const handler = async (req: Request): Promise<Response> => {
     const email = escapeHTML(body.email ?? "");
     const phone = escapeHTML(body.phone ?? "");
     const subject = escapeHTML(body.subject ?? "");
-    // For message, escape, then only allow explicit newlines to become <br>
     const messageRaw: string = typeof body.message === "string" ? body.message : "";
     const message = escapeHTML(messageRaw).replace(/\n/g, "<br/>");
     const source = escapeHTML(body.source ?? "");
 
-    // Build contact info block
     let contactInfoHtml = `
       <p><strong>Name:</strong> ${name}</p>
       <p><strong>Email:</strong> ${email}</p>
@@ -59,16 +57,42 @@ const handler = async (req: Request): Promise<Response> => {
     // Updated "from" address to your verified domain
     const emailResponse = await resend.emails.send({
       from: "Contact Notification <hi@suphian.com>",
-      to: ["suph.tweel@gmail.com"], // your recipient email
+      to: ["suph.tweel@gmail.com"],
       subject: subject ? `Contact Form: ${subject}` : "New Contact Submission",
       html,
-      reply_to: email ? email : undefined
+      reply_to: email ? email : undefined,
     });
 
-    return new Response(JSON.stringify({ result: "ok", emailResponse }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    // Send confirmation to submitter (if they provided an email)
+    let confirmEmailResponse: any = null;
+    if (email) {
+      const thankYouHtml = `
+        <h2>Thank you for reaching out, ${name || "there"}!</h2>
+        <p>I’ve received your message:</p>
+        <blockquote style="margin:1em 0;padding:1em;background:#f8f9fa;border-radius:6px;">
+          ${message}
+        </blockquote>
+        <p>I’ll get back to you as soon as possible.</p>
+        <hr />
+        <p><em>This is an automated confirmation.</em></p>
+      `;
+
+      confirmEmailResponse = await resend.emails.send({
+        from: "Contact Notification <hi@suphian.com>",
+        to: [email],
+        subject: "Thanks for contacting Suphian!",
+        html: thankYouHtml,
+        reply_to: "hi@suphian.com",
+      });
+    }
+
+    return new Response(
+      JSON.stringify({ result: "ok", emailResponse, confirmEmailResponse }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
   } catch (error: any) {
     console.error("Notify Contact Submit error:", error);
     return new Response(
