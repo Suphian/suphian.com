@@ -1,5 +1,6 @@
 import { UAParser } from 'ua-parser-js';
 import supabase from '@/integrations/supabase/client';
+import { getTrafficType } from './ipDetection';
 
 interface EventTrackerConfig {
   enableInDevelopment?: boolean;
@@ -42,7 +43,6 @@ class SecureEventTracker {
   private batchTimer: NodeJS.Timeout | null = null;
   private isInitialized = false;
   private sessionStored = false;
-  private internalDomains = ['localhost', '127.0.0.1'];
 
   constructor(config: EventTrackerConfig = {}) {
     this.config = {
@@ -108,10 +108,10 @@ class SecureEventTracker {
       ipAddress = ipData.ip;
       console.log('🔒 Got IP address:', ipAddress);
       
-      isInternal = this.internalDomains.some(domain => 
-        window.location.hostname.includes(domain)
-      );
-      console.log('🔒 Is internal user:', isInternal);
+      // Use the proper traffic type detection instead of hostname check
+      const trafficType = await getTrafficType();
+      isInternal = trafficType === 'internal';
+      console.log('🔒 Traffic type detected:', trafficType, '- Is internal user:', isInternal);
       
       locationData = {
         country: ipData.country_name,
@@ -122,6 +122,13 @@ class SecureEventTracker {
       console.log('🔒 Location data:', locationData);
     } catch (error) {
       console.log('⚠️ Could not fetch location data:', error);
+      
+      // Fallback to hostname check if IP detection fails
+      const internalDomains = ['localhost', '127.0.0.1'];
+      isInternal = internalDomains.some(domain => 
+        window.location.hostname.includes(domain)
+      );
+      console.log('🔒 Using fallback hostname check - Is internal user:', isInternal);
     }
 
     this.sessionData = {
