@@ -42,6 +42,7 @@ class SecureEventTracker {
   private eventBuffer: EventData[] = [];
   private batchTimer: NodeJS.Timeout | null = null;
   private isInitialized = false;
+  private sessionStored = false;
   private internalDomains = ['localhost', '127.0.0.1'];
 
   constructor(config: EventTrackerConfig = {}) {
@@ -138,7 +139,7 @@ class SecureEventTracker {
   }
 
   private async storeSession(): Promise<void> {
-    if (!this.sessionData) return;
+    if (!this.sessionData || this.sessionStored) return;
 
     try {
       const { error } = await supabase
@@ -149,16 +150,22 @@ class SecureEventTracker {
 
       if (error) {
         console.error('Failed to store session:', error);
+        throw error;
       } else {
+        this.sessionStored = true;
         console.log('✅ Secure session stored successfully');
       }
     } catch (error) {
       console.error('Error storing session:', error);
+      throw error;
     }
   }
 
   public trackEvent(eventName: string, eventPayload: any = {}): void {
-    if (!this.isInitialized) return;
+    if (!this.isInitialized || !this.sessionStored) {
+      console.warn('Cannot track event: tracker not initialized or session not stored');
+      return;
+    }
 
     // Sanitize event payload to remove sensitive data
     const sanitizedPayload = this.sanitizeEventPayload(eventPayload);
@@ -207,7 +214,7 @@ class SecureEventTracker {
   }
 
   private async flushEvents(): Promise<void> {
-    if (this.eventBuffer.length === 0) return;
+    if (this.eventBuffer.length === 0 || !this.sessionStored) return;
 
     const eventsToFlush = [...this.eventBuffer];
     this.eventBuffer = [];
@@ -219,13 +226,13 @@ class SecureEventTracker {
 
       if (error) {
         console.error('Failed to store events:', error);
-        this.eventBuffer.unshift(...eventsToFlush);
+        // Don't put events back in buffer to avoid infinite loops
       } else {
         console.log(`✅ Stored ${eventsToFlush.length} secure events`);
       }
     } catch (error) {
       console.error('Error flushing events:', error);
-      this.eventBuffer.unshift(...eventsToFlush);
+      // Don't put events back in buffer to avoid infinite loops
     }
   }
 
@@ -235,6 +242,7 @@ class SecureEventTracker {
     }
     this.flushEvents();
     this.isInitialized = false;
+    this.sessionStored = false;
   }
 
   public track(eventName: string, eventPayload: any = {}): void {
