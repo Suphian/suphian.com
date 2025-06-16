@@ -1,8 +1,9 @@
-import React from "react";
+
+import React, { forwardRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 
-const ExperienceSection = () => {
+const ExperienceSection = forwardRef<HTMLDivElement>((props, ref) => {
   const experiences = [{
     period: "2020 - Present",
     company: "YouTube",
@@ -50,7 +51,8 @@ const ExperienceSection = () => {
     }]
   }];
   
-  return <section id="experience-section" className="mb-20 reveal relative">
+  return (
+    <section id="experience-section" ref={ref} className="mb-20 reveal relative">
       {/* Updated heading to match the heading-xl class used in AboutSection */}
       <h2 className="heading-xl mb-12 text-left">Experience</h2>
       
@@ -58,7 +60,8 @@ const ExperienceSection = () => {
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/80 to-transparent opacity-50 -top-32 h-64 z-0"></div>
       
       <div className="grid grid-cols-1 gap-10 relative z-10">
-        {experiences.map((exp, index) => <Card key={index} className="bg-card hover:shadow-lg transition-all duration-300 border border-muted">
+        {experiences.map((exp, index) => (
+          <Card key={index} className="bg-card hover:shadow-lg transition-all duration-300 border border-muted">
             <CardContent className="p-0">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {/* Left section with period */}
@@ -72,21 +75,34 @@ const ExperienceSection = () => {
                 <div className="p-6 md:col-span-3 flex flex-col">
                   <p className="text-sm text-foreground mb-6">{exp.description}</p>
                   
-                  {exp.links.length > 0 && <div className="mt-auto">
-                      
+                  {exp.links.length > 0 && (
+                    <div className="mt-auto">
                       <div className="space-y-2">
-                        {exp.links.map((link, linkIndex) => <a key={linkIndex} href={link.url} target="_blank" rel="noopener noreferrer" className="text-xs text-accent hover:text-accent/80 transition-colors flex items-center gap-2">
+                        {exp.links.map((link, linkIndex) => (
+                          <a 
+                            key={linkIndex} 
+                            href={link.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-xs text-accent hover:text-accent/80 transition-colors flex items-center gap-2"
+                          >
                             <ExternalLink size={12} />
                             <span>{link.title}</span>
-                          </a>)}
+                          </a>
+                        ))}
                       </div>
-                    </div>}
+                    </div>
+                  )}
                 </div>
               </div>
             </CardContent>
-          </Card>)}
+          </Card>
+        ))}
       </div>
-    </section>;
-};
+    </section>
+  );
+});
+
+ExperienceSection.displayName = "ExperienceSection";
 
 export default ExperienceSection;

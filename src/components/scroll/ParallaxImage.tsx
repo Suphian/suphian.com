@@ -1,8 +1,9 @@
 
-import { RefObject } from "react";
+import { RefObject, useEffect } from "react";
 
 interface ParallaxImageProps {
   imageRef: RefObject<HTMLDivElement>;
+  trackingRef?: RefObject<HTMLDivElement>;
   imageSrc: string;
   altText: string;
   className?: string;
@@ -12,12 +13,22 @@ interface ParallaxImageProps {
 
 const ParallaxImage = ({ 
   imageRef, 
+  trackingRef,
   imageSrc, 
   altText, 
   className = "",
   zIndex = 10,
   initialPosition = 'translateY(40vh) scale(0.9)' // Start from lower position
 }: ParallaxImageProps) => {
+  
+  // Forward the ref from imageRef to trackingRef for scroll tracking
+  useEffect(() => {
+    if (trackingRef && imageRef.current) {
+      // @ts-ignore - We're manually syncing refs for tracking purposes
+      trackingRef.current = imageRef.current;
+    }
+  }, [trackingRef, imageRef]);
+
   return (
     <div 
       ref={imageRef} 

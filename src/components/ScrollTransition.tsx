@@ -8,9 +8,15 @@ interface ScrollTransitionProps {
   className?: string;
   landingRef: React.RefObject<HTMLDivElement>;
   projectsRef: React.RefObject<HTMLDivElement>;
+  parallaxImageRef?: React.RefObject<HTMLDivElement>;
 }
 
-const ScrollTransition = ({ className = "", landingRef, projectsRef }: ScrollTransitionProps) => {
+const ScrollTransition = ({ 
+  className = "", 
+  landingRef, 
+  projectsRef, 
+  parallaxImageRef 
+}: ScrollTransitionProps) => {
   const transitionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const projectsTransitionRef = useRef<HTMLDivElement>(null);
@@ -31,6 +37,7 @@ const ScrollTransition = ({ className = "", landingRef, projectsRef }: ScrollTra
       {/* Parallax image that will slide under the text */}
       <ParallaxImage 
         imageRef={imageRef}
+        trackingRef={parallaxImageRef}
         imageSrc="/lovable-uploads/75f08c75-ec0f-4cee-b3a2-db7b2ea15061.png"
         altText="Astronaut running with moon"
         zIndex={5} // Lower z-index to ensure it stays behind text

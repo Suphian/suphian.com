@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import LandingPage from "@/components/LandingPage";
 import ScrollTransition from "@/components/ScrollTransition";
@@ -5,13 +6,49 @@ import Hero from "@/components/Hero";
 import RequestCVModal from "@/components/RequestCVModal";
 import ContactSheet from "@/components/ContactSheet";
 import { initializeRevealAnimations } from "@/lib/animations";
+import { useScrollTracking } from "@/hooks/useScrollTracking";
 import ContentSection from "@/components/sections/ContentSection";
 
 const Index = () => {
   const landingRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const aboutSectionRef = useRef<HTMLDivElement>(null);
+  const experienceSectionRef = useRef<HTMLDivElement>(null);
+  const parallaxImageRef = useRef<HTMLDivElement>(null);
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  
+  // Set up scroll tracking for all major sections
+  const scrollSections = [
+    { name: "landing", ref: landingRef, threshold: 0.5 },
+    { name: "parallax-image", ref: parallaxImageRef, threshold: 0.3 },
+    { name: "about-story", ref: aboutSectionRef, threshold: 0.4 },
+    { name: "experience", ref: experienceSectionRef, threshold: 0.4 }
+  ];
+
+  const { viewedSections } = useScrollTracking({
+    sections: scrollSections,
+    onSectionView: (sectionName, progress) => {
+      console.log(`🎯 User engaged with: ${sectionName} section (${Math.round(progress * 100)}% visible)`);
+      
+      // You can add custom logic here for each section
+      switch (sectionName) {
+        case "landing":
+          console.log("👋 User saw the landing/greeting");
+          break;
+        case "parallax-image":
+          console.log("🚀 User saw the astronaut image");
+          break;
+        case "about-story":
+          console.log("📖 User is reading your story");
+          break;
+        case "experience":
+          console.log("💼 User is viewing your experience");
+          break;
+      }
+    }
+  });
   
   useEffect(() => {
     // Reset scroll position when the component mounts
@@ -70,8 +107,12 @@ const Index = () => {
           <LandingPage />
         </div>
         
-        {/* Scroll transition elements */}
-        <ScrollTransition landingRef={landingRef} projectsRef={contentRef} />
+        {/* Scroll transition elements - pass the parallax image ref for tracking */}
+        <ScrollTransition 
+          landingRef={landingRef} 
+          projectsRef={contentRef}
+          parallaxImageRef={parallaxImageRef}
+        />
         
         {/* Content section - Hero with About Me */}
         <div 
@@ -88,7 +129,7 @@ const Index = () => {
           {/* About Me Hero section */}
           <Hero />
 
-          {/* Content Sections */}
+          {/* Content Sections - pass refs for tracking */}
           <ContentSection 
             onRequestCV={() => {
               setIsModalOpen(true);
@@ -100,7 +141,9 @@ const Index = () => {
             }} 
             onContactClick={() => {
               handleContactOpenChange(true);
-            }} 
+            }}
+            aboutSectionRef={aboutSectionRef}
+            experienceSectionRef={experienceSectionRef}
           />
           
           {/* CV Request Modal - now with onGetInTouch prop */}
