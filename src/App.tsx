@@ -11,6 +11,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Logo from "./components/Logo";
 import { AnalyticsPageviewListener } from "./components/AnalyticsPageviewListener";
+import { useEventTracker } from "./hooks/useEventTracker";
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -26,6 +27,13 @@ const ScrollToTop = () => {
 const queryClient = new QueryClient();
 
 const AppContent = () => {
+  // Initialize event tracking
+  useEventTracker({
+    autoTrackPageViews: true,
+    autoTrackClicks: true,
+    autoTrackScrollEvents: true
+  });
+
   return (
     <>
       <ScrollToTop />

@@ -39,6 +39,110 @@ export type Database = {
         }
         Relationships: []
       }
+      events: {
+        Row: {
+          created_at: string | null
+          event_name: string
+          event_payload: Json | null
+          id: string
+          page_url: string | null
+          session_id: string
+          timestamp: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_name: string
+          event_payload?: Json | null
+          id?: string
+          page_url?: string | null
+          session_id: string
+          timestamp?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_name?: string
+          event_payload?: Json | null
+          id?: string
+          page_url?: string | null
+          session_id?: string
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["session_id"]
+          },
+        ]
+      }
+      sessions: {
+        Row: {
+          browser: string | null
+          created_at: string | null
+          device_type: string | null
+          id: string
+          ip_address: string | null
+          is_internal_user: boolean | null
+          landing_url: string | null
+          locale: string | null
+          location: Json | null
+          os: string | null
+          referrer: string | null
+          screen_height: number | null
+          screen_width: number | null
+          session_id: string
+          timezone: string | null
+          updated_at: string | null
+          user_agent: string | null
+          viewport_height: number | null
+          viewport_width: number | null
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          ip_address?: string | null
+          is_internal_user?: boolean | null
+          landing_url?: string | null
+          locale?: string | null
+          location?: Json | null
+          os?: string | null
+          referrer?: string | null
+          screen_height?: number | null
+          screen_width?: number | null
+          session_id: string
+          timezone?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          viewport_height?: number | null
+          viewport_width?: number | null
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          ip_address?: string | null
+          is_internal_user?: boolean | null
+          landing_url?: string | null
+          locale?: string | null
+          location?: Json | null
+          os?: string | null
+          referrer?: string | null
+          screen_height?: number | null
+          screen_width?: number | null
+          session_id?: string
+          timezone?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          viewport_height?: number | null
+          viewport_width?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

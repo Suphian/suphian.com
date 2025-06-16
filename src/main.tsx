@@ -6,6 +6,9 @@ import './index.css'
 // Initialize Google Analytics tracking
 import './utils/analytics/googleAnalytics';
 
+// Initialize Supabase event tracking
+import './utils/analytics/eventTracker';
+
 // Log when the page loads to help debug favicon issues
 window.addEventListener('load', () => {
   console.log('Page fully loaded, including stylesheets and images');
