@@ -1,9 +1,25 @@
-
 import React, { forwardRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 
 const ExperienceSection = forwardRef<HTMLDivElement>((props, ref) => {
+  const handleExternalLinkClick = async (linkTitle: string, url: string) => {
+    console.log(`🎯 External link clicked: ${linkTitle}`);
+    
+    try {
+      await window.trackEvent?.("external_link_click", {
+        label: linkTitle,
+        url: url,
+        page: window.location.pathname,
+        source: "ExperienceSection",
+        type: "external_link",
+      });
+      console.log(`✅ External link "${linkTitle}" click tracked successfully`);
+    } catch (error) {
+      console.error(`❌ Failed to track external link "${linkTitle}" click:`, error);
+    }
+  };
+
   const experiences = [{
     period: "2020 - Present",
     company: "YouTube",
@@ -53,10 +69,8 @@ const ExperienceSection = forwardRef<HTMLDivElement>((props, ref) => {
   
   return (
     <section id="experience-section" ref={ref} className="mb-20 reveal relative">
-      {/* Updated heading to match the heading-xl class used in AboutSection */}
       <h2 className="heading-xl mb-12 text-left">Experience</h2>
       
-      {/* Added similar fade/transition overlay like the one used in scroll transitions */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/80 to-transparent opacity-50 -top-32 h-64 z-0"></div>
       
       <div className="grid grid-cols-1 gap-10 relative z-10">
@@ -64,14 +78,12 @@ const ExperienceSection = forwardRef<HTMLDivElement>((props, ref) => {
           <Card key={index} className="bg-card hover:shadow-lg transition-all duration-300 border border-muted">
             <CardContent className="p-0">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                {/* Left section with period */}
                 <div className="p-6 md:border-r border-muted bg-muted/10">
                   <span className="text-accent text-sm font-medium block">{exp.period}</span>
                   <h3 className="heading-sm mt-2">{exp.company}</h3>
                   <p className="text-sm text-muted-foreground">{exp.role}</p>
                 </div>
                 
-                {/* Right section with description and links */}
                 <div className="p-6 md:col-span-3 flex flex-col">
                   <p className="text-sm text-foreground mb-6">{exp.description}</p>
                   
@@ -85,6 +97,7 @@ const ExperienceSection = forwardRef<HTMLDivElement>((props, ref) => {
                             target="_blank" 
                             rel="noopener noreferrer" 
                             className="text-xs text-accent hover:text-accent/80 transition-colors flex items-center gap-2"
+                            onClick={() => handleExternalLinkClick(link.title, link.url)}
                           >
                             <ExternalLink size={12} />
                             <span>{link.title}</span>
