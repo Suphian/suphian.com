@@ -2,13 +2,13 @@
 import { useEffect, useRef } from 'react';
 import { secureEventTracker } from '@/utils/analytics/secureEventTracker';
 
-interface UseEventTrackerOptions {
+interface UseSecureEventTrackerOptions {
   autoTrackPageViews?: boolean;
   autoTrackClicks?: boolean;
   autoTrackScrollEvents?: boolean;
 }
 
-export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
+export const useSecureEventTracker = (options: UseSecureEventTrackerOptions = {}) => {
   const {
     autoTrackPageViews = true,
     autoTrackClicks = true,
@@ -18,7 +18,7 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
   const hasTrackedPageView = useRef(false);
 
   useEffect(() => {
-    // Track page view with secure tracker
+    // Track page view
     if (autoTrackPageViews && !hasTrackedPageView.current) {
       secureEventTracker.track('page_view', {
         path: window.location.pathname,

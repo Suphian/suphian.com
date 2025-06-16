@@ -6,12 +6,12 @@ import './index.css'
 // Initialize Google Analytics tracking
 import './utils/analytics/googleAnalytics';
 
-// Initialize Supabase event tracking
-import './utils/analytics/eventTracker';
+// Initialize Secure Supabase event tracking (replaces old eventTracker)
+import './utils/analytics/secureEventTracker';
 
 // Log when the page loads to help debug favicon issues
 window.addEventListener('load', () => {
-  console.log('Page fully loaded, including stylesheets and images');
+  console.log('🔒 Secure page loaded, including stylesheets and images');
   
   // Check if favicon is in document
   const faviconLinks = document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]');
@@ -21,15 +21,17 @@ window.addEventListener('load', () => {
 // Initialize the root component
 createRoot(document.getElementById("root")!).render(<App />);
 
-// -------- EXAMPLE USAGE (for your components) --------
+// -------- SECURE TRACKING EXAMPLE USAGE --------
 /*
 import React from "react";
+import { secureEventTracker } from '@/utils/analytics/secureEventTracker';
+
 function MyButton() {
   const handleClick = () => {
-    window.trackEvent("button_click", {
+    secureEventTracker.track("button_click", {
       label: "Download CV",
       page: window.location.pathname,
-      customProperty: "Value",
+      action: "download",
     });
   };
   return <button onClick={handleClick}>Download CV</button>
