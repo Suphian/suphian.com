@@ -1,4 +1,3 @@
-
 import { UAParser } from 'ua-parser-js';
 import supabase from '@/integrations/supabase/client';
 
@@ -47,9 +46,9 @@ class SecureEventTracker {
 
   constructor(config: EventTrackerConfig = {}) {
     this.config = {
-      enableInDevelopment: false,
-      batchSize: 10,
-      batchIntervalMs: 5000,
+      enableInDevelopment: true, // Force enable in development
+      batchSize: 5,
+      batchIntervalMs: 3000,
       ...config
     };
 
@@ -60,12 +59,6 @@ class SecureEventTracker {
   async initialize(): Promise<void> {
     if (this.isInitialized) {
       console.log('🔒 SecureEventTracker already initialized');
-      return;
-    }
-
-    // Skip in development unless explicitly enabled
-    if (process.env.NODE_ENV === 'development' && !this.config.enableInDevelopment) {
-      console.log('🔒 Event tracking disabled in development for security');
       return;
     }
 
@@ -80,7 +73,7 @@ class SecureEventTracker {
       this.startBatchTimer();
       
       this.isInitialized = true;
-      console.log('🔒 Secure event tracker initialized for session:', this.sessionId);
+      console.log('✅ Secure event tracker initialized successfully for session:', this.sessionId);
     } catch (error) {
       console.error('❌ Failed to initialize secure event tracker:', error);
     }
@@ -109,26 +102,22 @@ class SecureEventTracker {
 
     try {
       console.log('🔒 Fetching IP and location data...');
-      // Only collect basic location data, no precise coordinates
       const ipResponse = await fetch('https://ipapi.co/json/');
       const ipData = await ipResponse.json();
       
       ipAddress = ipData.ip;
       console.log('🔒 Got IP address:', ipAddress);
       
-      // Check if internal based on domain rather than hardcoded IPs
       isInternal = this.internalDomains.some(domain => 
         window.location.hostname.includes(domain)
       );
       console.log('🔒 Is internal user:', isInternal);
       
-      // Only store country/region level data, no precise coordinates
       locationData = {
         country: ipData.country_name,
         region: ipData.region,
         city: ipData.city,
         timezone: ipData.timezone
-        // Removed: latitude, longitude, postal for privacy
       };
       console.log('🔒 Location data:', locationData);
     } catch (error) {
@@ -165,7 +154,6 @@ class SecureEventTracker {
 
     try {
       console.log('🔒 Attempting to store session in Supabase...');
-      console.log('🔒 Session data being sent:', JSON.stringify(this.sessionData, null, 2));
       
       const { data, error } = await supabase
         .from('sessions')
@@ -175,20 +163,14 @@ class SecureEventTracker {
 
       if (error) {
         console.error('❌ Failed to store session - Supabase error:', error);
-        console.error('❌ Error details:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        });
         throw error;
       } else {
         this.sessionStored = true;
-        console.log('✅ Secure session stored successfully');
-        console.log('✅ Supabase response data:', data);
+        console.log('✅ Session stored successfully in Supabase!');
+        console.log('✅ Response data:', data);
       }
     } catch (error) {
-      console.error('❌ Error storing session:', error);
+      console.error('❌ Critical error storing session:', error);
       throw error;
     }
   }
@@ -201,7 +183,6 @@ class SecureEventTracker {
 
     console.log('🔒 Tracking event:', eventName, eventPayload);
 
-    // Sanitize event payload to remove sensitive data
     const sanitizedPayload = this.sanitizeEventPayload(eventPayload);
 
     const eventData: EventData = {
@@ -215,7 +196,7 @@ class SecureEventTracker {
     this.eventBuffer.push(eventData);
     console.log('🔒 Event added to buffer. Buffer size:', this.eventBuffer.length);
     
-    if (this.eventBuffer.length >= (this.config.batchSize || 10)) {
+    if (this.eventBuffer.length >= (this.config.batchSize || 5)) {
       console.log('🔒 Buffer full, flushing events...');
       this.flushEvents();
     }
@@ -224,7 +205,6 @@ class SecureEventTracker {
   private sanitizeEventPayload(payload: any): any {
     if (!payload) return payload;
 
-    // Remove potentially sensitive fields
     const sensitiveFields = ['password', 'token', 'secret', 'key', 'auth'];
     const sanitized = { ...payload };
 
@@ -248,7 +228,7 @@ class SecureEventTracker {
         console.log('🔒 Timer triggered, flushing', this.eventBuffer.length, 'events');
         this.flushEvents();
       }
-    }, this.config.batchIntervalMs || 5000);
+    }, this.config.batchIntervalMs || 3000);
   }
 
   private async flushEvents(): Promise<void> {
@@ -262,7 +242,6 @@ class SecureEventTracker {
 
     try {
       console.log('🔒 Flushing', eventsToFlush.length, 'events to Supabase...');
-      console.log('🔒 Events being sent:', eventsToFlush);
       
       const { data, error } = await supabase
         .from('events')
@@ -270,14 +249,11 @@ class SecureEventTracker {
 
       if (error) {
         console.error('❌ Failed to store events:', error);
-        // Don't put events back in buffer to avoid infinite loops
       } else {
-        console.log(`✅ Stored ${eventsToFlush.length} secure events`);
-        console.log('✅ Events response data:', data);
+        console.log(`✅ Stored ${eventsToFlush.length} events successfully!`);
       }
     } catch (error) {
       console.error('❌ Error flushing events:', error);
-      // Don't put events back in buffer to avoid infinite loops
     }
   }
 
