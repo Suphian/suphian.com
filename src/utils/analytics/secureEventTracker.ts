@@ -1,3 +1,4 @@
+
 import { UAParser } from 'ua-parser-js';
 import supabase from '@/integrations/supabase/client';
 import { getTrafficType } from './ipDetection';
@@ -46,7 +47,7 @@ class SecureEventTracker {
 
   constructor(config: EventTrackerConfig = {}) {
     this.config = {
-      enableInDevelopment: true, // Force enable in development
+      enableInDevelopment: true,
       batchSize: 5,
       batchIntervalMs: 3000,
       ...config
@@ -76,6 +77,7 @@ class SecureEventTracker {
       console.log('✅ Secure event tracker initialized successfully for session:', this.sessionId);
     } catch (error) {
       console.error('❌ Failed to initialize secure event tracker:', error);
+      // Don't throw - allow the app to continue without analytics
     }
   }
 
@@ -108,7 +110,6 @@ class SecureEventTracker {
       ipAddress = ipData.ip;
       console.log('🔒 Got IP address:', ipAddress);
       
-      // Use the proper traffic type detection instead of hostname check
       const trafficType = await getTrafficType();
       isInternal = trafficType === 'internal';
       console.log('🔒 Traffic type detected:', trafficType, '- Is internal user:', isInternal);
@@ -123,7 +124,6 @@ class SecureEventTracker {
     } catch (error) {
       console.log('⚠️ Could not fetch location data:', error);
       
-      // Fallback to hostname check if IP detection fails
       const internalDomains = ['localhost', '127.0.0.1'];
       isInternal = internalDomains.some(domain => 
         window.location.hostname.includes(domain)
@@ -161,16 +161,39 @@ class SecureEventTracker {
 
     try {
       console.log('🔒 Attempting to store session in Supabase...');
+      console.log('🔒 Using Supabase client with anon key');
       
+      // Ensure we're using the anon client (no auth required)
       const { data, error } = await supabase
         .from('sessions')
-        .upsert(this.sessionData, { 
-          onConflict: 'session_id' 
-        });
+        .insert(this.sessionData);
 
       if (error) {
         console.error('❌ Failed to store session - Supabase error:', error);
-        throw error;
+        console.error('❌ Error details:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        });
+        
+        // Try with upsert as backup
+        console.log('🔄 Trying upsert as backup...');
+        const { data: upsertData, error: upsertError } = await supabase
+          .from('sessions')
+          .upsert(this.sessionData, { 
+            onConflict: 'session_id',
+            ignoreDuplicates: false 
+          });
+          
+        if (upsertError) {
+          console.error('❌ Upsert also failed:', upsertError);
+          throw upsertError;
+        } else {
+          this.sessionStored = true;
+          console.log('✅ Session stored successfully via upsert!');
+          console.log('✅ Upsert response data:', upsertData);
+        }
       } else {
         this.sessionStored = true;
         console.log('✅ Session stored successfully in Supabase!');
@@ -178,13 +201,15 @@ class SecureEventTracker {
       }
     } catch (error) {
       console.error('❌ Critical error storing session:', error);
-      throw error;
+      // Don't throw - allow tracking to continue without session storage
     }
   }
 
   public trackEvent(eventName: string, eventPayload: any = {}): void {
-    if (!this.isInitialized || !this.sessionStored) {
-      console.warn('⚠️ Cannot track event: tracker not initialized or session not stored');
+    if (!this.isInitialized) {
+      console.warn('⚠️ Cannot track event: tracker not initialized yet, queuing event...');
+      // Queue the event for later
+      setTimeout(() => this.trackEvent(eventName, eventPayload), 1000);
       return;
     }
 
@@ -239,8 +264,8 @@ class SecureEventTracker {
   }
 
   private async flushEvents(): Promise<void> {
-    if (this.eventBuffer.length === 0 || !this.sessionStored) {
-      console.log('🔒 No events to flush or session not stored');
+    if (this.eventBuffer.length === 0) {
+      console.log('🔒 No events to flush');
       return;
     }
 
@@ -256,8 +281,19 @@ class SecureEventTracker {
 
       if (error) {
         console.error('❌ Failed to store events:', error);
+        console.error('❌ Event error details:', {
+          code: error.code,
+          message: error.message,
+          details: error.details
+        });
+        // Put events back in buffer for retry (but only once)
+        if (!eventsToFlush[0]?.retried) {
+          eventsToFlush.forEach(event => event.retried = true);
+          this.eventBuffer.unshift(...eventsToFlush);
+        }
       } else {
         console.log(`✅ Stored ${eventsToFlush.length} events successfully!`);
+        console.log('✅ Events response:', data);
       }
     } catch (error) {
       console.error('❌ Error flushing events:', error);
