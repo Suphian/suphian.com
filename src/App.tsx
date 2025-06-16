@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Logo from "./components/Logo";
+import { AnalyticsPageviewListener } from "./components/AnalyticsPageviewListener";
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -27,6 +29,7 @@ const AppContent = () => {
   return (
     <>
       <ScrollToTop />
+      <AnalyticsPageviewListener />
       <Navbar />
       <Logo />
       <main className="min-h-screen">
