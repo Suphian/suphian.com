@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
@@ -13,7 +14,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
   // Improved CSP for more restriction
-  "Content-Security-Policy": "default-src 'self'; img-src 'self' data: https://raw.githubusercontent.com https://suphian.com; script-src 'none'; object-src 'none'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'",
+  "Content-Security-Policy": "default-src 'self'; img-src 'self' data: https://ujughujunixnwlmtdsxd.supabase.co https://suphian.com; script-src 'none'; object-src 'none'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'",
   "X-Frame-Options": "DENY",
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "no-referrer",
@@ -127,7 +128,7 @@ const handler = async (req: Request): Promise<Response> => {
                box-shadow:0 12px 48px rgba(0,0,0,.55);overflow:hidden;">
           <tr>
             <td style="padding:32px 48px 24px 48px;text-align:center;background:#000000;">
-              <img src="https://raw.githubusercontent.com/Suphian/suphiansite/main/u1327668621_logo_SUPH_--chaos_15_--ar_23_--profile_aa8enny_--st_b2040bf7-71f1-4263-bf3e-422f9561d81e.png"
+              <img src="https://ujughujunixnwlmtdsxd.supabase.co/storage/v1/object/public/images/db2efd18-0555-427b-89b4-c5cae8a5a143.png"
                    width="140" alt="Running astronaut illustration"
                    style="display:block;margin:0 auto 28px auto;border-radius:12px;">
               <h1 style="margin:0 0 4px 0;font-size:28px;line-height:1.3;font-weight:700;
