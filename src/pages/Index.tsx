@@ -7,6 +7,7 @@ import RequestCVModal from "@/components/RequestCVModal";
 import ContactSheet from "@/components/ContactSheet";
 import { initializeRevealAnimations } from "@/lib/animations";
 import { useScrollTracking } from "@/hooks/useScrollTracking";
+import { useEventTracker } from "@/hooks/useEventTracker";
 import ContentSection from "@/components/sections/ContentSection";
 
 const Index = () => {
@@ -18,6 +19,13 @@ const Index = () => {
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  
+  // Initialize secure event tracking for this page
+  useEventTracker({
+    autoTrackPageViews: true,
+    autoTrackClicks: true,
+    autoTrackScrollEvents: true
+  });
   
   // Set up scroll tracking for all major sections
   const scrollSections = [
