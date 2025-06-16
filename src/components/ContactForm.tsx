@@ -127,7 +127,42 @@ const ContactForm: React.FC<ContactFormProps> = ({
                       maxLength={2500}
                       aria-required="true"
                     />
-                    {showChips && chipsBarComponent}
+                    {showChips && (
+                      <div className="chips mt-2" onClick={(e) => {
+                        const target = e.target as HTMLElement;
+                        if (!target.classList.contains("chip")) return;
+
+                        let newValue: string | undefined;
+                        if (target.textContent === "Random") {
+                          const COUNT_OF_MONTE_CRISTO_QUOTES = [
+                            "Until the day when God will deign to reveal the future to man, all human wisdom is contained in these two words: Wait and Hope.",
+                            "There is neither happiness nor misery in the world; there is only the comparison of one state with another, nothing more.",
+                            "All human wisdom is summed up in two words - wait and hope."
+                          ];
+                          const idx = Math.floor(Math.random() * COUNT_OF_MONTE_CRISTO_QUOTES.length);
+                          const quote = COUNT_OF_MONTE_CRISTO_QUOTES[idx];
+                          const authorLine = "Alexandre Dumas, Count of Monte Cristo";
+                          newValue = `"${quote}"\n— ${authorLine}`;
+                        } else {
+                          newValue = target.getAttribute("data-text") || "";
+                        }
+
+                        if (typeof newValue === "string") {
+                          field.onChange(newValue);
+                        }
+                      }}>
+                        <span className="chip" data-text="Hey! I'd love to discuss a potential collaboration." tabIndex={0} role="button">
+                          Collaboration
+                        </span>
+                        <span className="chip" data-text="Hi! I'm interested in learning more about your work and experience." tabIndex={0} role="button">
+                          Learn More
+                        </span>
+                        <span className="chip" data-text="Hello! I'd like to explore potential opportunities to work together." tabIndex={0} role="button">
+                          Opportunities
+                        </span>
+                        <span className="chip" tabIndex={0} role="button">Random</span>
+                      </div>
+                    )}
                   </>
                 </FormControl>
                 <FormMessage className="text-accent" />

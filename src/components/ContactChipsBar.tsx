@@ -23,9 +23,11 @@ const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId, onChange,
       newValue = target.getAttribute("data-text") || "";
     }
 
+    // Always use onChange if provided (this is the React Hook Form way)
     if (onChange && typeof newValue === "string") {
       onChange(newValue);
     } else {
+      // Fallback to direct DOM manipulation if onChange not provided
       const ta = document.getElementById(textareaId) as HTMLTextAreaElement | null;
       if (ta && typeof newValue === "string") {
         ta.value = newValue;
