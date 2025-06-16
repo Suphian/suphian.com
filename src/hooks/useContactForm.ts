@@ -61,6 +61,33 @@ const checkRateLimit = async (identifier: string, action: string, maxAttempts: n
   }
 };
 
+// Test function to send a sample email
+export const sendTestEmail = async () => {
+  try {
+    const testData = {
+      name: "Test User",
+      email: "test@example.com",
+      message: "This is a test message to verify the spaceman logo appears in the email.",
+      source: "EmailTest"
+    };
+
+    const { data, error } = await supabase.functions.invoke("notify-contact-submit", {
+      body: testData
+    });
+
+    if (error) {
+      console.error("Test email error:", error);
+      return { success: false, error: error.message };
+    }
+
+    console.log("Test email sent successfully:", data);
+    return { success: true, data };
+  } catch (error) {
+    console.error("Failed to send test email:", error);
+    return { success: false, error: error.message };
+  }
+};
+
 export function useContactForm({
   showPhone = false,
   source,
@@ -157,9 +184,26 @@ export function useContactForm({
     }
   };
 
+  const testEmail = async () => {
+    const result = await sendTestEmail();
+    if (result.success) {
+      toast({
+        title: "Test email sent!",
+        description: "Check your email to see if the spaceman logo appears correctly.",
+      });
+    } else {
+      toast({
+        title: "Test email failed",
+        description: result.error || "Could not send test email.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return {
     form,
     isSubmitting,
     onSubmit,
+    testEmail,
   };
 }

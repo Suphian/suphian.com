@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -25,7 +24,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
   extraFields,
   submitButton,
 }) => {
-  const { form, isSubmitting, onSubmit } = useContactForm({ showPhone, source, onSubmitted });
+  const { form, isSubmitting, onSubmit, testEmail } = useContactForm({ showPhone, source, onSubmitted });
 
   return (
     <Form {...form}>
@@ -39,6 +38,23 @@ const ContactForm: React.FC<ContactFormProps> = ({
           {...form.register("website")}
           aria-hidden="true"
         />
+        
+        {/* Test Email Button - only show in development */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+            <button
+              type="button"
+              onClick={testEmail}
+              className="bg-yellow-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-yellow-600 transition-colors"
+            >
+              🧪 Send Test Email
+            </button>
+            <p className="text-sm text-yellow-700 mt-2">
+              Development only: Click to test the email with spaceman logo
+            </p>
+          </div>
+        )}
+
         {/* Name */}
         <FormField
             control={form.control}
