@@ -16,6 +16,23 @@ const Footer = () => {
     });
   };
 
+  const handleSocialClick = async (platform: string, url: string) => {
+    console.log(`🎯 Footer link clicked: ${platform}`);
+    
+    try {
+      await window.trackEvent?.("footer_social_click", {
+        label: platform,
+        url: url,
+        page: window.location.pathname,
+        source: "Footer",
+        type: "external_link",
+      });
+      console.log(`✅ Footer ${platform} click tracked successfully`);
+    } catch (error) {
+      console.error(`❌ Failed to track ${platform} click:`, error);
+    }
+  };
+
   return (
     <footer className="border-t border-border/60 bg-background py-12 md:py-16">
       <div className="container-custom">
@@ -25,13 +42,34 @@ const Footer = () => {
           </div>
           
           <div className="flex space-x-4">
-            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=suph.tweel@gmail.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors" aria-label="Email">
+            <a 
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=suph.tweel@gmail.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors" 
+              aria-label="Email"
+              onClick={() => handleSocialClick("Email", "mailto:suph.tweel@gmail.com")}
+            >
               <Mail size={20} />
             </a>
-            <a href="https://www.linkedin.com/in/suphian/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors" aria-label="LinkedIn">
+            <a 
+              href="https://www.linkedin.com/in/suphian/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors" 
+              aria-label="LinkedIn"
+              onClick={() => handleSocialClick("LinkedIn", "https://www.linkedin.com/in/suphian/")}
+            >
               <Linkedin size={20} />
             </a>
-            <a href="https://github.com/Suphian" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors" aria-label="GitHub">
+            <a 
+              href="https://github.com/Suphian" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors" 
+              aria-label="GitHub"
+              onClick={() => handleSocialClick("GitHub", "https://github.com/Suphian")}
+            >
               <Github size={20} />
             </a>
             <button onClick={scrollToTop} className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors" aria-label="Scroll to top">
