@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Headphones } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -10,24 +11,39 @@ interface ActionButtonsProps {
 const ActionButtons = ({ onRequestCV }: ActionButtonsProps) => {
   const isMobile = useIsMobile();
 
-  // Add analytics for both buttons
-  const handleRequestCV = () => {
-    window.trackEvent?.("hero_cta_click", {
-      label: isMobile ? "Download CV" : "Request My Resume",
-      page: window.location.pathname,
-      source: "HeroSection",
-      type: "request_cv",
-    });
+  // Add analytics for both buttons with console logging
+  const handleRequestCV = async () => {
+    console.log("🎯 Button clicked: Request CV");
+    
+    try {
+      await window.trackEvent?.("hero_cta_click", {
+        label: isMobile ? "Download CV" : "Request My Resume",
+        page: window.location.pathname,
+        source: "HeroSection",
+        type: "request_cv",
+      });
+      console.log("✅ CV request event tracked successfully");
+    } catch (error) {
+      console.error("❌ Failed to track CV request event:", error);
+    }
+    
     onRequestCV();
   };
 
-  const handleListen = () => {
-    window.trackEvent?.("hero_cta_click", {
-      label: isMobile ? "Listen" : "Notebook LLM Podcast",
-      page: window.location.pathname,
-      source: "HeroSection",
-      type: "listen_podcast",
-    });
+  const handleListen = async () => {
+    console.log("🎯 Button clicked: Listen to Podcast");
+    
+    try {
+      await window.trackEvent?.("hero_cta_click", {
+        label: isMobile ? "Listen" : "Notebook LLM Podcast",
+        page: window.location.pathname,
+        source: "HeroSection",
+        type: "listen_podcast",
+      });
+      console.log("✅ Podcast listen event tracked successfully");
+    } catch (error) {
+      console.error("❌ Failed to track podcast listen event:", error);
+    }
   };
 
   return (

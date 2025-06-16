@@ -10,8 +10,22 @@ const CallToAction = () => {
   const [contactOpen, setContactOpen] = useState(false);
   const isMobile = useIsMobile();
 
-  const scrollToProjects = (e: React.MouseEvent) => {
+  const scrollToProjects = async (e: React.MouseEvent) => {
     e.preventDefault();
+    console.log("🎯 Button clicked: Start Here");
+    
+    try {
+      await window.trackEvent?.("landing_cta_click", {
+        label: isMobile ? "Start" : "Start Here",
+        page: window.location.pathname,
+        source: "LandingPage",
+        type: "scroll_to_content",
+      });
+      console.log("✅ Start Here event tracked successfully");
+    } catch (error) {
+      console.error("❌ Failed to track start here event:", error);
+    }
+    
     const contentSection = document.getElementById("content-section");
     if (contentSection) {
       window.scrollTo({

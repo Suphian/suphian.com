@@ -41,6 +41,24 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
     },
   });
 
+  const handleOpenModal = async () => {
+    console.log("🎯 Button clicked: Get in Touch (Contact Section)");
+    
+    try {
+      await window.trackEvent?.("contact_section_cta_click", {
+        label: "Get in Touch",
+        page: window.location.pathname,
+        source: "ContactSection",
+        type: "open_contact_modal",
+      });
+      console.log("✅ Contact Section modal open event tracked successfully");
+    } catch (error) {
+      console.error("❌ Failed to track contact section modal event:", error);
+    }
+    
+    setIsOpen(true);
+  };
+
   const handleSubmit = async (data: FormData) => {
     if (data.website && data.website.trim().length > 0) {
       toast({
@@ -119,7 +137,7 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
         </span>
       </p>
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpenModal}
         className="w-full sm:w-auto wave-btn bg-primary text-background px-6 py-4 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group text-center"
         aria-haspopup="dialog"
         aria-controls="contact-dialog"
