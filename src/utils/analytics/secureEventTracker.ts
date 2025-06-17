@@ -1,4 +1,3 @@
-
 import { UAParser } from 'ua-parser-js';
 import supabase from '@/integrations/supabase/client';
 import { getTrafficType } from './ipDetection';
@@ -34,6 +33,7 @@ interface EventData {
   event_payload?: any;
   timestamp: string;
   page_url?: string;
+  retried?: boolean; // Add this to support retry logic
 }
 
 class SecureEventTracker {
