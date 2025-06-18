@@ -1,6 +1,8 @@
 
-import { UAParser } from 'ua-parser-js';
 import { SessionData } from './types';
+import { SessionStorage } from './sessionStorage';
+import { LocationService } from './locationService';
+import { MetadataCollector } from './metadataCollector';
 
 export class SessionManager {
   private sessionId: string;
@@ -8,7 +10,7 @@ export class SessionManager {
   private sessionStored = false;
 
   constructor() {
-    this.sessionId = this.getOrCreateSessionId();
+    this.sessionId = SessionStorage.getOrCreateSessionId();
     console.log('🔒 SessionManager constructor - Session ID:', this.sessionId);
   }
 
@@ -24,61 +26,17 @@ export class SessionManager {
     return this.sessionStored;
   }
 
-  private getOrCreateSessionId(): string {
-    let sessionId = sessionStorage.getItem('secure_analytics_session_id');
-    if (!sessionId) {
-      sessionId = crypto.randomUUID();
-      sessionStorage.setItem('secure_analytics_session_id', sessionId);
-      console.log('🔒 Created new session ID:', sessionId);
-    } else {
-      console.log('🔒 Using existing session ID:', sessionId);
-    }
-    return sessionId;
-  }
-
   async collectSessionMetadata(isInternalTraffic: boolean): Promise<void> {
     console.log('🔒 Collecting session metadata...');
-    const parser = new UAParser();
-    const result = parser.getResult();
-
-    let locationData = null;
-    let ipAddress = null;
-
-    try {
-      console.log('🔒 Fetching IP and location data...');
-      const ipResponse = await fetch('https://ipapi.co/json/');
-      const ipData = await ipResponse.json();
-      
-      ipAddress = ipData.ip;
-      console.log('🔒 Got IP address:', ipAddress);
-      
-      locationData = {
-        country: ipData.country_name,
-        region: ipData.region,
-        city: ipData.city,
-        timezone: ipData.timezone
-      };
-      console.log('🔒 Location data:', locationData);
-    } catch (error) {
-      console.log('⚠️ Could not fetch location data:', error);
-    }
+    
+    const browserMetadata = MetadataCollector.collectBrowserMetadata();
+    const { ipAddress, locationData } = await LocationService.fetchLocationData();
 
     this.sessionData = {
       session_id: this.sessionId,
       ip_address: ipAddress,
       location: locationData,
-      browser: `${result.browser.name} ${result.browser.version}`,
-      os: `${result.os.name} ${result.os.version}`,
-      device_type: result.device.type || 'desktop',
-      screen_width: window.screen.width,
-      screen_height: window.screen.height,
-      viewport_width: window.innerWidth,
-      viewport_height: window.innerHeight,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      locale: navigator.language,
-      referrer: document.referrer || null,
-      landing_url: window.location.href,
-      user_agent: navigator.userAgent,
+      ...browserMetadata,
       is_internal_user: isInternalTraffic
     };
 
