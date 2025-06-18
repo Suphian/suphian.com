@@ -18,7 +18,7 @@ class SecureEventTracker {
       enableInDevelopment: true,
       batchSize: 5,
       batchIntervalMs: 3000,
-      filterInternalTraffic: true,
+      filterInternalTraffic: false, // Changed to false to track but classify internal traffic
       ...config
     };
 
@@ -43,11 +43,7 @@ class SecureEventTracker {
       const trafficType = await getTrafficType();
       this.isInternalTraffic = trafficType === 'internal';
       
-      if (this.config.filterInternalTraffic && this.isInternalTraffic) {
-        console.log('🚫 Analytics disabled - Internal traffic detected (Lovable dev environment)');
-        this.isInitialized = true;
-        return;
-      }
+      console.log(`🔒 Traffic classified as: ${trafficType.toUpperCase()}`);
       
       await this.sessionManager.collectSessionMetadata(this.isInternalTraffic);
       console.log('🔒 Session metadata collected:', this.sessionManager.getSessionData());
@@ -65,25 +61,27 @@ class SecureEventTracker {
   }
 
   public trackEvent(eventName: string, eventPayload: any = {}): void {
-    if (this.config.filterInternalTraffic && this.isInternalTraffic) {
-      console.log('🚫 Event tracking skipped - Internal traffic:', eventName);
-      return;
-    }
-
     if (!this.isInitialized) {
       console.warn('⚠️ Cannot track event: tracker not initialized yet, queuing event...');
       setTimeout(() => this.trackEvent(eventName, eventPayload), 1000);
       return;
     }
 
-    console.log('🔒 Tracking event:', eventName, eventPayload);
+    console.log(`🔒 Tracking event: ${eventName} (${this.isInternalTraffic ? 'INTERNAL' : 'EXTERNAL'} traffic)`, eventPayload);
 
     const sanitizedPayload = EventSanitizer.sanitizeEventPayload(eventPayload);
+
+    // Add traffic classification to event payload
+    const enrichedPayload = {
+      ...sanitizedPayload,
+      is_internal_traffic: this.isInternalTraffic,
+      traffic_type: this.isInternalTraffic ? 'internal' : 'external'
+    };
 
     const eventData: EventData = {
       session_id: this.sessionManager.getSessionId(),
       event_name: eventName,
-      event_payload: sanitizedPayload,
+      event_payload: enrichedPayload,
       timestamp: new Date().toISOString(),
       page_url: window.location.href
     };
@@ -110,12 +108,12 @@ class SecureEventTracker {
   }
 }
 
-// Export secure singleton instance with internal traffic filtering enabled
+// Export secure singleton instance with internal traffic tracking enabled
 export const secureEventTracker = new SecureEventTracker({
   enableInDevelopment: true,
   batchSize: 5,
   batchIntervalMs: 3000,
-  filterInternalTraffic: true
+  filterInternalTraffic: false // Track internal traffic but classify it
 });
 
 // Auto-initialize when module loads

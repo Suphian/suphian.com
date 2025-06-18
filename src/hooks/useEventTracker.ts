@@ -16,14 +16,17 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
   } = options;
 
   const hasTrackedPageView = useRef(false);
+  const lastScrollPercent = useRef(0);
 
   useEffect(() => {
     // Track page view with secure tracker
     if (autoTrackPageViews && !hasTrackedPageView.current) {
+      console.log('📄 Tracking page view for:', window.location.pathname);
       secureEventTracker.track('page_view', {
         path: window.location.pathname,
         url: window.location.href,
-        referrer: document.referrer
+        referrer: document.referrer,
+        title: document.title
       });
       hasTrackedPageView.current = true;
     }
@@ -34,25 +37,42 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
       const trackData = target.closest('[data-track]')?.getAttribute('data-track');
       
       if (trackData) {
+        console.log('🖱️ Tracking click with data-track:', trackData);
         try {
           const eventData = JSON.parse(trackData);
           secureEventTracker.track('element_click', {
             ...eventData,
             elementTag: target.tagName,
-            elementText: target.textContent?.slice(0, 100)
+            elementText: target.textContent?.slice(0, 100),
+            clickX: event.clientX,
+            clickY: event.clientY
           });
         } catch (error) {
           // Fallback for simple string values
           secureEventTracker.track('element_click', {
             action: trackData,
             elementTag: target.tagName,
-            elementText: target.textContent?.slice(0, 100)
+            elementText: target.textContent?.slice(0, 100),
+            clickX: event.clientX,
+            clickY: event.clientY
+          });
+        }
+      } else {
+        // Track any button clicks even without data-track
+        const isButton = target.tagName === 'BUTTON' || target.closest('button');
+        if (isButton) {
+          console.log('🔘 Tracking button click:', target.textContent?.slice(0, 50));
+          secureEventTracker.track('button_click', {
+            buttonText: target.textContent?.slice(0, 100),
+            elementTag: target.tagName,
+            clickX: event.clientX,
+            clickY: event.clientY
           });
         }
       }
     };
 
-    // Track scroll events
+    // Track scroll events with improved logic
     let scrollTimeout: NodeJS.Timeout;
     const handleScroll = () => {
       clearTimeout(scrollTimeout);
@@ -61,17 +81,26 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
           (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
         );
         
-        if (scrollPercent > 0 && scrollPercent % 25 === 0) {
-          secureEventTracker.track('scroll_progress', {
-            percent: scrollPercent,
-            scrollY: window.scrollY
-          });
+        // Track scroll milestones (25%, 50%, 75%, 100%)
+        const milestones = [25, 50, 75, 100];
+        for (const milestone of milestones) {
+          if (scrollPercent >= milestone && lastScrollPercent.current < milestone) {
+            console.log(`📜 Tracking scroll milestone: ${milestone}%`);
+            secureEventTracker.track('scroll_milestone', {
+              milestone: milestone,
+              scrollPercent: scrollPercent,
+              scrollY: window.scrollY,
+              pageHeight: document.documentElement.scrollHeight
+            });
+            lastScrollPercent.current = milestone;
+            break;
+          }
         }
-      }, 100);
+      }, 250);
     };
 
     if (autoTrackClicks) {
-      document.addEventListener('click', handleClick);
+      document.addEventListener('click', handleClick, true);
     }
 
     if (autoTrackScrollEvents) {
@@ -79,7 +108,7 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
     }
 
     return () => {
-      document.removeEventListener('click', handleClick);
+      document.removeEventListener('click', handleClick, true);
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(scrollTimeout);
     };
