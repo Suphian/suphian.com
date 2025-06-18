@@ -32,4 +32,6 @@ export interface EventData {
   timestamp: string;
   page_url?: string;
   retried?: boolean;
+  is_internal_traffic?: boolean;
+  traffic_type?: string;
 }

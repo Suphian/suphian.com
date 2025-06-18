@@ -45,27 +45,33 @@ export type Database = {
           event_name: string
           event_payload: Json | null
           id: string
+          is_internal_traffic: boolean | null
           page_url: string | null
           session_id: string
           timestamp: string | null
+          traffic_type: string | null
         }
         Insert: {
           created_at?: string | null
           event_name: string
           event_payload?: Json | null
           id?: string
+          is_internal_traffic?: boolean | null
           page_url?: string | null
           session_id: string
           timestamp?: string | null
+          traffic_type?: string | null
         }
         Update: {
           created_at?: string | null
           event_name?: string
           event_payload?: Json | null
           id?: string
+          is_internal_traffic?: boolean | null
           page_url?: string | null
           session_id?: string
           timestamp?: string | null
+          traffic_type?: string | null
         }
         Relationships: [
           {

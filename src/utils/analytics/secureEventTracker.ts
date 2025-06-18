@@ -83,7 +83,9 @@ class SecureEventTracker {
       event_name: eventName,
       event_payload: enrichedPayload,
       timestamp: new Date().toISOString(),
-      page_url: window.location.href
+      page_url: window.location.href,
+      is_internal_traffic: this.isInternalTraffic,
+      traffic_type: this.isInternalTraffic ? 'internal' : 'external'
     };
 
     this.eventBatcher.addEvent(eventData);
