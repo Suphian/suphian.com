@@ -1,8 +1,10 @@
 
 import { EventData } from './types';
+import { EventBuffer } from './eventBuffer';
+import { BatchProcessor } from './batchProcessor';
 
 export class EventBatcher {
-  private eventBuffer: EventData[] = [];
+  private eventBuffer: EventBuffer;
   private batchTimer: NodeJS.Timeout | null = null;
   private batchSize: number;
   private batchIntervalMs: number;
@@ -10,13 +12,14 @@ export class EventBatcher {
   constructor(batchSize: number, batchIntervalMs: number) {
     this.batchSize = batchSize;
     this.batchIntervalMs = batchIntervalMs;
+    this.eventBuffer = new EventBuffer();
   }
 
   addEvent(eventData: EventData): void {
-    this.eventBuffer.push(eventData);
-    console.log('🔒 Event added to buffer. Buffer size:', this.eventBuffer.length);
+    const bufferSize = this.eventBuffer.add(eventData);
+    console.log('🔒 Event added to buffer. Buffer size:', bufferSize);
     
-    if (this.eventBuffer.length >= this.batchSize) {
+    if (bufferSize >= this.batchSize) {
       console.log('🔒 Buffer full, flushing events...');
       this.flush();
     }
@@ -29,51 +32,31 @@ export class EventBatcher {
 
     console.log('🔒 Starting batch timer...');
     this.batchTimer = setInterval(() => {
-      if (this.eventBuffer.length > 0) {
-        console.log('🔒 Timer triggered, flushing', this.eventBuffer.length, 'events');
+      if (!this.eventBuffer.isEmpty()) {
+        console.log('🔒 Timer triggered, flushing', this.eventBuffer.size(), 'events');
         flushCallback();
       }
     }, this.batchIntervalMs);
   }
 
   async flush(supabase?: any): Promise<void> {
-    if (this.eventBuffer.length === 0) {
+    if (this.eventBuffer.isEmpty()) {
       console.log('🔒 No events to flush');
       return;
     }
 
-    const eventsToFlush = [...this.eventBuffer];
-    this.eventBuffer = [];
+    const eventsToFlush = this.eventBuffer.flush();
 
     if (!supabase) {
       console.log('🔒 No supabase client provided for flush');
       return;
     }
 
-    try {
-      console.log('🔒 Flushing', eventsToFlush.length, 'events to Supabase...');
-      
-      const { data, error } = await supabase
-        .from('events')
-        .insert(eventsToFlush);
-
-      if (error) {
-        console.error('❌ Failed to store events:', error);
-        console.error('❌ Event error details:', {
-          code: error.code,
-          message: error.message,
-          details: error.details
-        });
-        if (!eventsToFlush[0]?.retried) {
-          eventsToFlush.forEach(event => event.retried = true);
-          this.eventBuffer.unshift(...eventsToFlush);
-        }
-      } else {
-        console.log(`✅ Stored ${eventsToFlush.length} events successfully!`);
-        console.log('✅ Events response:', data);
-      }
-    } catch (error) {
-      console.error('❌ Error flushing events:', error);
+    const success = await BatchProcessor.processEvents(eventsToFlush, supabase);
+    
+    if (!success && !eventsToFlush[0]?.retried) {
+      eventsToFlush.forEach(event => event.retried = true);
+      this.eventBuffer.addBackToBuffer(eventsToFlush);
     }
   }
 
@@ -84,6 +67,6 @@ export class EventBatcher {
   }
 
   getBufferSize(): number {
-    return this.eventBuffer.length;
+    return this.eventBuffer.size();
   }
 }
