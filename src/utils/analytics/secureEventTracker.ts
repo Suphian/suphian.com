@@ -6,6 +6,7 @@ interface EventTrackerConfig {
   enableInDevelopment?: boolean;
   batchSize?: number;
   batchIntervalMs?: number;
+  filterInternalTraffic?: boolean;
 }
 
 interface SessionData {
@@ -33,7 +34,7 @@ interface EventData {
   event_payload?: any;
   timestamp: string;
   page_url?: string;
-  retried?: boolean; // Add this to support retry logic
+  retried?: boolean;
 }
 
 class SecureEventTracker {
@@ -44,12 +45,14 @@ class SecureEventTracker {
   private batchTimer: NodeJS.Timeout | null = null;
   private isInitialized = false;
   private sessionStored = false;
+  private isInternalTraffic = false;
 
   constructor(config: EventTrackerConfig = {}) {
     this.config = {
       enableInDevelopment: true,
       batchSize: 5,
       batchIntervalMs: 3000,
+      filterInternalTraffic: true, // New option to filter internal traffic
       ...config
     };
 
@@ -65,6 +68,17 @@ class SecureEventTracker {
 
     try {
       console.log('🔒 Starting SecureEventTracker initialization...');
+      
+      // Check traffic type first
+      const trafficType = await getTrafficType();
+      this.isInternalTraffic = trafficType === 'internal';
+      
+      if (this.config.filterInternalTraffic && this.isInternalTraffic) {
+        console.log('🚫 Analytics disabled - Internal traffic detected (Lovable dev environment)');
+        this.isInitialized = true; // Mark as initialized but don't actually track
+        return;
+      }
+      
       await this.collectSessionMetadata();
       console.log('🔒 Session metadata collected:', this.sessionData);
       
@@ -100,7 +114,6 @@ class SecureEventTracker {
 
     let locationData = null;
     let ipAddress = null;
-    let isInternal = false;
 
     try {
       console.log('🔒 Fetching IP and location data...');
@@ -109,10 +122,6 @@ class SecureEventTracker {
       
       ipAddress = ipData.ip;
       console.log('🔒 Got IP address:', ipAddress);
-      
-      const trafficType = await getTrafficType();
-      isInternal = trafficType === 'internal';
-      console.log('🔒 Traffic type detected:', trafficType, '- Is internal user:', isInternal);
       
       locationData = {
         country: ipData.country_name,
@@ -123,12 +132,6 @@ class SecureEventTracker {
       console.log('🔒 Location data:', locationData);
     } catch (error) {
       console.log('⚠️ Could not fetch location data:', error);
-      
-      const internalDomains = ['localhost', '127.0.0.1'];
-      isInternal = internalDomains.some(domain => 
-        window.location.hostname.includes(domain)
-      );
-      console.log('🔒 Using fallback hostname check - Is internal user:', isInternal);
     }
 
     this.sessionData = {
@@ -147,7 +150,7 @@ class SecureEventTracker {
       referrer: document.referrer || null,
       landing_url: window.location.href,
       user_agent: navigator.userAgent,
-      is_internal_user: isInternal
+      is_internal_user: this.isInternalTraffic
     };
 
     console.log('🔒 Complete session data prepared:', this.sessionData);
@@ -206,6 +209,12 @@ class SecureEventTracker {
   }
 
   public trackEvent(eventName: string, eventPayload: any = {}): void {
+    // Skip tracking if this is internal traffic and filtering is enabled
+    if (this.config.filterInternalTraffic && this.isInternalTraffic) {
+      console.log('🚫 Event tracking skipped - Internal traffic:', eventName);
+      return;
+    }
+
     if (!this.isInitialized) {
       console.warn('⚠️ Cannot track event: tracker not initialized yet, queuing event...');
       // Queue the event for later
@@ -322,11 +331,12 @@ class SecureEventTracker {
   }
 }
 
-// Export secure singleton instance
+// Export secure singleton instance with internal traffic filtering enabled
 export const secureEventTracker = new SecureEventTracker({
   enableInDevelopment: true,
   batchSize: 5,
-  batchIntervalMs: 3000
+  batchIntervalMs: 3000,
+  filterInternalTraffic: true // Filter out Lovable dev traffic
 });
 
 // Auto-initialize when module loads
