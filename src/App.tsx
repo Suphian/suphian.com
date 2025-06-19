@@ -7,12 +7,10 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import Auth from "./pages/Auth";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Logo from "./components/Logo";
 import { AnalyticsPageviewListener } from "./components/AnalyticsPageviewListener";
-import SecureEventsDashboard from "./components/SecureEventsDashboard";
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -37,8 +35,6 @@ const AppContent = () => {
       <main className="min-h-screen">
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/admin/analytics" element={<SecureEventsDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
