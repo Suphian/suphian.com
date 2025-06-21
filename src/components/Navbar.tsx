@@ -35,6 +35,10 @@ const Navbar = () => {
       name: "Work",
       path: "/",
       scrollTo: "experience-section"
+    },
+    {
+      name: "Misc Experiment",
+      path: "/misc-experiment"
     }
   ];
 
