@@ -9,7 +9,7 @@ const MiscExperiment = () => {
       <div className="max-w-6xl mx-auto space-y-12">
         <div className="text-center">
           <h1 className="heading-xl mb-8">
-            Music Lab
+            Music Experiment
           </h1>
           <p className="paragraph mb-12">
             Explore the economics of music streaming with our interactive revenue calculator and enjoy music with our YouTube player.
