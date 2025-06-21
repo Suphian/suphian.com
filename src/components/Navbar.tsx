@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -36,7 +37,7 @@ const Navbar = () => {
       scrollTo: "experience-section"
     },
     {
-      name: "Music Lab",
+      name: "Music",
       path: "/misc-experiment"
     }
   ];
