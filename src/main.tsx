@@ -1,4 +1,3 @@
-
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
@@ -6,7 +5,7 @@ import './index.css'
 // Initialize Google Analytics tracking
 import './utils/analytics/googleAnalytics';
 
-// Initialize Secure Supabase event tracking (replaces old eventTracker)
+// Initialize Secure Supabase event tracking
 import './utils/analytics/secureEventTracker';
 
 // Log when the page loads to help debug favicon issues
@@ -20,21 +19,3 @@ window.addEventListener('load', () => {
 
 // Initialize the root component
 createRoot(document.getElementById("root")!).render(<App />);
-
-// -------- SECURE TRACKING EXAMPLE USAGE --------
-/*
-import React from "react";
-import { secureEventTracker } from '@/utils/analytics/secureEventTracker';
-
-function MyButton() {
-  const handleClick = () => {
-    secureEventTracker.track("button_click", {
-      label: "Download CV",
-      page: window.location.pathname,
-      action: "download",
-    });
-  };
-  return <button onClick={handleClick}>Download CV</button>
-}
-*/
-// -----------------------------------------------------
