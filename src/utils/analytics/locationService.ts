@@ -9,7 +9,8 @@ export interface LocationData {
 export class LocationService {
   private static lastFetchTime = 0;
   private static cachedData: { ipAddress: string | null; locationData: LocationData | null } | null = null;
-  private static readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  private static readonly CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+  private static isRequesting = false;
 
   static async fetchLocationData(): Promise<{ ipAddress: string | null; locationData: LocationData | null }> {
     const now = Date.now();
@@ -22,6 +23,15 @@ export class LocationService {
       return this.cachedData;
     }
 
+    // Prevent multiple simultaneous requests
+    if (this.isRequesting) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔒 Request already in progress, returning cached data');
+      }
+      return this.cachedData || { ipAddress: null, locationData: null };
+    }
+
+    this.isRequesting = true;
     let locationData = null;
     let ipAddress = null;
 
@@ -81,6 +91,8 @@ export class LocationService {
         }
         return this.cachedData;
       }
+    } finally {
+      this.isRequesting = false;
     }
 
     return { ipAddress, locationData };
