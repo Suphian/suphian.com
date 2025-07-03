@@ -161,7 +161,7 @@ export const getSecurityHeaders = () => {
   return {
     'Content-Security-Policy': [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ipapi.co https://www.googletagmanager.com https://www.google-analytics.com https://cdn.gpteng.co",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ipapi.co https://www.googletagmanager.com https://www.google-analytics.com https://cdn.gpteng.co chrome-extension:",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https: blob:",

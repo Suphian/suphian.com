@@ -22,6 +22,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
         className="w-full sm:max-w-xl md:max-w-2xl p-0 overflow-y-auto border-l-0"
         aria-modal="true"
         role="dialog"
+        aria-describedby="contact-desc"
       >
         <div className="h-full flex flex-col" tabIndex={-1}>
           <div className="p-6 md:p-8 border-b">
