@@ -4,6 +4,7 @@ import { getTrafficType } from './ipDetection';
 import { SessionManager } from './sessionManager';
 import { EventBatcher } from './eventBatcher';
 import { EventSanitizer } from './eventSanitizer';
+import { validateEventData } from '../security';
 import { EventTrackerConfig, EventData, SessionData } from './types';
 
 class SecureEventTracker {
@@ -64,6 +65,13 @@ class SecureEventTracker {
     if (!this.isInitialized) {
       console.warn('⚠️ Cannot track event: tracker not initialized yet, queuing event...');
       setTimeout(() => this.trackEvent(eventName, eventPayload), 1000);
+      return;
+    }
+
+    // Validate event data before processing
+    const validation = validateEventData({ event_name: eventName, event_payload: eventPayload });
+    if (!validation.isValid) {
+      console.error('❌ Invalid event data:', validation.errors);
       return;
     }
 

@@ -73,7 +73,7 @@ export const checkAuthRateLimit = async (identifier: string, action: 'login' | '
   }
 };
 
-// Input sanitization helper
+// Enhanced input sanitization helper
 export const sanitizeInput = (input: string, maxLength: number = 1000): string => {
   if (!input) return '';
   
@@ -82,7 +82,59 @@ export const sanitizeInput = (input: string, maxLength: number = 1000): string =
     .slice(0, maxLength)
     .replace(/[<>]/g, '') // Remove potential HTML tags
     .replace(/javascript:/gi, '') // Remove javascript: protocols
-    .replace(/on\w+\s*=/gi, ''); // Remove event handlers
+    .replace(/on\w+\s*=/gi, '') // Remove event handlers
+    .replace(/data:/gi, '') // Remove data URLs
+    .replace(/vbscript:/gi, ''); // Remove vbscript
+};
+
+// Validate analytics session data
+export const validateSessionData = (sessionData: any): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+  
+  if (sessionData.screen_width && (sessionData.screen_width < 0 || sessionData.screen_width > 10000)) {
+    errors.push('Invalid screen width');
+  }
+  
+  if (sessionData.screen_height && (sessionData.screen_height < 0 || sessionData.screen_height > 10000)) {
+    errors.push('Invalid screen height');
+  }
+  
+  if (sessionData.viewport_width && (sessionData.viewport_width < 0 || sessionData.viewport_width > 10000)) {
+    errors.push('Invalid viewport width');
+  }
+  
+  if (sessionData.viewport_height && (sessionData.viewport_height < 0 || sessionData.viewport_height > 10000)) {
+    errors.push('Invalid viewport height');
+  }
+  
+  if (sessionData.user_agent && sessionData.user_agent.length > 1000) {
+    errors.push('User agent too long');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+};
+
+// Validate event data
+export const validateEventData = (eventData: any): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+  
+  if (!eventData.event_name || typeof eventData.event_name !== 'string') {
+    errors.push('Event name is required and must be a string');
+  } else if (!/^[a-zA-Z0-9_-]+$/.test(eventData.event_name)) {
+    errors.push('Event name contains invalid characters');
+  }
+  
+  if (eventData.event_payload && JSON.stringify(eventData.event_payload).length > 10240) {
+    errors.push('Event payload too large (max 10KB)');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
 };
 
 // Check if user has admin privileges (using proper role-based system)
@@ -104,7 +156,7 @@ export const checkAdminAccess = async (): Promise<boolean> => {
   }
 };
 
-// Security headers for CSP (Content Security Policy)
+// Enhanced security headers for CSP (Content Security Policy)
 export const getSecurityHeaders = () => {
   return {
     'Content-Security-Policy': [
@@ -116,11 +168,16 @@ export const getSecurityHeaders = () => {
       "connect-src 'self' https://ipapi.co https://*.supabase.co https://www.google-analytics.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
-      "object-src 'none'"
+      "object-src 'none'",
+      "form-action 'self'",
+      "upgrade-insecure-requests"
     ].join('; '),
     'X-Frame-Options': 'DENY',
     'X-Content-Type-Options': 'nosniff',
+    'X-XSS-Protection': '1; mode=block',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
   };
 };
