@@ -11,7 +11,6 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Logo from "./components/Logo";
 import ScrollProgress from "./components/ScrollProgress";
-import BackToTop from "./components/BackToTop";
 import SEOHead from "./components/SEOHead";
 import { AnalyticsPageviewListener } from "./components/AnalyticsPageviewListener";
 
@@ -44,7 +43,6 @@ const AppContent = () => {
         </Routes>
       </main>
       <Footer />
-      <BackToTop />
     </>
   );
 };
