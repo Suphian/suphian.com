@@ -74,10 +74,13 @@ const Footer = () => {
             </a>
             <button 
               onClick={scrollToTop} 
-              className="p-2 rounded-full bg-accent hover:bg-accent/80 hover:scale-110 transition-all duration-300 hover:shadow-lg hover:shadow-accent/25" 
+              className="wave-btn p-2 rounded-full bg-accent text-background hover:text-accent-foreground font-montserrat font-bold transition-all duration-300 relative overflow-hidden group" 
               aria-label="Scroll to top"
             >
-              <ArrowUp size={20} className="text-background" />
+              <span className="relative z-10 transition-colors duration-300">
+                <ArrowUp size={20} />
+              </span>
+              <span className="absolute inset-0 bg-primary bg-[length:200%] transform translate-y-full group-hover:translate-y-0 transition-transform duration-500"></span>
             </button>
           </div>
         </div>
