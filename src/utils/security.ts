@@ -161,11 +161,11 @@ export const getSecurityHeaders = () => {
   return {
     'Content-Security-Policy': [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://ipapi.co https://www.googletagmanager.com https://www.google-analytics.com https://cdn.gpteng.co chrome-extension: 'sha256-+osnfquB23g9K0xV1ls9W1PGJx2yRDNBiM+W8Bj/zdc='",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api.ipify.org https://www.googletagmanager.com https://www.google-analytics.com https://cdn.gpteng.co chrome-extension: 'sha256-+osnfquB23g9K0xV1ls9W1PGJx2yRDNBiM+W8Bj/zdc='",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https: blob:",
-      "connect-src 'self' https://ipapi.co https://*.supabase.co https://www.google-analytics.com https://stats.g.doubleclick.net",
+      "connect-src 'self' https://api.ipify.org https://*.supabase.co https://www.google-analytics.com https://stats.g.doubleclick.net",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "object-src 'none'",
