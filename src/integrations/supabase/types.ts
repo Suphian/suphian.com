@@ -137,6 +137,8 @@ export type Database = {
       sessions: {
         Row: {
           browser: string | null
+          city: string | null
+          country: string | null
           created_at: string | null
           device_type: string | null
           id: string
@@ -147,17 +149,29 @@ export type Database = {
           location: Json | null
           os: string | null
           referrer: string | null
+          referrer_detail: string | null
+          referrer_source: string | null
+          region: string | null
           screen_height: number | null
           screen_width: number | null
           session_id: string
           timezone: string | null
           updated_at: string | null
           user_agent: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
           viewport_height: number | null
           viewport_width: number | null
+          visit_count: number | null
+          visitor_id: string | null
         }
         Insert: {
           browser?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string | null
           device_type?: string | null
           id?: string
@@ -168,17 +182,29 @@ export type Database = {
           location?: Json | null
           os?: string | null
           referrer?: string | null
+          referrer_detail?: string | null
+          referrer_source?: string | null
+          region?: string | null
           screen_height?: number | null
           screen_width?: number | null
           session_id: string
           timezone?: string | null
           updated_at?: string | null
           user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
           viewport_height?: number | null
           viewport_width?: number | null
+          visit_count?: number | null
+          visitor_id?: string | null
         }
         Update: {
           browser?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string | null
           device_type?: string | null
           id?: string
@@ -189,14 +215,24 @@ export type Database = {
           location?: Json | null
           os?: string | null
           referrer?: string | null
+          referrer_detail?: string | null
+          referrer_source?: string | null
+          region?: string | null
           screen_height?: number | null
           screen_width?: number | null
           session_id?: string
           timezone?: string | null
           updated_at?: string | null
           user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
           viewport_height?: number | null
           viewport_width?: number | null
+          visit_count?: number | null
+          visitor_id?: string | null
         }
         Relationships: []
       }

@@ -4,6 +4,7 @@ import { SessionStorage } from './sessionStorage';
 import { LocationService } from './locationService';
 import { MetadataCollector } from './metadataCollector';
 import { validateSessionData } from '../security';
+import { EnhancedTracker } from './enhancedTracker';
 
 export class SessionManager {
   private sessionId: string;
@@ -28,17 +29,32 @@ export class SessionManager {
   }
 
   async collectSessionMetadata(isInternalTraffic: boolean): Promise<void> {
-    console.log('🔒 Collecting session metadata...');
+    console.log('🔒 Collecting enhanced session metadata...');
     
     const browserMetadata = MetadataCollector.collectBrowserMetadata();
     const { ipAddress, locationData } = await LocationService.fetchLocationData();
+    const enhancedData = EnhancedTracker.getEnhancedSessionData();
 
     const rawSessionData = {
       session_id: this.sessionId,
+      visitor_id: enhancedData.visitorData.visitor_id,
+      visit_count: enhancedData.visitorData.visit_count,
       ip_address: ipAddress,
       location: locationData,
+      city: locationData?.city || null,
+      region: locationData?.region || null,
+      country: locationData?.country || null,
+      referrer: enhancedData.referrerInfo.referrer,
+      referrer_source: enhancedData.referrerInfo.referrer_source,
+      referrer_detail: enhancedData.referrerInfo.referrer_detail,
+      utm_source: enhancedData.utmParams.utm_source || null,
+      utm_medium: enhancedData.utmParams.utm_medium || null,
+      utm_campaign: enhancedData.utmParams.utm_campaign || null,
+      utm_content: enhancedData.utmParams.utm_content || null,
+      utm_term: enhancedData.utmParams.utm_term || null,
+      landing_url: window.location.href,
       ...browserMetadata,
-      is_internal_user: isInternalTraffic
+      is_internal_user: enhancedData.isInternal || isInternalTraffic
     };
 
     // Validate session data
@@ -64,7 +80,7 @@ export class SessionManager {
     }
 
     this.sessionData = rawSessionData;
-    console.log('🔒 Complete session data prepared:', this.sessionData);
+    console.log('🔒 Enhanced session data prepared:', this.sessionData);
   }
 
   async storeSession(supabase: any): Promise<void> {

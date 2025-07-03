@@ -1,6 +1,7 @@
 
 import { useEffect, useRef } from 'react';
 import { secureEventTracker } from '@/utils/analytics/secureEventTracker';
+import { EnhancedTracker } from '@/utils/analytics/enhancedTracker';
 
 interface UseEventTrackerOptions {
   autoTrackPageViews?: boolean;
@@ -19,14 +20,21 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
   const lastScrollPercent = useRef(0);
 
   useEffect(() => {
+    // Set up enhanced UI event tracking
+    EnhancedTracker.setupUIEventTracking((eventName, eventData) => {
+      secureEventTracker.track(eventName, eventData);
+    });
+
     // Track page view with secure tracker
     if (autoTrackPageViews && !hasTrackedPageView.current) {
-      console.log('📄 Tracking page view for:', window.location.pathname);
+      console.log('📄 Tracking enhanced page view for:', window.location.pathname);
       secureEventTracker.track('page_view', {
         path: window.location.pathname,
         url: window.location.href,
         referrer: document.referrer,
-        title: document.title
+        title: document.title,
+        viewport_width: window.innerWidth,
+        viewport_height: window.innerHeight
       });
       hasTrackedPageView.current = true;
     }
@@ -45,7 +53,8 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
             elementTag: target.tagName,
             elementText: target.textContent?.slice(0, 100),
             clickX: event.clientX,
-            clickY: event.clientY
+            clickY: event.clientY,
+            timestamp: new Date().toISOString()
           });
         } catch (error) {
           // Fallback for simple string values
@@ -54,7 +63,8 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
             elementTag: target.tagName,
             elementText: target.textContent?.slice(0, 100),
             clickX: event.clientX,
-            clickY: event.clientY
+            clickY: event.clientY,
+            timestamp: new Date().toISOString()
           });
         }
       } else {
@@ -66,7 +76,8 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
             buttonText: target.textContent?.slice(0, 100),
             elementTag: target.tagName,
             clickX: event.clientX,
-            clickY: event.clientY
+            clickY: event.clientY,
+            timestamp: new Date().toISOString()
           });
         }
       }
@@ -90,7 +101,9 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
               milestone: milestone,
               scrollPercent: scrollPercent,
               scrollY: window.scrollY,
-              pageHeight: document.documentElement.scrollHeight
+              pageHeight: document.documentElement.scrollHeight,
+              viewport_height: window.innerHeight,
+              timestamp: new Date().toISOString()
             });
             lastScrollPercent.current = milestone;
             break;
