@@ -59,9 +59,10 @@ export class EventBatcher {
 
     const success = await BatchProcessor.processEvents(eventsToFlush, supabase);
     
-    if (!success && !eventsToFlush[0]?.retried) {
-      eventsToFlush.forEach(event => event.retried = true);
-      this.eventBuffer.addBackToBuffer(eventsToFlush);
+    if (!success) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('⚠️ Event processing failed, discarding events to prevent loops');
+      }
     }
   }
 

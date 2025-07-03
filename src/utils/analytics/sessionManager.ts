@@ -80,41 +80,29 @@ export class SessionManager {
         console.log('🔒 Attempting to store session in Supabase...');
       }
       
-      // Try upsert first to handle duplicates gracefully
+      // Always mark as stored first to prevent retries
+      this.sessionStored = true;
+      
+      // Try to insert the session
       const { data, error } = await supabase
         .from('sessions')
-        .upsert(this.sessionData, { 
-          onConflict: 'session_id',
-          ignoreDuplicates: true 
-        });
+        .insert(this.sessionData)
+        .select();
 
       if (error) {
         if (process.env.NODE_ENV === 'development') {
-          console.error('❌ Failed to store/update session:', error);
+          console.log('⚠️ Session storage failed (continuing normally):', error.message);
         }
-        
-        // If it's a policy violation, just mark as stored and continue
-        if (error.code === '42501') {
-          this.sessionStored = true;
-          if (process.env.NODE_ENV === 'development') {
-            console.log('🔒 Session storage skipped due to RLS policy (continuing normally)');
-          }
-          return;
-        }
-        
-        throw error;
-      } else {
-        this.sessionStored = true;
-        if (process.env.NODE_ENV === 'development') {
-          console.log('✅ Session stored/updated successfully in Supabase!');
-        }
+        return;
+      }
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Session stored successfully in Supabase!');
       }
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
-        console.error('❌ Critical error storing session:', error);
+        console.log('⚠️ Session storage error (continuing normally):', error);
       }
-      // Mark as stored to prevent infinite retries
-      this.sessionStored = true;
     }
   }
 }
