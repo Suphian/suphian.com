@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { WaveButton } from "@/components/ui/wave-button";
-import { useAuth } from "@/hooks/useAuth";
 import ContactSheet from "./ContactSheet";
 
 const Navbar = () => {
@@ -10,7 +9,6 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const location = useLocation();
-  const { user, signOut } = useAuth();
   const closeMenu = () => setIsOpen(false);
   const isHomepage = location.pathname === "/";
 
@@ -114,29 +112,6 @@ const Navbar = () => {
                 </Link>
               </li>
             ))}
-            {/* Auth controls */}
-            {user ? (
-              <li className="flex items-center space-x-4">
-                <span className="text-sm text-muted-foreground">
-                  {user.email}
-                </span>
-                <button
-                  onClick={signOut}
-                  className="text-sm text-primary hover:text-primary/80 transition-colors"
-                >
-                  Sign Out
-                </button>
-              </li>
-            ) : (
-              <li>
-                <Link 
-                  to="/auth" 
-                  className="text-sm text-primary hover:text-primary/80 transition-colors"
-                >
-                  Sign In
-                </Link>
-              </li>
-            )}
             
             <li>
               <WaveButton 
