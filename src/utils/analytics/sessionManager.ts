@@ -80,10 +80,7 @@ export class SessionManager {
         console.log('🔒 Attempting to store session in Supabase...');
       }
       
-      // Always mark as stored first to prevent retries
-      this.sessionStored = true;
-      
-      // Try to insert the session
+      // Try to insert the session with error handling
       const { data, error } = await supabase
         .from('sessions')
         .insert(this.sessionData)
@@ -93,9 +90,12 @@ export class SessionManager {
         if (process.env.NODE_ENV === 'development') {
           console.log('⚠️ Session storage failed (continuing normally):', error.message);
         }
+        // Mark as stored regardless to prevent retries
+        this.sessionStored = true;
         return;
       }
 
+      this.sessionStored = true;
       if (process.env.NODE_ENV === 'development') {
         console.log('✅ Session stored successfully in Supabase!');
       }
@@ -103,6 +103,8 @@ export class SessionManager {
       if (process.env.NODE_ENV === 'development') {
         console.log('⚠️ Session storage error (continuing normally):', error);
       }
+      // Mark as stored to prevent infinite retries
+      this.sessionStored = true;
     }
   }
 }

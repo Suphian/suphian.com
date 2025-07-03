@@ -15,22 +15,17 @@ export class BatchProcessor {
       
       const { data, error } = await supabase
         .from('events')
-        .insert(events);
+        .insert(events)
+        .select('session_id, event_name, event_payload, timestamp, page_url, is_internal_traffic, traffic_type');
 
       if (error) {
-        console.error('❌ Failed to store events:', error);
         if (process.env.NODE_ENV === 'development') {
-          console.error('❌ Event error details:', {
-            code: error.code,
-            message: error.message,
-            details: error.details
-          });
+          console.log('⚠️ Failed to store events (continuing normally):', error.message);
         }
         return false;
       } else {
         if (process.env.NODE_ENV === 'development') {
           console.log(`✅ Stored ${events.length} events successfully!`);
-          console.log('✅ Events response:', data);
         }
         return true;
       }

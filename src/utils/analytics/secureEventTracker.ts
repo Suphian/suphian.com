@@ -60,6 +60,7 @@ class SecureEventTracker {
         console.log('🔒 Session metadata collected:', this.sessionManager.getSessionData());
       }
       
+      // Wait for session to be stored before starting event tracking
       await this.sessionManager.storeSession(supabase);
       if (process.env.NODE_ENV === 'development') {
         console.log('🔒 Session storage completed');
@@ -78,8 +79,9 @@ class SecureEventTracker {
 
   public trackEvent(eventName: string, eventPayload: any = {}): void {
     if (!this.isInitialized) {
-      console.warn('⚠️ Cannot track event: tracker not initialized yet, queuing event...');
-      setTimeout(() => this.trackEvent(eventName, eventPayload), 1000);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('⚠️ Tracker not initialized yet, discarding event:', eventName);
+      }
       return;
     }
 
