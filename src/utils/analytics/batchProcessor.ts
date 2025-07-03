@@ -9,7 +9,9 @@ export class BatchProcessor {
     }
 
     try {
-      console.log('🔒 Processing', events.length, 'events to Supabase...');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔒 Processing', events.length, 'events to Supabase...');
+      }
       
       const { data, error } = await supabase
         .from('events')
@@ -17,15 +19,19 @@ export class BatchProcessor {
 
       if (error) {
         console.error('❌ Failed to store events:', error);
-        console.error('❌ Event error details:', {
-          code: error.code,
-          message: error.message,
-          details: error.details
-        });
+        if (process.env.NODE_ENV === 'development') {
+          console.error('❌ Event error details:', {
+            code: error.code,
+            message: error.message,
+            details: error.details
+          });
+        }
         return false;
       } else {
-        console.log(`✅ Stored ${events.length} events successfully!`);
-        console.log('✅ Events response:', data);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`✅ Stored ${events.length} events successfully!`);
+          console.log('✅ Events response:', data);
+        }
         return true;
       }
     } catch (error) {

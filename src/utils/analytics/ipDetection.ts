@@ -42,7 +42,8 @@ export async function getTrafficType(): Promise<'internal' | 'external'> {
     // Your known internal IPs
     const internalIPs = [
       '70.23.218.121', 
-      '2600:4040:9074:300:20fd:4959:4e97:a68e'
+      '2600:4040:9074:300:20fd:4959:4e97:a68e',
+      '2600:4040:9074:300:1407:6941:9885:f80e'  // Your current IP
     ];
     
     if (internalIPs.includes(ipData.ip)) {

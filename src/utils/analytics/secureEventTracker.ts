@@ -29,33 +29,48 @@ class SecureEventTracker {
       this.config.batchIntervalMs || 3000
     );
 
-    console.log('🔒 SecureEventTracker constructor - Session ID:', this.sessionManager.getSessionId());
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔒 SecureEventTracker constructor - Session ID:', this.sessionManager.getSessionId());
+    }
   }
 
   async initialize(): Promise<void> {
     if (this.isInitialized) {
-      console.log('🔒 SecureEventTracker already initialized');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔒 SecureEventTracker already initialized');
+      }
       return;
     }
 
     try {
-      console.log('🔒 Starting SecureEventTracker initialization...');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔒 Starting SecureEventTracker initialization...');
+      }
       
       const trafficType = await getTrafficType();
       this.isInternalTraffic = trafficType === 'internal';
       
-      console.log(`🔒 Traffic classified as: ${trafficType.toUpperCase()}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🔒 Traffic classified as: ${trafficType.toUpperCase()}`);
+      }
       
       await this.sessionManager.collectSessionMetadata(this.isInternalTraffic);
-      console.log('🔒 Session metadata collected:', this.sessionManager.getSessionData());
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔒 Session metadata collected:', this.sessionManager.getSessionData());
+      }
       
       await this.sessionManager.storeSession(supabase);
-      console.log('🔒 Session storage completed');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔒 Session storage completed');
+      }
       
       this.eventBatcher.startBatchTimer(() => this.eventBatcher.flush(supabase));
       
       this.isInitialized = true;
-      console.log('✅ Secure event tracker initialized successfully for session:', this.sessionManager.getSessionId());
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Secure event tracker initialized successfully for session:', this.sessionManager.getSessionId());
+      }
     } catch (error) {
       console.error('❌ Failed to initialize secure event tracker:', error);
     }
@@ -75,7 +90,9 @@ class SecureEventTracker {
       return;
     }
 
-    console.log(`🔒 Tracking event: ${eventName} (${this.isInternalTraffic ? 'INTERNAL' : 'EXTERNAL'} traffic)`, eventPayload);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔒 Tracking event: ${eventName} (${this.isInternalTraffic ? 'INTERNAL' : 'EXTERNAL'} traffic)`, eventPayload);
+    }
 
     const sanitizedPayload = EventSanitizer.sanitizeEventPayload(eventPayload);
 
@@ -128,7 +145,9 @@ export const secureEventTracker = new SecureEventTracker({
 
 // Auto-initialize when module loads
 if (typeof window !== 'undefined') {
-  console.log('🔒 Auto-initializing secure event tracker...');
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔒 Auto-initializing secure event tracker...');
+  }
   secureEventTracker.initialize();
 }
 

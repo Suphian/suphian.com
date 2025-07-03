@@ -48,9 +48,13 @@ export const useScrollTracking = ({ sections, onSectionView }: UseScrollTracking
         
         if (isInView && !viewedSections.current.has(name)) {
           viewedSections.current.add(name);
-          console.log(`📍 Section viewed: ${name} (${Math.round(progress * 100)}% visible, scrolling ${scrollDirection.current})`);
           
-          // Track the event
+          // Only log in development mode to reduce console noise
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`📍 Section viewed: ${name} (${Math.round(progress * 100)}% visible, scrolling ${scrollDirection.current})`);
+          }
+          
+          // Track the event (only once per section)
           window.trackEvent?.("section_viewed", {
             section: name,
             progress: Math.round(progress * 100),

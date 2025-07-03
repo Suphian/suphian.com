@@ -38,22 +38,25 @@ const Index = () => {
   const { viewedSections } = useScrollTracking({
     sections: scrollSections,
     onSectionView: (sectionName, progress) => {
-      console.log(`🎯 User engaged with: ${sectionName} section (${Math.round(progress * 100)}% visible)`);
-      
-      // You can add custom logic here for each section
-      switch (sectionName) {
-        case "landing":
-          console.log("👋 User saw the landing/greeting");
-          break;
-        case "parallax-image":
-          console.log("🚀 User saw the astronaut image");
-          break;
-        case "about-story":
-          console.log("📖 User is reading your story");
-          break;
-        case "experience":
-          console.log("💼 User is viewing your experience");
-          break;
+      // Only log engagement events in development mode
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🎯 User engaged with: ${sectionName} section (${Math.round(progress * 100)}% visible)`);
+        
+        // You can add custom logic here for each section
+        switch (sectionName) {
+          case "landing":
+            console.log("👋 User saw the landing/greeting");
+            break;
+          case "parallax-image":
+            console.log("🚀 User saw the astronaut image");
+            break;
+          case "about-story":
+            console.log("📖 User is reading your story");
+            break;
+          case "experience":
+            console.log("💼 User is viewing your experience");
+            break;
+        }
       }
     }
   });

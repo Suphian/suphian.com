@@ -17,10 +17,15 @@ export class EventBatcher {
 
   addEvent(eventData: EventData): void {
     const bufferSize = this.eventBuffer.add(eventData);
-    console.log('🔒 Event added to buffer. Buffer size:', bufferSize);
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔒 Event added to buffer. Buffer size:', bufferSize);
+    }
     
     if (bufferSize >= this.batchSize) {
-      console.log('🔒 Buffer full, flushing events...');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔒 Buffer full, flushing events...');
+      }
       this.flush();
     }
   }
