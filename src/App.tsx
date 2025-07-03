@@ -10,6 +10,9 @@ import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Logo from "./components/Logo";
+import ScrollProgress from "./components/ScrollProgress";
+import BackToTop from "./components/BackToTop";
+import SEOHead from "./components/SEOHead";
 import { AnalyticsPageviewListener } from "./components/AnalyticsPageviewListener";
 
 // Scroll to top on route change
@@ -28,6 +31,8 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   return (
     <>
+      <SEOHead />
+      <ScrollProgress />
       <ScrollToTop />
       <AnalyticsPageviewListener />
       <Navbar />
@@ -39,6 +44,7 @@ const AppContent = () => {
         </Routes>
       </main>
       <Footer />
+      <BackToTop />
     </>
   );
 };

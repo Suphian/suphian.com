@@ -28,18 +28,20 @@ const CompanyLogos = () => {
             Companies I've worked with
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center justify-items-center">
-            <div className="w-32 h-16 md:w-40 md:h-20 flex items-center justify-center grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-              <img src="/youtube-logo.svg" alt="YouTube logo" className="max-w-full max-h-full" />
+            <div className="w-32 h-16 md:w-40 md:h-20 flex items-center justify-center grayscale opacity-70 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer group">
+              <img src="/youtube-logo.svg" alt="YouTube logo" className="max-w-full max-h-full group-hover:drop-shadow-lg" />
             </div>
-            <div className="w-32 h-16 md:w-40 md:h-20 flex items-center justify-center grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-              <img src="/google-logo.svg" alt="Google logo" className="max-w-full max-h-full" />
+            <div className="w-32 h-16 md:w-40 md:h-20 flex items-center justify-center grayscale opacity-70 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer group">
+              <img src="/google-logo.svg" alt="Google logo" className="max-w-full max-h-full group-hover:drop-shadow-lg" />
             </div>
-            
-            <div className="w-32 h-16 md:w-40 md:h-20 flex items-center justify-center grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-              <img src="/huge-logo.svg" alt="Huge Inc logo" className="max-w-full max-h-full" />
+            <div className="w-32 h-16 md:w-40 md:h-20 flex items-center justify-center grayscale opacity-70 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer group">
+              <img src="/gv-logo.svg" alt="Google Ventures logo" className="max-w-full max-h-full group-hover:drop-shadow-lg" />
             </div>
-            <div className="w-32 h-16 md:w-40 md:h-20 flex items-center justify-center grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-              <img src="/capitalg-logo.svg" alt="CapitalG logo" className="max-w-full max-h-full" />
+            <div className="w-32 h-16 md:w-40 md:h-20 flex items-center justify-center grayscale opacity-70 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer group">
+              <img src="/huge-logo.svg" alt="Huge Inc logo" className="max-w-full max-h-full group-hover:drop-shadow-lg" />
+            </div>
+            <div className="w-32 h-16 md:w-40 md:h-20 flex items-center justify-center grayscale opacity-70 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer group">
+              <img src="/capitalg-logo.svg" alt="CapitalG logo" className="max-w-full max-h-full group-hover:drop-shadow-lg" />
             </div>
           </div>
         </div>
