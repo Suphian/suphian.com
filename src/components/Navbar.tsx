@@ -10,7 +10,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const location = useLocation();
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const closeMenu = () => setIsOpen(false);
   const isHomepage = location.pathname === "/";
 
@@ -114,22 +114,6 @@ const Navbar = () => {
                 </Link>
               </li>
             ))}
-            
-            {/* Admin link for authenticated admin users */}
-            {isAdmin && (
-              <li>
-                <Link 
-                  to="/admin" 
-                  className={cn(
-                    "link-underline py-2 text-primary", 
-                    isActive("/admin") ? "font-medium" : "hover:text-primary/80"
-                  )}
-                >
-                  Admin
-                </Link>
-              </li>
-            )}
-            
             {/* Auth controls */}
             {user ? (
               <li className="flex items-center space-x-4">
