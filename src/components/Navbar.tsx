@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { WaveButton } from "@/components/ui/wave-button";
+import ThemeToggle from "./ThemeToggle";
 import ContactSheet from "./ContactSheet";
 
 const Navbar = () => {
@@ -112,6 +113,9 @@ const Navbar = () => {
                 </Link>
               </li>
             ))}
+            <li>
+              <ThemeToggle />
+            </li>
             <li>
               <WaveButton 
                 variant="primary"
