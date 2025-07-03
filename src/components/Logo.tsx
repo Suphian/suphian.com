@@ -22,8 +22,12 @@ const Logo = () => {
       <Link to="/" onClick={handleLogoClick}>
         <img 
           src="/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png" 
-          alt="Suphian Logo" 
+          alt="Suphian Tweel - Product Manager at YouTube, professional headshot and logo" 
           className="h-[97px] md:h-[122px] hover:scale-105 transition-transform duration-200"
+          loading="eager"
+          decoding="async"
+          width="122"
+          height="122"
         />
       </Link>
     </div>

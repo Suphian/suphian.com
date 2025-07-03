@@ -1,0 +1,18 @@
+/* TEAM */
+
+Developer: Suphian Tweel
+Contact: suph.tweel@gmail.com
+From: San Francisco, CA
+
+/* THANKS */
+
+Built with: React, TypeScript, Tailwind CSS, Supabase
+Framework: Vite
+Analytics: Google Analytics 4
+
+/* SITE */
+
+Last update: 2025/01/03
+Language: English
+Doctype: HTML5
+IDE: Lovable

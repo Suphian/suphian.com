@@ -1,20 +1,28 @@
 
 {
-  "name": "Suphian Tweel - Product Manager",
+  "name": "Suphian Tweel - Product Manager at YouTube",
   "short_name": "Suphian Tweel",
+  "description": "Product Manager leading payments at YouTube. Portfolio showcasing experience in product management, user experience design, and technology strategy.",
+  "start_url": "/",
+  "scope": "/",
   "icons": [
     {
       "src": "/lovable-uploads/af121fff-31a4-4b8d-90fd-b99337bbc094.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/lovable-uploads/af121fff-31a4-4b8d-90fd-b99337bbc094.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "theme_color": "#ffffff",
   "background_color": "#000000",
-  "display": "standalone"
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "en-US",
+  "categories": ["business", "productivity", "portfolio"]
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://suphiantweel.lovable.app/</loc>
+    <lastmod>2025-01-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://suphiantweel.lovable.app/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png</image:loc>
+      <image:title>Suphian Tweel - Product Manager at YouTube</image:title>
+      <image:caption>Professional headshot of Suphian Tweel, Product Manager leading payments at YouTube</image:caption>
+    </image:image>
+  </url>
+</urlset>

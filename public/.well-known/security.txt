@@ -1,0 +1,5 @@
+Contact: mailto:suph.tweel@gmail.com
+Preferred-Languages: en
+Canonical: https://suphiantweel.lovable.app/.well-known/security.txt
+Policy: https://suphiantweel.lovable.app/security-policy
+Expires: 2025-12-31T23:59:59.000Z
