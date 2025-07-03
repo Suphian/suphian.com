@@ -72,8 +72,12 @@ const Footer = () => {
             >
               <Github size={20} />
             </a>
-            <button onClick={scrollToTop} className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors" aria-label="Scroll to top">
-              <ArrowUp size={20} />
+            <button 
+              onClick={scrollToTop} 
+              className="p-2 rounded-full bg-accent hover:bg-accent/80 hover:scale-110 transition-all duration-300 hover:shadow-lg hover:shadow-accent/25" 
+              aria-label="Scroll to top"
+            >
+              <ArrowUp size={20} className="text-background" />
             </button>
           </div>
         </div>
