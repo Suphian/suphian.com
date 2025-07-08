@@ -13,8 +13,8 @@ const CallToAction = () => {
 
   const playPronunciation = async () => {
     const now = Date.now();
-    if (now - lastAudioPlayRef.current < 3000) {
-      return; // Skip if audio was played within last 3 seconds
+    if (now - lastAudioPlayRef.current < 60000) {
+      return; // Skip if audio was played within last 1 minute
     }
     
     try {
