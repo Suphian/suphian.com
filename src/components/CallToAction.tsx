@@ -57,7 +57,7 @@ const CallToAction = () => {
 
   return (
     <>
-      <div className="mt-12 flex gap-3 justify-center">
+      <div className="mt-12 flex gap-3 justify-start">
         <WaveButton
           variant="youtube"
           size="lg"
