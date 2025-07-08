@@ -71,11 +71,20 @@ const CallToAction = () => {
           variant="youtube"
           size="lg"
           onClick={playPronunciation}
-          className="flex-1 sm:flex-none sm:w-auto text-center whitespace-nowrap"
+          onMouseEnter={playPronunciation}
+          className="flex-1 sm:flex-none sm:w-auto text-center whitespace-nowrap group relative"
           aria-label="Hear how to pronounce Suphian"
         >
-          <Mic className="h-4 w-4 mr-2" />
-          How to Say
+          <div className="flex items-center">
+            <div className="flex items-center space-x-1 mr-2">
+              <div className="w-1 h-3 bg-current rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-200"></div>
+              <div className="w-1 h-4 bg-current rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-200" style={{animationDelay: '0.1s'}}></div>
+              <div className="w-1 h-2 bg-current rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-200" style={{animationDelay: '0.2s'}}></div>
+              <div className="w-1 h-5 bg-current rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-200" style={{animationDelay: '0.3s'}}></div>
+              <div className="w-1 h-3 bg-current rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-200" style={{animationDelay: '0.4s'}}></div>
+            </div>
+            How to Say
+          </div>
         </WaveButton>
       </div>
 
