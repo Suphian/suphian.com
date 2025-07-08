@@ -71,11 +71,11 @@ const CallToAction = () => {
           variant="youtube"
           size="lg"
           onClick={playPronunciation}
-          className="flex-1 sm:flex-none sm:w-auto text-center"
+          className="flex-1 sm:flex-none sm:w-auto text-center whitespace-nowrap"
           aria-label="Hear how to pronounce Suphian"
         >
           <Mic className="h-4 w-4 mr-2" />
-          {isMobile ? "how to say" : "how to say"}
+          How to Say
         </WaveButton>
       </div>
 
