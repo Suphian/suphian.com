@@ -75,7 +75,7 @@ const CallToAction = () => {
           aria-label="Hear how to pronounce Suphian"
         >
           <Mic className="h-4 w-4 mr-2" />
-          {isMobile ? "Hear my name" : "[Pronounce Suphian]"}
+          {isMobile ? "how to say" : "how to say"}
         </WaveButton>
       </div>
 
