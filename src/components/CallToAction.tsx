@@ -18,7 +18,7 @@ const CallToAction = () => {
     }
     
     try {
-      const audio = new Audio('/Recording (2).m4a');
+      const audio = new Audio('/suphian-pronunciation.m4a');
       await audio.play();
       lastAudioPlayRef.current = now;
       
