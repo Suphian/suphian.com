@@ -40,7 +40,7 @@ const CallToAction = () => {
 
   const playPronunciation = async () => {
     try {
-      const audio = new Audio('https://sofyan.com/audio/suphian_pronunciation.mp3');
+      const audio = new Audio('/Recording (2).m4a');
       await audio.play();
       
       // Track the pronunciation button click
