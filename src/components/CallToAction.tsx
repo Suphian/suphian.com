@@ -11,6 +11,7 @@ const CallToAction = () => {
   const isMobile = useIsMobile();
   const lastAudioPlayRef = useRef<number>(0);
   const hasUserInteractedRef = useRef<boolean>(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const playPronunciation = async (source = "unknown") => {
     const now = Date.now();
@@ -50,6 +51,12 @@ const CallToAction = () => {
     e.preventDefault();
     console.log("🎯 Button clicked: Start Here");
     
+    // Clear hover timeout since user clicked
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    
     // Play pronunciation audio
     await playPronunciation("click");
     
@@ -65,6 +72,10 @@ const CallToAction = () => {
       console.error("❌ Failed to track start here event:", error);
     }
     
+    scrollToContent();
+  };
+
+  const scrollToContent = () => {
     const contentSection = document.getElementById("content-section");
     if (contentSection) {
       window.scrollTo({
@@ -76,6 +87,41 @@ const CallToAction = () => {
     }
   };
 
+  const handleMouseEnter = () => {
+    if (isMobile) return;
+    
+    // Play pronunciation audio
+    playPronunciation("hover");
+    
+    // Set timeout for auto-scroll after animation duration (1.2s)
+    hoverTimeoutRef.current = setTimeout(async () => {
+      console.log("🎯 Auto-scrolling from hover timeout");
+      
+      try {
+        await window.trackEvent?.("landing_cta_hover_auto_scroll", {
+          label: "Auto scroll from hover",
+          page: window.location.pathname,
+          source: "LandingPage",
+          type: "auto_scroll_to_content",
+        });
+      } catch (error) {
+        console.error("❌ Failed to track hover auto-scroll event:", error);
+      }
+      
+      scrollToContent();
+    }, 1200); // 1.2 seconds to let animation complete
+  };
+
+  const handleMouseLeave = () => {
+    if (isMobile) return;
+    
+    // Clear the hover timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+  };
+
   return (
     <>
       <div className="mt-12 flex gap-3 justify-start">
@@ -83,7 +129,8 @@ const CallToAction = () => {
           variant="youtube"
           size="lg"
           onClick={handleStartButtonAction}
-          onMouseEnter={isMobile ? undefined : () => playPronunciation("hover")}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
           className="flex-1 sm:flex-none sm:w-56 text-center group relative"
         >
           <div className="flex items-center justify-center">
