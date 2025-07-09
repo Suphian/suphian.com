@@ -71,7 +71,7 @@ const CallToAction = () => {
           variant="youtube"
           size="lg"
           onClick={handleStartButtonAction}
-          onMouseEnter={playPronunciation}
+          onMouseEnter={isMobile ? undefined : playPronunciation}
           className="flex-1 sm:flex-none sm:w-56 text-center group relative"
         >
           <div className="flex items-center justify-center">
