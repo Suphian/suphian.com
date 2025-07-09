@@ -57,6 +57,9 @@ const CallToAction = () => {
     e.preventDefault();
     console.log("🎯 Button clicked: Start Here");
     
+    // Track if user clicked during hover timeout
+    const wasHovering = hoverTimeoutRef.current !== null;
+    
     // Clear hover timeout since user clicked
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current);
@@ -71,7 +74,8 @@ const CallToAction = () => {
         label: isMobile ? "Start" : "Start Here",
         page: window.location.pathname,
         source: "LandingPage",
-        type: "scroll_to_content",
+        type: wasHovering ? "click_during_hover" : "direct_click",
+        interaction_context: wasHovering ? "interrupted_hover" : "direct_action"
       });
       console.log("✅ Start Here event tracked successfully");
     } catch (error) {
@@ -96,6 +100,14 @@ const CallToAction = () => {
   const handleMouseEnter = () => {
     if (isMobile) return;
     
+    // Track hover start
+    window.trackEvent?.("landing_cta_hover_start", {
+      label: "Start Here hover began",
+      page: window.location.pathname,
+      source: "LandingPage",
+      type: "hover_interaction",
+    });
+    
     // Play pronunciation audio
     playPronunciation("hover");
     
@@ -104,14 +116,15 @@ const CallToAction = () => {
       console.log("🎯 Auto-scrolling from hover timeout");
       
       try {
-        await window.trackEvent?.("landing_cta_hover_auto_scroll", {
-          label: "Auto scroll from hover",
+        await window.trackEvent?.("landing_cta_hover_completion", {
+          label: "Start Here hover completed - auto scroll",
           page: window.location.pathname,
           source: "LandingPage",
-          type: "auto_scroll_to_content",
+          type: "hover_completion_auto_scroll",
+          duration_ms: 3000
         });
       } catch (error) {
-        console.error("❌ Failed to track hover auto-scroll event:", error);
+        console.error("❌ Failed to track hover completion event:", error);
       }
       
       scrollToContent();
@@ -120,6 +133,16 @@ const CallToAction = () => {
 
   const handleMouseLeave = () => {
     if (isMobile) return;
+    
+    // Track hover interruption if timeout was active
+    if (hoverTimeoutRef.current) {
+      window.trackEvent?.("landing_cta_hover_interrupted", {
+        label: "Start Here hover interrupted",
+        page: window.location.pathname,
+        source: "LandingPage",
+        type: "hover_interruption",
+      });
+    }
     
     // Clear the hover timeout
     if (hoverTimeoutRef.current) {
