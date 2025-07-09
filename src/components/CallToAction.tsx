@@ -11,13 +11,15 @@ const CallToAction = () => {
   const isMobile = useIsMobile();
   const lastAudioPlayRef = useRef<number>(0);
 
-  const playPronunciation = async () => {
+  const playPronunciation = async (source = "unknown") => {
     const now = Date.now();
     if (now - lastAudioPlayRef.current < 60000) {
+      console.log("Audio throttled - played within last minute");
       return; // Skip if audio was played within last 1 minute
     }
     
     try {
+      console.log("Playing pronunciation audio from:", source);
       const audio = new Audio('/suphian-pronunciation.wav');
       await audio.play();
       lastAudioPlayRef.current = now;
@@ -28,6 +30,7 @@ const CallToAction = () => {
         page: window.location.pathname,
         source: "LandingPage",
         type: "audio_playback",
+        trigger: source
       });
     } catch (error) {
       console.error("Failed to play pronunciation audio:", error);
@@ -39,7 +42,7 @@ const CallToAction = () => {
     console.log("🎯 Button clicked: Start Here");
     
     // Play pronunciation audio
-    await playPronunciation();
+    await playPronunciation("click");
     
     try {
       await window.trackEvent?.("landing_cta_click", {
@@ -71,7 +74,7 @@ const CallToAction = () => {
           variant="youtube"
           size="lg"
           onClick={handleStartButtonAction}
-          onMouseEnter={isMobile ? undefined : playPronunciation}
+          onMouseEnter={isMobile ? undefined : () => playPronunciation("hover")}
           className="flex-1 sm:flex-none sm:w-56 text-center group relative"
         >
           <div className="flex items-center justify-center">
