@@ -99,7 +99,7 @@ const CallToAction = () => {
     // Play pronunciation audio
     playPronunciation("hover");
     
-    // Set timeout for auto-scroll after animation duration (2s)
+    // Set timeout for auto-scroll after animation duration (3s)
     hoverTimeoutRef.current = setTimeout(async () => {
       console.log("🎯 Auto-scrolling from hover timeout");
       
@@ -115,7 +115,7 @@ const CallToAction = () => {
       }
       
       scrollToContent();
-    }, 2000); // 2 seconds to let user fully experience the hover effect
+    }, 3000); // 3 seconds to let user fully experience the hover effect
   };
 
   const handleMouseLeave = () => {
