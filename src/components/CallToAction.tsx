@@ -20,9 +20,9 @@ const CallToAction = () => {
       return; // Skip if audio was played within last 1 minute
     }
     
-    // For mobile hover events, only play if user has already interacted with audio
-    if (source === "hover" && isMobile && !hasUserInteractedRef.current) {
-      console.log("Mobile hover audio blocked - no prior user interaction");
+    // For hover events (mobile or desktop), only play if user has already interacted with audio
+    if (source === "hover" && !hasUserInteractedRef.current) {
+      console.log("Hover audio blocked - no prior user interaction required by browser");
       return;
     }
     
