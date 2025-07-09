@@ -20,6 +20,12 @@ const CallToAction = () => {
       return; // Skip if audio was played within last 1 minute
     }
     
+    // For mobile hover events, only play if user has already interacted with audio
+    if (source === "hover" && isMobile && !hasUserInteractedRef.current) {
+      console.log("Mobile hover audio blocked - no prior user interaction");
+      return;
+    }
+    
     try {
       console.log("Playing pronunciation audio from:", source);
       const audio = new Audio('/suphian-pronunciation.wav');
