@@ -20,15 +20,13 @@ const CallToAction = () => {
       return; // Skip if audio was played within last 1 minute
     }
     
-    // For hover events, only play if user has already interacted with audio
-    if (source === "hover" && !hasUserInteractedRef.current) {
-      console.log("Hover audio blocked - no prior user interaction");
-      return;
-    }
-    
     try {
       console.log("Playing pronunciation audio from:", source);
       const audio = new Audio('/suphian-pronunciation.wav');
+      
+      // Set volume to ensure it's audible
+      audio.volume = 0.8;
+      
       await audio.play();
       lastAudioPlayRef.current = now;
       hasUserInteractedRef.current = true; // Mark that user has interacted
@@ -43,7 +41,9 @@ const CallToAction = () => {
       });
     } catch (error) {
       console.error("Failed to play pronunciation audio:", error);
-      console.error("This is likely due to browser audio policy restrictions");
+      if (error.name === 'NotAllowedError') {
+        console.error("Audio blocked by browser - user interaction required");
+      }
     }
   };
 
