@@ -15,19 +15,21 @@ const CallToAction = () => {
 
   const playPronunciation = async (source = "unknown") => {
     const now = Date.now();
+    console.log(`🔊 playPronunciation called from: ${source}`);
+    
     if (now - lastAudioPlayRef.current < 60000) {
-      console.log("Audio throttled - played within last minute");
+      console.log("⏸️ Audio throttled - played within last minute");
       return; // Skip if audio was played within last 1 minute
     }
     
-    // For hover events (mobile or desktop), only play if user has already interacted with audio
+    // For hover events, show a helpful message about clicking first
     if (source === "hover" && !hasUserInteractedRef.current) {
-      console.log("Hover audio blocked - no prior user interaction required by browser");
+      console.log("🔒 Hover audio blocked - click the button first to enable hover audio (browser security)");
       return;
     }
     
     try {
-      console.log("Playing pronunciation audio from:", source);
+      console.log(`🎵 Playing pronunciation audio from: ${source}`);
       const audio = new Audio('/suphian-pronunciation.wav');
       
       // Set volume to ensure it's audible
@@ -36,6 +38,7 @@ const CallToAction = () => {
       await audio.play();
       lastAudioPlayRef.current = now;
       hasUserInteractedRef.current = true; // Mark that user has interacted
+      console.log("✅ Audio played successfully");
       
       // Track the pronunciation audio play
       await window.trackEvent?.("pronunciation_play", {
@@ -46,9 +49,9 @@ const CallToAction = () => {
         trigger: source
       });
     } catch (error) {
-      console.error("Failed to play pronunciation audio:", error);
+      console.error("❌ Failed to play pronunciation audio:", error);
       if (error.name === 'NotAllowedError') {
-        console.error("Audio blocked by browser - user interaction required");
+        console.error("🚫 Audio blocked by browser - user interaction required first");
       }
     }
   };
@@ -98,7 +101,12 @@ const CallToAction = () => {
   };
 
   const handleMouseEnter = () => {
-    if (isMobile) return;
+    console.log("🖱️ Mouse entered button - isMobile:", isMobile);
+    
+    if (isMobile) {
+      console.log("🔒 Mobile detected - skipping hover effects");
+      return;
+    }
     
     // Track hover start
     window.trackEvent?.("landing_cta_hover_start", {
@@ -108,10 +116,12 @@ const CallToAction = () => {
       type: "hover_interaction",
     });
     
-    // Play pronunciation audio
+    // Always try to play pronunciation audio on hover
+    console.log("🔊 Attempting to play audio on hover");
     playPronunciation("hover");
     
     // Set timeout for auto-scroll after animation duration (3s)
+    console.log("⏰ Setting 3-second timeout for auto-scroll");
     hoverTimeoutRef.current = setTimeout(async () => {
       console.log("🎯 Auto-scrolling from hover timeout");
       
