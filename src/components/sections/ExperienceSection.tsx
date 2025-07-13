@@ -35,6 +35,9 @@ const ExperienceSection = forwardRef<HTMLDivElement>((props, ref) => {
       url: "https://www.billboard.com/pro/youtube-fraud-royalties-scam-irs-latin-chenel-yenddi-mediamuv-adrev/",
       title: "Billboard: YouTube Fraud Detection"
     }, {
+      url: "https://blog.youtube/creator-and-artist-stories/6-billion-paid-to-the-music-industry-in-12-months/#:~:text=In%20the%2012%20months%20between,B%20to%20the%20music%20industry.&text=Last%20year%20we%20announced%20a,B%20to%20the%20music%20industry.",
+      title: "YouTube: $6B Paid to Music Industry"
+    }, {
       url: "https://research.google/blog/unlocking-zero-resource-machine-translation-to-support-new-languages-in-google-translate/",
       title: "Google Research: Zero-Resource Machine Translation"
     }]
