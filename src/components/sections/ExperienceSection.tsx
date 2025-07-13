@@ -47,6 +47,9 @@ const ExperienceSection = forwardRef<HTMLDivElement>((props, ref) => {
     role: "Principal Analytical Lead",
     description: "Served as an in-house analytics advisor for CapitalG portfolio companies and high-growth D2C brands. Led incrementality testing and optimization strategies to improve marketing efficiency and scale growth across platforms like Duolingo and Chewy.com.",
     links: [{
+      url: "https://www.hugeinc.com/work/google/",
+      title: "Huge Inc: Google Work"
+    }, {
       url: "https://investor.chewy.com/news-and-events/news/news-details/2019/Chewy-Announces-Pricing-of-Initial-Public-Offering/default.aspx",
       title: "Chewy IPO Announcement"
     }, {
