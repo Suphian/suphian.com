@@ -1,5 +1,5 @@
 
-import React, { forwardRef } from "react";
+import React, { forwardRef, memo } from "react";
 import AstronautImage from "./AstronautImage";
 import ActionButtons from "./ActionButtons";
 import BioCards from "./BioCards";
@@ -8,7 +8,7 @@ interface AboutSectionProps {
   onRequestCV: () => void;
 }
 
-const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>(
+const AboutSection = memo(forwardRef<HTMLDivElement, AboutSectionProps>(
   ({ onRequestCV }, ref) => {
     return (
       <section id="about-section" ref={ref} className="mb-20">
@@ -35,7 +35,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>(
       </section>
     );
   }
-);
+));
 
 AboutSection.displayName = "AboutSection";
 

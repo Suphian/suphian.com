@@ -1,5 +1,5 @@
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import LandingPage from "@/components/LandingPage";
 import ScrollTransition from "@/components/ScrollTransition";
 import Hero from "@/components/Hero";
@@ -77,7 +77,7 @@ const Index = () => {
   }, []);
   
   // Handles workflow when user clicks "Get in Touch" in the modal
-  const handleGetInTouchFromModal = () => {
+  const handleGetInTouchFromModal = useCallback(() => {
     setIsModalOpen(false);
     setTimeout(() => {
       setContactOpen(true);
@@ -87,10 +87,10 @@ const Index = () => {
         fromModal: true,
       });
     }, 125);
-  };
+  }, []);
 
   // Track every time ContactSheet is opened from Index
-  const handleContactOpenChange = (open: boolean) => {
+  const handleContactOpenChange = useCallback((open: boolean) => {
     setContactOpen(open);
     if (open) {
       window.trackEvent?.("open_contact_sheet", {
@@ -99,7 +99,7 @@ const Index = () => {
         source: "IndexMainContent",
       });
     }
-  };
+  }, []);
 
   return (
     <div className="relative">

@@ -1,7 +1,7 @@
-import React from "react";
+import React, { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 
-const BioCards = () => {
+const BioCards = memo(() => {
   const bioContent = [
     "I grew up between cultures — the kind of upbringing that teaches you to listen deeply, challenge assumptions, and speak multiple languages (including internet). I've spent my career working with founders, builders and private equity who want to do more than just ship — they want to shake things up.",
     "I think data science and AI aren't just the future — they're the foundation. I'm wired for first principles, allergic to fluff, and always looking for people who are smart, egoless, and unafraid to be wrong.",
@@ -20,6 +20,8 @@ const BioCards = () => {
       ))}
     </div>
   );
-};
+});
+
+BioCards.displayName = "BioCards";
 
 export default BioCards;

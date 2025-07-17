@@ -1,9 +1,9 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useCallback, memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 
-const ExperienceSection = forwardRef<HTMLDivElement>((props, ref) => {
-  const handleExternalLinkClick = async (linkTitle: string, url: string) => {
+const ExperienceSection = memo(forwardRef<HTMLDivElement>((props, ref) => {
+  const handleExternalLinkClick = useCallback(async (linkTitle: string, url: string) => {
     console.log(`🎯 External link clicked: ${linkTitle}`);
     
     try {
@@ -18,7 +18,7 @@ const ExperienceSection = forwardRef<HTMLDivElement>((props, ref) => {
     } catch (error) {
       console.error(`❌ Failed to track external link "${linkTitle}" click:`, error);
     }
-  };
+  }, []);
 
   const experiences = [{
     period: "2020 - Present",
@@ -120,7 +120,7 @@ const ExperienceSection = forwardRef<HTMLDivElement>((props, ref) => {
       </div>
     </section>
   );
-});
+}));
 
 ExperienceSection.displayName = "ExperienceSection";
 

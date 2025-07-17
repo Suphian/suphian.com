@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { Headphones } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WaveButton } from "@/components/ui/wave-button";
@@ -8,11 +8,11 @@ interface ActionButtonsProps {
   onRequestCV: () => void;
 }
 
-const ActionButtons = ({ onRequestCV }: ActionButtonsProps) => {
+const ActionButtons = memo(({ onRequestCV }: ActionButtonsProps) => {
   const isMobile = useIsMobile();
 
   // Add analytics for both buttons with console logging
-  const handleRequestCV = async () => {
+  const handleRequestCV = useCallback(async () => {
     console.log("🎯 Button clicked: Request CV");
     
     try {
@@ -28,9 +28,9 @@ const ActionButtons = ({ onRequestCV }: ActionButtonsProps) => {
     }
     
     onRequestCV();
-  };
+  }, [isMobile, onRequestCV]);
 
-  const handleListen = async () => {
+  const handleListen = useCallback(async () => {
     console.log("🎯 Button clicked: Listen to Podcast");
     
     try {
@@ -44,7 +44,7 @@ const ActionButtons = ({ onRequestCV }: ActionButtonsProps) => {
     } catch (error) {
       console.error("❌ Failed to track podcast listen event:", error);
     }
-  };
+  }, [isMobile]);
 
   return (
     <div className="flex gap-3 w-full mx-auto md:mx-0">
@@ -70,6 +70,8 @@ const ActionButtons = ({ onRequestCV }: ActionButtonsProps) => {
       </WaveButton>
     </div>
   );
-};
+});
+
+ActionButtons.displayName = "ActionButtons";
 
 export default ActionButtons;
