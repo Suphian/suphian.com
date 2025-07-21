@@ -21,7 +21,7 @@ const Index = () => {
   const [contactOpen, setContactOpen] = useState(false);
   
   // Initialize secure event tracking for this page
-  useEventTracker({
+  const { track } = useEventTracker({
     autoTrackPageViews: true,
     autoTrackClicks: true,
     autoTrackScrollEvents: true
@@ -81,7 +81,7 @@ const Index = () => {
     setIsModalOpen(false);
     setTimeout(() => {
       setContactOpen(true);
-      window.trackEvent?.("open_contact_sheet", {
+      track("open_contact_sheet", {
         label: "Open ContactSheet via CV Modal",
         page: window.location.pathname,
         fromModal: true,
@@ -93,7 +93,7 @@ const Index = () => {
   const handleContactOpenChange = useCallback((open: boolean) => {
     setContactOpen(open);
     if (open) {
-      window.trackEvent?.("open_contact_sheet", {
+      track("open_contact_sheet", {
         page: window.location.pathname,
         label: "Open ContactSheet",
         source: "IndexMainContent",
@@ -144,7 +144,7 @@ const Index = () => {
           <ContentSection 
             onRequestCV={() => {
               setIsModalOpen(true);
-              window.trackEvent?.("open_cv_modal", {
+              track("open_cv_modal", {
                 label: "Request CV",
                 page: window.location.pathname,
                 source: "IndexHeroContent",
@@ -163,7 +163,7 @@ const Index = () => {
             onOpenChange={(open) => {
               setIsModalOpen(open);
               if (!open) {
-                window.trackEvent?.("close_cv_modal", {
+                track("close_cv_modal", {
                   page: window.location.pathname,
                   source: "Index",
                 });
