@@ -103,9 +103,7 @@ export class SessionManager {
         .select();
 
       if (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('⚠️ Session storage failed (continuing normally):', error.message);
-        }
+        console.log('⚠️ Session storage failed:', error.message, error);
         // Mark as stored regardless to prevent retries
         this.sessionStored = true;
         return;
@@ -116,9 +114,7 @@ export class SessionManager {
         console.log('✅ Session stored successfully in Supabase!');
       }
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('⚠️ Session storage error (continuing normally):', error);
-      }
+      console.log('⚠️ Session storage error:', error);
       // Mark as stored to prevent infinite retries
       this.sessionStored = true;
     }
