@@ -52,7 +52,7 @@ export type Database = {
           id: string
           is_internal_traffic: boolean | null
           page_url: string | null
-          session_id: string
+          session_id: string | null
           timestamp: string | null
           traffic_type: string | null
         }
@@ -63,7 +63,7 @@ export type Database = {
           id?: string
           is_internal_traffic?: boolean | null
           page_url?: string | null
-          session_id: string
+          session_id?: string | null
           timestamp?: string | null
           traffic_type?: string | null
         }
@@ -74,7 +74,7 @@ export type Database = {
           id?: string
           is_internal_traffic?: boolean | null
           page_url?: string | null
-          session_id?: string
+          session_id?: string | null
           timestamp?: string | null
           traffic_type?: string | null
         }
@@ -192,7 +192,7 @@ export type Database = {
           region?: string | null
           screen_height?: number | null
           screen_width?: number | null
-          session_id: string
+          session_id?: string
           timezone?: string | null
           updated_at?: string | null
           user_agent?: string | null
