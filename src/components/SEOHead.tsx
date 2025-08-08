@@ -8,7 +8,7 @@ interface SEOHeadProps {
 }
 
 const SEOHead = ({ 
-  title = "Suphian Tweel – Product Manager",
+  title = "Suphian Tweel – Product Manager | Portfolio",
   description = "Product Manager leading payments at YouTube. Passionate about crafting exceptional user experiences powered by data, design, and cutting-edge technology.",
   image = "/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png",
   url = window.location.href

@@ -34,19 +34,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Preconnect/DNS Prefetch for Supabase -->
+    <link rel="preconnect" href="https://ujughujunixnwlmtdsxd.supabase.co">
+    <link rel="dns-prefetch" href="//ujughujunixnwlmtdsxd.supabase.co">
     
     <!-- Preload critical resources -->
     <link rel="preload" href="/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png" as="image" type="image/png">
+    <link rel="preload" href="/src/main.tsx" as="script" type="module">
     
     <!-- DNS prefetch for external resources -->
     <link rel="dns-prefetch" href="//www.googletagmanager.com">
     <link rel="dns-prefetch" href="//www.google-analytics.com">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
     
     <!-- Google Analytics tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8S5FL37K8X"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
+      function gtag(){dataLayer.push(arguments);} // eslint-disable-line
       gtag('js', new Date());
       gtag('config', 'G-8S5FL37K8X');
     </script>
