@@ -9,6 +9,7 @@ interface AnimatedGreetingProps {
 const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
   const [currentGreetingIndex, setCurrentGreetingIndex] = useState(0);
   const [animationState, setAnimationState] = useState<'visible' | 'changing'>('visible');
+  const [blotterReady, setBlotterReady] = useState(false);
   const isMobile = useIsMobile();
 
   const blotterContainerRef = useRef<HTMLSpanElement>(null);
@@ -75,6 +76,9 @@ const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
       const color = computed.color || 'currentColor';
       const family = computed.fontFamily || 'Montserrat, system-ui, sans-serif';
 
+      // Clear any fallback text
+      try { blotterContainerRef.current.innerHTML = ''; } catch {}
+
       // Create text + material
       const text = new B.Text(currentGreeting.text, {
         family,
@@ -93,17 +97,23 @@ const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
       scope.appendTo(blotterContainerRef.current);
 
       blotterRefs.current = { text, scope, blotter };
+      setBlotterReady(true);
     };
 
-    // Load Blotter core then material
+    // Load dependencies in order: Underscore -> Three -> Blotter core -> material
+    const underscoreSrc = 'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.6/underscore-min.js';
+    const threeSrc = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
     const coreSrc = 'https://cdn.jsdelivr.net/gh/bradley/Blotter@v0.1.0/build/blotter.min.js';
     const matSrc = 'https://cdn.jsdelivr.net/gh/bradley/Blotter@v0.1.0/build/materials/liquidDistortMaterial.js';
 
-    loadScript(coreSrc)
+    loadScript(underscoreSrc)
+      .then(() => loadScript(threeSrc))
+      .then(() => loadScript(coreSrc))
       .then(() => loadScript(matSrc))
       .then(initBlotter)
       .catch(() => {
         // Silently fall back to plain text on failure
+        setBlotterReady(false);
       });
 
     return () => {
@@ -113,6 +123,8 @@ const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
         try { blotterRefs.current.scope.remove(); } catch {}
       }
       blotterRefs.current = null;
+      setBlotterReady(false);
+      try { if (blotterContainerRef.current) blotterContainerRef.current.innerHTML = ''; } catch {}
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -139,7 +151,7 @@ const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
         className="inline-block align-baseline"
       >
         {/* If Blotter hasn't loaded yet, show plain text visually */}
-        {!(window as any).Blotter && (
+        {!blotterReady && (
           <span>{currentGreeting.text}</span>
         )}
       </span>
