@@ -12,7 +12,7 @@ import Logo from "./components/Logo";
 import ScrollProgress from "./components/ScrollProgress";
 import SEOHead from "./components/SEOHead";
 import { AnalyticsPageviewListener } from "./components/AnalyticsPageviewListener";
-import Analytics from "./pages/Analytics";
+
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -39,7 +39,7 @@ const AppContent = () => {
       <main className="min-h-screen">
         <Routes>
           <Route path="/" element={<LazyRoute><LazyIndex /></LazyRoute>} />
-          <Route path="/analytics" element={<LazyRoute><Analytics /></LazyRoute>} />
+          
           <Route path="*" element={<LazyRoute><LazyNotFound /></LazyRoute>} />
         </Routes>
       </main>
