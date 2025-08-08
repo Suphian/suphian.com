@@ -49,7 +49,8 @@ const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
   // Lazy-load Blotter.js and apply effect on desktop with reduced-motion respected
   useEffect(() => {
     const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (isMobile || prefersReduced) return; // Keep it light on mobile or when reduced motion is preferred
+    const pointerCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    if (prefersReduced || (isMobile && pointerCoarse)) return; // Skip on true mobile or when reduced motion is preferred
 
     let mounted = true;
 
