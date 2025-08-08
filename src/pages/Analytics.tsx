@@ -13,6 +13,20 @@ interface EventRow {
 const Analytics = () => {
   const [events, setEvents] = useState<EventRow[]>([]);
   const [connected, setConnected] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Initial fetch of recent events
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from('events')
+        .select('id, event_name, page_url, is_internal_traffic, traffic_type, timestamp, created_at')
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (!error && data) setEvents(data as any);
+      setLoading(false);
+    })();
+  }, []);
 
   useEffect(() => {
     const channel = supabase
