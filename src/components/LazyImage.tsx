@@ -7,6 +7,10 @@ interface LazyImageProps {
   className?: string;
   skeletonClassName?: string;
   placeholder?: string;
+  sizes?: string;
+  width?: number;
+  height?: number;
+  priority?: 'high' | 'low' | 'auto';
 }
 
 const LazyImage = ({ 
@@ -14,7 +18,11 @@ const LazyImage = ({
   alt, 
   className = '', 
   skeletonClassName = '',
-  placeholder 
+  placeholder,
+  sizes,
+  width,
+  height,
+  priority = 'low'
 }: LazyImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
@@ -54,7 +62,12 @@ const LazyImage = ({
           isLoaded ? 'opacity-100' : 'opacity-0'
         } ${className}`}
         onLoad={() => setIsLoaded(true)}
-        loading="lazy"
+        loading={priority === 'high' ? 'eager' : 'lazy'}
+        decoding="async"
+        sizes={sizes}
+        width={width}
+        height={height}
+        {...(priority ? ({ fetchPriority: priority } as any) : {})}
       />
     </div>
   );

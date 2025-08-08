@@ -2,11 +2,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
-// Initialize Google Analytics tracking
-import './utils/analytics/googleAnalytics';
-
-// Initialize Secure Supabase event tracking
-import './utils/analytics/secureEventTracker';
+// Analytics modules are loaded by feature modules as needed to reduce initial bundle size
 
 // Log when the page loads to help debug favicon issues
 window.addEventListener('load', () => {

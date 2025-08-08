@@ -1,9 +1,9 @@
-
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, Suspense } from "react";
 import { useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WaveButton } from "@/components/ui/wave-button";
-import ContactSheet from "./ContactSheet";
+
+const LazyContactSheet = React.lazy(() => import("./ContactSheet"));
 
 const CallToAction = () => {
   const location = useLocation();
@@ -185,7 +185,9 @@ const CallToAction = () => {
         </WaveButton>
       </div>
 
-      <ContactSheet open={contactOpen} onOpenChange={setContactOpen} />
+      <Suspense fallback={null}>
+        <LazyContactSheet open={contactOpen} onOpenChange={setContactOpen} />
+      </Suspense>
     </>
   );
 };

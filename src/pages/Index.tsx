@@ -1,10 +1,10 @@
-
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, Suspense } from "react";
 import LandingPage from "@/components/LandingPage";
 import ScrollTransition from "@/components/ScrollTransition";
 import Hero from "@/components/Hero";
-import RequestCVModal from "@/components/RequestCVModal";
-import ContactSheet from "@/components/ContactSheet";
+
+const RequestCVModal = React.lazy(() => import("@/components/RequestCVModal"));
+const LazyContactSheet = React.lazy(() => import("@/components/ContactSheet"));
 import { initializeRevealAnimations } from "@/lib/animations";
 import { useScrollTracking } from "@/hooks/useScrollTracking";
 import { useEventTracker } from "@/hooks/useEventTracker";
@@ -142,7 +142,8 @@ const Index = () => {
 
           {/* Content Sections - pass refs for tracking */}
           <ContentSection 
-            onRequestCV={() => {
+            onRequestCV={async () => {
+              await import("@/components/RequestCVModal");
               setIsModalOpen(true);
               track("open_cv_modal", {
                 label: "Request CV",
@@ -150,7 +151,8 @@ const Index = () => {
                 source: "IndexHeroContent",
               });
             }} 
-            onContactClick={() => {
+            onContactClick={async () => {
+              await import("@/components/ContactSheet");
               handleContactOpenChange(true);
             }}
             aboutSectionRef={aboutSectionRef}
@@ -158,22 +160,26 @@ const Index = () => {
           />
           
           {/* CV Request Modal - now with onGetInTouch prop */}
-          <RequestCVModal 
-            open={isModalOpen}
-            onOpenChange={(open) => {
-              setIsModalOpen(open);
-              if (!open) {
-                track("close_cv_modal", {
-                  page: window.location.pathname,
-                  source: "Index",
-                });
-              }
-            }}
-            onGetInTouch={handleGetInTouchFromModal}
-          />
+          <Suspense fallback={null}>
+            <RequestCVModal 
+              open={isModalOpen}
+              onOpenChange={(open) => {
+                setIsModalOpen(open);
+                if (!open) {
+                  track("close_cv_modal", {
+                    page: window.location.pathname,
+                    source: "Index",
+                  });
+                }
+              }}
+              onGetInTouch={handleGetInTouchFromModal}
+            />
+          </Suspense>
 
           {/* Contact Sheet */}
-          <ContactSheet open={contactOpen} onOpenChange={handleContactOpenChange} />
+          <Suspense fallback={null}>
+            <LazyContactSheet open={contactOpen} onOpenChange={handleContactOpenChange} />
+          </Suspense>
         </div>
       </div>
     </div>

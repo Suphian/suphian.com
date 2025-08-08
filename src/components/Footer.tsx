@@ -1,9 +1,9 @@
-
-import { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { Mail, Linkedin, Github, ArrowUp } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import ContactSheet from "./ContactSheet";
+
+const LazyContactSheet = React.lazy(() => import("./ContactSheet"));
 
 const Footer = () => {
   const [contactOpen, setContactOpen] = useState(false);
@@ -89,7 +89,7 @@ const Footer = () => {
         {isMobile && (
           <div className="mt-8 pb-4">
             <button 
-              onClick={() => setContactOpen(true)}
+              onClick={async () => { await import("./ContactSheet"); setContactOpen(true); }}
               className="w-full wave-btn bg-primary text-background px-6 py-4 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group text-center"
             >
               <span className="relative z-10 group-hover:text-background transition-colors duration-300">Get in Touch</span>
@@ -99,7 +99,9 @@ const Footer = () => {
         )}
         
         {/* Contact Sheet */}
-        <ContactSheet open={contactOpen} onOpenChange={setContactOpen} />
+        <Suspense fallback={null}>
+          <LazyContactSheet open={contactOpen} onOpenChange={setContactOpen} />
+        </Suspense>
       </div>
     </footer>
   );

@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { WaveButton } from "@/components/ui/wave-button";
-import ContactSheet from "./ContactSheet";
+
+const LazyContactSheet = React.lazy(() => import("./ContactSheet"));
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,15 +14,19 @@ const Navbar = () => {
   const isHomepage = location.pathname === "/";
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
+    let ticking = false;
+    const update = () => {
+      setIsScrolled(window.scrollY > 10);
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
       }
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const navLinks = [
@@ -85,6 +90,7 @@ const Navbar = () => {
       console.error("❌ Failed to track navbar contact event:", error);
     }
     
+    await import("./ContactSheet");
     setContactOpen(true);
   };
 
@@ -125,7 +131,9 @@ const Navbar = () => {
         </nav>
       </div>
       
-      <ContactSheet open={contactOpen} onOpenChange={setContactOpen} />
+      <Suspense fallback={null}>
+        <LazyContactSheet open={contactOpen} onOpenChange={setContactOpen} />
+      </Suspense>
     </header>
   );
 };
