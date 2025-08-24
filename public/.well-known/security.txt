@@ -1,5 +1,45 @@
 Contact: mailto:suph.tweel@gmail.com
+Expires: 2025-12-31T23:59:59.000Z
 Preferred-Languages: en
 Canonical: https://suphiantweel.lovable.app/.well-known/security.txt
 Policy: https://suphiantweel.lovable.app/security-policy
-Expires: 2025-12-31T23:59:59.000Z
+Acknowledgments: https://suphiantweel.lovable.app/security-acknowledgments
+
+# Security Policy
+
+## Reporting Security Vulnerabilities
+
+We take security seriously. If you discover a security vulnerability, please report it responsibly:
+
+1. Do NOT open a public issue
+2. Send details to suph.tweel@gmail.com
+3. Include steps to reproduce the vulnerability
+4. Provide your assessment of the impact
+
+## What We Protect
+
+- User data and privacy
+- Authentication and authorization systems
+- Database security and access controls
+- API endpoints and rate limiting
+- Session management
+- Input validation and sanitization
+
+## Response Timeline
+
+- Acknowledgment: Within 48 hours
+- Initial assessment: Within 72 hours  
+- Regular updates: Every 5 business days
+- Resolution target: 90 days for critical issues
+
+## Security Features
+
+Our application implements:
+- Row Level Security (RLS) on all user data
+- Rate limiting on authentication endpoints
+- Input sanitization and validation
+- Secure session management
+- Regular security audits and monitoring
+- Encrypted data transmission (HTTPS only)
+
+Last updated: 2024-08-24

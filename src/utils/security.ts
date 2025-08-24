@@ -154,14 +154,27 @@ export const getSecurityHeaders = () => {
       "base-uri 'self'",
       "object-src 'none'",
       "form-action 'self'",
-      "upgrade-insecure-requests"
+      "upgrade-insecure-requests",
+      "block-all-mixed-content"
     ].join('; '),
     'X-Frame-Options': 'DENY',
     'X-Content-Type-Options': 'nosniff',
     'X-XSS-Protection': '1; mode=block',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
-    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate'
+    'Permissions-Policy': [
+      'camera=()',
+      'microphone=()',
+      'geolocation=()',
+      'payment=()',
+      'usb=()',
+      'serial=()',
+      'accelerometer=()',
+      'gyroscope=()',
+      'magnetometer=()'
+    ].join(', '),
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
   };
 };
