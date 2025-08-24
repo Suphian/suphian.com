@@ -88,30 +88,6 @@ export type Database = {
           },
         ]
       }
-      profiles: {
-        Row: {
-          created_at: string | null
-          email: string | null
-          id: string
-          role: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email?: string | null
-          id: string
-          role?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          role?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       rate_limits: {
         Row: {
           action: string
@@ -267,6 +243,18 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      get_contact_submissions: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string
+          subject: string
+        }[]
+      }
       is_admin: {
         Args: { user_id?: string }
         Returns: boolean
@@ -274,6 +262,10 @@ export type Database = {
       promote_user_to_admin: {
         Args: { user_email: string }
         Returns: undefined
+      }
+      verify_admin_access: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
       }
     }
     Enums: {
