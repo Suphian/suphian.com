@@ -1,9 +1,7 @@
 import React, { useState, useEffect, Suspense } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { WaveButton } from "@/components/ui/wave-button";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
 
 const LazyContactSheet = React.lazy(() => import("./ContactSheet"));
 
@@ -12,11 +10,8 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-  const { user, isAdmin, signOut } = useAuth();
   const closeMenu = () => setIsOpen(false);
   const isHomepage = location.pathname === "/";
-  const isAuthPage = location.pathname === "/auth";
 
   useEffect(() => {
     let ticking = false;
@@ -99,23 +94,6 @@ const Navbar = () => {
     setContactOpen(true);
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
-
-  const handleAuthClick = () => {
-    if (isAuthPage) {
-      navigate('/');
-    } else {
-      navigate('/auth');
-    }
-  };
-
-  const handleAdminClick = () => {
-    navigate('/admin');
-  };
-
   return (
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4", 
@@ -125,8 +103,8 @@ const Navbar = () => {
         <nav className="flex justify-between items-center">
           <div className="flex-1"></div>
 
-          <ul className="hidden md:flex space-x-4 items-center justify-end">
-            {!isAuthPage && navLinks.map(link => (
+          <ul className="hidden md:flex space-x-8 items-center justify-end">
+            {navLinks.map(link => (
               <li key={link.name}>
                 <Link 
                   to={link.path} 
@@ -141,48 +119,14 @@ const Navbar = () => {
               </li>
             ))}
             
-            {user ? (
-              <>
-                {isAdmin && (
-                  <li>
-                    <Button variant="outline" size="sm" onClick={handleAdminClick}>
-                      Admin
-                    </Button>
-                  </li>
-                )}
-                <li>
-                  <WaveButton 
-                    variant="primary"
-                    onClick={handleGetInTouchClick}
-                  >
-                    Get in Touch
-                  </WaveButton>
-                </li>
-                <li>
-                  <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                    Sign Out
-                  </Button>
-                </li>
-              </>
-            ) : (
-              <>
-                {!isAuthPage && (
-                  <li>
-                    <WaveButton 
-                      variant="primary"
-                      onClick={handleGetInTouchClick}
-                    >
-                      Get in Touch
-                    </WaveButton>
-                  </li>
-                )}
-                <li>
-                  <Button variant="outline" size="sm" onClick={handleAuthClick}>
-                    {isAuthPage ? 'Back to Home' : 'Sign In'}
-                  </Button>
-                </li>
-              </>
-            )}
+            <li>
+              <WaveButton 
+                variant="primary"
+                onClick={handleGetInTouchClick}
+              >
+                Get in Touch
+              </WaveButton>
+            </li>
           </ul>
         </nav>
       </div>

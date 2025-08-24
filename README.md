@@ -1,10 +1,10 @@
 # Suphian Tweel – Personal Portfolio & Digital Experience
 
 [![Deploy Status](https://img.shields.io/badge/deploy-live-brightgreen)](https://suphian.com)
-[![Security Status](https://img.shields.io/badge/security-hardened-blue)](docs/SECURITY_SETUP.md)
+[![Security Status](https://img.shields.io/badge/security-protected-blue)](https://github.com/Suphian/suphiansite)
 [![Tech Stack](https://img.shields.io/badge/stack-React%20%7C%20TypeScript%20%7C%20Supabase-orange)](https://github.com/Suphian/suphiansite)
 
-> A sophisticated, security-first personal portfolio showcasing expertise in product management, analytics, and modern web development. Built with performance, accessibility, and user experience at its core.
+> A sophisticated personal portfolio showcasing expertise in product management, analytics, and modern web development. Built with performance, accessibility, and user experience at its core.
 
 **🌐 Live Site**: [suphian.com](https://suphian.com)
 
@@ -12,13 +12,13 @@
 
 ## 🎯 Project Overview
 
-This is a comprehensive personal portfolio and digital experience platform that demonstrates advanced web development practices, security implementation, and modern design principles. The site serves as both a showcase of professional work and a technical demonstration of production-ready application development.
+This is a comprehensive personal portfolio and digital experience platform that demonstrates advanced web development practices and modern design principles. The site serves as both a showcase of professional work and a technical demonstration of production-ready application development.
 
 ### 🎨 Design Philosophy
 
 - **Performance-First**: Optimized for speed with lazy loading, code splitting, and efficient asset management
 - **Accessibility-Driven**: WCAG compliant with semantic HTML, proper ARIA labels, and keyboard navigation
-- **Security-Hardened**: Enterprise-grade security with RLS policies, authentication, and comprehensive monitoring
+- **Security-Protected**: Secure contact forms with rate limiting and input validation
 - **Mobile-Responsive**: Fluid design that adapts seamlessly across all device sizes
 - **SEO-Optimized**: Structured data, meta tags, and performance optimizations for search visibility
 
@@ -48,9 +48,8 @@ Lovable Platform      → Deployment and hosting infrastructure
 ```
 CSP Headers           → Content Security Policy protection
 Rate Limiting         → API protection against abuse
-Session Management    → Secure authentication with timeout policies
 Privacy-First Analytics → Anonymized visitor tracking without PII
-Security Monitoring   → Comprehensive logging and threat detection
+Security Monitoring   → Basic logging and protection
 ```
 
 ---
@@ -63,17 +62,15 @@ Security Monitoring   → Comprehensive logging and threat detection
 - **Responsive Contact Forms**: Real-time validation with security protection
 - **Progressive Enhancement**: Works perfectly with JavaScript disabled
 
-### 🔐 **Enterprise Security**
-- **Multi-Factor Authentication**: Secure admin access with session management
-- **Database Encryption**: All sensitive data encrypted at rest and in transit
+### 🔐 **Contact Security**
 - **Input Sanitization**: Protection against XSS and injection attacks
-- **Audit Logging**: Comprehensive tracking of admin actions and security events
+- **Rate Limiting**: Prevention of spam and abuse
+- **Form Validation**: Real-time validation with security checks
 
 ### 📊 **Privacy-Respecting Analytics**
 - **Anonymous Visitor Tracking**: No cookies or personal data collection
 - **Geographic Insights**: Country/city level data without IP storage
 - **Performance Monitoring**: Real-time insights into site performance
-- **Admin Dashboard**: Secure interface for viewing analytics and contact submissions
 
 ### 🎨 **Design System**
 - **Custom CSS Variables**: Semantic color tokens and consistent spacing
@@ -89,9 +86,7 @@ Security Monitoring   → Comprehensive logging and threat detection
 src/
 ├── components/           # Reusable UI components
 │   ├── ui/              # Base design system components
-│   ├── sections/        # Page section components
-│   └── security/        # Security-related components
-├── contexts/            # React context providers
+│   └── sections/        # Page section components
 ├── hooks/               # Custom React hooks
 ├── pages/               # Route components
 ├── utils/               # Utility functions and helpers
@@ -106,27 +101,19 @@ src/
 
 ## 🔒 Security Implementation
 
-This project implements enterprise-grade security measures:
+This project implements modern security measures:
 
-### Database Security
-- **Row Level Security (RLS)**: Every table protected with granular access policies
-- **SQL Injection Prevention**: Parameterized queries and input sanitization
-- **Admin Privilege Verification**: Multi-layer authentication checks
-- **Data Anonymization**: Personal data protection and GDPR compliance
+### Form Security
+- **Input Sanitization**: All form inputs are sanitized to prevent XSS attacks
+- **Rate Limiting**: Contact forms protected against spam and abuse
+- **CSRF Protection**: Cross-site request forgery prevention
+- **Data Validation**: Server-side validation of all user inputs
 
-### Authentication & Authorization
-- **Secure Session Management**: JWT tokens with automatic refresh
-- **Account Lockout Protection**: Prevents brute force attacks
-- **Rate Limiting**: API protection against abuse
-- **Admin Role Management**: Granular permission system
-
-### Monitoring & Incident Response
-- **Security Event Logging**: Comprehensive audit trails
-- **Anomaly Detection**: Automated suspicious activity monitoring
-- **Incident Response**: Documented procedures for security events
-- **Regular Security Audits**: Automated vulnerability scanning
-
-**📋 Security Setup Guide**: [docs/SECURITY_SETUP.md](docs/SECURITY_SETUP.md)
+### Privacy Protection
+- **Anonymous Analytics**: No personally identifiable information collected
+- **IP Anonymization**: IP addresses anonymized before any processing
+- **GDPR Compliance**: Full compliance with privacy regulations
+- **Cookie-Free**: No tracking cookies or persistent storage
 
 ---
 
@@ -213,10 +200,7 @@ User Interactions   → Button clicks and scroll behavior (privacy-safe)
 Explore dynamic project showcases with detailed case studies, technology breakdowns, and impact metrics.
 
 ### 📧 **Secure Contact System**
-Enterprise-grade contact form with spam protection, rate limiting, and admin notification system.
-
-### 🔍 **Admin Dashboard**
-Secure administrative interface for managing contact submissions and viewing analytics insights.
+Enterprise-grade contact form with spam protection, rate limiting, and email notifications.
 
 ### 📱 **Progressive Web App**
 Installable PWA with offline capabilities and native app-like experience.

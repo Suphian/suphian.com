@@ -5,22 +5,22 @@ export class SecurityMonitor {
 
   // Log security-related events
   static async logSecurityEvent(
-    eventType: 'admin_access' | 'failed_auth' | 'suspicious_activity' | 'data_access',
+    eventType: 'suspicious_activity' | 'data_access',
     details: Record<string, any> = {}
   ): Promise<void> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      // For non-auth events, we don't need user context
+      const enrichedDetails = {
+        ...details,
+        timestamp: new Date().toISOString(),
+        user_agent: navigator.userAgent,
+        url: window.location.href,
+        ip_hash: await this.getHashedIP()
+      };
+
       const securityEvent = {
         event_name: `${this.SECURITY_EVENT_PREFIX}${eventType}`,
-        event_payload: {
-          ...details,
-          user_id: user?.id || 'anonymous',
-          timestamp: new Date().toISOString(),
-          user_agent: navigator.userAgent,
-          url: window.location.href,
-          ip_hash: await this.getHashedIP()
-        }
+        event_payload: enrichedDetails
       };
 
       // Log to events table for security monitoring
@@ -71,15 +71,15 @@ export class SecurityMonitor {
 
       if (!recentEvents) return false;
 
-      // Check for rapid successive failed auth attempts
-      const failedAuthEvents = recentEvents.filter(e => 
-        e.event_name.includes('failed_auth')
+      // Check for suspicious patterns in general activity
+      const suspiciousEvents = recentEvents.filter(e => 
+        e.event_name.includes('suspicious')
       );
-
-      if (failedAuthEvents.length > 5) {
+      
+      if (suspiciousEvents.length > 3) {
         await this.logSecurityEvent('suspicious_activity', {
-          reason: 'multiple_failed_auth',
-          count: failedAuthEvents.length,
+          reason: 'multiple_suspicious_events',
+          count: suspiciousEvents.length,
           user_id: userId
         });
         return true;
@@ -92,12 +92,11 @@ export class SecurityMonitor {
     }
   }
 
-  // Enhanced admin access logging
-  static async logAdminAccess(action: string, resourceType: string): Promise<void> {
-    await this.logSecurityEvent('admin_access', {
+  // Log general data access events
+  static async logDataAccess(action: string, resourceType: string): Promise<void> {
+    await this.logSecurityEvent('data_access', {
       action,
-      resource_type: resourceType,
-      timestamp: new Date().toISOString()
+      resource_type: resourceType
     });
   }
 }
