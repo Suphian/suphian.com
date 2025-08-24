@@ -31,42 +31,26 @@ export const validatePassword = (password: string): { isValid: boolean; errors: 
   };
 };
 
-// Rate limiting for authentication attempts
+// Secure rate limiting using server-side function
 export const checkAuthRateLimit = async (identifier: string, action: 'login' | 'signup' | 'password_reset'): Promise<boolean> => {
   try {
     const maxAttempts = action === 'login' ? 5 : 3;
     const windowMinutes = action === 'login' ? 60 : 30;
     
-    // Clean up old records first
-    await supabase.rpc('cleanup_old_rate_limits');
-    
-    // Check current attempts in the time window
-    const { data: rateLimits, error } = await supabase
-      .from('rate_limits')
-      .select('attempts')
-      .eq('identifier', identifier)
-      .eq('action', action)
-      .gte('window_start', new Date(Date.now() - (windowMinutes * 60 * 1000)).toISOString())
-      .single();
-
-    if (error && error.code !== 'PGRST116') {
-      console.error('Auth rate limit check error:', error);
-      return true; // Allow on error
-    }
-
-    if (rateLimits && rateLimits.attempts >= maxAttempts) {
-      return false; // Rate limited
-    }
-
-    // Record this attempt
-    await supabase.from('rate_limits').upsert({
-      identifier,
-      action,
-      attempts: rateLimits ? rateLimits.attempts + 1 : 1,
-      window_start: rateLimits ? undefined : new Date().toISOString()
+    // Use secure server-side rate limiting function
+    const { data, error } = await supabase.rpc('check_rate_limit', {
+      p_identifier: identifier,
+      p_action: action,
+      p_max_attempts: maxAttempts,
+      p_window_minutes: windowMinutes
     });
 
-    return true; // Allowed
+    if (error) {
+      console.error('Secure rate limit check error:', error);
+      return true; // Allow on error to avoid blocking legitimate users
+    }
+
+    return data === true;
   } catch (error) {
     console.error('Auth rate limiting error:', error);
     return true; // Allow on error to avoid blocking legitimate users

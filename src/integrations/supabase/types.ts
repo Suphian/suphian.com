@@ -246,6 +246,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      anonymize_ip: {
+        Args: { ip_address: string }
+        Returns: string
+      }
+      check_rate_limit: {
+        Args: {
+          p_action: string
+          p_identifier: string
+          p_max_attempts?: number
+          p_window_minutes?: number
+        }
+        Returns: boolean
+      }
+      cleanup_old_analytics_data: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_old_rate_limits: {
         Args: Record<PropertyKey, never>
         Returns: undefined

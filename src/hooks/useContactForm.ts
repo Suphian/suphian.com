@@ -32,42 +32,28 @@ export const contactFormSchema = z.object({
 
 export type ContactFormData = z.infer<typeof contactFormSchema>;
 
-// Rate limiting helper
-const checkRateLimit = async (identifier: string, action: string, maxAttempts: number = 5) => {
+// Secure rate limiting using server-side function
+const checkRateLimit = async (identifier: string, action: string, maxAttempts: number = 3): Promise<boolean> => {
   try {
-    // Clean up old rate limit records first
-    await supabase.rpc('cleanup_old_rate_limits');
+    const windowMinutes = 60; // 1 hour window for contact forms
     
-    // Check current attempts
-    const { data: rateLimits, error } = await supabase
-      .from('rate_limits')
-      .select('attempts')
-      .eq('identifier', identifier)
-      .eq('action', action)
-      .gte('window_start', new Date(Date.now() - 3600000).toISOString()) // Last hour
-      .single();
+    // Use secure server-side rate limiting function
+    const { data, error } = await supabase.rpc('check_rate_limit', {
+      p_identifier: identifier,
+      p_action: action,
+      p_max_attempts: maxAttempts,
+      p_window_minutes: windowMinutes
+    });
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
-      console.error('Rate limit check error:', error);
+    if (error) {
+      console.error('Secure rate limit check error:', error);
       return true; // Allow on error to avoid blocking legitimate users
     }
 
-    if (rateLimits && rateLimits.attempts >= maxAttempts) {
-      return false; // Rate limited
-    }
-
-    // Record this attempt
-    await supabase.from('rate_limits').upsert({
-      identifier,
-      action,
-      attempts: rateLimits ? rateLimits.attempts + 1 : 1,
-      window_start: rateLimits ? undefined : new Date().toISOString()
-    });
-
-    return true; // Allowed
+    return data === true;
   } catch (error) {
     console.error('Rate limiting error:', error);
-    return true; // Allow on error
+    return true; // Allow on error to avoid blocking legitimate users
   }
 };
 

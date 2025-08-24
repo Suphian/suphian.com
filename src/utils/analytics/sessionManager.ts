@@ -5,6 +5,7 @@ import { LocationService } from './locationService';
 import { MetadataCollector } from './metadataCollector';
 import { validateSessionData } from '../security';
 import { EnhancedTracker } from './enhancedTracker';
+import supabase from '@/integrations/supabase/client';
 
 export class SessionManager {
   private sessionId: string;
@@ -35,11 +36,14 @@ export class SessionManager {
     const { ipAddress, locationData } = await LocationService.fetchLocationData();
     const enhancedData = EnhancedTracker.getEnhancedSessionData();
 
+    // Anonymize IP address for privacy before storing
+    const anonymizedIp = ipAddress ? await this.anonymizeIpAddress(ipAddress) : null;
+    
     const rawSessionData = {
       session_id: this.sessionId,
       visitor_id: enhancedData.visitorData.visitor_id,
       visit_count: enhancedData.visitorData.visit_count,
-      ip_address: ipAddress,
+      ip_address: anonymizedIp, // Store anonymized IP for privacy
       location: locationData,
       city: locationData?.city || null,
       region: locationData?.region || null,
@@ -117,6 +121,20 @@ export class SessionManager {
       console.log('⚠️ Session storage error:', error);
       // Mark as stored to prevent infinite retries
       this.sessionStored = true;
+    }
+  }
+
+  private async anonymizeIpAddress(ipAddress: string): Promise<string | null> {
+    try {
+      const { data, error } = await supabase.rpc('anonymize_ip', { ip_address: ipAddress });
+      if (error) {
+        console.warn('IP anonymization failed:', error);
+        return null; // Return null for privacy if anonymization fails
+      }
+      return data;
+    } catch (error) {
+      console.warn('IP anonymization error:', error);
+      return null; // Return null for privacy if anonymization fails
     }
   }
 }
