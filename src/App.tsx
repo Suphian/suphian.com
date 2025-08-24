@@ -12,6 +12,7 @@ import Logo from "./components/Logo";
 import ScrollProgress from "./components/ScrollProgress";
 import SEOHead from "./components/SEOHead";
 import { AnalyticsPageviewListener } from "./components/AnalyticsPageviewListener";
+import { useEventTracker } from "./hooks/useEventTracker";
 
 
 // Scroll to top on route change
@@ -28,6 +29,13 @@ const ScrollToTop = () => {
 const queryClient = new QueryClient();
 
 const AppContent = () => {
+  // Initialize event tracking for the entire app
+  useEventTracker({
+    autoTrackPageViews: true,
+    autoTrackClicks: true,
+    autoTrackScrollEvents: true
+  });
+
   return (
     <>
       <SEOHead />
