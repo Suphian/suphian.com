@@ -243,6 +243,38 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      get_analytics_events: {
+        Args: { limit_count?: number; offset_count?: number }
+        Returns: {
+          created_at: string
+          event_name: string
+          id: string
+          is_internal_traffic: boolean
+          page_url: string
+          session_id: string
+          traffic_type: string
+        }[]
+      }
+      get_analytics_sessions: {
+        Args: { limit_count?: number; offset_count?: number }
+        Returns: {
+          browser: string
+          city: string
+          country: string
+          created_at: string
+          device_type: string
+          id: string
+          is_internal_user: boolean
+          os: string
+          referrer_source: string
+          session_id: string
+          utm_campaign: string
+          utm_medium: string
+          utm_source: string
+          visit_count: number
+          visitor_id: string
+        }[]
+      }
       get_contact_submissions: {
         Args: Record<PropertyKey, never>
         Returns: {
