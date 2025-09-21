@@ -65,12 +65,12 @@ const Navbar = () => {
       
       const section = document.getElementById(scrollTo);
       if (section) {
-        const offset = 190;
-        const topPosition = section.getBoundingClientRect().top + window.pageYOffset - offset;
-        window.scrollTo({
-          top: topPosition,
-          behavior: "smooth"
+        // Use scrollIntoView to avoid forced reflow from getBoundingClientRect
+        section.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
         });
+        // Adjust for navbar offset using CSS scroll-margin-top instead
       }
     }
   };

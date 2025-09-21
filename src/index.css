@@ -262,4 +262,9 @@
     background: #32323a;
     outline: none;
   }
+  
+  /* Add scroll margin to prevent content from hiding behind navbar */
+  section[id], div[id] {
+    scroll-margin-top: 190px;
+  }
 }

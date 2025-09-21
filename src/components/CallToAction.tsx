@@ -91,9 +91,10 @@ const CallToAction = () => {
   const scrollToContent = () => {
     const contentSection = document.getElementById("content-section");
     if (contentSection) {
-      window.scrollTo({
-        top: contentSection.offsetTop - 50,
-        behavior: "smooth"
+      // Use scrollIntoView to avoid forced reflow from offsetTop
+      contentSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
       });
       
       window.dispatchEvent(new Event('startButtonClicked'));
