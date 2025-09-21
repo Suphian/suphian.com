@@ -30,18 +30,19 @@
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="author" href="/humans.txt" />
     
-    <!-- Optimized font loading to break critical request chains -->
+    <!-- Optimized non-blocking font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Preload critical Montserrat font first -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" as="style" crossorigin>
-    <!-- Defer non-critical fonts -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" crossorigin>
+    
+    <!-- Load fonts asynchronously to prevent render blocking -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" crossorigin>
     <noscript><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet"></noscript>
     
-    <!-- Load critical font immediately -->
+    <!-- Critical CSS fallback fonts to prevent FOIT -->
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+      body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      .font-montserrat { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      .font-cairo { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     </style>
 
     <!-- Preconnect for Supabase to reduce API request chains -->
