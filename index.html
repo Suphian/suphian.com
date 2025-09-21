@@ -34,9 +34,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Load fonts asynchronously to prevent render blocking -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" crossorigin>
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet"></noscript>
+    <!-- Fonts will be loaded asynchronously via JavaScript to eliminate render blocking -->
     
     <!-- Critical CSS fallback fonts to prevent FOIT -->
     <style>
@@ -74,6 +72,16 @@
           gtag('js', new Date());
           gtag('config', 'G-8S5FL37K8X');
         }, 1000); // Load after 1 second
+      });
+
+      // Load fonts asynchronously to eliminate render blocking
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          var fontLink = document.createElement('link');
+          fontLink.rel = 'stylesheet';
+          fontLink.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap';
+          document.head.appendChild(fontLink);
+        }, 100); // Load fonts after 100ms
       });
     </script>
   </head>
