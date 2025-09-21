@@ -44,6 +44,9 @@
   body {
     @apply bg-background text-foreground font-montserrat;
     overflow-x: hidden;
+    /* Add fallback fonts and font-display for immediate rendering */
+    font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-display: swap;
   }
 
   /* Custom utility classes */
