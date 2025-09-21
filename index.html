@@ -30,16 +30,22 @@
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="author" href="/humans.txt" />
     
-    <!-- Add Montserrat and Cairo fonts (non-blocking) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Optimized font loading to break critical request chains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Preload critical font for LCP text -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <!-- Preload critical Montserrat font first -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" as="style" crossorigin>
+    <!-- Defer non-critical fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" crossorigin>
     <noscript><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet"></noscript>
+    
+    <!-- Load critical font immediately -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+    </style>
 
-    <!-- Preconnect/DNS Prefetch for Supabase -->
-    <link rel="preconnect" href="https://ujughujunixnwlmtdsxd.supabase.co">
+    <!-- Preconnect for Supabase to reduce API request chains -->
+    <link rel="preconnect" href="https://ujughujunixnwlmtdsxd.supabase.co" crossorigin>
     <link rel="dns-prefetch" href="//ujughujunixnwlmtdsxd.supabase.co">
     
     <!-- Preload critical resources -->
