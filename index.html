@@ -30,10 +30,11 @@
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="author" href="/humans.txt" />
     
-    <!-- Add Montserrat and Cairo fonts -->
+    <!-- Add Montserrat and Cairo fonts (non-blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet"></noscript>
 
     <!-- Preconnect/DNS Prefetch for Supabase -->
     <link rel="preconnect" href="https://ujughujunixnwlmtdsxd.supabase.co">
