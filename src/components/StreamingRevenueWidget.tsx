@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Info, Monitor, Smartphone } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { LocationService, LocationData } from "@/utils/analytics/locationService";
-import { ComparisonTable } from "@/components/ComparisonTable";
-import { EarningsChart } from "@/components/EarningsChart";
+
+// Lazy load heavy chart components
+const ComparisonTable = React.lazy(() => import("@/components/ComparisonTable").then(m => ({ default: m.ComparisonTable })));
+const EarningsChart = React.lazy(() => import("@/components/EarningsChart").then(m => ({ default: m.EarningsChart })));
 
 interface StreamingRates {
   [country: string]: {
@@ -199,8 +201,12 @@ export const StreamingRevenueWidget: React.FC = () => {
         {/* Comparison Section */}
         {showComparison && (
           <div className="space-y-6">
-            <ComparisonTable streamingRates={streamingRates} />
-            <EarningsChart streamingRates={streamingRates} />
+            <Suspense fallback={<div className="animate-pulse bg-muted h-32 rounded-lg" />}>
+              <ComparisonTable streamingRates={streamingRates} />
+            </Suspense>
+            <Suspense fallback={<div className="animate-pulse bg-muted h-64 rounded-lg" />}>
+              <EarningsChart streamingRates={streamingRates} />
+            </Suspense>
           </div>
         )}
 

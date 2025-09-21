@@ -52,13 +52,22 @@
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     
-    <!-- Google Analytics tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8S5FL37K8X"></script>
+    <!-- Google Analytics tag (gtag.js) - Deferred loading -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);} // eslint-disable-line
-      gtag('js', new Date());
-      gtag('config', 'G-8S5FL37K8X');
+      // Defer Google Analytics loading until after page load
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-8S5FL37K8X';
+          document.head.appendChild(script);
+          
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);} // eslint-disable-line
+          gtag('js', new Date());
+          gtag('config', 'G-8S5FL37K8X');
+        }, 1000); // Load after 1 second
+      });
     </script>
   </head>
 
