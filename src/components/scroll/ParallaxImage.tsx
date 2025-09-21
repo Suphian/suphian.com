@@ -40,12 +40,24 @@ const ParallaxImage = ({
         willChange: "transform, opacity" // Removed filter from willChange for clearer image
       }} 
     >
-      <img 
-        src={imageSrc}
-        alt={altText}
-        className="w-full max-w-6xl object-contain"
-        style={{ filter: "none" }} // Ensure no filter is applied
-      />
+      <picture>
+        <source 
+          type="image/webp" 
+          srcSet={imageSrc.includes('75f08c75-ec0f-4cee-b3a2-db7b2ea15061') 
+            ? "/optimized/astronaut-running-1200.webp 1200w, /optimized/astronaut-running.webp 1736w"
+            : imageSrc
+          }
+          sizes="(max-width: 1200px) 1200px, 1152px"
+        />
+        <img 
+          src={imageSrc}
+          alt={altText}
+          className="w-full max-w-6xl object-contain"
+          style={{ filter: "none" }} // Ensure no filter is applied
+          loading="lazy"
+          decoding="async"
+        />
+      </picture>
     </div>
   );
 };

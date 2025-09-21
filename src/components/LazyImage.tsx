@@ -11,6 +11,9 @@ interface LazyImageProps {
   width?: number;
   height?: number;
   priority?: 'high' | 'low' | 'auto';
+  webpSrc?: string;
+  srcSet?: string;
+  webpSrcSet?: string;
 }
 
 const LazyImage = ({ 
@@ -22,7 +25,10 @@ const LazyImage = ({
   sizes,
   width,
   height,
-  priority = 'low'
+  priority = 'low',
+  webpSrc,
+  srcSet,
+  webpSrcSet
 }: LazyImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
@@ -54,21 +60,48 @@ const LazyImage = ({
           className={`absolute inset-0 ${skeletonClassName}`} 
         />
       )}
-      <img
-        ref={imgRef}
-        src={isInView ? src : placeholder}
-        alt={alt}
-        className={`transition-opacity duration-300 ${
-          isLoaded ? 'opacity-100' : 'opacity-0'
-        } ${className}`}
-        onLoad={() => setIsLoaded(true)}
-        loading={priority === 'high' ? 'eager' : 'lazy'}
-        decoding="async"
-        sizes={sizes}
-        width={width}
-        height={height}
-        {...(priority ? ({ fetchPriority: priority } as any) : {})}
-      />
+      {webpSrc ? (
+        <picture>
+          <source 
+            type="image/webp" 
+            srcSet={isInView ? (webpSrcSet || webpSrc) : undefined}
+            sizes={sizes}
+          />
+          <img
+            ref={imgRef}
+            src={isInView ? src : placeholder}
+            srcSet={isInView ? srcSet : undefined}
+            alt={alt}
+            className={`transition-opacity duration-300 ${
+              isLoaded ? 'opacity-100' : 'opacity-0'
+            } ${className}`}
+            onLoad={() => setIsLoaded(true)}
+            loading={priority === 'high' ? 'eager' : 'lazy'}
+            decoding="async"
+            sizes={sizes}
+            width={width}
+            height={height}
+            {...(priority ? ({ fetchPriority: priority } as any) : {})}
+          />
+        </picture>
+      ) : (
+        <img
+          ref={imgRef}
+          src={isInView ? src : placeholder}
+          srcSet={isInView ? srcSet : undefined}
+          alt={alt}
+          className={`transition-opacity duration-300 ${
+            isLoaded ? 'opacity-100' : 'opacity-0'
+          } ${className}`}
+          onLoad={() => setIsLoaded(true)}
+          loading={priority === 'high' ? 'eager' : 'lazy'}
+          decoding="async"
+          sizes={sizes}
+          width={width}
+          height={height}
+          {...(priority ? ({ fetchPriority: priority } as any) : {})}
+        />
+      )}
     </div>
   );
 };
