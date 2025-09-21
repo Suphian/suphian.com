@@ -18,75 +18,54 @@ export const useScrollTracking = ({ sections, onSectionView }: UseScrollTracking
   const scrollDirection = useRef<'up' | 'down'>('down');
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const viewportHeight = window.innerHeight;
-      
-      // Determine scroll direction
-      scrollDirection.current = currentScrollY > lastScrollY.current ? 'down' : 'up';
-      lastScrollY.current = currentScrollY;
+    // Use Intersection Observer for better performance
+    const observerOptions = {
+      threshold: [0, 0.1, 0.3, 0.5, 0.7, 1.0],
+      rootMargin: '0px'
+    };
 
-      sections.forEach(({ name, ref, threshold = 0.3 }) => {
-        if (!ref.current) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const sectionName = entry.target.getAttribute('data-section-name');
+        if (!sectionName) return;
 
-        const element = ref.current;
-        const rect = element.getBoundingClientRect();
-        const elementTop = rect.top + currentScrollY;
-        const elementHeight = rect.height;
+        const section = sections.find(s => s.name === sectionName);
+        if (!section) return;
+
+        const threshold = section.threshold || 0.3;
+        const isInView = entry.intersectionRatio >= threshold;
         
-        // Calculate if section is in view
-        const elementCenter = elementTop + (elementHeight / 2);
-        const scrollCenter = currentScrollY + (viewportHeight / 2);
-        const distanceFromCenter = Math.abs(scrollCenter - elementCenter);
-        const maxDistance = (elementHeight / 2) + (viewportHeight / 2);
-        
-        // Calculate progress (0 to 1) - how much of the section is visible
-        const progress = Math.max(0, Math.min(1, 1 - (distanceFromCenter / maxDistance)));
-        
-        // Check if section is significantly in view
-        const isInView = progress >= threshold;
-        
-        if (isInView && !viewedSections.current.has(name)) {
-          viewedSections.current.add(name);
+        if (isInView && !viewedSections.current.has(sectionName)) {
+          viewedSections.current.add(sectionName);
           
           // Only log in development mode to reduce console noise
           if (process.env.NODE_ENV === 'development') {
-            console.log(`📍 Section viewed: ${name} (${Math.round(progress * 100)}% visible, scrolling ${scrollDirection.current})`);
+            console.log(`📍 Section viewed: ${sectionName} (${Math.round(entry.intersectionRatio * 100)}% visible)`);
           }
           
           // Track the event (only once per section)
           window.trackEvent?.("section_viewed", {
-            section: name,
-            progress: Math.round(progress * 100),
-            scrollDirection: scrollDirection.current,
+            section: sectionName,
+            progress: Math.round(entry.intersectionRatio * 100),
             timestamp: Date.now(),
             page: window.location.pathname
           });
           
-          onSectionView?.(name, progress);
+          onSectionView?.(sectionName, entry.intersectionRatio);
         }
       });
-    };
+    }, observerOptions);
 
-    // Initial check
-    handleScroll();
-    
-    // Throttled scroll listener for performance
-    let ticking = false;
-    const throttledScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
+    // Observe all sections
+    sections.forEach(({ name, ref }) => {
+      if (ref.current) {
+        ref.current.setAttribute('data-section-name', name);
+        observer.observe(ref.current);
       }
-    };
-
-    window.addEventListener("scroll", throttledScroll, { passive: true });
+    });
     
     return () => {
-      window.removeEventListener("scroll", throttledScroll);
+      observer.disconnect();
     };
   }, [sections, onSectionView]);
 

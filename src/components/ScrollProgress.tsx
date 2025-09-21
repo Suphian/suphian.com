@@ -5,10 +5,17 @@ const ScrollProgress = () => {
 
   useEffect(() => {
     let ticking = false;
+    let cachedScrollHeight = 0;
+    let cachedClientHeight = 0;
+
+    const updateCache = () => {
+      cachedScrollHeight = document.documentElement.scrollHeight;
+      cachedClientHeight = document.documentElement.clientHeight;
+    };
 
     const update = () => {
       const scrollPx = document.documentElement.scrollTop;
-      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const winHeightPx = cachedScrollHeight - cachedClientHeight;
       const scrolled = winHeightPx > 0 ? (scrollPx / winHeightPx) * 100 : 0;
       setScrollProgress(scrolled);
       ticking = false;
@@ -22,10 +29,12 @@ const ScrollProgress = () => {
     };
 
     const onResize = () => {
+      updateCache();
       update();
     };
 
-    // initial calc
+    // Initial setup
+    updateCache();
     update();
 
     window.addEventListener('scroll', onScroll, { passive: true });

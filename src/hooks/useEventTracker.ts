@@ -83,13 +83,21 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
       }
     };
 
-    // Track scroll events with improved logic
+    // Track scroll events with cached values to prevent forced reflows
     let scrollTimeout: NodeJS.Timeout;
+    let cachedPageHeight = 0;
+    let cachedViewportHeight = 0;
+
+    const updateScrollCache = () => {
+      cachedPageHeight = document.documentElement.scrollHeight;
+      cachedViewportHeight = window.innerHeight;
+    };
+
     const handleScroll = () => {
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
         const scrollPercent = Math.round(
-          (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
+          (window.scrollY / (cachedPageHeight - cachedViewportHeight)) * 100
         );
         
         // Track scroll milestones (25%, 50%, 75%, 100%)
@@ -101,8 +109,8 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
               milestone: milestone,
               scrollPercent: scrollPercent,
               scrollY: window.scrollY,
-              pageHeight: document.documentElement.scrollHeight,
-              viewport_height: window.innerHeight,
+              pageHeight: cachedPageHeight,
+              viewport_height: cachedViewportHeight,
               timestamp: new Date().toISOString()
             });
             lastScrollPercent.current = milestone;
@@ -112,17 +120,26 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
       }, 250);
     };
 
+    const handleResize = () => {
+      updateScrollCache();
+    };
+
+    // Initial cache update
+    updateScrollCache();
+
     if (autoTrackClicks) {
       document.addEventListener('click', handleClick, true);
     }
 
     if (autoTrackScrollEvents) {
       window.addEventListener('scroll', handleScroll, { passive: true });
+      window.addEventListener('resize', handleResize, { passive: true });
     }
 
     return () => {
       document.removeEventListener('click', handleClick, true);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
       clearTimeout(scrollTimeout);
     };
   }, [autoTrackPageViews, autoTrackClicks, autoTrackScrollEvents]);
