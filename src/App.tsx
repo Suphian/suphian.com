@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,8 +10,7 @@ import Footer from "./components/Footer";
 import Logo from "./components/Logo";
 import ScrollProgress from "./components/ScrollProgress";
 import SEOHead from "./components/SEOHead";
-import { AnalyticsPageviewListener } from "./components/AnalyticsPageviewListener";
-import { useEventTracker } from "./hooks/useEventTracker";
+import { LazyAnalytics } from "./components/LazyAnalytics";
 
 
 // Scroll to top on route change
@@ -29,19 +27,12 @@ const ScrollToTop = () => {
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  // Initialize event tracking for the entire app
-  useEventTracker({
-    autoTrackPageViews: true,
-    autoTrackClicks: true,
-    autoTrackScrollEvents: true
-  });
-
   return (
     <>
       <SEOHead />
       <ScrollProgress />
       <ScrollToTop />
-      <AnalyticsPageviewListener />
+      <LazyAnalytics />
       <Navbar />
       <Logo />
       <main className="min-h-screen">
