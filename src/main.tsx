@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+import { registerServiceWorker } from './utils/serviceWorker'
 
 // Analytics modules are loaded by feature modules as needed to reduce initial bundle size
 
@@ -15,3 +16,8 @@ window.addEventListener('load', () => {
 
 // Initialize the root component
 createRoot(document.getElementById("root")!).render(<App />);
+
+// Register service worker for efficient caching
+if (import.meta.env.PROD) {
+  registerServiceWorker();
+}

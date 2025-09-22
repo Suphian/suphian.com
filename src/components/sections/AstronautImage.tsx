@@ -1,11 +1,11 @@
 
 import React from "react";
-import LazyImage from "../LazyImage";
+import OptimizedImage from "../OptimizedImage";
 
 const AstronautImage = () => {
   return (
     <div className="aspect-square w-full mx-auto md:mx-0 rounded-2xl overflow-hidden shadow-lg bg-background">
-      <LazyImage
+      <OptimizedImage
         src="/lovable-uploads/9ecd33bc-76a0-4af2-a18c-c988cab8c7e9.png"
         webpSrc="/optimized/astronaut-headphones.webp"
         webpSrcSet="/optimized/astronaut-headphones-600.webp 600w, /optimized/astronaut-headphones.webp 1920w"

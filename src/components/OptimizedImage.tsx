@@ -1,12 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
 import { SkeletonLoader } from './ui/skeleton-loader';
 
-interface LazyImageProps {
+interface OptimizedImageProps {
   src: string;
   alt: string;
   className?: string;
   skeletonClassName?: string;
-  placeholder?: string;
   sizes?: string;
   width?: number;
   height?: number;
@@ -14,27 +13,31 @@ interface LazyImageProps {
   webpSrc?: string;
   srcSet?: string;
   webpSrcSet?: string;
+  lazy?: boolean;
 }
 
-const LazyImage = ({ 
+const OptimizedImage = memo(({ 
   src, 
   alt, 
   className = '', 
   skeletonClassName = '',
-  placeholder,
   sizes,
   width,
   height,
   priority = 'low',
   webpSrc,
   srcSet,
-  webpSrcSet
-}: LazyImageProps) => {
+  webpSrcSet,
+  lazy = true
+}: OptimizedImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isInView, setIsInView] = useState(false);
+  const [isInView, setIsInView] = useState(!lazy);
+  const [hasError, setHasError] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
+    if (!lazy) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -42,7 +45,7 @@ const LazyImage = ({
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1, rootMargin: '50px' }
     );
 
     if (imgRef.current) {
@@ -50,16 +53,27 @@ const LazyImage = ({
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [lazy]);
+
+  const handleLoad = () => {
+    setIsLoaded(true);
+    setHasError(false);
+  };
+
+  const handleError = () => {
+    setHasError(true);
+    setIsLoaded(true);
+  };
 
   return (
     <div className="relative overflow-hidden">
-      {!isLoaded && (
+      {!isLoaded && !hasError && (
         <SkeletonLoader 
           variant="image" 
           className={`absolute inset-0 ${skeletonClassName}`} 
         />
       )}
+      
       {webpSrc ? (
         <picture>
           <source 
@@ -69,43 +83,53 @@ const LazyImage = ({
           />
           <img
             ref={imgRef}
-            src={isInView ? src : placeholder}
+            src={isInView ? src : undefined}
             srcSet={isInView ? srcSet : undefined}
             alt={alt}
             className={`transition-opacity duration-300 ${
               isLoaded ? 'opacity-100' : 'opacity-0'
             } ${className}`}
-            onLoad={() => setIsLoaded(true)}
+            onLoad={handleLoad}
+            onError={handleError}
             loading={priority === 'high' ? 'eager' : 'lazy'}
             decoding="async"
             sizes={sizes}
             width={width}
             height={height}
-            {...(priority ? ({ fetchPriority: priority } as any) : {})}
+            fetchPriority={priority}
             crossOrigin="anonymous"
           />
         </picture>
       ) : (
         <img
           ref={imgRef}
-          src={isInView ? src : placeholder}
+          src={isInView ? src : undefined}
           srcSet={isInView ? srcSet : undefined}
           alt={alt}
           className={`transition-opacity duration-300 ${
             isLoaded ? 'opacity-100' : 'opacity-0'
           } ${className}`}
-          onLoad={() => setIsLoaded(true)}
+          onLoad={handleLoad}
+          onError={handleError}
           loading={priority === 'high' ? 'eager' : 'lazy'}
           decoding="async"
           sizes={sizes}
           width={width}
           height={height}
-          {...(priority ? ({ fetchPriority: priority } as any) : {})}
+          fetchPriority={priority}
           crossOrigin="anonymous"
         />
       )}
+      
+      {hasError && (
+        <div className={`flex items-center justify-center bg-muted text-muted-foreground ${className}`}>
+          <span className="text-sm">Failed to load image</span>
+        </div>
+      )}
     </div>
   );
-};
+});
 
-export default LazyImage;
+OptimizedImage.displayName = 'OptimizedImage';
+
+export default OptimizedImage;

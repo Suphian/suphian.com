@@ -34,6 +34,8 @@ const Logo = () => {
             decoding="async"
             width="122"
             height="122"
+            fetchPriority="high"
+            crossOrigin="anonymous"
           />
         </picture>
       </Link>
