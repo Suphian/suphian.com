@@ -43,7 +43,15 @@ export default defineConfig(({ mode }) => ({
             if (id.includes('@radix-ui')) return 'radix';
             if (id.includes('recharts')) return 'recharts';
             if (id.includes('lucide-react')) return 'icons';
+            if (id.includes('emailjs-com')) return 'email';
           }
+          // Split analytics utilities into separate chunk
+          if (id.includes('/utils/analytics/')) return 'analytics';
+          // Split heavy components into separate chunks
+          if (id.includes('/components/StreamingRevenueWidget') || 
+              id.includes('/components/YouTubeMusicPlayer') ||
+              id.includes('/components/EarningsChart') ||
+              id.includes('/components/ComparisonTable')) return 'widgets';
         }
       }
     }

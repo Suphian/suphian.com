@@ -61,21 +61,33 @@
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     
-    <!-- Google Analytics tag (gtag.js) - Deferred loading -->
+    <!-- Google Analytics tag (gtag.js) - Highly deferred loading -->
     <script>
-      // Defer Google Analytics loading until after page load
+      // Defer Google Analytics loading until user interaction or after significant delay
+      let analyticsLoaded = false;
+      
+      function loadAnalytics() {
+        if (analyticsLoaded) return;
+        analyticsLoaded = true;
+        
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-8S5FL37K8X';
+        document.head.appendChild(script);
+        
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);} // eslint-disable-line
+        gtag('js', new Date());
+        gtag('config', 'G-8S5FL37K8X');
+      }
+      
+      // Load on first user interaction or after 3 seconds
+      ['mousedown', 'touchstart', 'keydown', 'scroll'].forEach(event => {
+        document.addEventListener(event, loadAnalytics, { once: true, passive: true });
+      });
+      
       window.addEventListener('load', function() {
-        setTimeout(function() {
-          var script = document.createElement('script');
-          script.async = true;
-          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-8S5FL37K8X';
-          document.head.appendChild(script);
-          
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);} // eslint-disable-line
-          gtag('js', new Date());
-          gtag('config', 'G-8S5FL37K8X');
-        }, 1000); // Load after 1 second
+        setTimeout(loadAnalytics, 3000); // Fallback after 3 seconds
       });
 
       // Load fonts asynchronously to eliminate render blocking
