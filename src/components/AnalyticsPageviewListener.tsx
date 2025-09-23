@@ -1,6 +1,5 @@
 
 import { useEffect } from "react";
-import { trackPageView } from "@/utils/analytics/googleAnalytics";
 
 /**
  * Analytics pageview listener component that tracks page views on route changes.
@@ -8,12 +7,26 @@ import { trackPageView } from "@/utils/analytics/googleAnalytics";
  */
 export function AnalyticsPageviewListener() {
   useEffect(() => {
-    // Track the initial page load
-    trackPageView();
+    let trackPageView: (() => void) | null = null;
+
+    // Lazy load trackPageView function
+    const loadAndTrack = async () => {
+      try {
+        const { trackPageView: track } = await import("@/utils/analytics/googleAnalytics");
+        trackPageView = track;
+        trackPageView(); // Track initial page load
+      } catch (error) {
+        console.warn('Failed to load analytics:', error);
+      }
+    };
+
+    loadAndTrack();
 
     // Track GA pageview on every route/page change
     const onHistory = () => {
-      setTimeout(trackPageView, 0); // next tick after route update
+      if (trackPageView) {
+        setTimeout(trackPageView, 0); // next tick after route update
+      }
     };
     window.addEventListener("popstate", onHistory);
     window.addEventListener("pushstate", onHistory); // For SPA navigation
