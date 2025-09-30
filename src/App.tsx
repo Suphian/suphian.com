@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import Logo from "./components/Logo";
 import ScrollProgress from "./components/ScrollProgress";
 import SEOHead from "./components/SEOHead";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 
 // Scroll to top on route change
@@ -51,7 +52,9 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AppContent />
+        <ErrorBoundary>
+          <AppContent />
+        </ErrorBoundary>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
