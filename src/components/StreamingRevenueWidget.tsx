@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Info, Monitor, Smartphone } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-// LocationService and LocationData will be imported dynamically
+import { LocationService, LocationData } from "@/utils/analytics/locationService";
 
 // Lazy load heavy chart components
 const ComparisonTable = React.lazy(() => import("@/components/ComparisonTable").then(m => ({ default: m.ComparisonTable })));
@@ -35,7 +35,7 @@ const streamingRates: StreamingRates = {
 };
 
 export const StreamingRevenueWidget: React.FC = () => {
-  const [locationData, setLocationData] = useState<any>(null);
+  const [locationData, setLocationData] = useState<LocationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showComparison, setShowComparison] = useState(false);
   const isMobile = useIsMobile();
@@ -43,7 +43,6 @@ export const StreamingRevenueWidget: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { LocationService } = await import("@/utils/analytics/locationService");
         const { locationData } = await LocationService.fetchLocationData();
         setLocationData(locationData);
       } catch (error) {

@@ -4,14 +4,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import React, { useEffect } from "react";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import { LazyIndex, LazyNotFound, LazyRoute } from "./components/LazyRoute";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Logo from "./components/Logo";
 import ScrollProgress from "./components/ScrollProgress";
 import SEOHead from "./components/SEOHead";
-import ErrorBoundary from "./components/ErrorBoundary";
+import { LazyAnalytics } from "./components/LazyAnalytics";
 
 
 // Scroll to top on route change
@@ -33,12 +32,13 @@ const AppContent = () => {
       <SEOHead />
       <ScrollProgress />
       <ScrollToTop />
+      <LazyAnalytics />
       <Navbar />
       <Logo />
       <main className="min-h-screen">
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/" element={<LazyRoute><LazyIndex /></LazyRoute>} />
+          <Route path="*" element={<LazyRoute><LazyNotFound /></LazyRoute>} />
         </Routes>
       </main>
       <Footer />
@@ -52,9 +52,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <ErrorBoundary>
-          <AppContent />
-        </ErrorBoundary>
+        <AppContent />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

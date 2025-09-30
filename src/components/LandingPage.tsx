@@ -11,15 +11,15 @@ const LandingPage = () => {
       {/* Main content with enhanced backdrop for better text visibility against the sliding image */}
       <div className="max-w-4xl relative z-20">
         <div className="backdrop-blur-sm bg-background/50 rounded-xl p-6 md:p-8 shadow-xl">
-          <h1 className="heading-xl mb-6 flex flex-wrap items-baseline relative text-white">
+          <h1 className="heading-xl mb-6 flex flex-wrap items-baseline relative">
             <span className="relative inline-block">
               <AnimatedGreeting greetings={greetings} />
               <span className="ml-2 font-montserrat font-black">, I'm Suphian.</span>
             </span>
           </h1>
           
-          <div className="space-y-4">
-            <p className="text-xl md:text-2xl lg:text-3xl font-montserrat font-bold text-white">
+          <div className="space-y-4 text-content">
+            <p className="text-xl md:text-2xl lg:text-3xl font-montserrat font-bold">
               Product Manager leading payments at YouTube. Passionate about crafting exceptional experiences powered by data, design, and cutting-edge tech.
             </p>
           </div>

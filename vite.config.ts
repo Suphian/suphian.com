@@ -39,38 +39,26 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            // Core React bundle
-            if (id.includes('react') || id.includes('react-dom')) return 'react';
-            // UI library chunks
+            if (id.includes('react') || id.includes('react-dom')) return 'vendor';
             if (id.includes('@radix-ui')) return 'radix';
             if (id.includes('recharts')) return 'recharts';
             if (id.includes('lucide-react')) return 'icons';
-            // Third-party services
             if (id.includes('emailjs-com')) return 'email';
-            if (id.includes('ua-parser-js')) return 'analytics-deps';
-            // Router
-            if (id.includes('react-router')) return 'router';
-            // Query client
-            if (id.includes('@tanstack/react-query')) return 'query';
-            // Other vendor code
-            return 'vendor';
+            if (id.includes('ua-parser-js')) return 'analytics';
           }
-          // Analytics - completely separate and lazy loaded
+          // Split analytics utilities into separate chunk - load only when needed
           if (id.includes('/utils/analytics/') || 
               id.includes('/hooks/useEventTracker') ||
-              id.includes('AnalyticsPageviewListener') ||
-              id.includes('LazyAnalytics')) return 'analytics';
-          // Heavy widgets - lazy loaded
+              id.includes('AnalyticsPageviewListener')) return 'analytics';
+          // Split heavy components into separate chunks
           if (id.includes('/components/StreamingRevenueWidget') || 
               id.includes('/components/YouTubeMusicPlayer') ||
               id.includes('/components/EarningsChart') ||
               id.includes('/components/ComparisonTable')) return 'widgets';
-          // Contact forms - lazy loaded
+          // Split contact forms into separate chunk
           if (id.includes('/components/ContactForm') ||
               id.includes('/components/ContactSheet') ||
               id.includes('/components/RequestCVModal')) return 'contact';
-          // Section components - lazy loaded
-          if (id.includes('/components/sections/')) return 'sections';
         },
         // Optimize asset naming for better caching
         assetFileNames: (assetInfo) => {
