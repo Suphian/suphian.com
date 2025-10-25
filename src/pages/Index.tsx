@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback, Suspense } from "react";
 import LandingPage from "@/components/LandingPage";
 import ScrollTransition from "@/components/ScrollTransition";
-import Hero from "@/components/Hero";
 
 const RequestCVModal = React.lazy(() => import("@/components/RequestCVModal"));
 const LazyContactSheet = React.lazy(() => import("@/components/ContactSheet"));
@@ -137,9 +136,6 @@ const Index = () => {
             willChange: "opacity, transform"
           }}
         >
-          {/* About Me Hero section */}
-          <Hero />
-
           {/* Content Sections - pass refs for tracking */}
           <ContentSection 
             onRequestCV={async () => {

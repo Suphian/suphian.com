@@ -10,7 +10,6 @@ import Footer from "./components/Footer";
 import Logo from "./components/Logo";
 import ScrollProgress from "./components/ScrollProgress";
 import SEOHead from "./components/SEOHead";
-import { LazyAnalytics } from "./components/LazyAnalytics";
 
 
 // Scroll to top on route change
@@ -32,7 +31,6 @@ const AppContent = () => {
       <SEOHead />
       <ScrollProgress />
       <ScrollToTop />
-      <LazyAnalytics />
       <Navbar />
       <Logo />
       <main className="min-h-screen">

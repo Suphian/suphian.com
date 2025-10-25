@@ -26,7 +26,8 @@ class SecureEventTracker {
     this.sessionManager = new SessionManager();
     this.eventBatcher = new EventBatcher(
       this.config.batchSize || 5,
-      this.config.batchIntervalMs || 3000
+      this.config.batchIntervalMs || 30000,
+      supabase
     );
 
     if (process.env.NODE_ENV === 'development') {
@@ -141,7 +142,7 @@ class SecureEventTracker {
 export const secureEventTracker = new SecureEventTracker({
   enableInDevelopment: true,
   batchSize: 5,
-  batchIntervalMs: 3000,
+  batchIntervalMs: 30000, // 30 seconds - more reasonable interval
   filterInternalTraffic: false // Track internal traffic but classify it
 });
 

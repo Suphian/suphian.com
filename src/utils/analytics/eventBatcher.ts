@@ -12,11 +12,13 @@ export class EventBatcher {
   private retryDelayMs = 3000;
   private maxRetryDelayMs = 60000;
   private flushCb?: () => Promise<void>;
+  private supabase: any;
 
-  constructor(batchSize: number, batchIntervalMs: number) {
+  constructor(batchSize: number, batchIntervalMs: number, supabase?: any) {
     this.batchSize = batchSize;
     this.batchIntervalMs = batchIntervalMs;
     this.eventBuffer = new EventBuffer();
+    this.supabase = supabase;
   }
   addEvent(eventData: EventData): void {
     const bufferSize = this.eventBuffer.add(eventData);
@@ -39,10 +41,17 @@ export class EventBatcher {
     }
 
     this.flushCb = flushCallback;
-    console.log('🔒 Starting batch timer...');
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔒 Starting batch timer...');
+    }
+    
+    // Only set timer if not already running
     this.batchTimer = setInterval(() => {
       if (!this.eventBuffer.isEmpty()) {
-        console.log('🔒 Timer triggered, flushing', this.eventBuffer.size(), 'events');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔒 Timer triggered, flushing', this.eventBuffer.size(), 'events');
+        }
         this.flushCb?.();
       }
     }, this.batchIntervalMs);
@@ -60,7 +69,6 @@ export class EventBatcher {
   }
   async flush(supabase?: any): Promise<void> {
     if (this.eventBuffer.isEmpty()) {
-      console.log('🔒 No events to flush');
       return;
     }
 
@@ -68,21 +76,27 @@ export class EventBatcher {
 
     // If offline, requeue and schedule retry
     if (typeof navigator !== 'undefined' && navigator && 'onLine' in navigator && !navigator.onLine) {
-      console.log('🔒 Offline detected, re-queueing events');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔒 Offline detected, re-queueing events');
+      }
       eventsToFlush.forEach(e => this.eventBuffer.add(e));
       this.scheduleRetry();
       return;
     }
 
-    if (!supabase) {
-      console.log('🔒 No supabase client provided for flush');
-      // Requeue and try later
+    // Use provided supabase or fall back to instance supabase
+    const client = supabase || this.supabase;
+    
+    if (!client) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔒 No supabase client available, re-queueing events');
+      }
       eventsToFlush.forEach(e => this.eventBuffer.add(e));
       this.scheduleRetry();
       return;
     }
 
-    const success = await BatchProcessor.processEvents(eventsToFlush, supabase);
+    const success = await BatchProcessor.processEvents(eventsToFlush, client);
     
     if (!success) {
       if (process.env.NODE_ENV === 'development') {
@@ -100,7 +114,11 @@ export class EventBatcher {
   private scheduleRetry() {
     if (this.retryTimer || !this.flushCb) return;
     const delay = Math.min(this.retryDelayMs, this.maxRetryDelayMs);
-    console.log(`🔒 Scheduling retry in ${delay}ms`);
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔒 Scheduling retry in ${delay}ms`);
+    }
+    
     this.retryTimer = setTimeout(() => {
       this.retryTimer = null;
       // Exponential backoff

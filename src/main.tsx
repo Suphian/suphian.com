@@ -17,7 +17,9 @@ window.addEventListener('load', () => {
 // Initialize the root component
 createRoot(document.getElementById("root")!).render(<App />);
 
-// Register service worker for efficient caching
+// Register service worker for efficient caching (production only)
 if (import.meta.env.PROD) {
-  registerServiceWorker();
+  registerServiceWorker().catch(err => {
+    console.warn('Service worker registration failed:', err);
+  });
 }
