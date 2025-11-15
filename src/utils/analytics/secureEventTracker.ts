@@ -146,12 +146,4 @@ export const secureEventTracker = new SecureEventTracker({
   filterInternalTraffic: false // Track internal traffic but classify it
 });
 
-// Auto-initialize when module loads
-if (typeof window !== 'undefined') {
-  if (process.env.NODE_ENV === 'development') {
-    console.log('🔒 Auto-initializing secure event tracker...');
-  }
-  secureEventTracker.initialize();
-}
-
 export default secureEventTracker;

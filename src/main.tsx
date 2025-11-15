@@ -2,8 +2,12 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { registerServiceWorker } from './utils/serviceWorker'
+import { secureEventTracker } from './utils/analytics/secureEventTracker'
 
-// Analytics modules are loaded by feature modules as needed to reduce initial bundle size
+// Initialize analytics tracking
+secureEventTracker.initialize().catch(err => {
+  console.warn('Analytics initialization failed:', err);
+});
 
 // Log when the page loads to help debug favicon issues
 window.addEventListener('load', () => {
