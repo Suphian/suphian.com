@@ -4,7 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import React, { useEffect } from "react";
-import { LazyIndex, LazyNotFound, LazyRoute } from "./components/LazyRoute";
+import { LazyNotFound, LazyRoute } from "./components/LazyRoute";
+import Index from "./pages/Index";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Logo from "./components/Logo";
@@ -35,7 +36,7 @@ const AppContent = () => {
       <Logo />
       <main className="min-h-screen">
         <Routes>
-          <Route path="/" element={<LazyRoute><LazyIndex /></LazyRoute>} />
+          <Route path="/" element={<Index />} />
           <Route path="*" element={<LazyRoute><LazyNotFound /></LazyRoute>} />
         </Routes>
       </main>
