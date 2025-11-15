@@ -96,8 +96,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send to site owner
     const emailResponse = await resend.emails.send({
-      from: "Contact Notification <hi@suphian.com>",
-      to: ["suph.tweel@gmail.com"],
+      from: "Contact Notification <hello@suphian.com>",
+      to: ["hello@suphian.com"],
       subject: "Contact Form Submission",
       html,
       reply_to: email ? email : undefined,
@@ -201,11 +201,11 @@ const handler = async (req: Request): Promise<Response> => {
 </html>
       `;
       confirmEmailResponse = await resend.emails.send({
-        from: "Contact Notification <hi@suphian.com>",
+        from: "Contact Notification <hello@suphian.com>",
         to: [email],
         subject: "🌕 Your message reached my inbox!",
         html: thankYouHtml,
-        reply_to: "hi@suphian.com",
+        reply_to: "hello@suphian.com",
       });
     }
 
