@@ -246,10 +246,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      anonymize_ip: {
-        Args: { ip_address: string }
-        Returns: string
-      }
+      anonymize_ip: { Args: { ip_address: string }; Returns: string }
       check_rate_limit: {
         Args: {
           p_action: string
@@ -259,14 +256,8 @@ export type Database = {
         }
         Returns: boolean
       }
-      cleanup_old_analytics_data: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      cleanup_old_rate_limits: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      cleanup_old_analytics_data: { Args: never; Returns: undefined }
+      cleanup_old_rate_limits: { Args: never; Returns: undefined }
       get_analytics_events: {
         Args: { limit_count?: number; offset_count?: number }
         Returns: {
@@ -300,7 +291,7 @@ export type Database = {
         }[]
       }
       get_contact_submissions: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           created_at: string
           email: string
@@ -311,18 +302,12 @@ export type Database = {
           subject: string
         }[]
       }
-      is_admin: {
-        Args: { user_id?: string }
-        Returns: boolean
-      }
+      is_admin: { Args: { user_id?: string }; Returns: boolean }
       promote_user_to_admin: {
         Args: { user_email: string }
         Returns: undefined
       }
-      verify_admin_access: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      verify_admin_access: { Args: never; Returns: boolean }
     }
     Enums: {
       user_role: "admin" | "user"
