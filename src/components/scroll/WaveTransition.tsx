@@ -17,8 +17,11 @@ const WaveTransition = ({
   return (
     <div 
       ref={transitionRef}
-      className={`absolute ${position}-0 left-0 right-0 h-96 transition-all duration-500 ease-out transform-gpu opacity-0 ${className}`}
-      style={{ zIndex }} // Position between text and image
+      className={`absolute ${position}-0 left-0 right-0 h-96 transform-gpu opacity-0 ${className}`}
+      style={{ 
+        zIndex,
+        transition: "transform 0.2s linear, opacity 0.4s ease-out"
+      }}
     >
       <svg 
         viewBox="0 0 1440 320" 

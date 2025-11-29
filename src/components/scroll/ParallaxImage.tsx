@@ -32,13 +32,14 @@ const ParallaxImage = ({
   return (
     <div 
       ref={imageRef} 
-      className={`fixed inset-0 w-full h-full flex items-center justify-center transition-transform duration-700 ease-out transform-gpu ${className}`}
+      className={`fixed inset-0 w-full h-full flex items-center justify-center transform-gpu ${className}`}
       style={{ 
         zIndex, // Positioned behind text
         opacity: 0,  // Start hidden
         transform: initialPosition, // Start from lower position
-        willChange: "transform, opacity" // Removed filter from willChange for clearer image
-      }} 
+        willChange: "transform, opacity",
+        transition: "transform 0.1s linear, opacity 0.3s ease-out" // Smoother transitions
+      }}
     >
       <picture>
         <source 
