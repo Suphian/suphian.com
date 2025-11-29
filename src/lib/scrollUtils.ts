@@ -14,9 +14,9 @@ export const calculateScrollAnimationValues = (
   const landingFadeOutStart = viewportHeight * 0.4; // Start fading later
   const landingFadeOutEnd = viewportHeight * 0.9;   // End fading later
   
-  // Image transitions - appear sooner and stay longer
-  const imageAppearStart = viewportHeight * 0.1;    // Start earlier
-  const imageAppearEnd = viewportHeight * 0.4;      // Complete sooner
+  // Image transitions - appear at the right moment
+  const imageAppearStart = viewportHeight * 0.25;   // Start later
+  const imageAppearEnd = viewportHeight * 0.55;     // Complete later
   
   const imageFadeOutStart = viewportHeight * 0.6;   // Start fading earlier (changed from 0.7)
   const imageFadeOutEnd = viewportHeight * 0.9;     // End fade earlier (changed from 1.1)
