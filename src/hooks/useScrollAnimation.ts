@@ -18,9 +18,15 @@ export const useScrollAnimation = ({
   projectsRef
 }: UseScrollAnimationProps) => {
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      const viewportHeight = window.innerHeight;
+      if (ticking) return;
+      
+      ticking = true;
+      requestAnimationFrame(() => {
+        const scrollPosition = window.scrollY;
+        const viewportHeight = window.innerHeight;
       
       const {
         landingOpacity,
@@ -67,9 +73,12 @@ export const useScrollAnimation = ({
         projectsTransitionRef.current.style.opacity = `${projectWaveOpacity}`;
         projectsTransitionRef.current.style.transform = `translateY(${projectWaveTranslateY}px)`;
       }
+      
+      ticking = false;
+      });
     };
     
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     // Initial call to set positions correctly on page load
     handleScroll();
     

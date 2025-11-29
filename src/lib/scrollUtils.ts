@@ -36,35 +36,35 @@ export const calculateScrollAnimationValues = (
   const projectsAppearProgress = calculateProgress(scrollPosition, projectsAppearStart, projectsAppearEnd);
   const projectWaveProgress = calculateProgress(scrollPosition, projectWaveAppearStart, projectWaveAppearEnd);
 
-  // Apply easing functions for smoother transitions
-  const easedLandingProgress = easeOutCubic(landingProgress);
-  const easedImageAppearProgress = easeInOutCubic(imageAppearProgress);
-  const easedImageFadeOutProgress = easeInCubic(imageFadeOutProgress);
-  const easedProjectsAppearProgress = easeOutQuad(projectsAppearProgress);
-  const easedProjectWaveProgress = easeInOutCubic(projectWaveProgress);
+  // Apply ultra-smooth easing functions for parallax
+  const easedLandingProgress = easeOutQuart(landingProgress);
+  const easedImageAppearProgress = easeOutExpo(imageAppearProgress);
+  const easedImageFadeOutProgress = easeInOutQuart(imageFadeOutProgress);
+  const easedProjectsAppearProgress = easeOutExpo(projectsAppearProgress);
+  const easedProjectWaveProgress = easeInOutQuart(projectWaveProgress);
 
   return {
-    // Landing text stays more visible for longer with subtler movement
-    landingOpacity: 1 - easedLandingProgress * 0.5,  // Only fade to 50% opacity
-    landingTranslateY: -20 * easedLandingProgress,   // Less vertical movement
-    landingScale: 1 - (easedLandingProgress * 0.03), // Less scaling
+    // Landing text with ultra-smooth fade and subtle movement
+    landingOpacity: 1 - easedLandingProgress * 0.4,  // Gentler fade to 60% opacity
+    landingTranslateY: -25 * easedLandingProgress,   // Smooth upward movement
+    landingScale: 1 - (easedLandingProgress * 0.02), // Very subtle scaling
     
-    // Image transitions - more dramatic parallax effect but clearer image
+    // Image transitions - silky smooth parallax effect
     imageOpacity: calculateOpacityWithFadeInOut(easedImageAppearProgress, easedImageFadeOutProgress),
-    imageScale: 0.9 + (easedImageAppearProgress * 0.15), // Subtle scale
-    imageTranslateY: (40 - (easedImageAppearProgress * 60)) + (30 * easedImageFadeOutProgress), // Enhanced movement
+    imageScale: 0.9 + (easedImageAppearProgress * 0.2), // Smooth scale 0.9 to 1.1
+    imageTranslateY: (40 - (easedImageAppearProgress * 65)) + (25 * easedImageFadeOutProgress), // Fluid movement
     
-    // Wave effect for main transition
-    waveOpacity: easedImageAppearProgress * 0.4,
-    waveTranslateY: 20 - (easedImageAppearProgress * 30),
+    // Wave effect for main transition - smoother
+    waveOpacity: easedImageAppearProgress * 0.35,
+    waveTranslateY: 25 - (easedImageAppearProgress * 35),
     
-    // Projects wave transition effect
-    projectWaveOpacity: easedProjectWaveProgress * 0.4,
-    projectWaveTranslateY: 20 - (easedProjectWaveProgress * 30),
+    // Projects wave transition effect - smoother
+    projectWaveOpacity: easedProjectWaveProgress * 0.35,
+    projectWaveTranslateY: 25 - (easedProjectWaveProgress * 35),
     
-    // Projects section fade in - now appears earlier
+    // Projects section with buttery smooth fade in
     projectsOpacity: easedProjectsAppearProgress,
-    projectsTranslateY: 40 * (1 - easedProjectsAppearProgress), // Start from lower
+    projectsTranslateY: 35 * (1 - easedProjectsAppearProgress), // Smooth slide up
   };
 };
 
@@ -91,7 +91,7 @@ const calculateOpacityWithFadeInOut = (appearProgress: number, fadeOutProgress: 
 };
 
 /**
- * Easing functions for smoother animations
+ * Easing functions for ultra-smooth parallax animations
  */
 const easeOutCubic = (x: number): number => {
   return 1 - Math.pow(1 - x, 3);
@@ -107,4 +107,18 @@ const easeInOutCubic = (x: number): number => {
 
 const easeOutQuad = (x: number): number => {
   return 1 - (1 - x) * (1 - x);
+};
+
+// Smoother easing for parallax effects
+const easeOutQuart = (x: number): number => {
+  return 1 - Math.pow(1 - x, 4);
+};
+
+const easeInOutQuart = (x: number): number => {
+  return x < 0.5 ? 8 * x * x * x * x : 1 - Math.pow(-2 * x + 2, 4) / 2;
+};
+
+// Ultra-smooth easing for silky parallax
+const easeOutExpo = (x: number): number => {
+  return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
 };
