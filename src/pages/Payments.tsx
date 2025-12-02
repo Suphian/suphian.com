@@ -181,7 +181,7 @@ const Payments = () => {
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">
-                  You'll be charged $1,000 today. Your $100/month subscription begins after go-live.
+                  You'll be charged $1,000 today. Your $100/month subscription starts after a 7-day free trial.
                 </p>
               </CardContent>
             </Card>

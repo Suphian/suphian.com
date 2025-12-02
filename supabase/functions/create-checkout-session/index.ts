@@ -58,12 +58,21 @@ serve(async (req) => {
 
     console.log("Line items:", lineItems.length, "mode:", mode);
 
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       line_items: lineItems,
       mode: mode,
       success_url: successUrl || `${req.headers.get("origin")}/payment-success`,
       cancel_url: cancelUrl || `${req.headers.get("origin")}/payment-cancel`,
-    });
+    };
+
+    // Add 7-day free trial for subscriptions
+    if (mode === "subscription") {
+      sessionParams.subscription_data = {
+        trial_period_days: 7,
+      };
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     console.log("Checkout session created:", session.id);
 
