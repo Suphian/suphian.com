@@ -19,9 +19,14 @@ const PaymentSuccess = () => {
           <p className="text-muted-foreground mb-8">
             Thank you for your payment. You will receive a confirmation email shortly with the details of your purchase.
           </p>
-          <Button asChild>
-            <Link to="/">Return Home</Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button asChild>
+              <Link to="/">Return Home</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to="/manage-billing">Manage Subscription</Link>
+            </Button>
+          </div>
         </div>
       </div>
     </>

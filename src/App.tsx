@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Payments from "./pages/Payments";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancel from "./pages/PaymentCancel";
+import ManageBilling from "./pages/ManageBilling";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Logo from "./components/Logo";
@@ -43,6 +44,7 @@ const AppContent = () => {
           <Route path="/customers" element={<Payments />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/payment-cancel" element={<PaymentCancel />} />
+          <Route path="/manage-billing" element={<ManageBilling />} />
           <Route path="*" element={<LazyRoute><LazyNotFound /></LazyRoute>} />
         </Routes>
       </main>

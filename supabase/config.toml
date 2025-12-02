@@ -2,3 +2,6 @@ project_id = "ujughujunixnwlmtdsxd"
 
 [functions.create-checkout-session]
 verify_jwt = false
+
+[functions.create-portal-session]
+verify_jwt = false
