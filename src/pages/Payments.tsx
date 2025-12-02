@@ -1,40 +1,51 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState, useCallback } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  EmbeddedCheckoutProvider,
+  EmbeddedCheckout
+} from "@stripe/react-stripe-js";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, CreditCard, Loader2, Rocket, Calendar, Shield, ArrowRight, Sparkles } from "lucide-react";
+import { Check, Rocket, Calendar, Shield, ArrowRight, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import supabase from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
 
-const Payments = () => {
-  const [loadingType, setLoadingType] = useState<string | null>(null);
+// Load Stripe outside of component to avoid recreating on each render
+const stripePromise = loadStripe("pk_live_51S4FcTBROJBOfZpmZw2CdWQNjDJLJBNWLNJZBMqlg7opD1YXwVJNLvuBXg0I7FP3NVJPYBrC6axQVhJyIFbnWM0b00VnfWnQQf");
 
-  const handleCheckout = async (priceType: "one-time" | "subscription" | "both") => {
-    setLoadingType(priceType);
-    
+const Payments = () => {
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchClientSecret = useCallback(async () => {
+    setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout-session", {
         body: {
-          priceType,
-          successUrl: `${window.location.origin}/payment-success`,
-          cancelUrl: `${window.location.origin}/payment-cancel`,
+          priceType: "both",
+          returnUrl: window.location.origin,
+          embedded: true,
         },
       });
 
       if (error) throw error;
       
-      if (data?.url) {
-        window.location.href = data.url;
+      if (data?.clientSecret) {
+        setClientSecret(data.clientSecret);
+        return data.clientSecret;
       } else {
-        throw new Error("No checkout URL returned");
+        throw new Error("No client secret returned");
       }
     } catch (error: any) {
       console.error("Checkout error:", error);
-      toast.error("Failed to start checkout. Please try again.");
+      toast.error("Failed to load checkout. Please try again.");
+      throw error;
     } finally {
-      setLoadingType(null);
+      setLoading(false);
     }
-  };
+  }, []);
+
+  const options = { fetchClientSecret };
 
   return (
     <>
@@ -104,115 +115,70 @@ const Payments = () => {
               </div>
             </div>
 
-            {/* Combined Payment Card */}
+            {/* Payment Summary Card */}
             <Card className="max-w-xl mx-auto border-2 border-primary mb-8">
-              <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-3 py-1 text-xs font-medium rounded-bl-lg">
-                Complete Package
-              </div>
-              <CardHeader className="text-center pt-8">
+              <CardHeader className="text-center">
                 <CardTitle className="flex items-center justify-center gap-2 text-2xl">
                   <Sparkles className="h-6 w-6 text-primary" />
-                  Get Started Today
+                  Complete Package
                 </CardTitle>
                 <CardDescription>One checkout for everything</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4">
                 <div className="text-center">
-                  <div className="text-4xl font-bold mb-2">
+                  <div className="text-3xl font-bold mb-1">
                     $1,000
-                    <span className="text-lg font-normal text-muted-foreground ml-1">today</span>
+                    <span className="text-base font-normal text-muted-foreground ml-1">today</span>
                   </div>
-                  <div className="text-xl text-muted-foreground">
-                    + $100<span className="text-sm">/month</span> after launch
+                  <div className="text-lg text-muted-foreground">
+                    + $100<span className="text-sm">/month</span> after 7-day trial
                   </div>
                 </div>
                 
-                <div className="grid sm:grid-cols-2 gap-4 pt-4">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium">Implementation Fee includes:</p>
-                    <ul className="space-y-1.5">
+                <div className="grid sm:grid-cols-2 gap-4 pt-2 text-sm">
+                  <div className="space-y-1.5">
+                    <p className="font-medium">Implementation includes:</p>
+                    <ul className="space-y-1">
                       <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm">Initial setup & configuration</span>
+                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                        <span>Setup & configuration</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm">Custom implementation</span>
+                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                        <span>Custom implementation</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm">Documentation & training</span>
+                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                        <span>Documentation & training</span>
                       </li>
                     </ul>
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium">Monthly Retainer includes:</p>
-                    <ul className="space-y-1.5">
+                  <div className="space-y-1.5">
+                    <p className="font-medium">Monthly includes:</p>
+                    <ul className="space-y-1">
                       <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm">Hosting & infrastructure</span>
+                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                        <span>Hosting & infrastructure</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm">Security & maintenance</span>
+                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                        <span>Security & maintenance</span>
                       </li>
                       <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm">Priority support</span>
+                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                        <span>Priority support</span>
                       </li>
                     </ul>
                   </div>
                 </div>
-
-                <Button 
-                  className="w-full" 
-                  size="lg"
-                  onClick={() => handleCheckout("both")}
-                  disabled={loadingType !== null}
-                >
-                  {loadingType === "both" ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    "Pay Now & Start Subscription"
-                  )}
-                </Button>
-
-                <p className="text-xs text-center text-muted-foreground">
-                  You'll be charged $1,000 today. Your $100/month subscription starts after a 7-day free trial.
-                </p>
               </CardContent>
             </Card>
 
-            {/* Alternate options */}
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-4">Or pay separately:</p>
-              <div className="flex flex-wrap justify-center gap-3">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => handleCheckout("one-time")}
-                  disabled={loadingType !== null}
-                >
-                  {loadingType === "one-time" ? (
-                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
-                  ) : null}
-                  Implementation Only ($1,000)
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => handleCheckout("subscription")}
-                  disabled={loadingType !== null}
-                >
-                  {loadingType === "subscription" ? (
-                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
-                  ) : null}
-                  Subscription Only ($100/mo)
-                </Button>
-              </div>
+            {/* Embedded Checkout */}
+            <div id="checkout" className="max-w-xl mx-auto">
+              <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
+                <EmbeddedCheckout />
+              </EmbeddedCheckoutProvider>
             </div>
 
             <p className="text-center text-sm text-muted-foreground mt-8">
