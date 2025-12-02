@@ -1,11 +1,10 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   EmbeddedCheckoutProvider,
   EmbeddedCheckout
 } from "@stripe/react-stripe-js";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Rocket, Calendar, Shield, ArrowRight, Sparkles } from "lucide-react";
+import { Rocket, Calendar, Shield, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import supabase from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
@@ -14,11 +13,7 @@ import SEOHead from "@/components/SEOHead";
 const stripePromise = loadStripe("pk_live_51S4FcTBROJBOfZpmZw2CdWQNjDJLJBNWLNJZBMqlg7opD1YXwVJNLvuBXg0I7FP3NVJPYBrC6axQVhJyIFbnWM0b00VnfWnQQf");
 
 const Payments = () => {
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
   const fetchClientSecret = useCallback(async () => {
-    setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout-session", {
         body: {
@@ -31,7 +26,6 @@ const Payments = () => {
       if (error) throw error;
       
       if (data?.clientSecret) {
-        setClientSecret(data.clientSecret);
         return data.clientSecret;
       } else {
         throw new Error("No client secret returned");
@@ -40,8 +34,6 @@ const Payments = () => {
       console.error("Checkout error:", error);
       toast.error("Failed to load checkout. Please try again.");
       throw error;
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -109,70 +101,11 @@ const Payments = () => {
                   <div className="text-sm font-medium text-primary mb-1">Step 3</div>
                   <h3 className="font-semibold mb-2">Ongoing Support</h3>
                   <p className="text-sm text-muted-foreground">
-                    The <strong>Monthly Retainer</strong> begins automatically post-launch to cover hosting, security, and maintenance.
+                    The <strong>Monthly Retainer</strong> begins after a 7-day trial to cover hosting, security, and maintenance.
                   </p>
                 </div>
               </div>
             </div>
-
-            {/* Payment Summary Card */}
-            <Card className="max-w-xl mx-auto border-2 border-primary mb-8">
-              <CardHeader className="text-center">
-                <CardTitle className="flex items-center justify-center gap-2 text-2xl">
-                  <Sparkles className="h-6 w-6 text-primary" />
-                  Complete Package
-                </CardTitle>
-                <CardDescription>One checkout for everything</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold mb-1">
-                    $1,000
-                    <span className="text-base font-normal text-muted-foreground ml-1">today</span>
-                  </div>
-                  <div className="text-lg text-muted-foreground">
-                    + $100<span className="text-sm">/month</span> after 7-day trial
-                  </div>
-                </div>
-                
-                <div className="grid sm:grid-cols-2 gap-4 pt-2 text-sm">
-                  <div className="space-y-1.5">
-                    <p className="font-medium">Implementation includes:</p>
-                    <ul className="space-y-1">
-                      <li className="flex items-center gap-2">
-                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-                        <span>Setup & configuration</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-                        <span>Custom implementation</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-                        <span>Documentation & training</span>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="space-y-1.5">
-                    <p className="font-medium">Monthly includes:</p>
-                    <ul className="space-y-1">
-                      <li className="flex items-center gap-2">
-                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-                        <span>Hosting & infrastructure</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-                        <span>Security & maintenance</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-                        <span>Priority support</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Embedded Checkout */}
             <div id="checkout" className="max-w-xl mx-auto">
@@ -182,7 +115,7 @@ const Payments = () => {
             </div>
 
             <p className="text-center text-sm text-muted-foreground mt-8">
-              Payments are processed securely via Stripe. Your payment information is never stored on our servers.
+              Payments are processed securely via Stripe.
             </p>
           </div>
         </div>
