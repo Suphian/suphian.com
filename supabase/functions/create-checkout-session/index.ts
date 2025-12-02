@@ -27,34 +27,39 @@ serve(async (req) => {
     
     console.log("Creating checkout session for:", priceType);
 
-    // Get the appropriate price ID based on type
-    let priceId: string;
-    let mode: "payment" | "subscription";
+    const oneTimePriceId = Deno.env.get("STRIPE_PRICE_ONE_TIME") || "";
+    const subscriptionPriceId = Deno.env.get("STRIPE_PRICE_SUBSCRIPTION") || "";
+
+    let lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+    let mode: "payment" | "subscription" = "payment";
 
     if (priceType === "one-time") {
-      priceId = Deno.env.get("STRIPE_PRICE_ONE_TIME") || "";
+      if (!oneTimePriceId) throw new Error("One-time price not configured");
+      lineItems = [{ price: oneTimePriceId, quantity: 1 }];
       mode = "payment";
     } else if (priceType === "subscription") {
-      priceId = Deno.env.get("STRIPE_PRICE_SUBSCRIPTION") || "";
+      if (!subscriptionPriceId) throw new Error("Subscription price not configured");
+      lineItems = [{ price: subscriptionPriceId, quantity: 1 }];
+      mode = "subscription";
+    } else if (priceType === "both") {
+      // Combined: one-time + subscription in same checkout
+      // When mixing one-time and recurring, mode must be "subscription"
+      if (!oneTimePriceId || !subscriptionPriceId) {
+        throw new Error("Price configuration not found");
+      }
+      lineItems = [
+        { price: oneTimePriceId, quantity: 1 },
+        { price: subscriptionPriceId, quantity: 1 },
+      ];
       mode = "subscription";
     } else {
       throw new Error("Invalid price type");
     }
 
-    if (!priceId) {
-      console.error(`Price ID not found for type: ${priceType}`);
-      throw new Error("Price configuration not found");
-    }
-
-    console.log("Using price ID:", priceId, "mode:", mode);
+    console.log("Line items:", lineItems.length, "mode:", mode);
 
     const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       mode: mode,
       success_url: successUrl || `${req.headers.get("origin")}/payment-success`,
       cancel_url: cancelUrl || `${req.headers.get("origin")}/payment-cancel`,
