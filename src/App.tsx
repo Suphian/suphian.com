@@ -40,7 +40,7 @@ const AppContent = () => {
       <main className="min-h-screen">
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/payments" element={<Payments />} />
+          <Route path="/customers" element={<Payments />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/payment-cancel" element={<PaymentCancel />} />
           <Route path="*" element={<LazyRoute><LazyNotFound /></LazyRoute>} />
