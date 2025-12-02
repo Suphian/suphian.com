@@ -81,7 +81,7 @@ const Payments = () => {
                   <div className="text-sm font-medium text-primary mb-1">Step 2</div>
                   <h3 className="font-semibold mb-2">Go-Live</h3>
                   <p className="text-sm text-muted-foreground">
-                    We launch your portal on <strong>December 8th</strong>. Handover is complete and live.
+                    Your portal launches and handover is complete. You're live and ready.
                   </p>
                 </div>
 
