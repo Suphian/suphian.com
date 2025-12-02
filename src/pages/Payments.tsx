@@ -115,7 +115,7 @@ const Payments = () => {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="text-4xl font-bold">
-                    $99
+                    $100
                     <span className="text-base font-normal text-muted-foreground ml-2">/month</span>
                   </div>
                   
