@@ -23,9 +23,9 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
-    const { priceType, successUrl, cancelUrl } = await req.json();
+    const { priceType, returnUrl, embedded } = await req.json();
     
-    console.log("Creating checkout session for:", priceType);
+    console.log("Creating checkout session for:", priceType, "embedded:", embedded);
 
     const oneTimePriceId = Deno.env.get("STRIPE_PRICE_ONE_TIME") || "";
     const subscriptionPriceId = Deno.env.get("STRIPE_PRICE_SUBSCRIPTION") || "";
@@ -42,8 +42,6 @@ serve(async (req) => {
       lineItems = [{ price: subscriptionPriceId, quantity: 1 }];
       mode = "subscription";
     } else if (priceType === "both") {
-      // Combined: one-time + subscription in same checkout
-      // When mixing one-time and recurring, mode must be "subscription"
       if (!oneTimePriceId || !subscriptionPriceId) {
         throw new Error("Price configuration not found");
       }
@@ -56,14 +54,23 @@ serve(async (req) => {
       throw new Error("Invalid price type");
     }
 
-    console.log("Line items:", lineItems.length, "mode:", mode);
+    console.log("Line items:", lineItems.length, "mode:", mode, "embedded:", embedded);
+
+    const baseUrl = returnUrl || req.headers.get("origin");
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       line_items: lineItems,
       mode: mode,
-      success_url: successUrl || `${req.headers.get("origin")}/payment-success`,
-      cancel_url: cancelUrl || `${req.headers.get("origin")}/payment-cancel`,
     };
+
+    // Configure for embedded or hosted mode
+    if (embedded) {
+      sessionParams.ui_mode = "embedded";
+      sessionParams.return_url = `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}`;
+    } else {
+      sessionParams.success_url = `${baseUrl}/payment-success`;
+      sessionParams.cancel_url = `${baseUrl}/payment-cancel`;
+    }
 
     // Add 7-day free trial for subscriptions
     if (mode === "subscription") {
@@ -77,7 +84,11 @@ serve(async (req) => {
     console.log("Checkout session created:", session.id);
 
     return new Response(
-      JSON.stringify({ url: session.url }),
+      JSON.stringify({ 
+        url: session.url,
+        clientSecret: session.client_secret,
+        sessionId: session.id
+      }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
