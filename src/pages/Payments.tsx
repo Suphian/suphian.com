@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, CreditCard, Loader2, Rocket, Calendar, Shield, ArrowRight } from "lucide-react";
+import { Check, CreditCard, Loader2, Rocket, Calendar, Shield, ArrowRight, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import supabase from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
@@ -9,7 +9,7 @@ import SEOHead from "@/components/SEOHead";
 const Payments = () => {
   const [loadingType, setLoadingType] = useState<string | null>(null);
 
-  const handleCheckout = async (priceType: "one-time" | "subscription") => {
+  const handleCheckout = async (priceType: "one-time" | "subscription" | "both") => {
     setLoadingType(priceType);
     
     try {
@@ -53,7 +53,7 @@ const Payments = () => {
             </div>
 
             {/* Engagement Roadmap */}
-            <div className="mb-16">
+            <div className="mb-12">
               <h2 className="text-xl font-semibold text-center mb-8 text-muted-foreground">Engagement Roadmap</h2>
               <div className="grid md:grid-cols-3 gap-4 md:gap-0 relative">
                 {/* Step 1 */}
@@ -104,113 +104,115 @@ const Payments = () => {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* One-Time Implementation Fee */}
-              <Card className="relative overflow-hidden border-2 border-primary hover:border-primary/80 transition-colors">
-                <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-3 py-1 text-xs font-medium">
-                  Step 1: Start Here
-                </div>
-                <CardHeader className="pt-10">
-                  <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5" />
-                    Implementation Fee
-                  </CardTitle>
-                  <CardDescription>One-time payment</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="text-4xl font-bold">
+            {/* Combined Payment Card */}
+            <Card className="max-w-xl mx-auto border-2 border-primary mb-8">
+              <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-3 py-1 text-xs font-medium rounded-bl-lg">
+                Complete Package
+              </div>
+              <CardHeader className="text-center pt-8">
+                <CardTitle className="flex items-center justify-center gap-2 text-2xl">
+                  <Sparkles className="h-6 w-6 text-primary" />
+                  Get Started Today
+                </CardTitle>
+                <CardDescription>One checkout for everything</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="text-center">
+                  <div className="text-4xl font-bold mb-2">
                     $1,000
-                    <span className="text-base font-normal text-muted-foreground ml-2">USD</span>
+                    <span className="text-lg font-normal text-muted-foreground ml-1">today</span>
                   </div>
-                  
-                  <ul className="space-y-3">
-                    <li className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">Initial setup & configuration</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">Custom implementation</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">Documentation & training</span>
-                    </li>
-                  </ul>
-
-                  <Button 
-                    className="w-full" 
-                    size="lg"
-                    onClick={() => handleCheckout("one-time")}
-                    disabled={loadingType !== null}
-                  >
-                    {loadingType === "one-time" ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      "Pay Now"
-                    )}
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Monthly Subscription */}
-              <Card className="relative overflow-hidden border-2 hover:border-primary/50 transition-colors">
-                <div className="absolute top-0 left-0 bg-muted text-muted-foreground px-3 py-1 text-xs font-medium">
-                  Starts After Go-Live
+                  <div className="text-xl text-muted-foreground">
+                    + $100<span className="text-sm">/month</span> after launch
+                  </div>
                 </div>
-                <CardHeader className="pt-10">
-                  <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5" />
-                    Monthly Retainer
-                  </CardTitle>
-                  <CardDescription>Recurring billing</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="text-4xl font-bold">
-                    $100
-                    <span className="text-base font-normal text-muted-foreground ml-2">/month</span>
+                
+                <div className="grid sm:grid-cols-2 gap-4 pt-4">
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">Implementation Fee includes:</p>
+                    <ul className="space-y-1.5">
+                      <li className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">Initial setup & configuration</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">Custom implementation</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">Documentation & training</span>
+                      </li>
+                    </ul>
                   </div>
-                  
-                  <ul className="space-y-3">
-                    <li className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">Hosting & infrastructure</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">Security & maintenance</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">Priority support</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">Cancel anytime</span>
-                    </li>
-                  </ul>
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">Monthly Retainer includes:</p>
+                    <ul className="space-y-1.5">
+                      <li className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">Hosting & infrastructure</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">Security & maintenance</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">Priority support</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
 
-                  <Button 
-                    className="w-full" 
-                    size="lg"
-                    variant="outline"
-                    onClick={() => handleCheckout("subscription")}
-                    disabled={loadingType !== null}
-                  >
-                    {loadingType === "subscription" ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      "Subscribe Now"
-                    )}
-                  </Button>
-                </CardContent>
-              </Card>
+                <Button 
+                  className="w-full" 
+                  size="lg"
+                  onClick={() => handleCheckout("both")}
+                  disabled={loadingType !== null}
+                >
+                  {loadingType === "both" ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Pay Now & Start Subscription"
+                  )}
+                </Button>
+
+                <p className="text-xs text-center text-muted-foreground">
+                  You'll be charged $1,000 today. Your $100/month subscription begins after go-live.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Alternate options */}
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-4">Or pay separately:</p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleCheckout("one-time")}
+                  disabled={loadingType !== null}
+                >
+                  {loadingType === "one-time" ? (
+                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                  ) : null}
+                  Implementation Only ($1,000)
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleCheckout("subscription")}
+                  disabled={loadingType !== null}
+                >
+                  {loadingType === "subscription" ? (
+                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                  ) : null}
+                  Subscription Only ($100/mo)
+                </Button>
+              </div>
             </div>
 
             <p className="text-center text-sm text-muted-foreground mt-8">
