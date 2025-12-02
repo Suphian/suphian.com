@@ -24,7 +24,7 @@ const PaymentCancel = () => {
               <Link to="/">Return Home</Link>
             </Button>
             <Button asChild>
-              <Link to="/payments">Try Again</Link>
+              <Link to="/customers">Try Again</Link>
             </Button>
           </div>
         </div>
