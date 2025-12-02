@@ -23,9 +23,9 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
-    const { priceType, returnUrl, embedded } = await req.json();
+    const { priceType, successUrl, cancelUrl } = await req.json();
     
-    console.log("Creating checkout session for:", priceType, "embedded:", embedded);
+    console.log("Creating checkout session for:", priceType);
 
     const oneTimePriceId = Deno.env.get("STRIPE_PRICE_ONE_TIME") || "";
     const subscriptionPriceId = Deno.env.get("STRIPE_PRICE_SUBSCRIPTION") || "";
@@ -54,23 +54,14 @@ serve(async (req) => {
       throw new Error("Invalid price type");
     }
 
-    console.log("Line items:", lineItems.length, "mode:", mode, "embedded:", embedded);
-
-    const baseUrl = returnUrl || req.headers.get("origin");
+    console.log("Line items:", lineItems.length, "mode:", mode);
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       line_items: lineItems,
       mode: mode,
+      success_url: successUrl || `${req.headers.get("origin")}/customers?success=true`,
+      cancel_url: cancelUrl || `${req.headers.get("origin")}/customers`,
     };
-
-    // Configure for embedded or hosted mode
-    if (embedded) {
-      sessionParams.ui_mode = "embedded";
-      sessionParams.return_url = `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}`;
-    } else {
-      sessionParams.success_url = `${baseUrl}/payment-success`;
-      sessionParams.cancel_url = `${baseUrl}/payment-cancel`;
-    }
 
     // Add 7-day free trial for subscriptions
     if (mode === "subscription") {
@@ -84,11 +75,7 @@ serve(async (req) => {
     console.log("Checkout session created:", session.id);
 
     return new Response(
-      JSON.stringify({ 
-        url: session.url,
-        clientSecret: session.client_secret,
-        sessionId: session.id
-      }),
+      JSON.stringify({ url: session.url }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,

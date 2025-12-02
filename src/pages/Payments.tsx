@@ -1,43 +1,100 @@
-import { useCallback } from "react";
-import { loadStripe } from "@stripe/stripe-js";
-import {
-  EmbeddedCheckoutProvider,
-  EmbeddedCheckout
-} from "@stripe/react-stripe-js";
-import { Rocket, Calendar, Shield, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Check, CreditCard, Loader2, Rocket, Calendar, Shield, ArrowRight, Sparkles, CheckCircle, Mail } from "lucide-react";
 import { toast } from "sonner";
 import supabase from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
 
-// Load Stripe outside of component to avoid recreating on each render
-const stripePromise = loadStripe("pk_live_51S4FcTBROJBOfZpmZw2CdWQNjDJLJBNWLNJZBMqlg7opD1YXwVJNLvuBXg0I7FP3NVJPYBrC6axQVhJyIFbnWM0b00VnfWnQQf");
-
 const Payments = () => {
-  const fetchClientSecret = useCallback(async () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [loadingType, setLoadingType] = useState<string | null>(null);
+  const isSuccess = searchParams.get("success") === "true";
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Payment successful! Thank you for your purchase.");
+      // Clean up URL
+      setSearchParams({});
+    }
+  }, [isSuccess, setSearchParams]);
+
+  const handleCheckout = async (priceType: "one-time" | "subscription" | "both") => {
+    setLoadingType(priceType);
+    
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout-session", {
         body: {
-          priceType: "both",
-          returnUrl: window.location.origin,
-          embedded: true,
+          priceType,
+          successUrl: `${window.location.origin}/customers?success=true`,
+          cancelUrl: `${window.location.origin}/customers`,
         },
       });
 
       if (error) throw error;
       
-      if (data?.clientSecret) {
-        return data.clientSecret;
+      if (data?.url) {
+        window.location.href = data.url;
       } else {
-        throw new Error("No client secret returned");
+        throw new Error("No checkout URL returned");
       }
     } catch (error: any) {
       console.error("Checkout error:", error);
-      toast.error("Failed to load checkout. Please try again.");
-      throw error;
+      toast.error("Failed to start checkout. Please try again.");
+    } finally {
+      setLoadingType(null);
     }
-  }, []);
+  };
 
-  const options = { fetchClientSecret };
+  // Success state view
+  if (isSuccess) {
+    return (
+      <>
+        <SEOHead 
+          title="Payment Successful | Suphian"
+          description="Your payment has been processed successfully."
+        />
+        <div className="min-h-screen bg-background pt-24 pb-16">
+          <div className="container-custom">
+            <div className="max-w-xl mx-auto text-center">
+              <div className="mb-6">
+                <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
+              </div>
+              <h1 className="text-3xl font-bold mb-4">Payment Successful!</h1>
+              <p className="text-muted-foreground mb-8">
+                Thank you for your payment. You will receive a confirmation email shortly with the details of your purchase.
+              </p>
+              
+              <Card className="text-left mb-8">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Mail className="h-5 w-5" />
+                    Need Support?
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-3">
+                    If you have any questions or need assistance, please reach out:
+                  </p>
+                  <a 
+                    href="mailto:hello@suphian.com" 
+                    className="text-primary hover:underline font-medium"
+                  >
+                    hello@suphian.com
+                  </a>
+                </CardContent>
+              </Card>
+
+              <Button asChild variant="outline">
+                <a href="/">Return Home</a>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -107,15 +164,116 @@ const Payments = () => {
               </div>
             </div>
 
-            {/* Embedded Checkout */}
-            <div id="checkout" className="max-w-xl mx-auto">
-              <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
-                <EmbeddedCheckout />
-              </EmbeddedCheckoutProvider>
+            {/* Combined Payment Card */}
+            <Card className="max-w-xl mx-auto border-2 border-primary mb-8">
+              <CardHeader className="text-center pt-8">
+                <CardTitle className="flex items-center justify-center gap-2 text-2xl">
+                  <Sparkles className="h-6 w-6 text-primary" />
+                  Get Started Today
+                </CardTitle>
+                <CardDescription>One checkout for everything</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="text-center">
+                  <div className="text-4xl font-bold mb-2">
+                    $1,000
+                    <span className="text-lg font-normal text-muted-foreground ml-1">today</span>
+                  </div>
+                  <div className="text-xl text-muted-foreground">
+                    + $100<span className="text-sm">/month</span> after 7-day trial
+                  </div>
+                </div>
+                
+                <div className="grid sm:grid-cols-2 gap-4 pt-4">
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">Implementation Fee includes:</p>
+                    <ul className="space-y-1.5">
+                      <li className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">Initial setup & configuration</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">Custom implementation</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">Documentation & training</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">Monthly Retainer includes:</p>
+                    <ul className="space-y-1.5">
+                      <li className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">Hosting & infrastructure</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">Security & maintenance</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">Priority support</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <Button 
+                  className="w-full" 
+                  size="lg"
+                  onClick={() => handleCheckout("both")}
+                  disabled={loadingType !== null}
+                >
+                  {loadingType === "both" ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Pay Now & Start Subscription"
+                  )}
+                </Button>
+
+                <p className="text-xs text-center text-muted-foreground">
+                  You'll be charged $1,000 today. Your $100/month subscription starts after a 7-day free trial.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Alternate options */}
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-4">Or pay separately:</p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleCheckout("one-time")}
+                  disabled={loadingType !== null}
+                >
+                  {loadingType === "one-time" ? (
+                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                  ) : null}
+                  Implementation Only ($1,000)
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleCheckout("subscription")}
+                  disabled={loadingType !== null}
+                >
+                  {loadingType === "subscription" ? (
+                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                  ) : null}
+                  Subscription Only ($100/mo)
+                </Button>
+              </div>
             </div>
 
             <p className="text-center text-sm text-muted-foreground mt-8">
-              Payments are processed securely via Stripe.
+              Payments are processed securely via Stripe. Your payment information is never stored on our servers.
             </p>
           </div>
         </div>
