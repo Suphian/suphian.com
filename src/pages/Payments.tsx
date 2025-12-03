@@ -100,7 +100,7 @@ const Payments = () => {
     <>
       <SEOHead 
         title="Client Payment Portal | Suphian"
-        description="Secure payment portal for implementation fees and subscriptions."
+        description="Secure payment portal - $1,500 implementation fee and $50/month subscription."
       />
       <div className="min-h-screen bg-background pt-24 pb-16">
         <div className="container-custom">
@@ -124,7 +124,7 @@ const Payments = () => {
                   <div className="text-sm font-medium text-primary mb-1">Step 1</div>
                   <h3 className="font-semibold mb-2">Kickoff & Build</h3>
                   <p className="text-sm text-muted-foreground">
-                    Pay the one-time <strong>Implementation Fee</strong> to finalize your portal setup and secure data integration.
+                    Pay the one-time <strong>$1,500 Implementation Fee</strong> to finalize your portal setup and secure data integration.
                   </p>
                 </div>
 
@@ -158,7 +158,7 @@ const Payments = () => {
                   <div className="text-sm font-medium text-primary mb-1">Step 3</div>
                   <h3 className="font-semibold mb-2">Ongoing Support</h3>
                   <p className="text-sm text-muted-foreground">
-                    The <strong>Monthly Retainer</strong> begins after a 7-day trial to cover hosting, security, and maintenance.
+                    The <strong>$50/month Retainer</strong> begins after a 7-day trial to cover hosting, security, and maintenance.
                   </p>
                 </div>
               </div>
