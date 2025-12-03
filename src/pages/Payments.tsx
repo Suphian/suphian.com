@@ -176,11 +176,11 @@ const Payments = () => {
               <CardContent className="space-y-6">
                 <div className="text-center">
                   <div className="text-4xl font-bold mb-2">
-                    $1,000
+                    $1,500
                     <span className="text-lg font-normal text-muted-foreground ml-1">today</span>
                   </div>
                   <div className="text-xl text-muted-foreground">
-                    + $100<span className="text-sm">/month</span> after 7-day trial
+                    + $50<span className="text-sm">/month</span> after 7-day trial
                   </div>
                 </div>
                 
@@ -238,7 +238,7 @@ const Payments = () => {
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">
-                  You'll be charged $1,000 today. Your $100/month subscription starts after a 7-day free trial.
+                  You'll be charged $1,500 today. Your $50/month subscription starts after a 7-day free trial.
                 </p>
               </CardContent>
             </Card>
@@ -256,7 +256,7 @@ const Payments = () => {
                   {loadingType === "one-time" ? (
                     <Loader2 className="mr-2 h-3 w-3 animate-spin" />
                   ) : null}
-                  Implementation Only ($1,000)
+                  Implementation Only ($1,500)
                 </Button>
                 <Button 
                   variant="outline" 
@@ -267,7 +267,7 @@ const Payments = () => {
                   {loadingType === "subscription" ? (
                     <Loader2 className="mr-2 h-3 w-3 animate-spin" />
                   ) : null}
-                  Subscription Only ($100/mo)
+                  Subscription Only ($50/mo)
                 </Button>
               </div>
             </div>
