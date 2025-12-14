@@ -40,15 +40,12 @@ const Footer = () => {
             <div className="mb-6 md:mb-0">
               <p className="text-sm text-gray-500">
                 © {new Date().getFullYear()} Suphian Tweel. All rights reserved.
-                <span className="ml-2 text-xs bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full border border-yellow-500/30">
-                  Staging
-                </span>
               </p>
             </div>
             
             <div className="flex space-x-4">
             <a 
-              href="https://mail.google.com/mail/?view=cm&fs=1&to=suph.tweel@gmail.com" 
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=suph.tweel@gmail.com&su=Hey,%20wanted%20to%20chat" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="p-2 rounded-full bg-secondary hover:bg-secondary/70 transition-colors" 
