@@ -34,7 +34,12 @@ export class SessionManager {
     
     const browserMetadata = MetadataCollector.collectBrowserMetadata();
     const { ipAddress, locationData } = await LocationService.fetchLocationData();
-    const enhancedData = EnhancedTracker.getEnhancedSessionData();
+    const enhancedData = {
+      visitorData: VisitorTracking.getOrCreateVisitorData(),
+      referrerInfo: VisitorTracking.analyzeReferrer(),
+      utmParams: VisitorTracking.parseUTMParameters(),
+      isInternal: VisitorTracking.detectInternalTraffic()
+    };
 
     // Anonymize IP address for privacy before storing
     const anonymizedIp = ipAddress ? await this.anonymizeIpAddress(ipAddress) : null;
