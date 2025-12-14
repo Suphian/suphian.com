@@ -13,9 +13,12 @@ export class BatchProcessor {
         console.log('🔒 Processing', events.length, 'events to Supabase...');
       }
       
+      // Sanitize events to remove client-only fields like 'retried'
+      const sanitizedEvents = events.map(({ retried, ...event }) => event);
+      
       const { data, error } = await supabase
         .from('events')
-        .insert(events);
+        .insert(sanitizedEvents);
 
       if (error) {
         if (process.env.NODE_ENV === 'development') {
