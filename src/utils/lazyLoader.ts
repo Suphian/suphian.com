@@ -94,7 +94,6 @@ export const loadWidgetsOnIntersection = (element: Element) => {
           try {
             const widgets = await Promise.all([
               import('@/components/StreamingRevenueWidget'),
-              import('@/components/YouTubeMusicPlayer'),
               import('@/components/EarningsChart'),
               import('@/components/ComparisonTable')
             ]);
