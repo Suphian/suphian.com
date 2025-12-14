@@ -51,7 +51,6 @@
     <link rel="preload" href="/optimized/logo-128.webp" as="image" type="image/webp" crossorigin="anonymous">
     <link rel="preload" href="/optimized/logo-256.webp" as="image" type="image/webp" crossorigin="anonymous">
     <link rel="preload" href="/optimized/astronaut-headphones.webp" as="image" type="image/webp" crossorigin="anonymous">
-    <link rel="preload" href="/src/main.tsx" as="script" type="module">
     
     <!-- Preload critical font files to reduce dependency chains -->
     <link rel="preload" href="https://fonts.gstatic.com/s/montserrat/v31/JTUSjIg1_i6t8kCHKm459WlhyyTh89Y.woff2" as="font" type="font/woff2" crossorigin>
@@ -105,7 +104,14 @@
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Fallback content - should be replaced by React -->
+      <div style="padding: 2rem; background: #1a1a1a; color: #fff; min-height: 100vh;">
+        <h1>Loading...</h1>
+        <p>If you see this for more than a few seconds, React may not be loading.</p>
+        <p>Check the browser console (F12) for errors.</p>
+      </div>
+    </div>
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>

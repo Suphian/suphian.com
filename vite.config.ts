@@ -6,23 +6,8 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "::",
+    host: true,
     port: 8080,
-    fs: {
-      // Security: Deny access to sensitive files and bypass patterns
-      deny: [
-        '.env*',
-        '**/.env*',
-        '**/node_modules/**',
-        '**/.*',
-        // Prevent known CVE bypass patterns
-        '**/..',
-        '**/../**',
-        '/..',
-        '/../**'
-      ],
-      strict: true
-    }
   },
   plugins: [
     react(),
