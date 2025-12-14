@@ -32,47 +32,38 @@ class SecureEventTracker {
     );
 
     if (process.env.NODE_ENV === 'development') {
-      console.log('🔒 SecureEventTracker constructor - Session ID:', this.sessionManager.getSessionId());
+      // Debug logging removed for cleaner production code
     }
   }
 
   async initialize(): Promise<void> {
     if (this.isInitialized) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔒 SecureEventTracker already initialized');
-      }
       return;
     }
 
     try {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔒 Starting SecureEventTracker initialization...');
-      }
       
       const trafficType = await getTrafficType();
       this.isInternalTraffic = trafficType === 'internal';
       
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`🔒 Traffic classified as: ${trafficType.toUpperCase()}`);
-      }
-      
       await this.sessionManager.collectSessionMetadata(this.isInternalTraffic);
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔒 Session metadata collected:', this.sessionManager.getSessionData());
-      }
       
       // Wait for session to be stored before starting event tracking
       await this.sessionManager.storeSession(supabase);
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔒 Session storage completed');
-      }
       
       this.eventBatcher.startBatchTimer(() => this.eventBatcher.flush(supabase));
       
       this.isInitialized = true;
-      if (process.env.NODE_ENV === 'development') {
-        console.log('✅ Secure event tracker initialized successfully for session:', this.sessionManager.getSessionId());
+
+      // Process any pending events that were queued before initialization
+      if (this.pendingEvents.length > 0) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🔒 Processing ${this.pendingEvents.length} pending events...`);
+        }
+        this.pendingEvents.forEach(event => {
+          this.trackEvent(event.name, event.payload);
+        });
+        this.pendingEvents = [];
       }
     } catch (error) {
       console.error('❌ Failed to initialize secure event tracker:', error);
@@ -81,9 +72,6 @@ class SecureEventTracker {
 
   public trackEvent(eventName: string, eventPayload: any = {}): void {
     if (!this.isInitialized) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔒 Tracker not initialized yet, queueing event:', eventName);
-      }
       this.pendingEvents.push({ name: eventName, payload: eventPayload });
       return;
     }
@@ -123,13 +111,10 @@ class SecureEventTracker {
     // Also send to Google Analytics if available
     if (typeof window.gtag === 'function') {
       window.gtag('event', eventName, enrichedPayload);
-    } else if (process.env.NODE_ENV === 'development') {
-      console.log('⚠️ Google Analytics not available, skipping gtag push');
     }
   }
 
   public destroy(): void {
-    console.log('🔒 Destroying event tracker...');
     this.eventBatcher.destroy();
     this.eventBatcher.flush(supabase);
     this.isInitialized = false;
