@@ -18,7 +18,7 @@ export interface BrowserMetadata {
 
 export class MetadataCollector {
   static collectBrowserMetadata(): BrowserMetadata {
-    console.log('🔒 Collecting browser metadata...');
+    // console.log('🔒 Collecting browser metadata...');
     const parser = new UAParser();
     const result = parser.getResult();
 

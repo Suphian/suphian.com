@@ -4,7 +4,7 @@ import { SessionStorage } from './sessionStorage';
 import { LocationService } from './locationService';
 import { MetadataCollector } from './metadataCollector';
 import { validateSessionData } from '../security';
-import { EnhancedTracker } from './enhancedTracker';
+import { VisitorTracking } from './visitorTracking';
 import supabase from '@/integrations/supabase/client';
 
 export class SessionManager {
