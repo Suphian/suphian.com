@@ -34,6 +34,11 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   return (
     <>
+      <div className="fixed top-0 left-0 right-0 z-[100] flex justify-center pointer-events-none">
+        <span className="bg-yellow-500/90 text-black text-[10px] font-bold px-3 py-0.5 rounded-b-md shadow-md backdrop-blur-sm pointer-events-auto">
+          STAGING
+        </span>
+      </div>
       <SEOHead />
       <ScrollProgress />
       <ScrollToTop />
