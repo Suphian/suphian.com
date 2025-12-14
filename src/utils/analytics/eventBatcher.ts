@@ -24,12 +24,12 @@ export class EventBatcher {
     const bufferSize = this.eventBuffer.add(eventData);
     
     if (process.env.NODE_ENV === 'development') {
-      console.log('🔒 Event added to buffer. Buffer size:', bufferSize);
+      // console.log('🔒 Event added to buffer. Buffer size:', bufferSize);
     }
     
     if (bufferSize >= this.batchSize) {
       if (process.env.NODE_ENV === 'development') {
-        console.log('🔒 Buffer full, flushing events...');
+        // console.log('🔒 Buffer full, flushing events...');
       }
       this.flush();
     }
@@ -50,7 +50,7 @@ export class EventBatcher {
     this.batchTimer = setInterval(() => {
       if (!this.eventBuffer.isEmpty()) {
         if (process.env.NODE_ENV === 'development') {
-          console.log('🔒 Timer triggered, flushing', this.eventBuffer.size(), 'events');
+          // console.log('🔒 Timer triggered, flushing', this.eventBuffer.size(), 'events');
         }
         this.flushCb?.();
       }

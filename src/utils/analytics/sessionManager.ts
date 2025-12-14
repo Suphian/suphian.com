@@ -14,7 +14,7 @@ export class SessionManager {
 
   constructor() {
     this.sessionId = SessionStorage.getOrCreateSessionId();
-    console.log('🔒 SessionManager constructor - Session ID:', this.sessionId);
+    // console.log('🔒 SessionManager constructor - Session ID:', this.sessionId);
   }
 
   getSessionId(): string {
@@ -30,7 +30,7 @@ export class SessionManager {
   }
 
   async collectSessionMetadata(isInternalTraffic: boolean): Promise<void> {
-    console.log('🔒 Collecting enhanced session metadata...');
+    // console.log('🔒 Collecting enhanced session metadata...');
     
     const browserMetadata = MetadataCollector.collectBrowserMetadata();
     const { ipAddress, locationData } = await LocationService.fetchLocationData();
@@ -84,27 +84,26 @@ export class SessionManager {
     }
 
     this.sessionData = rawSessionData;
-    console.log('🔒 Enhanced session data prepared:', this.sessionData);
+    // console.log('🔒 Enhanced session data prepared:', this.sessionData);
   }
 
   async storeSession(supabase: any): Promise<void> {
     if (!this.sessionData || this.sessionStored) {
       if (process.env.NODE_ENV === 'development') {
-        console.log('🔒 Session already stored or no session data');
+        // console.log('🔒 Session already stored or no session data');
       }
       return;
     }
 
     try {
       if (process.env.NODE_ENV === 'development') {
-        console.log('🔒 Attempting to store session in Supabase...');
+        // console.log('🔒 Attempting to store session in Supabase...');
       }
       
       // Try to insert the session with error handling
       const { data, error } = await supabase
         .from('sessions')
-        .insert(this.sessionData)
-        .select();
+        .insert(this.sessionData);
 
       if (error) {
         console.log('⚠️ Session storage failed:', error.message, error);
@@ -115,7 +114,7 @@ export class SessionManager {
 
       this.sessionStored = true;
       if (process.env.NODE_ENV === 'development') {
-        console.log('✅ Session stored successfully in Supabase!');
+        // console.log('✅ Session stored successfully in Supabase!');
       }
     } catch (error) {
       console.log('⚠️ Session storage error:', error);

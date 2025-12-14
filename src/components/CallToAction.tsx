@@ -24,7 +24,7 @@ const CallToAction = () => {
     
     // For hover events, show a helpful message about clicking first
     if (source === "hover" && !hasUserInteractedRef.current) {
-      console.log("🔒 Hover audio blocked - click the button first to enable hover audio (browser security)");
+      // console.log("🔒 Hover audio blocked - click the button first to enable hover audio (browser security)");
       return;
     }
     

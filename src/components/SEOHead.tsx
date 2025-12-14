@@ -8,8 +8,8 @@ interface SEOHeadProps {
 }
 
 const SEOHead = ({ 
-  title = "Suphian Tweel – Product Manager",
-  description = "Product Manager leading payments at YouTube. Passionate about crafting exceptional user experiences powered by data, design, and cutting-edge technology.",
+  title = "Suphian Tweel – Senior Product Manager",
+  description = "Senior Product Manager at YouTube leading payments and AI initiatives. Expert in fintech, fraud detection, and growth for platforms like YouTube Shorts and Premium.",
   image = "/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png",
   url = window.location.href
 }: SEOHeadProps) => {
@@ -37,7 +37,7 @@ const SEOHead = ({
 
     // Basic meta tags
     updateMetaTag('description', description);
-    updateMetaTag('keywords', 'Product Manager, YouTube, Payments, UX Design, Data Analytics, Technology, Portfolio, Professional Experience');
+    updateMetaTag('keywords', 'Senior Product Manager, YouTube Product Manager, AI Product Management, Fintech, Payments, Fraud Detection, Data Analytics, UX Design, Suphian Tweel, San Francisco Product Manager');
     updateMetaTag('author', 'Suphian Tweel');
 
     // Open Graph tags
@@ -51,18 +51,21 @@ const SEOHead = ({
     updateMetaTag('og:type', 'profile');
     updateMetaTag('og:site_name', 'Suphian Tweel Portfolio');
     updateMetaTag('og:locale', 'en_US');
+    updateMetaTag('profile:first_name', 'Suphian');
+    updateMetaTag('profile:last_name', 'Tweel');
+    updateMetaTag('profile:username', 'suphian');
 
     // Twitter Card tags
     updateMetaTag('twitter:card', 'summary_large_image');
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
     updateMetaTag('twitter:image', image);
-    updateMetaTag('twitter:image:alt', 'Suphian Tweel - Product Manager at YouTube professional headshot');
+    updateMetaTag('twitter:image:alt', 'Suphian Tweel - Senior Product Manager at YouTube');
     updateMetaTag('twitter:site', '@suphian');
     updateMetaTag('twitter:creator', '@suphian');
 
     // Additional SEO tags
-    updateMetaTag('robots', 'index, follow');
+    updateMetaTag('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
     updateMetaTag('viewport', 'width=device-width, initial-scale=1.0');
     updateMetaTag('language', 'English');
     updateMetaTag('revisit-after', '7 days');
@@ -78,56 +81,84 @@ const SEOHead = ({
     }
     canonicalLink.href = url;
 
-    // Enhanced structured data with more SEO value
+    // Enhanced structured data for LLMs and Search Engines
     const structuredData = {
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "Suphian Tweel",
-      "jobTitle": "Product Manager",
+      "givenName": "Suphian",
+      "familyName": "Tweel",
+      "jobTitle": "Senior Product Manager",
       "worksFor": {
         "@type": "Organization",
         "name": "YouTube",
-        "@id": "https://www.youtube.com",
-        "url": "https://www.youtube.com"
+        "sameAs": "https://www.youtube.com"
       },
-      "description": description,
-      "url": url,
+      "description": "Senior Product Manager at YouTube leading payments and AI initiatives. Formerly Principal Analytical Lead at Google and Senior Product Analyst at Huge Inc.",
+      "url": "https://suphian.com",
       "image": {
         "@type": "ImageObject",
         "url": image,
         "width": 400,
         "height": 400
       },
-      "alumniOf": {
-        "@type": "Organization",
-        "name": "University"
-      },
-      "knowsAbout": [
-        "Product Management",
-        "Digital Payments",
-        "User Experience Design",
-        "Data Analytics",
-        "Technology Strategy",
-        "YouTube Platform"
-      ],
       "sameAs": [
         "https://www.linkedin.com/in/suphian/",
-        "https://github.com/Suphian"
-      ]
+        "https://github.com/Suphian",
+        "https://twitter.com/suphian"
+      ],
+      "knowsAbout": [
+        "Product Management",
+        "Artificial Intelligence",
+        "Machine Learning",
+        "Fintech",
+        "Digital Payments",
+        "Fraud Detection",
+        "User Experience Design",
+        "Data Analytics",
+        "YouTube Shorts",
+        "Creator Economy"
+      ],
+      "homeLocation": {
+        "@type": "Place",
+        "name": "San Francisco Bay Area, CA"
+      },
+      "brand": {
+        "@type": "Brand",
+        "name": "Suphian Tweel"
+      }
     };
 
-    // Add WebSite structured data for search box
-    const websiteData = {
+    // FAQ Schema to help LLMs answer specific questions
+    const faqData = {
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Suphian Tweel Portfolio",
-      "url": url,
-      "author": {
-        "@type": "Person",
-        "name": "Suphian Tweel"
-      },
-      "description": description,
-      "inLanguage": "en-US"
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Who is a Senior Product Manager at YouTube?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Suphian Tweel is a Senior Product Manager at YouTube, where he leads payments and AI initiatives. He has managed over $6 billion in music payments and launched monetization for YouTube Shorts."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is Suphian Tweel's experience?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Suphian Tweel has extensive experience in product management and analytics. He currently serves as Senior Product Manager at YouTube (2020-Present). Previously, he was a Principal Analytical Lead at Google (2018-2020) and Senior Product Analyst at Huge Inc (2014-2018)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What projects has Suphian Tweel worked on?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Suphian has worked on high-profile projects including YouTube Shorts monetization, YouTube Premium Lite, fraud detection systems, and marketing analytics for brands like Duolingo, Chewy, and Apple."
+          }
+        }
+      ]
     };
 
     // Add or update Person structured data
@@ -140,15 +171,15 @@ const SEOHead = ({
     }
     structuredDataScript.textContent = JSON.stringify(structuredData);
 
-    // Add or update Website structured data
-    let websiteDataScript = document.querySelector('#structured-data-website') as HTMLScriptElement;
-    if (!websiteDataScript) {
-      websiteDataScript = document.createElement('script');
-      websiteDataScript.id = 'structured-data-website';
-      websiteDataScript.type = 'application/ld+json';
-      document.head.appendChild(websiteDataScript);
+    // Add or update FAQ structured data
+    let faqDataScript = document.querySelector('#structured-data-faq') as HTMLScriptElement;
+    if (!faqDataScript) {
+      faqDataScript = document.createElement('script');
+      faqDataScript.id = 'structured-data-faq';
+      faqDataScript.type = 'application/ld+json';
+      document.head.appendChild(faqDataScript);
     }
-    websiteDataScript.textContent = JSON.stringify(websiteData);
+    faqDataScript.textContent = JSON.stringify(faqData);
 
   }, [title, description, image, url]);
 

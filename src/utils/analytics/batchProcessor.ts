@@ -15,8 +15,7 @@ export class BatchProcessor {
       
       const { data, error } = await supabase
         .from('events')
-        .insert(events)
-        .select('session_id, event_name, event_payload, timestamp, page_url, is_internal_traffic, traffic_type');
+        .insert(events);
 
       if (error) {
         if (process.env.NODE_ENV === 'development') {
