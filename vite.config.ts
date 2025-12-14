@@ -37,7 +37,6 @@ export default defineConfig(({ mode }) => ({
               id.includes('AnalyticsPageviewListener')) return 'analytics';
           // Split heavy components into separate chunks
           if (id.includes('/components/StreamingRevenueWidget') || 
-              id.includes('/components/YouTubeMusicPlayer') ||
               id.includes('/components/EarningsChart') ||
               id.includes('/components/ComparisonTable')) return 'widgets';
           // Split contact forms into separate chunk

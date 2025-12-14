@@ -1,7 +1,6 @@
 
 import { useEffect, useRef } from 'react';
 import { secureEventTracker } from '@/utils/analytics/secureEventTracker';
-import { EnhancedTracker } from '@/utils/analytics/enhancedTracker';
 
 interface UseEventTrackerOptions {
   autoTrackPageViews?: boolean;
@@ -20,11 +19,6 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
   const lastScrollPercent = useRef(0);
 
   useEffect(() => {
-    // Set up enhanced UI event tracking
-    EnhancedTracker.setupUIEventTracking((eventName, eventData) => {
-      secureEventTracker.track(eventName, eventData);
-    });
-
     // Track page view with secure tracker
     if (autoTrackPageViews && !hasTrackedPageView.current) {
       console.log('📄 Tracking enhanced page view for:', window.location.pathname);

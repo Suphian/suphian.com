@@ -118,7 +118,18 @@ export const StreamingRevenueWidget: React.FC = () => {
             </div>
 
             {/* Main Payout Display */}
-            <div className="text-center p-6 bg-secondary/20 rounded-lg">
+            <div 
+              className="text-center p-6 bg-secondary/20 rounded-lg"
+              onMouseEnter={() => {
+                window.trackEvent?.("revenue_widget_hover", {
+                  element: "main_payout",
+                  country: locationData?.country,
+                  is_mobile: isMobile,
+                  source: "StreamingRevenueWidget",
+                  page: window.location.pathname
+                });
+              }}
+            >
               <p className="text-sm text-muted-foreground mb-2">Each stream from your device and location earns:</p>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -181,7 +192,16 @@ export const StreamingRevenueWidget: React.FC = () => {
             <div className="text-center">
               <Button
                 variant="outline"
-                onClick={() => setShowComparison(!showComparison)}
+                onClick={() => {
+                  const newState = !showComparison;
+                  setShowComparison(newState);
+                  
+                  window.trackEvent?.("revenue_widget_toggle", {
+                    action: newState ? "expand" : "collapse",
+                    source: "StreamingRevenueWidget",
+                    page: window.location.pathname
+                  });
+                }}
                 className="w-full md:w-auto"
               >
                 {showComparison ? (
