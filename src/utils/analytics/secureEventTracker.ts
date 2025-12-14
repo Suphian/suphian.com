@@ -13,6 +13,7 @@ class SecureEventTracker {
   private eventBatcher: EventBatcher;
   private isInitialized = false;
   private isInternalTraffic = false;
+  private pendingEvents: { name: string; payload: any }[] = [];
 
   constructor(config: EventTrackerConfig = {}) {
     this.config = {
@@ -81,8 +82,9 @@ class SecureEventTracker {
   public trackEvent(eventName: string, eventPayload: any = {}): void {
     if (!this.isInitialized) {
       if (process.env.NODE_ENV === 'development') {
-        console.log('⚠️ Tracker not initialized yet, discarding event:', eventName);
+        console.log('🔒 Tracker not initialized yet, queueing event:', eventName);
       }
+      this.pendingEvents.push({ name: eventName, payload: eventPayload });
       return;
     }
 
