@@ -17,7 +17,6 @@ const Footer = () => {
   };
 
   const handleSocialClick = async (platform: string, url: string) => {
-    console.log(`🎯 Footer link clicked: ${platform}`);
     
     try {
       await window.trackEvent?.("footer_social_click", {
@@ -27,7 +26,6 @@ const Footer = () => {
         source: "Footer",
         type: "external_link",
       });
-      console.log(`✅ Footer ${platform} click tracked successfully`);
     } catch (error) {
       console.error(`❌ Failed to track ${platform} click:`, error);
     }

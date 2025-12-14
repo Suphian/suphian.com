@@ -14,7 +14,6 @@ export class SessionManager {
 
   constructor() {
     this.sessionId = SessionStorage.getOrCreateSessionId();
-    // console.log('🔒 SessionManager constructor - Session ID:', this.sessionId);
   }
 
   getSessionId(): string {
@@ -30,7 +29,6 @@ export class SessionManager {
   }
 
   async collectSessionMetadata(isInternalTraffic: boolean): Promise<void> {
-    // console.log('🔒 Collecting enhanced session metadata...');
     
     const browserMetadata = MetadataCollector.collectBrowserMetadata();
     const { ipAddress, locationData } = await LocationService.fetchLocationData();
@@ -111,18 +109,15 @@ export class SessionManager {
         .insert(this.sessionData);
 
       if (error) {
-        console.log('⚠️ Session storage failed:', error.message, error);
+        console.error('⚠️ Session storage failed:', error.message, error);
         // Mark as stored regardless to prevent retries
         this.sessionStored = true;
         return;
       }
 
       this.sessionStored = true;
-      if (process.env.NODE_ENV === 'development') {
-        // console.log('✅ Session stored successfully in Supabase!');
-      }
     } catch (error) {
-      console.log('⚠️ Session storage error:', error);
+      console.error('⚠️ Session storage error:', error);
       // Mark as stored to prevent infinite retries
       this.sessionStored = true;
     }

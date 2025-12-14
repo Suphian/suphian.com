@@ -45,7 +45,6 @@ const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const handleNavClick = async (e: React.MouseEvent, scrollTo?: string) => {
-    console.log("🎯 Nav link clicked:", scrollTo || "regular navigation");
     
     if (scrollTo && isHomepage) {
       e.preventDefault();
@@ -58,7 +57,6 @@ const Navbar = () => {
           source: "Navbar",
           type: "scroll_to_section",
         });
-        console.log(`✅ Navigation to ${scrollTo} tracked successfully`);
       } catch (error) {
         console.error("❌ Failed to track navigation event:", error);
       }
@@ -76,7 +74,6 @@ const Navbar = () => {
   };
 
   const handleGetInTouchClick = async () => {
-    console.log("🎯 Button clicked: Get in Touch (Navbar)");
     
     try {
       await window.trackEvent?.("nav_cta_click", {
@@ -85,7 +82,6 @@ const Navbar = () => {
         source: "Navbar",
         type: "contact_button",
       });
-      console.log("✅ Navbar Get in Touch event tracked successfully");
     } catch (error) {
       console.error("❌ Failed to track navbar contact event:", error);
     }

@@ -24,23 +24,14 @@ export async function getTrafficType(): Promise<'internal' | 'external'> {
   );
   
   if (isLocalDev) {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔒 Traffic classified as INTERNAL - Development environment detected:', hostname);
-    }
     return 'internal';
   }
 
   // Check for Lovable preview URLs (they typically have specific patterns)
   if (hostname.includes('lovable') || hostname.includes('preview')) {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔒 Traffic classified as INTERNAL - Lovable preview environment detected:', hostname);
-    }
     return 'internal';
   }
 
   // For production, classify as external without IP lookup to avoid rate limits
-  if (process.env.NODE_ENV === 'development') {
-    console.log('🔒 Traffic classified as EXTERNAL - Production environment');
-  }
   return 'external';
 }

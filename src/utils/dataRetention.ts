@@ -13,8 +13,6 @@ export const cleanupOldData = async (): Promise<void> => {
       console.error('Data cleanup failed:', error);
       return;
     }
-    
-    console.log('✅ Old analytics data cleaned up successfully');
   } catch (error) {
     console.error('Data retention cleanup error:', error);
   }

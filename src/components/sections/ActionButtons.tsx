@@ -11,9 +11,8 @@ interface ActionButtonsProps {
 const ActionButtons = memo(({ onRequestCV }: ActionButtonsProps) => {
   const isMobile = useIsMobile();
 
-  // Add analytics for both buttons with console logging
+  // Add analytics for both buttons
   const handleRequestCV = useCallback(async () => {
-    console.log("🎯 Button clicked: Request CV");
     
     try {
       await window.trackEvent?.("hero_cta_click", {
@@ -31,7 +30,6 @@ const ActionButtons = memo(({ onRequestCV }: ActionButtonsProps) => {
   }, [isMobile, onRequestCV]);
 
   const handleListen = useCallback(async () => {
-    console.log("🎯 Button clicked: Listen to Podcast");
     
     try {
       await window.trackEvent?.("hero_cta_click", {
@@ -40,7 +38,6 @@ const ActionButtons = memo(({ onRequestCV }: ActionButtonsProps) => {
         source: "HeroSection",
         type: "listen_podcast",
       });
-      console.log("✅ Podcast listen event tracked successfully");
     } catch (error) {
       console.error("❌ Failed to track podcast listen event:", error);
     }

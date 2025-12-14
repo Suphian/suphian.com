@@ -23,14 +23,7 @@ export class EventBatcher {
   addEvent(eventData: EventData): void {
     const bufferSize = this.eventBuffer.add(eventData);
     
-    if (process.env.NODE_ENV === 'development') {
-      // console.log('🔒 Event added to buffer. Buffer size:', bufferSize);
-    }
-    
     if (bufferSize >= this.batchSize) {
-      if (process.env.NODE_ENV === 'development') {
-        // console.log('🔒 Buffer full, flushing events...');
-      }
       this.flush();
     }
   }
@@ -42,16 +35,9 @@ export class EventBatcher {
 
     this.flushCb = flushCallback;
     
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔒 Starting batch timer...');
-    }
-    
     // Only set timer if not already running
     this.batchTimer = setInterval(() => {
       if (!this.eventBuffer.isEmpty()) {
-        if (process.env.NODE_ENV === 'development') {
-          // console.log('🔒 Timer triggered, flushing', this.eventBuffer.size(), 'events');
-        }
         this.flushCb?.();
       }
     }, this.batchIntervalMs);
@@ -60,7 +46,6 @@ export class EventBatcher {
     if (typeof window !== 'undefined') {
       window.addEventListener('online', () => {
         if (!this.eventBuffer.isEmpty()) {
-          console.log('🔒 Back online, retrying flush');
           this.retryDelayMs = 3000; // reset backoff
           this.flushCb?.();
         }
@@ -114,10 +99,6 @@ export class EventBatcher {
   private scheduleRetry() {
     if (this.retryTimer || !this.flushCb) return;
     const delay = Math.min(this.retryDelayMs, this.maxRetryDelayMs);
-    
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🔒 Scheduling retry in ${delay}ms`);
-    }
     
     this.retryTimer = setTimeout(() => {
       this.retryTimer = null;
