@@ -36,12 +36,17 @@ const Footer = () => {
   return (
     <footer className="border-t border-border/60 bg-background py-12 md:py-16">
       <div className="container-custom">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-          <div className="mb-6 md:mb-0">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+            <div className="mb-6 md:mb-0">
+              <p className="text-sm text-gray-500">
+                © {new Date().getFullYear()} Suphian Tweel. All rights reserved.
+                <span className="ml-2 text-xs bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full border border-yellow-500/30">
+                  Staging
+                </span>
+              </p>
+            </div>
             
-          </div>
-          
-          <div className="flex space-x-4">
+            <div className="flex space-x-4">
             <a 
               href="https://mail.google.com/mail/?view=cm&fs=1&to=suph.tweel@gmail.com" 
               target="_blank" 
