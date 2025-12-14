@@ -27,6 +27,15 @@ const ProjectCard = ({
   return (
     <Link
       to={`/projects/${id}`}
+      onClick={() => {
+        window.trackEvent?.("project_card_click", {
+          project_id: id,
+          project_title: title,
+          category: category,
+          source: "ProjectList",
+          page: window.location.pathname
+        });
+      }}
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-xl border bg-card transition-all duration-300 hover:shadow-lg",
         className

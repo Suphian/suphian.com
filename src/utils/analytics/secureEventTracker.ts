@@ -117,6 +117,13 @@ class SecureEventTracker {
     };
 
     this.eventBatcher.addEvent(eventData);
+    
+    // Also send to Google Analytics if available
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', eventName, enrichedPayload);
+    } else if (process.env.NODE_ENV === 'development') {
+      console.log('⚠️ Google Analytics not available, skipping gtag push');
+    }
   }
 
   public destroy(): void {
