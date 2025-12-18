@@ -3,7 +3,6 @@
 // Dynamically import analytics modules only when needed
 export const getGoogleAnalytics = () => import('./googleAnalytics');
 export const getSecureEventTracker = () => import('./secureEventTracker');
-export const getEnhancedTracker = () => import('./enhancedTracker');
 export const getLocationService = () => import('./locationService');
 
 // Lazy track function that loads analytics on demand
