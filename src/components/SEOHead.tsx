@@ -10,7 +10,7 @@ interface SEOHeadProps {
 const SEOHead = ({ 
   title = "Suphian Tweel – Senior Product Manager",
   description = "Senior Product Manager at YouTube leading payments and AI initiatives. Expert in fintech, fraud detection, and growth for platforms like YouTube Shorts and Premium.",
-  image = "/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png",
+  image = "/assets/logos/Logo.webp",
   url = window.location.href
 }: SEOHeadProps) => {
   
@@ -40,14 +40,19 @@ const SEOHead = ({
     updateMetaTag('keywords', 'Senior Product Manager, YouTube Product Manager, AI Product Management, Fintech, Payments, Fraud Detection, Data Analytics, UX Design, Suphian Tweel, San Francisco Product Manager');
     updateMetaTag('author', 'Suphian Tweel');
 
+    // Get absolute URLs (add cache-busting parameter for social media)
+    const imageWithCacheBust = image.includes('?') ? image : `${image}?v=2`;
+    const absoluteImageUrl = imageWithCacheBust.startsWith('http') ? imageWithCacheBust : `${window.location.origin}${imageWithCacheBust}`;
+    const absoluteUrl = url.startsWith('http') ? url : `${window.location.origin}${url}`;
+    
     // Open Graph tags
     updateMetaTag('og:title', title);
     updateMetaTag('og:description', description);
-    updateMetaTag('og:image', image);
-    updateMetaTag('og:image:width', '400');
-    updateMetaTag('og:image:height', '400');
-    updateMetaTag('og:image:type', 'image/png');
-    updateMetaTag('og:url', url);
+    updateMetaTag('og:image', absoluteImageUrl);
+    updateMetaTag('og:image:width', '1200');
+    updateMetaTag('og:image:height', '1200');
+    updateMetaTag('og:image:type', 'image/webp');
+    updateMetaTag('og:url', absoluteUrl);
     updateMetaTag('og:type', 'profile');
     updateMetaTag('og:site_name', 'Suphian Tweel Portfolio');
     updateMetaTag('og:locale', 'en_US');
@@ -59,7 +64,7 @@ const SEOHead = ({
     updateMetaTag('twitter:card', 'summary_large_image');
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
-    updateMetaTag('twitter:image', image);
+    updateMetaTag('twitter:image', absoluteImageUrl);
     updateMetaTag('twitter:image:alt', 'Suphian Tweel - Senior Product Manager at YouTube');
     updateMetaTag('twitter:site', '@suphian');
     updateMetaTag('twitter:creator', '@suphian');
@@ -88,7 +93,7 @@ const SEOHead = ({
     
     // Additional Open Graph properties
     updateMetaTag('og:image:alt', 'Suphian Tweel - Senior Product Manager at YouTube');
-    updateMetaTag('og:image:secure_url', image.startsWith('http') ? image : `${window.location.origin}${image}`);
+    updateMetaTag('og:image:secure_url', absoluteImageUrl);
     updateMetaTag('og:updated_time', new Date().toISOString());
     
     // Article-specific tags (if applicable)
@@ -106,11 +111,7 @@ const SEOHead = ({
       canonicalLink.rel = 'canonical';
       document.head.appendChild(canonicalLink);
     }
-    canonicalLink.href = url;
-
-    // Get absolute URL for images
-    const absoluteImageUrl = image.startsWith('http') ? image : `${window.location.origin}${image}`;
-    const absoluteUrl = url.startsWith('http') ? url : `${window.location.origin}${url}`;
+    canonicalLink.href = absoluteUrl;
 
     // Enhanced structured data for LLMs and Search Engines
     const structuredData = {
