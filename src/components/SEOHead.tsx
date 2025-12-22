@@ -10,7 +10,7 @@ interface SEOHeadProps {
 const SEOHead = ({ 
   title = "Suphian Tweel – Senior Product Manager",
   description = "Senior Product Manager at YouTube leading payments and AI initiatives. Expert in fintech, fraud detection, and growth for platforms like YouTube Shorts and Premium.",
-  image = "/assets/logos/Logo.webp",
+  image = "/assets/images/u1327668621_logo_SUPH_--chaos_15_--ar_23_--profile_aa8enny_--st_b2040bf7-71f1-4263-bf3e-422f9561d81e.png",
   url = window.location.href
 }: SEOHeadProps) => {
   
@@ -41,7 +41,7 @@ const SEOHead = ({
     updateMetaTag('author', 'Suphian Tweel');
 
     // Get absolute URLs (add cache-busting parameter for social media)
-    const imageWithCacheBust = image.includes('?') ? image : `${image}?v=2`;
+    const imageWithCacheBust = image.includes('?') ? image : `${image}?v=3`;
     const absoluteImageUrl = imageWithCacheBust.startsWith('http') ? imageWithCacheBust : `${window.location.origin}${imageWithCacheBust}`;
     const absoluteUrl = url.startsWith('http') ? url : `${window.location.origin}${url}`;
     
@@ -51,7 +51,7 @@ const SEOHead = ({
     updateMetaTag('og:image', absoluteImageUrl);
     updateMetaTag('og:image:width', '1200');
     updateMetaTag('og:image:height', '1200');
-    updateMetaTag('og:image:type', 'image/webp');
+    updateMetaTag('og:image:type', 'image/png');
     updateMetaTag('og:url', absoluteUrl);
     updateMetaTag('og:type', 'profile');
     updateMetaTag('og:site_name', 'Suphian Tweel Portfolio');
