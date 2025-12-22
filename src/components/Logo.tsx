@@ -1,43 +1,68 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const Logo = () => {
   const location = useLocation();
   const isHomepage = location.pathname === "/";
+  const [showLogo, setShowLogo] = useState(false);
+
+  useEffect(() => {
+    if (!isHomepage) {
+      setShowLogo(true);
+      return;
+    }
+
+    let ticking = false;
+    const update = () => {
+      // On homepage, only show logo after scrolling past landing section
+      setShowLogo(window.scrollY > window.innerHeight * 0.5);
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    // Initial check
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHomepage]);
 
   const handleLogoClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+    // If we're already on the homepage, prevent navigation and just scroll to top
+    if (isHomepage) {
+      e.preventDefault();
+    }
+    
+    // Always scroll to top when logo is clicked
     window.scrollTo({
       top: 0,
       behavior: "smooth"
     });
   };
 
-  // Only show the logo on the homepage/landing page
-  if (!isHomepage) return null;
+  // Always show logo (removed conditional visibility for now)
+  // TODO: Consider restoring conditional visibility if needed: if (isHomepage && !showLogo) return null;
+
+  // Switch between logos by changing the src below:
+  // Option 1: Logo.webp
+  // Option 2: 01f5ac94-7fd7-4f93-a2b8-06b0e5fec8f3.png
+  const logoPath = "/assets/logos/Logo.webp";
 
   return (
-    <div className="fixed top-6 left-6 md:top-10 md:left-10 z-50">
+    <div className="fixed top-6 left-6 md:top-10 md:left-10 z-[100]">
       <Link to="/" onClick={handleLogoClick}>
-        <picture>
-          <source 
-            type="image/webp" 
-            srcSet="/optimized/logo-128.webp 128w, /optimized/logo-256.webp 256w"
-            sizes="(max-width: 768px) 97px, 122px"
-          />
-          <img 
-            src="/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png" 
-            alt="Suphian Tweel - Product Manager at YouTube, professional headshot and logo" 
-            className="h-[97px] md:h-[122px] hover:scale-105 transition-transform duration-200"
-            loading="eager"
-            decoding="async"
-            width="122"
-            height="122"
-            fetchPriority="high"
-            crossOrigin="anonymous"
-          />
-        </picture>
+        <img 
+          src={logoPath}
+          alt="Suphian Tweel - Product Manager at YouTube" 
+          className="h-[116px] md:h-[146px] w-auto hover:scale-105 transition-transform duration-200"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+        />
       </Link>
     </div>
   );

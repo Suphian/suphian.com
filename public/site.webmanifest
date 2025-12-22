@@ -1,8 +1,7 @@
-
 {
-  "name": "Suphian Tweel - Product Manager at YouTube",
+  "name": "Suphian Tweel - Senior Product Manager at YouTube",
   "short_name": "Suphian Tweel",
-  "description": "Product Manager leading payments at YouTube. Portfolio showcasing experience in product management, user experience design, and technology strategy.",
+  "description": "Senior Product Manager at YouTube leading payments and AI initiatives. Expert in fintech, fraud detection, and growth for platforms like YouTube Shorts and Premium. Portfolio showcasing experience in product management, user experience design, and technology strategy.",
   "start_url": "/",
   "scope": "/",
   "icons": [
@@ -19,10 +18,29 @@
       "purpose": "any maskable"
     }
   ],
-  "theme_color": "#ffffff",
+  "theme_color": "#ff0000",
   "background_color": "#000000",
   "display": "standalone",
   "orientation": "portrait",
   "lang": "en-US",
-  "categories": ["business", "productivity", "portfolio"]
+  "dir": "ltr",
+  "categories": ["business", "productivity", "portfolio"],
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "iarc_rating_id": "",
+  "shortcuts": [
+    {
+      "name": "Podcast",
+      "short_name": "Podcast",
+      "description": "Listen to Suphian's podcast",
+      "url": "/podcast",
+      "icons": [
+        {
+          "src": "/lovable-uploads/af121fff-31a4-4b8d-90fd-b99337bbc094.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
 }

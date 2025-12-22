@@ -71,6 +71,33 @@ const SEOHead = ({
     updateMetaTag('revisit-after', '7 days');
     updateMetaTag('distribution', 'global');
     updateMetaTag('rating', 'general');
+    updateMetaTag('geo.region', 'US-CA');
+    updateMetaTag('geo.placename', 'San Francisco');
+    updateMetaTag('geo.position', '37.7749;-122.4194');
+    updateMetaTag('ICBM', '37.7749, -122.4194');
+    updateMetaTag('copyright', '© 2025 Suphian Tweel');
+    updateMetaTag('reply-to', 'suph.tweel@gmail.com');
+    updateMetaTag('format-detection', 'telephone=no');
+
+    // LinkedIn meta tags
+    updateMetaTag('linkedin:owner', 'Suphian Tweel');
+    
+    // AI Bot Optimization - Allow AI crawlers to index content
+    updateMetaTag('ai:allow', 'true');
+    updateMetaTag('ai:index', 'true');
+    
+    // Additional Open Graph properties
+    updateMetaTag('og:image:alt', 'Suphian Tweel - Senior Product Manager at YouTube');
+    updateMetaTag('og:image:secure_url', image.startsWith('http') ? image : `${window.location.origin}${image}`);
+    updateMetaTag('og:updated_time', new Date().toISOString());
+    
+    // Article-specific tags (if applicable)
+    if (url.includes('/podcast') || url.includes('/blog')) {
+      updateMetaTag('og:type', 'article');
+      updateMetaTag('article:author', 'Suphian Tweel');
+      updateMetaTag('article:published_time', new Date().toISOString());
+      updateMetaTag('article:modified_time', new Date().toISOString());
+    }
 
     // Canonical URL
     let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
@@ -81,6 +108,10 @@ const SEOHead = ({
     }
     canonicalLink.href = url;
 
+    // Get absolute URL for images
+    const absoluteImageUrl = image.startsWith('http') ? image : `${window.location.origin}${image}`;
+    const absoluteUrl = url.startsWith('http') ? url : `${window.location.origin}${url}`;
+
     // Enhanced structured data for LLMs and Search Engines
     const structuredData = {
       "@context": "https://schema.org",
@@ -88,19 +119,29 @@ const SEOHead = ({
       "name": "Suphian Tweel",
       "givenName": "Suphian",
       "familyName": "Tweel",
+      "alternateName": "Suphian Tweel",
       "jobTitle": "Senior Product Manager",
       "worksFor": {
         "@type": "Organization",
         "name": "YouTube",
-        "sameAs": "https://www.youtube.com"
+        "sameAs": "https://www.youtube.com",
+        "url": "https://www.youtube.com"
       },
-      "description": "Senior Product Manager at YouTube leading payments and AI initiatives. Formerly Principal Analytical Lead at Google and Senior Product Analyst at Huge Inc.",
-      "url": "https://suphian.com",
+      "description": "Senior Product Manager at YouTube leading payments and AI initiatives. Expert in fintech, fraud detection, and growth for platforms like YouTube Shorts and Premium. Formerly Principal Analytical Lead at Google and Senior Product Analyst at Huge Inc.",
+      "url": absoluteUrl,
       "image": {
         "@type": "ImageObject",
-        "url": image,
-        "width": 400,
-        "height": 400
+        "url": absoluteImageUrl,
+        "width": 1200,
+        "height": 1200,
+        "caption": "Suphian Tweel - Senior Product Manager at YouTube"
+      },
+      "email": "suph.tweel@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "San Francisco",
+        "addressRegion": "CA",
+        "addressCountry": "US"
       },
       "sameAs": [
         "https://www.linkedin.com/in/suphian/",
@@ -117,15 +158,46 @@ const SEOHead = ({
         "User Experience Design",
         "Data Analytics",
         "YouTube Shorts",
-        "Creator Economy"
+        "Creator Economy",
+        "Growth Strategy",
+        "Monetization",
+        "Platform Development"
       ],
       "homeLocation": {
         "@type": "Place",
-        "name": "San Francisco Bay Area, CA"
+        "name": "San Francisco Bay Area, CA",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "San Francisco",
+          "addressRegion": "CA",
+          "addressCountry": "US"
+        }
       },
       "brand": {
         "@type": "Brand",
         "name": "Suphian Tweel"
+      },
+      "alumniOf": [
+        {
+          "@type": "Organization",
+          "name": "Google"
+        }
+      ],
+      "hasOccupation": {
+        "@type": "Occupation",
+        "name": "Senior Product Manager",
+        "occupationLocation": {
+          "@type": "City",
+          "name": "San Francisco"
+        },
+        "skills": [
+          "Product Strategy",
+          "Data Analytics",
+          "AI/ML",
+          "Fintech",
+          "Payments",
+          "Fraud Detection"
+        ]
       }
     };
 
@@ -136,18 +208,18 @@ const SEOHead = ({
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "Who is a Senior Product Manager at YouTube?",
+          "name": "Who is Suphian Tweel?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Suphian Tweel is a Senior Product Manager at YouTube, where he leads payments and AI initiatives. He has managed over $6 billion in music payments and launched monetization for YouTube Shorts."
+            "text": "Suphian Tweel is a Senior Product Manager at YouTube, where he leads payments and AI initiatives. He has managed over $6 billion in music payments and launched monetization for YouTube Shorts. He is an expert in fintech, fraud detection, and growth for platforms like YouTube Shorts and Premium."
           }
         },
         {
           "@type": "Question",
-          "name": "What is Suphian Tweel's experience?",
+          "name": "What is Suphian Tweel's professional experience?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Suphian Tweel has extensive experience in product management and analytics. He currently serves as Senior Product Manager at YouTube (2020-Present). Previously, he was a Principal Analytical Lead at Google (2018-2020) and Senior Product Analyst at Huge Inc (2014-2018)."
+            "text": "Suphian Tweel has extensive experience in product management and analytics. He currently serves as Senior Product Manager at YouTube (2020-Present), where he leads payments and AI initiatives. Previously, he was a Principal Analytical Lead at Google (2018-2020) and Senior Product Analyst at Huge Inc (2014-2018)."
           }
         },
         {
@@ -155,11 +227,111 @@ const SEOHead = ({
           "name": "What projects has Suphian Tweel worked on?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Suphian has worked on high-profile projects including YouTube Shorts monetization, YouTube Premium Lite, fraud detection systems, and marketing analytics for brands like Duolingo, Chewy, and Apple."
+            "text": "Suphian has worked on high-profile projects including YouTube Shorts monetization, YouTube Premium Lite, fraud detection systems, and marketing analytics for brands like Duolingo, Chewy, and Apple. He has managed over $6 billion in music payments and launched key monetization features for YouTube."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are Suphian Tweel's areas of expertise?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Suphian Tweel specializes in Product Management, Artificial Intelligence, Machine Learning, Fintech, Digital Payments, Fraud Detection, User Experience Design, Data Analytics, YouTube Shorts, Creator Economy, Growth Strategy, Monetization, and Platform Development."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where is Suphian Tweel located?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Suphian Tweel is based in San Francisco, California, where he works as a Senior Product Manager at YouTube."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can I contact Suphian Tweel?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can reach Suphian Tweel via email at suph.tweel@gmail.com, or connect with him on LinkedIn at linkedin.com/in/suphian, GitHub at github.com/Suphian, or Twitter at twitter.com/suphian."
           }
         }
       ]
     };
+
+    // WebSite structured data for better search engine understanding
+    const websiteData = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Suphian Tweel Portfolio",
+      "url": window.location.origin,
+      "description": "Portfolio website of Suphian Tweel, Senior Product Manager at YouTube. Showcasing experience in product management, AI, fintech, and payments.",
+      "author": {
+        "@type": "Person",
+        "name": "Suphian Tweel"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Suphian Tweel"
+      },
+      "inLanguage": "en-US",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": `${window.location.origin}/?q={search_term_string}`
+        },
+        "query-input": "required name=search_term_string"
+      }
+    };
+
+    // Organization structured data
+    const organizationData = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Suphian Tweel",
+      "url": window.location.origin,
+      "logo": absoluteImageUrl,
+      "sameAs": [
+        "https://www.linkedin.com/in/suphian/",
+        "https://github.com/Suphian",
+        "https://twitter.com/suphian"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "suph.tweel@gmail.com",
+        "contactType": "Professional"
+      }
+    };
+
+    // BreadcrumbList for navigation structure
+    const breadcrumbData = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": window.location.origin
+        }
+      ]
+    };
+
+    // Add page-specific breadcrumb items
+    if (url.includes('/podcast')) {
+      breadcrumbData.itemListElement.push({
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Podcast",
+        "item": absoluteUrl
+      });
+    } else if (url.includes('/customers')) {
+      breadcrumbData.itemListElement.push({
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Customers",
+        "item": absoluteUrl
+      });
+    }
 
     // Add or update Person structured data
     let structuredDataScript = document.querySelector('#structured-data-person') as HTMLScriptElement;
@@ -180,6 +352,36 @@ const SEOHead = ({
       document.head.appendChild(faqDataScript);
     }
     faqDataScript.textContent = JSON.stringify(faqData);
+
+    // Add or update WebSite structured data
+    let websiteDataScript = document.querySelector('#structured-data-website') as HTMLScriptElement;
+    if (!websiteDataScript) {
+      websiteDataScript = document.createElement('script');
+      websiteDataScript.id = 'structured-data-website';
+      websiteDataScript.type = 'application/ld+json';
+      document.head.appendChild(websiteDataScript);
+    }
+    websiteDataScript.textContent = JSON.stringify(websiteData);
+
+    // Add or update Organization structured data
+    let organizationDataScript = document.querySelector('#structured-data-organization') as HTMLScriptElement;
+    if (!organizationDataScript) {
+      organizationDataScript = document.createElement('script');
+      organizationDataScript.id = 'structured-data-organization';
+      organizationDataScript.type = 'application/ld+json';
+      document.head.appendChild(organizationDataScript);
+    }
+    organizationDataScript.textContent = JSON.stringify(organizationData);
+
+    // Add or update BreadcrumbList structured data
+    let breadcrumbDataScript = document.querySelector('#structured-data-breadcrumb') as HTMLScriptElement;
+    if (!breadcrumbDataScript) {
+      breadcrumbDataScript = document.createElement('script');
+      breadcrumbDataScript.id = 'structured-data-breadcrumb';
+      breadcrumbDataScript.type = 'application/ld+json';
+      document.head.appendChild(breadcrumbDataScript);
+    }
+    breadcrumbDataScript.textContent = JSON.stringify(breadcrumbData);
 
   }, [title, description, image, url]);
 

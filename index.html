@@ -7,19 +7,48 @@
     <meta name="description" content="Product Manager leading payments at YouTube. Passionate about crafting exceptional user experiences powered by data, design, and cutting-edge technology." />
     <meta name="author" content="Suphian Tweel" />
     <meta name="keywords" content="Product Manager, YouTube, Payments, UX Design, Data Analytics, Technology, AI" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="theme-color" content="#ff0000" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="geo.region" content="US-CA" />
+    <meta name="geo.placename" content="San Francisco" />
+    <meta name="geo.position" content="37.7749;-122.4194" />
+    <meta name="ICBM" content="37.7749, -122.4194" />
+    <meta name="copyright" content="© 2025 Suphian Tweel" />
+    <meta name="reply-to" content="suph.tweel@gmail.com" />
+    
+    <!-- AI Bot Optimization - Allow AI crawlers to index content -->
+    <meta name="ai:allow" content="true" />
+    <meta name="ai:index" content="true" />
 
-    <meta property="og:title" content="Suphian Tweel - Product Manager at YouTube" />
-    <meta property="og:description" content="Product Manager leading payments at YouTube. Passionate about crafting exceptional user experiences powered by data, design, and cutting-edge technology." />
-    <meta property="og:type" content="website" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content="Suphian Tweel - Senior Product Manager at YouTube" />
+    <meta property="og:description" content="Senior Product Manager at YouTube leading payments and AI initiatives. Expert in fintech, fraud detection, and growth for platforms like YouTube Shorts and Premium." />
     <meta property="og:image" content="/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="1200" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content="Suphian Tweel - Senior Product Manager at YouTube" />
+    <meta property="og:url" content="https://suphian.com" />
     <meta property="og:site_name" content="Suphian Tweel Portfolio" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="profile:first_name" content="Suphian" />
+    <meta property="profile:last_name" content="Tweel" />
+    <meta property="profile:username" content="suphian" />
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Suphian Tweel - Product Manager at YouTube" />
-    <meta name="twitter:description" content="Product Manager leading payments at YouTube. Passionate about crafting exceptional user experiences." />
+    <meta name="twitter:title" content="Suphian Tweel - Senior Product Manager at YouTube" />
+    <meta name="twitter:description" content="Senior Product Manager at YouTube leading payments and AI initiatives. Expert in fintech, fraud detection, and growth." />
     <meta name="twitter:image" content="/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png" />
+    <meta name="twitter:image:alt" content="Suphian Tweel - Senior Product Manager at YouTube" />
+    <meta name="twitter:site" content="@suphian" />
+    <meta name="twitter:creator" content="@suphian" />
+    
+    <!-- LinkedIn -->
+    <meta property="linkedin:owner" content="Suphian Tweel" />
     
     <!-- Comprehensive favicon configuration -->
     <link rel="icon" href="/lovable-uploads/af121fff-31a4-4b8d-90fd-b99337bbc094.png" type="image/png" />
@@ -37,9 +66,10 @@
     
     <!-- Critical CSS fallback fonts to prevent FOIT -->
     <style>
-      body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-      .font-montserrat { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-      .font-cairo { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      body { font-family: 'IBM Plex Mono', 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace; }
+      .font-montserrat { font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      .font-cairo { font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      .font-terminal { font-family: 'IBM Plex Mono', 'Courier New', 'Monaco', 'Consolas', monospace; }
     </style>
 
     <!-- Preconnect for Supabase to reduce API request chains -->
@@ -86,9 +116,10 @@
       // Load fonts asynchronously to eliminate render blocking
       window.addEventListener('load', function() {
         setTimeout(function() {
+          // Load IBM Plex Mono (terminal/documentation font) with JetBrains Mono, Montserrat and Cairo as fallbacks
           var fontLink = document.createElement('link');
           fontLink.rel = 'stylesheet';
-          fontLink.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap';
+          fontLink.href = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Montserrat:wght@400;700;800;900&family=Cairo:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap';
           document.head.appendChild(fontLink);
         }, 100); // Load fonts after 100ms
       });

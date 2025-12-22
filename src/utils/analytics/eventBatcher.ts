@@ -61,7 +61,7 @@ export class EventBatcher {
 
     // If offline, requeue and schedule retry
     if (typeof navigator !== 'undefined' && navigator && 'onLine' in navigator && !navigator.onLine) {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('🔒 Offline detected, re-queueing events');
       }
       eventsToFlush.forEach(e => this.eventBuffer.add(e));
@@ -73,7 +73,7 @@ export class EventBatcher {
     const client = supabase || this.supabase;
     
     if (!client) {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('🔒 No supabase client available, re-queueing events');
       }
       eventsToFlush.forEach(e => this.eventBuffer.add(e));
@@ -84,7 +84,7 @@ export class EventBatcher {
     const success = await BatchProcessor.processEvents(eventsToFlush, client);
     
     if (!success) {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('⚠️ Event processing failed, will retry with backoff');
       }
       // Requeue failed events

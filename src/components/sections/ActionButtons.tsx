@@ -1,8 +1,8 @@
 
 import React, { memo, useCallback } from "react";
 import { Headphones } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { WaveButton } from "@/components/ui/wave-button";
 
 interface ActionButtonsProps {
   onRequestCV: () => void;
@@ -10,6 +10,7 @@ interface ActionButtonsProps {
 
 const ActionButtons = memo(({ onRequestCV }: ActionButtonsProps) => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   // Add analytics for both buttons
   const handleRequestCV = useCallback(async () => {
@@ -30,7 +31,6 @@ const ActionButtons = memo(({ onRequestCV }: ActionButtonsProps) => {
   }, [isMobile, onRequestCV]);
 
   const handleListen = useCallback(async () => {
-    
     try {
       await window.trackEvent?.("hero_cta_click", {
         label: isMobile ? "Listen" : "Notebook LLM Podcast",
@@ -41,30 +41,48 @@ const ActionButtons = memo(({ onRequestCV }: ActionButtonsProps) => {
     } catch (error) {
       console.error("❌ Failed to track podcast listen event:", error);
     }
-  }, [isMobile]);
+    
+    navigate('/podcast');
+  }, [isMobile, navigate]);
 
   return (
-    <div className="flex gap-3 w-full mx-auto md:mx-0">
-      <WaveButton 
-        variant="secondary" 
-        onClick={handleRequestCV} 
-        className="flex-1 text-center"
+    <div className="flex flex-col sm:flex-row gap-3 w-full">
+      <button
+        onClick={handleRequestCV}
+        className="text-xs font-mono px-6 py-3 border transition-all text-center"
+        style={{ 
+          color: '#FF3B30',
+          borderColor: '#FF3B30',
+          backgroundColor: 'transparent'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(255, 59, 48, 0.1)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'transparent';
+        }}
       >
         {isMobile ? "Download CV" : "Request My Resume"}
-      </WaveButton>
+      </button>
       
-      <WaveButton variant="primary" className="flex-1">
-        <a 
-          href="https://notebooklm.google.com/notebook/2849175b-13a1-477d-ace3-9c3c593156a6/audio" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="flex items-center justify-center whitespace-nowrap w-full h-full"
-          onClick={handleListen}
-        >
-          <Headphones className="mr-2 h-5 w-5" />
-          {isMobile ? "Listen" : "Notebook LLM Podcast"}
-        </a>
-      </WaveButton>
+      <button
+        onClick={handleListen}
+        className="text-xs font-mono px-6 py-3 border transition-all text-center flex items-center justify-center gap-2"
+        style={{ 
+          color: '#FF3B30',
+          borderColor: '#FF3B30',
+          backgroundColor: 'transparent'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(255, 59, 48, 0.1)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'transparent';
+        }}
+      >
+        <Headphones className="h-4 w-4" />
+        <span>{isMobile ? "Listen" : "Notebook LLM Podcast"}</span>
+      </button>
     </div>
   );
 });

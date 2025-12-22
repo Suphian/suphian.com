@@ -57,7 +57,7 @@ const checkRateLimit = async (identifier: string, action: string, maxAttempts: n
   }
 };
 
-// Test function to send a sample email
+// Test function to send a sample email with better error handling
 export const sendTestEmail = async () => {
   try {
     const testData = {
@@ -72,15 +72,51 @@ export const sendTestEmail = async () => {
     });
 
     if (error) {
-      console.error("Test email error:", error);
-      return { success: false, error: error.message };
+      console.error("❌ Test email error:", error);
+      return { 
+        success: false, 
+        error: error.message || "Failed to send test email. Check that RESEND_API_KEY is configured." 
+      };
     }
 
-    console.log("Test email sent successfully:", data);
-    return { success: true, data };
-  } catch (error) {
-    console.error("Failed to send test email:", error);
-    return { success: false, error: error.message };
+    // Check for warnings in response
+    if (data?.warnings) {
+      console.warn("⚠️ Test email warnings:", data.warnings);
+      return { 
+        success: true, 
+        data,
+        warning: data.warnings.join(", ")
+      };
+    }
+
+    // Check if emails were actually sent
+    const ownerEmailSent = data?.emailResponse && !data.emailResponse.error;
+    const confirmEmailSent = data?.confirmEmailResponse && !data.confirmEmailResponse.error;
+    
+    if (!ownerEmailSent && !confirmEmailSent) {
+      return { 
+        success: false, 
+        error: "Emails were not sent. Check RESEND_API_KEY configuration." 
+      };
+    }
+
+    console.log("✅ Test email sent successfully:", {
+      ownerEmail: ownerEmailSent ? "sent" : "failed",
+      confirmEmail: confirmEmailSent ? "sent" : "failed"
+    });
+    
+    return { 
+      success: true, 
+      data,
+      ownerEmailSent,
+      confirmEmailSent
+    };
+  } catch (error: any) {
+    console.error("❌ Failed to send test email:", error);
+    return { 
+      success: false, 
+      error: error.message || "Unexpected error while sending test email" 
+    };
   }
 };
 
@@ -148,18 +184,48 @@ export function useContactForm({
         throw error;
       }
 
-      // Try to send notification
+      // Try to send notification with better error handling
       try {
-        await supabase.functions.invoke("notify-contact-submit", {
+        const { data: emailData, error: emailError } = await supabase.functions.invoke("notify-contact-submit", {
           body: {
             ...data,
             subject: "Contact Form Submission",
             source,
           }
         });
-      } catch (ex) {
-        console.error("Failed to call edge function:", ex);
+
+        if (emailError) {
+          console.error("❌ Email notification error:", emailError);
+          // Log but don't block - form was submitted successfully
+          if (import.meta.env.DEV) {
+            toast({
+              title: "Form submitted",
+              description: "Your message was received, but email notification may have failed.",
+              variant: "default",
+            });
+          }
+        } else if (emailData?.warnings) {
+          // Show warning if emails had issues but don't fail the submission
+          if (import.meta.env.DEV) {
+            console.warn("⚠️ Email warnings:", emailData.warnings);
+          }
+        } else {
+          // Success - emails sent
+          if (import.meta.env.DEV) {
+            console.log("✅ Email notifications sent successfully");
+          }
+        }
+      } catch (ex: any) {
+        console.error("❌ Failed to call email edge function:", ex);
         // Don't throw here - form submission was successful
+        // The database insert succeeded, so we show success
+        if (import.meta.env.DEV) {
+          toast({
+            title: "Form submitted",
+            description: "Your message was received, but email notification failed. Please contact directly if urgent.",
+            variant: "default",
+          });
+        }
       }
 
       toast({
@@ -183,14 +249,22 @@ export function useContactForm({
   const testEmail = async () => {
     const result = await sendTestEmail();
     if (result.success) {
+      const details = [];
+      if (result.ownerEmailSent) details.push("Owner notification sent");
+      if (result.confirmEmailSent) details.push("Confirmation email sent");
+      
       toast({
         title: "Test email sent!",
-        description: "Check your email to see if the spaceman logo appears correctly.",
+        description: result.warning 
+          ? `${result.warning}. Check your email to verify.`
+          : details.length > 0
+          ? `${details.join(" and ")}. Check your email to see if the spaceman logo appears correctly.`
+          : "Check your email to see if the spaceman logo appears correctly.",
       });
     } else {
       toast({
         title: "Test email failed",
-        description: result.error || "Could not send test email.",
+        description: result.error || "Could not send test email. Please check RESEND_API_KEY configuration.",
         variant: "destructive",
       });
     }

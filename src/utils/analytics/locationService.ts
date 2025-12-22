@@ -17,7 +17,7 @@ export class LocationService {
     
     // Return cached data if available and not expired
     if (this.cachedData && (now - this.lastFetchTime) < this.CACHE_DURATION) {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('🔒 Using cached location data');
       }
       return this.cachedData;
@@ -25,7 +25,7 @@ export class LocationService {
 
     // Prevent multiple simultaneous requests
     if (this.isRequesting) {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('🔒 Request already in progress, returning cached data');
       }
       return this.cachedData || { ipAddress: null, locationData: null };
@@ -36,7 +36,7 @@ export class LocationService {
     let ipAddress = null;
 
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('🔒 Fetching IP data...');
       }
       
@@ -57,7 +57,7 @@ export class LocationService {
       const ipData = await ipResponse.json();
       ipAddress = ipData.ip;
       
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('🔒 Got IP address:', ipAddress);
       }
       
@@ -74,13 +74,13 @@ export class LocationService {
       this.lastFetchTime = now;
       
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('⚠️ Could not fetch IP data:', error);
       }
       
       // Return cached data if available, even if expired
       if (this.cachedData) {
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           console.log('🔒 Falling back to cached location data');
         }
         return this.cachedData;

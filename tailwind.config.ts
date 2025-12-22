@@ -58,9 +58,15 @@ export default {
           foreground: 'hsl(var(--card-foreground))'
         },
         youtubeRed: '#FF3B30',
+        'cursor-orange': 'hsl(var(--cursor-orange))',
+        'cursor-orange-light': 'hsl(var(--cursor-orange-light))',
+        'cursor-orange-dark': 'hsl(var(--cursor-orange-dark))',
+        'cursor-accent': 'hsl(var(--cursor-accent))',
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['IBM Plex Mono', 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
+        mono: ['IBM Plex Mono', 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
+        terminal: ['IBM Plex Mono', 'Courier New', 'Monaco', 'Consolas', 'monospace'],
         montserrat: ['Montserrat', 'sans-serif'],
         cairo: ['Cairo', 'IBM Plex Sans Arabic', 'sans-serif'],
       },
@@ -110,12 +116,12 @@ export default {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-in': 'fade-in 0.5s ease-out',
-        'scale-in': 'scale-in 0.4s ease-out',
-        'slide-in': 'slide-in 0.7s ease-out forwards',
-        'slide-up': 'slide-up 1s ease-out forwards',
-        'greeting-fade-in': 'greeting-fade-in 0.6s ease-out forwards',
-        'greeting-fade-out': 'greeting-fade-out 0.6s ease-out forwards'
+        'fade-in': 'fade-in 1s ease-out',
+        'scale-in': 'scale-in 0.8s ease-out',
+        'slide-in': 'slide-in 1.2s ease-out forwards',
+        'slide-up': 'slide-up 1.2s ease-out forwards',
+        'greeting-fade-in': 'greeting-fade-in 0.8s ease-out forwards',
+        'greeting-fade-out': 'greeting-fade-out 0.8s ease-out forwards'
       }
     }
   },

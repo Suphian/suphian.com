@@ -40,7 +40,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
         />
         
         {/* Test Email Button - only show in development */}
-        {process.env.NODE_ENV === 'development' && (
+        {import.meta.env.DEV && (
           <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
             <button
               type="button"

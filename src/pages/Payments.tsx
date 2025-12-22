@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, CreditCard, Loader2, Rocket, Calendar, Shield, ArrowRight, Sparkles, CheckCircle, Mail } from "lucide-react";
+import { Check, Loader2, Rocket, Calendar, Shield, ArrowRight, CheckCircle, Mail, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import supabase from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
@@ -55,40 +54,48 @@ const Payments = () => {
           title="Payment Successful | Suphian"
           description="Your payment has been processed successfully."
         />
-        <div className="min-h-screen bg-background pt-24 pb-16">
+        <div className="min-h-screen bg-background pt-32 pb-16">
           <div className="container-custom">
-            <div className="max-w-xl mx-auto text-center">
-              <div className="mb-6">
-                <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
+            <div className="max-w-3xl mx-auto">
+              <div className="mb-12 text-center">
+                <CheckCircle className="h-16 w-16 mx-auto mb-6" style={{ color: 'hsl(var(--primary))' }} />
+                <h1 className="heading-lg mb-6" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
+                  PAYMENT SUCCESSFUL
+                </h1>
+                <p className="paragraph mb-12" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                  Thank you for your payment. You will receive a confirmation email shortly with the details of your purchase.
+                </p>
               </div>
-              <h1 className="text-3xl font-bold mb-4">Payment Successful!</h1>
-              <p className="text-muted-foreground mb-8">
-                Thank you for your payment. You will receive a confirmation email shortly with the details of your purchase.
-              </p>
               
-              <Card className="text-left mb-8">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Mail className="h-5 w-5" />
-                    Need Support?
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-3">
-                    If you have any questions or need assistance, please reach out:
-                  </p>
-                  <a 
-                    href="mailto:hello@suphian.com" 
-                    className="text-primary hover:underline font-medium"
-                  >
-                    hello@suphian.com
-                  </a>
-                </CardContent>
-              </Card>
+              <div className="border border-white/10 p-8 mb-8" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <Mail className="h-5 w-5" style={{ color: 'rgba(255, 255, 255, 0.85)' }} />
+                  <h2 className="text-sm font-mono font-semibold" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
+                    NEED SUPPORT?
+                  </h2>
+                </div>
+                <p className="text-sm font-mono mb-3" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                  If you have any questions or need assistance, please reach out:
+                </p>
+                <a 
+                  href="mailto:hello@suphian.com" 
+                  className="text-sm font-mono hover:opacity-70 transition-opacity link-underline"
+                  style={{ color: 'hsl(var(--primary))' }}
+                >
+                  hello@suphian.com
+                </a>
+              </div>
 
-              <Button asChild variant="outline">
-                <a href="/">Return Home</a>
-              </Button>
+              <div className="text-center">
+                <Button 
+                  asChild 
+                  variant="outline"
+                  className="font-mono text-xs border-white/20 hover:border-white/40 hover:bg-white/5"
+                  style={{ color: 'rgba(255, 255, 255, 0.85)' }}
+                >
+                  <a href="/">RETURN HOME</a>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -100,179 +107,226 @@ const Payments = () => {
     <>
       <SEOHead 
         title="Client Payment Portal | Suphian"
-        description="Secure payment portal - $1,500 implementation fee and $50/month subscription."
+        description="Secure payment portal - $5,000 implementation fee and $100/month subscription."
       />
-      <div className="min-h-screen bg-background pt-24 pb-16">
+      <div className="min-h-screen bg-background pt-32 pb-16">
         <div className="container-custom">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">Client Payment Portal</h1>
-              <p className="text-lg text-muted-foreground">
+          <div className="max-w-3xl mx-auto">
+            {/* Header */}
+            <div className="mb-16">
+              <h1 className="heading-lg mb-6" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
+                CLIENT PAYMENT PORTAL
+              </h1>
+              <p className="paragraph" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
                 Your engagement follows a simple timeline. Here's how billing works.
               </p>
             </div>
 
             {/* Engagement Roadmap */}
-            <div className="mb-12">
-              <h2 className="text-xl font-semibold text-center mb-8 text-muted-foreground">Engagement Roadmap</h2>
-              <div className="grid md:grid-cols-3 gap-4 md:gap-0 relative">
+            <div className="mb-20">
+              <h2 className="text-xs font-mono font-semibold text-center mb-12 tracking-wider" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                ENGAGEMENT ROADMAP
+              </h2>
+              <div className="grid md:grid-cols-3 gap-8 md:gap-0 relative">
                 {/* Step 1 */}
-                <div className="flex flex-col items-center text-center px-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <Rocket className="h-6 w-6 text-primary" />
+                <div className="flex flex-col items-center text-center px-4 relative">
+                  <div className="w-12 h-12 flex items-center justify-center mb-4 border border-white/10" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+                    <Rocket className="h-5 w-5" style={{ color: 'hsl(var(--primary))' }} />
                   </div>
-                  <div className="text-sm font-medium text-primary mb-1">Step 1</div>
-                  <h3 className="font-semibold mb-2">Kickoff & Build</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Pay the one-time <strong>$1,500 Implementation Fee</strong> to finalize your portal setup and secure data integration.
+                  <div className="text-xs font-mono mb-2 tracking-wider" style={{ color: 'hsl(var(--primary))' }}>
+                    STEP 1
+                  </div>
+                  <h3 className="text-sm font-mono font-semibold mb-3" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
+                    KICKOFF & BUILD
+                  </h3>
+                  <p className="text-xs font-mono leading-relaxed" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    Pay the one-time <strong style={{ color: 'rgba(255, 255, 255, 0.9)' }}>$5,000 Implementation Fee</strong> to finalize your portal setup and secure data integration.
                   </p>
                 </div>
 
                 {/* Arrow 1 - Desktop only */}
                 <div className="hidden md:flex absolute left-1/3 top-6 -translate-x-1/2 items-center justify-center w-8">
-                  <ArrowRight className="h-5 w-5 text-muted-foreground/50" />
+                  <ArrowRight className="h-4 w-4" style={{ color: 'rgba(255, 255, 255, 0.3)' }} />
                 </div>
 
                 {/* Step 2 */}
-                <div className="flex flex-col items-center text-center px-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <Calendar className="h-6 w-6 text-primary" />
+                <div className="flex flex-col items-center text-center px-4 relative">
+                  <div className="w-12 h-12 flex items-center justify-center mb-4 border border-white/10" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+                    <Calendar className="h-5 w-5" style={{ color: 'hsl(var(--primary))' }} />
                   </div>
-                  <div className="text-sm font-medium text-primary mb-1">Step 2</div>
-                  <h3 className="font-semibold mb-2">Go-Live</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <div className="text-xs font-mono mb-2 tracking-wider" style={{ color: 'hsl(var(--primary))' }}>
+                    STEP 2
+                  </div>
+                  <h3 className="text-sm font-mono font-semibold mb-3" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
+                    GO-LIVE
+                  </h3>
+                  <p className="text-xs font-mono leading-relaxed" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                     Your portal launches and handover is complete. You're live and ready.
                   </p>
                 </div>
 
                 {/* Arrow 2 - Desktop only */}
                 <div className="hidden md:flex absolute left-2/3 top-6 -translate-x-1/2 items-center justify-center w-8">
-                  <ArrowRight className="h-5 w-5 text-muted-foreground/50" />
+                  <ArrowRight className="h-4 w-4" style={{ color: 'rgba(255, 255, 255, 0.3)' }} />
                 </div>
 
                 {/* Step 3 */}
-                <div className="flex flex-col items-center text-center px-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <Shield className="h-6 w-6 text-primary" />
+                <div className="flex flex-col items-center text-center px-4 relative">
+                  <div className="w-12 h-12 flex items-center justify-center mb-4 border border-white/10" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
+                    <Shield className="h-5 w-5" style={{ color: 'hsl(var(--primary))' }} />
                   </div>
-                  <div className="text-sm font-medium text-primary mb-1">Step 3</div>
-                  <h3 className="font-semibold mb-2">Ongoing Support</h3>
-                  <p className="text-sm text-muted-foreground">
-                    The <strong>$50/month Retainer</strong> begins after a 7-day trial to cover hosting, security, and maintenance.
+                  <div className="text-xs font-mono mb-2 tracking-wider" style={{ color: 'hsl(var(--primary))' }}>
+                    STEP 3
+                  </div>
+                  <h3 className="text-sm font-mono font-semibold mb-3" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
+                    ONGOING SUPPORT
+                  </h3>
+                  <p className="text-xs font-mono leading-relaxed" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    The <strong style={{ color: 'rgba(255, 255, 255, 0.9)' }}>$100/month Retainer</strong> begins after a 7-day trial to cover hosting, security, and maintenance.
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Combined Payment Card */}
-            <Card className="max-w-xl mx-auto border-2 border-primary mb-8">
-              <CardHeader className="text-center pt-8">
-                <CardTitle className="flex items-center justify-center gap-2 text-2xl">
-                  <Sparkles className="h-6 w-6 text-primary" />
-                  Get Started Today
-                </CardTitle>
-                <CardDescription>One checkout for everything</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="text-center">
-                  <div className="text-4xl font-bold mb-2">
-                    $1,500
-                    <span className="text-lg font-normal text-muted-foreground ml-1">today</span>
+            {/* Payment Card */}
+            <div className="mt-16 mb-12 relative z-10" id="payment-card-section">
+              <div className="border-2 p-8" style={{ borderColor: 'hsl(var(--primary))', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+                <div className="text-center mb-8">
+                  <h2 className="text-lg font-mono font-semibold mb-3 tracking-wider flex items-center justify-center gap-2" style={{ color: 'rgba(255, 255, 255, 1)' }}>
+                    <Sparkles className="h-5 w-5" style={{ color: 'hsl(var(--primary))' }} />
+                    GET STARTED TODAY
+                  </h2>
+                  <p className="text-sm font-mono mb-6" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    One checkout for everything
+                  </p>
+                </div>
+                
+                <div className="text-center mb-8">
+                  <div className="text-5xl font-mono font-bold mb-3" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
+                    $5,000
+                    <span className="text-base font-normal ml-2" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>today</span>
                   </div>
-                  <div className="text-xl text-muted-foreground">
-                    + $50<span className="text-sm">/month</span> after 7-day trial
+                  <div className="text-base font-mono" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    + $100<span className="text-sm">/month</span> after 7-day trial
                   </div>
                 </div>
                 
-                <div className="grid sm:grid-cols-2 gap-4 pt-4">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium">Implementation Fee includes:</p>
-                    <ul className="space-y-1.5">
-                      <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm">Initial setup & configuration</span>
+                <div className="grid sm:grid-cols-2 gap-6 mb-8 pt-6 border-t border-white/10">
+                  <div className="space-y-3">
+                    <p className="text-sm font-mono font-semibold mb-3" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                      Implementation Fee includes:
+                    </p>
+                    <ul className="space-y-2">
+                      <li className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: 'hsl(var(--primary))' }} />
+                        <span className="text-sm font-mono" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Initial setup & configuration
+                        </span>
                       </li>
-                      <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm">Custom implementation</span>
+                      <li className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: 'hsl(var(--primary))' }} />
+                        <span className="text-sm font-mono" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Custom implementation
+                        </span>
                       </li>
-                      <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm">Documentation & training</span>
+                      <li className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: 'hsl(var(--primary))' }} />
+                        <span className="text-sm font-mono" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Documentation & training
+                        </span>
                       </li>
                     </ul>
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium">Monthly Retainer includes:</p>
-                    <ul className="space-y-1.5">
-                      <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm">Hosting & infrastructure</span>
+                  <div className="space-y-3">
+                    <p className="text-sm font-mono font-semibold mb-3" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                      Monthly Retainer includes:
+                    </p>
+                    <ul className="space-y-2">
+                      <li className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: 'hsl(var(--primary))' }} />
+                        <span className="text-sm font-mono" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Hosting & infrastructure
+                        </span>
                       </li>
-                      <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm">Security & maintenance</span>
+                      <li className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: 'hsl(var(--primary))' }} />
+                        <span className="text-sm font-mono" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Security & maintenance
+                        </span>
                       </li>
-                      <li className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                        <span className="text-sm">Priority support</span>
+                      <li className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: 'hsl(var(--primary))' }} />
+                        <span className="text-sm font-mono" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Priority support
+                        </span>
                       </li>
                     </ul>
                   </div>
                 </div>
 
                 <Button 
-                  className="w-full" 
+                  className="w-full font-mono text-sm py-6 border-0" 
                   size="lg"
                   onClick={() => handleCheckout("both")}
                   disabled={loadingType !== null}
+                  style={{ 
+                    backgroundColor: 'hsl(var(--primary))',
+                    color: 'hsl(var(--primary-foreground))',
+                    fontSize: '0.875rem'
+                  }}
                 >
                   {loadingType === "both" ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
+                      PROCESSING...
                     </>
                   ) : (
-                    "Pay Now & Start Subscription"
+                    "PAY NOW & START SUBSCRIPTION"
                   )}
                 </Button>
 
-                <p className="text-xs text-center text-muted-foreground">
-                  You'll be charged $1,500 today. Your $50/month subscription starts after a 7-day free trial.
+                <p className="text-sm font-mono text-center mt-4" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                  You'll be charged $5,000 today. Your $100/month subscription starts after a 7-day free trial.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Alternate options */}
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-4">Or pay separately:</p>
+            <div className="text-center mb-12">
+              <p className="text-sm font-mono mb-4" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                Or pay separately:
+              </p>
               <div className="flex flex-wrap justify-center gap-3">
                 <Button 
                   variant="outline" 
-                  size="sm"
+                  size="default"
                   onClick={() => handleCheckout("one-time")}
                   disabled={loadingType !== null}
+                  className="font-mono text-sm border-white/20 hover:border-white/40 hover:bg-white/5 px-6 py-2"
+                  style={{ color: 'rgba(255, 255, 255, 0.85)' }}
                 >
                   {loadingType === "one-time" ? (
-                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : null}
-                  Implementation Only ($1,500)
+                  Implementation Only ($5,000)
                 </Button>
                 <Button 
                   variant="outline" 
-                  size="sm"
+                  size="default"
                   onClick={() => handleCheckout("subscription")}
                   disabled={loadingType !== null}
+                  className="font-mono text-sm border-white/20 hover:border-white/40 hover:bg-white/5 px-6 py-2"
+                  style={{ color: 'rgba(255, 255, 255, 0.85)' }}
                 >
                   {loadingType === "subscription" ? (
-                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : null}
-                  Subscription Only ($50/mo)
+                  Subscription Only ($100/mo)
                 </Button>
               </div>
             </div>
 
-            <p className="text-center text-sm text-muted-foreground mt-8">
+            <p className="text-sm font-mono text-center" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
               Payments are processed securely via Stripe. Your payment information is never stored on our servers.
             </p>
           </div>

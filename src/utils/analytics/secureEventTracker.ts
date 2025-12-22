@@ -31,7 +31,7 @@ class SecureEventTracker {
       supabase
     );
 
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       // Debug logging removed for cleaner production code
     }
   }
@@ -57,7 +57,7 @@ class SecureEventTracker {
 
       // Process any pending events that were queued before initialization
       if (this.pendingEvents.length > 0) {
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           console.log(`🔒 Processing ${this.pendingEvents.length} pending events...`);
         }
         this.pendingEvents.forEach(event => {
@@ -83,7 +83,7 @@ class SecureEventTracker {
       return;
     }
 
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.log(`🔒 Tracking event: ${eventName} (${this.isInternalTraffic ? 'INTERNAL' : 'EXTERNAL'} traffic)`, eventPayload);
     }
 
@@ -106,11 +106,21 @@ class SecureEventTracker {
       traffic_type: this.isInternalTraffic ? 'internal' : 'external'
     };
 
+    // Add event to batcher (non-blocking)
     this.eventBatcher.addEvent(eventData);
     
-    // Also send to Google Analytics if available
+    // Also send to Google Analytics if available (use requestIdleCallback for non-critical)
     if (typeof window.gtag === 'function') {
-      window.gtag('event', eventName, enrichedPayload);
+      const sendToGA = () => {
+        window.gtag('event', eventName, enrichedPayload);
+      };
+      
+      // Use requestIdleCallback for non-critical GA events to avoid blocking main thread
+      if ('requestIdleCallback' in window && eventName !== 'page_view') {
+        requestIdleCallback(sendToGA, { timeout: 2000 });
+      } else {
+        sendToGA();
+      }
     }
   }
 
@@ -132,11 +142,11 @@ class SecureEventTracker {
   }
 }
 
-// Export secure singleton instance with internal traffic tracking enabled
+// Export secure singleton instance with optimized batching
 export const secureEventTracker = new SecureEventTracker({
   enableInDevelopment: true,
-  batchSize: 5,
-  batchIntervalMs: 30000, // 30 seconds - more reasonable interval
+  batchSize: 10, // Increased batch size for better efficiency
+  batchIntervalMs: 20000, // 20 seconds - optimized for performance
   filterInternalTraffic: false // Track internal traffic but classify it
 });
 

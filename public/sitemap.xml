@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Homepage -->
   <url>
-    <loc>https://suphiantweel.lovable.app/</loc>
+    <loc>https://suphian.com/</loc>
     <lastmod>2025-01-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://suphiantweel.lovable.app/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png</image:loc>
-      <image:title>Suphian Tweel - Product Manager at YouTube</image:title>
-      <image:caption>Professional headshot of Suphian Tweel, Product Manager leading payments at YouTube</image:caption>
+      <image:loc>https://suphian.com/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png</image:loc>
+      <image:title>Suphian Tweel - Senior Product Manager at YouTube</image:title>
+      <image:caption>Professional headshot of Suphian Tweel, Senior Product Manager leading payments and AI initiatives at YouTube</image:caption>
     </image:image>
+  </url>
+  
+  <!-- Podcast Page -->
+  <url>
+    <loc>https://suphian.com/podcast</loc>
+    <lastmod>2025-01-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Customers Page -->
+  <url>
+    <loc>https://suphian.com/customers</loc>
+    <lastmod>2025-01-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>

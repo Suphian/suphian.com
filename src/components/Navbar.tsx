@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { WaveButton } from "@/components/ui/wave-button";
 
 const LazyContactSheet = React.lazy(() => import("./ContactSheet"));
 
@@ -9,6 +8,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(false);
   const location = useLocation();
   const closeMenu = () => setIsOpen(false);
   const isHomepage = location.pathname === "/";
@@ -16,7 +16,14 @@ const Navbar = () => {
   useEffect(() => {
     let ticking = false;
     const update = () => {
-      setIsScrolled(window.scrollY > 10);
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > 10);
+      // On homepage, only show navbar after scrolling past landing section
+      if (isHomepage) {
+        setShowNavbar(scrollY > window.innerHeight * 0.5);
+      } else {
+        setShowNavbar(true);
+      }
       ticking = false;
     };
     const onScroll = () => {
@@ -25,9 +32,11 @@ const Navbar = () => {
         requestAnimationFrame(update);
       }
     };
+    // Initial check
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isHomepage]);
 
   const navLinks = [
     {
@@ -90,24 +99,30 @@ const Navbar = () => {
     setContactOpen(true);
   };
 
+  // Hide navbar on homepage until user scrolls
+  if (isHomepage && !showNavbar) {
+    return null;
+  }
+
   return (
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4", 
-      isScrolled || isOpen ? "blur-backdrop border-b border-border/40" : ""
+      isScrolled || isOpen ? "blur-backdrop" : ""
     )}>
       <div className="container-custom">
         <nav className="flex justify-between items-center">
           <div className="flex-1"></div>
 
-          <ul className="hidden md:flex space-x-8 items-center justify-end">
+          <ul className="hidden md:flex space-x-6 md:space-x-8 items-center justify-end">
             {navLinks.map(link => (
               <li key={link.name}>
                 <Link 
                   to={link.path} 
                   className={cn(
-                    "link-underline py-2 text-primary", 
-                    isActive(link.path) && !link.scrollTo ? "font-medium" : "hover:text-primary/80"
-                  )} 
+                    "text-xs font-mono py-2 hover:opacity-70 transition-opacity", 
+                    isActive(link.path) && !link.scrollTo ? "opacity-100" : "opacity-80"
+                  )}
+                  style={{ color: 'rgba(255, 255, 255, 0.85)' }}
                   onClick={e => handleNavClick(e, link.scrollTo)}
                 >
                   {link.name}
@@ -116,12 +131,13 @@ const Navbar = () => {
             ))}
             
             <li>
-              <WaveButton 
-                variant="primary"
+              <button
                 onClick={handleGetInTouchClick}
+                className="text-xs font-mono px-4 py-2 border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all"
+                style={{ color: 'rgba(255, 255, 255, 0.85)' }}
               >
-                Get in Touch
-              </WaveButton>
+                Contact
+              </button>
             </li>
           </ul>
         </nav>

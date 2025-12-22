@@ -92,14 +92,14 @@ export class SessionManager {
 
   async storeSession(supabase: any): Promise<void> {
     if (!this.sessionData || this.sessionStored) {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         // console.log('🔒 Session already stored or no session data');
       }
       return;
     }
 
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         // console.log('🔒 Attempting to store session in Supabase...');
       }
       

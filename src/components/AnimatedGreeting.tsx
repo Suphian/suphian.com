@@ -25,9 +25,9 @@ const AnimatedGreeting = ({ greetings }: AnimatedGreetingProps) => {
       setTimeout(() => {
         setCurrentGreetingIndex(prevIndex => (prevIndex + 1) % filteredGreetings.length);
         setAnimationState('visible');
-      }, 750); // Increased from 500ms to 750ms (half of 1.5s)
+      }, 800); // Match the 0.8s animation duration
       
-    }, 1500); // Changed from 1000ms to 1500ms (1.5 seconds)
+    }, 2000); // 2 seconds total cycle for more focus on each greeting
     
     return () => clearInterval(intervalId);
   }, [filteredGreetings.length]);

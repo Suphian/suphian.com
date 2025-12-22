@@ -1,3 +1,4 @@
+# Search Engine Crawlers
 User-agent: Googlebot
 Allow: /
 Crawl-delay: 1
@@ -6,6 +7,11 @@ User-agent: Bingbot
 Allow: /
 Crawl-delay: 1
 
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+
+# Social Media Crawlers
 User-agent: Twitterbot
 Allow: /
 
@@ -15,9 +21,59 @@ Allow: /
 User-agent: LinkedInBot
 Allow: /
 
+User-agent: WhatsApp
+Allow: /
+
+# AI and LLM Crawlers - Allow indexing for AI training and search
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: ChatGPT-User
+Allow: /
+Crawl-delay: 1
+
+User-agent: anthropic-ai
+Allow: /
+Crawl-delay: 1
+
+User-agent: Claude-Web
+Allow: /
+Crawl-delay: 1
+
+User-agent: PerplexityBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Applebot-Extended
+Allow: /
+Crawl-delay: 1
+
+User-agent: CCBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: anthropic-ai
+Allow: /
+Crawl-delay: 1
+
+User-agent: Google-Extended
+Allow: /
+Crawl-delay: 1
+
+User-agent: Omgilibot
+Allow: /
+Crawl-delay: 1
+
+User-agent: FacebookBot
+Allow: /
+Crawl-delay: 1
+
+# Default rules for all other bots
 User-agent: *
 Allow: /
 Crawl-delay: 2
 
 # Sitemap
-Sitemap: https://suphiantweel.lovable.app/sitemap.xml
+Sitemap: https://suphian.com/sitemap.xml
+Sitemap: https://www.suphian.com/sitemap.xml

@@ -5,35 +5,44 @@
 
 @layer base {
   :root {
+    /* Retro-futurist black base */
     --background: 0 0% 0%;
-    --foreground: 39 56% 89%;
+    --foreground: 0 0% 95%;
 
-    --card: 0 0% 3%;
-    --card-foreground: 39 56% 89%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 0 0% 3%;
-    --popover-foreground: 39 56% 89%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 39 56% 89%;
-    --primary-foreground: 0 0% 0%;
+    /* Muted oxide red accent (used sparingly) */
+    --primary: 0 60% 45%;
+    --primary-foreground: 0 0% 95%;
 
     --secondary: 0 0% 10%;
-    --secondary-foreground: 39 56% 89%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 39 56% 70%;
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 0 100% 59%;
-    --accent-foreground: 39 56% 89%;
+    /* Oxide red accent */
+    --accent: 0 60% 45%;
+    --accent-foreground: 0 0% 95%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 39 56% 89%;
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 0 0% 95%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 39 56% 89%;
-
-    --radius: 0.5rem;
+    --border: 0 0% 15%;
+    --input: 0 0% 10%;
+    --ring: 0 60% 45%;
+    
+    --radius: 0rem;
+    
+    /* Oxide red variations */
+    --cursor-orange: 0 60% 45%;
+    --cursor-orange-light: 0 60% 55%;
+    --cursor-orange-dark: 0 60% 35%;
+    --cursor-accent: 0 60% 45%;
   }
 
   * {
@@ -42,11 +51,34 @@
   }
 
   body {
-    @apply bg-background text-foreground font-montserrat;
+    @apply text-foreground;
+    background: transparent;
     overflow-x: hidden;
-    /* Add fallback fonts and font-display for immediate rendering */
-    font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* Terminal/documentation monospace font stack */
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
     font-display: swap;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    position: relative;
+  }
+
+  /* Global grain texture overlay - subtle film/paper texture */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.1;
+    background-image: url('/assets/textures/background.png');
+    background-repeat: repeat;
+    background-size: auto;
+    mix-blend-mode: normal;
+    /* Optimize loading - don't block rendering */
+    will-change: auto;
   }
 
   /* Custom utility classes */
@@ -62,28 +94,39 @@
     @apply inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground transition-colors hover:bg-secondary/80;
   }
 
+  /* Geometric, blocky display type for headings */
   .heading-xl {
-    @apply font-montserrat font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight tracking-tight;
+    @apply font-mono font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight tracking-tight;
+    letter-spacing: -0.02em;
+    font-weight: 700;
   }
 
   .heading-lg {
-    @apply font-montserrat font-extrabold text-3xl sm:text-4xl font-bold leading-tight tracking-tight;
+    @apply font-mono font-bold text-3xl sm:text-4xl leading-tight tracking-tight;
+    letter-spacing: -0.01em;
+    font-weight: 700;
   }
 
   .heading-md {
-    @apply font-montserrat font-bold text-2xl sm:text-3xl leading-tight;
+    @apply font-mono font-semibold text-2xl sm:text-3xl leading-tight;
+    letter-spacing: -0.01em;
+    font-weight: 600;
   }
 
   .heading-sm {
-    @apply font-montserrat font-bold text-xl sm:text-2xl leading-tight;
+    @apply font-mono font-semibold text-xl sm:text-2xl leading-tight;
+    font-weight: 600;
   }
 
   .paragraph {
-    @apply text-base sm:text-lg leading-relaxed text-foreground/90;
+    @apply text-base sm:text-lg leading-relaxed;
+    color: rgba(255, 255, 255, 0.85);
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
   }
 
   .blur-backdrop {
-    @apply backdrop-blur-lg bg-black/80 supports-[backdrop-filter]:bg-black/80;
+    @apply bg-black/95;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   /* Transform scale utility */
@@ -111,6 +154,7 @@
   /* Smooth scrolling for the entire page */
   html {
     scroll-behavior: smooth;
+    background: #000000;
   }
 
   /* Reduce motion for users who prefer it */
@@ -161,11 +205,11 @@
     @apply text-accent/70;
   }
 
-  /* Staggered fade-in animation */
+  /* Staggered fade-in animation - slow and subtle */
   .staggered-fade-in > * {
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    transform: translateY(10px);
+    transition: opacity 1s ease-out, transform 1s ease-out;
   }
 
   .staggered-fade-in > *.active {
@@ -173,7 +217,7 @@
     transform: translateY(0);
   }
 
-  /* Link underline animation */
+  /* Link underline animation - slow and subtle */
   .link-underline {
     position: relative;
     display: inline-block;
@@ -189,7 +233,7 @@
     left: 0;
     background-color: currentColor;
     transform-origin: bottom right;
-    transition: transform 0.3s ease-out;
+    transition: transform 0.8s ease-out;
   }
 
   .link-underline:hover::after {
@@ -197,18 +241,34 @@
     transform-origin: bottom left;
   }
   
+  /* Fade in animation */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 1.2s ease-out forwards;
+  }
+  
   /* For the animated multilingual greeting */
   @keyframes fadeIn {
     0% {
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(5px);
     }
     100% {
       opacity: 1;
       transform: translateY(0);
     }
   }
-  
+
   @keyframes fadeOut {
     0% {
       opacity: 1;
@@ -216,16 +276,16 @@
     }
     100% {
       opacity: 0;
-      transform: translateY(-10px);
+      transform: translateY(-5px);
     }
   }
   
   .greeting-animation-enter {
-    animation: fadeIn 0.5s forwards;
+    animation: fadeIn 0.8s ease-out forwards;
   }
-  
+
   .greeting-animation-exit {
-    animation: fadeOut 0.5s forwards;
+    animation: fadeOut 0.8s ease-out forwards;
   }
 
   /* Hand-drawn wavy underline animation */
@@ -266,5 +326,45 @@
   /* Add scroll margin to prevent content from hiding behind navbar */
   section[id], div[id] {
     scroll-margin-top: 190px;
+  }
+
+  /* Grain texture utility - uses same global grain image */
+  .grain-overlay {
+    position: relative;
+  }
+
+  .grain-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.08;
+    background-image: url('/assets/textures/background.png');
+    background-repeat: repeat;
+    background-size: auto;
+    mix-blend-mode: normal;
+    z-index: 1;
+  }
+
+  /* Subtle constellation dots */
+  .constellation-dots {
+    position: relative;
+  }
+
+  .constellation-dots::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
   }
 }

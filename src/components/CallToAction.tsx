@@ -162,11 +162,11 @@ const CallToAction = () => {
         >
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-1 mr-3">
-              <div className="w-1 h-3 bg-current rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-200"></div>
-              <div className="w-1 h-4 bg-current rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-200" style={{animationDelay: '0.1s'}}></div>
-              <div className="w-1 h-2 bg-current rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-200" style={{animationDelay: '0.2s'}}></div>
-              <div className="w-1 h-5 bg-current rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-200" style={{animationDelay: '0.3s'}}></div>
-              <div className="w-1 h-3 bg-current rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-200" style={{animationDelay: '0.4s'}}></div>
+              <div className="w-1 h-3 bg-[#FF3B30] rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-500"></div>
+              <div className="w-1 h-4 bg-[#FF3B30] rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-500" style={{animationDelay: '0.1s'}}></div>
+              <div className="w-1 h-2 bg-[#FF3B30] rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-500" style={{animationDelay: '0.2s'}}></div>
+              <div className="w-1 h-5 bg-[#FF3B30] rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-500" style={{animationDelay: '0.3s'}}></div>
+              <div className="w-1 h-3 bg-[#FF3B30] rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-500" style={{animationDelay: '0.4s'}}></div>
             </div>
             {isMobile ? "Start" : "Start Here"}
           </div>

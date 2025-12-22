@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback, Suspense } from "react";
-import LandingPage from "@/components/LandingPage";
-import ScrollTransition from "@/components/ScrollTransition";
+import LandingPageCursor from "@/components/LandingPageCursor";
 
 const RequestCVModal = React.lazy(() => import("@/components/RequestCVModal"));
 const LazyContactSheet = React.lazy(() => import("@/components/ContactSheet"));
@@ -38,7 +37,7 @@ const Index = () => {
     sections: scrollSections,
     onSectionView: (sectionName, progress) => {
       // Only log engagement events in development mode
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log(`🎯 User engaged with: ${sectionName} section (${Math.round(progress * 100)}% visible)`);
         
         // You can add custom logic here for each section
@@ -102,81 +101,74 @@ const Index = () => {
 
   return (
     <div className="relative">
-      {/* Landing page with transition */}
-      <div className="relative min-h-[200vh] bg-black">
-        {/* Landing content wrapped in a ref - higher z-index to overlay the image */}
-        <div 
-          ref={landingRef} 
-          className="min-h-screen flex flex-col transition-all duration-700 ease-out relative z-20" 
-          style={{
-            willChange: "opacity, transform",
-            backdropFilter: "blur(0px)",
-            WebkitBackdropFilter: "blur(0px)"
+      {/* Hero Section - Typing Text */}
+      <div 
+        ref={landingRef} 
+        className="min-h-screen flex flex-col relative z-20"
+      >
+        <LandingPageCursor />
+      </div>
+      
+      {/* Transition Section - Minimal Gap */}
+      <div 
+        ref={parallaxImageRef}
+        className="relative"
+        style={{
+          paddingTop: '8vh',
+          paddingBottom: '8vh'
+        }}
+      >
+      </div>
+      
+      {/* Content section - Story and Experience */}
+      <div 
+        id="content-section" 
+        ref={contentRef} 
+        className="relative z-30"
+        style={{
+          paddingTop: '4vh'
+        }}
+      >
+        {/* Content Sections - pass refs for tracking */}
+        <ContentSection 
+          onRequestCV={async () => {
+            await import("@/components/RequestCVModal");
+            setIsModalOpen(true);
+            track("open_cv_modal", {
+              label: "Request CV",
+              page: window.location.pathname,
+              source: "IndexHeroContent",
+            });
+          }} 
+          onContactClick={async () => {
+            await import("@/components/ContactSheet");
+            handleContactOpenChange(true);
           }}
-        >
-          <LandingPage />
-        </div>
-        
-        {/* Scroll transition elements - pass the parallax image ref for tracking */}
-        <ScrollTransition 
-          landingRef={landingRef} 
-          projectsRef={contentRef}
-          parallaxImageRef={parallaxImageRef}
+          aboutSectionRef={aboutSectionRef}
+          experienceSectionRef={experienceSectionRef}
         />
         
-        {/* Content section - Hero with About Me */}
-        <div 
-          id="content-section" 
-          ref={contentRef} 
-          className="relative bg-gradient-to-b from-black to-black/95 min-h-screen z-30" 
-          style={{
-            opacity: 0,
-            transform: "translateY(40px)",
-            transition: "opacity 0.7s ease-out, transform 0.7s ease-out",
-            willChange: "opacity, transform"
-          }}
-        >
-          {/* Content Sections - pass refs for tracking */}
-          <ContentSection 
-            onRequestCV={async () => {
-              await import("@/components/RequestCVModal");
-              setIsModalOpen(true);
-              track("open_cv_modal", {
-                label: "Request CV",
-                page: window.location.pathname,
-                source: "IndexHeroContent",
-              });
-            }} 
-            onContactClick={async () => {
-              await import("@/components/ContactSheet");
-              handleContactOpenChange(true);
+        {/* CV Request Modal - now with onGetInTouch prop */}
+        <Suspense fallback={null}>
+          <RequestCVModal 
+            open={isModalOpen}
+            onOpenChange={(open) => {
+              setIsModalOpen(open);
+              if (!open) {
+                track("close_cv_modal", {
+                  page: window.location.pathname,
+                  source: "Index",
+                });
+              }
             }}
-            aboutSectionRef={aboutSectionRef}
-            experienceSectionRef={experienceSectionRef}
+            onGetInTouch={handleGetInTouchFromModal}
           />
-          
-          {/* CV Request Modal - now with onGetInTouch prop */}
-          <Suspense fallback={null}>
-            <RequestCVModal 
-              open={isModalOpen}
-              onOpenChange={(open) => {
-                setIsModalOpen(open);
-                if (!open) {
-                  track("close_cv_modal", {
-                    page: window.location.pathname,
-                    source: "Index",
-                  });
-                }
-              }}
-              onGetInTouch={handleGetInTouchFromModal}
-            />
-          </Suspense>
+        </Suspense>
 
-          {/* Contact Sheet */}
-          <Suspense fallback={null}>
-            <LazyContactSheet open={contactOpen} onOpenChange={handleContactOpenChange} />
-          </Suspense>
-        </div>
+        {/* Contact Sheet */}
+        <Suspense fallback={null}>
+          <LazyContactSheet open={contactOpen} onOpenChange={handleContactOpenChange} />
+        </Suspense>
       </div>
     </div>
   );

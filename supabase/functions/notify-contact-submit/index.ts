@@ -6,7 +6,12 @@ const rateLimitMap = new Map<string, { count: number; ts: number }>();
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute window
 const RATE_LIMIT_MAX = 3; // Max 3 submissions per window per IP
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+if (!RESEND_API_KEY) {
+  console.error("❌ RESEND_API_KEY environment variable is not set!");
+}
+
+const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -94,16 +99,64 @@ const handler = async (req: Request): Promise<Response> => {
       <p>Submission Source: ${source || "Unknown"}</p>
     `;
 
-    // Send to site owner
-    const emailResponse = await resend.emails.send({
-      from: "Contact Notification <hello@suphian.com>",
-      to: ["hello@suphian.com"],
-      subject: "Contact Form Submission",
-      html,
-      reply_to: email ? email : undefined,
-    });
+    // Validate Resend is configured
+    if (!resend) {
+      console.error("❌ Resend API key not configured");
+      return new Response(
+        JSON.stringify({ error: "Email service not configured. Please contact support." }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
-    // Send confirmation to submitter (if email provided) -- unchanged, but enforce maxLength
+    // Helper function to send email with retry logic
+    const sendEmailWithRetry = async (
+      emailData: Parameters<typeof resend.emails.send>[0],
+      retries = 2,
+      delay = 1000
+    ): Promise<any> => {
+      for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+          const response = await resend.emails.send(emailData);
+          
+          // Check if response indicates success
+          if (response.error) {
+            throw new Error(response.error.message || "Email send failed");
+          }
+          
+          return response;
+        } catch (error: any) {
+          const isLastAttempt = attempt === retries;
+          
+          if (isLastAttempt) {
+            console.error(`❌ Email send failed after ${retries + 1} attempts:`, error);
+            throw error;
+          }
+          
+          // Wait before retrying (exponential backoff)
+          const waitTime = delay * Math.pow(2, attempt);
+          console.warn(`⚠️ Email send attempt ${attempt + 1} failed, retrying in ${waitTime}ms...`);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+        }
+      }
+    };
+
+    // Send to site owner with retry
+    let emailResponse: any = null;
+    try {
+      emailResponse = await sendEmailWithRetry({
+        from: "Contact Notification <hello@suphian.com>",
+        to: ["hello@suphian.com"],
+        subject: "Contact Form Submission",
+        html,
+        reply_to: email ? email : undefined,
+      });
+      console.log("✅ Owner notification email sent successfully");
+    } catch (error: any) {
+      console.error("❌ Failed to send owner notification email:", error);
+      // Continue - we'll still try to send confirmation email
+    }
+
+    // Send confirmation to submitter (if email provided) with retry
     let confirmEmailResponse: any = null;
     if (email) {
       const thankYouHtml = `
@@ -200,27 +253,52 @@ const handler = async (req: Request): Promise<Response> => {
 </body>
 </html>
       `;
-      confirmEmailResponse = await resend.emails.send({
-        from: "Contact Notification <hello@suphian.com>",
-        to: [email],
-        subject: "🌕 Your message reached my inbox!",
-        html: thankYouHtml,
-        reply_to: "hello@suphian.com",
-      });
+      try {
+        confirmEmailResponse = await sendEmailWithRetry({
+          from: "Contact Notification <hello@suphian.com>",
+          to: [email],
+          subject: "🌕 Your message reached my inbox!",
+          html: thankYouHtml,
+          reply_to: "hello@suphian.com",
+        });
+        console.log("✅ Confirmation email sent successfully to:", email);
+      } catch (error: any) {
+        console.error("❌ Failed to send confirmation email:", error);
+        // Continue - form submission was still successful
+      }
     }
 
+    // Return success even if one email failed (form was submitted to database)
+    const hasErrors = (!emailResponse || emailResponse.error) && (!confirmEmailResponse || confirmEmailResponse.error);
+    
     return new Response(
-      JSON.stringify({ result: "ok", emailResponse, confirmEmailResponse }),
+      JSON.stringify({ 
+        result: "ok", 
+        emailResponse, 
+        confirmEmailResponse,
+        warnings: hasErrors ? ["Some emails may not have been sent, but your submission was received."] : undefined
+      }),
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
   } catch (error: any) {
-    // Only log errors server-side
-    console.error("Notify Contact Submit error:", error);
+    // Log detailed error information
+    console.error("❌ Notify Contact Submit error:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
+    
+    // Return user-friendly error message
+    const errorMessage = error.message || "An unexpected error occurred while processing your submission.";
+    
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: errorMessage,
+        // Don't expose stack traces in production for security
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
