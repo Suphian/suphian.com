@@ -363,3 +363,5 @@ The current design is a **sophisticated, tech-forward portfolio** that positions
 
 *This document describes the current state of the landing page as of the design review. All technical specifications, colors, and measurements are accurate to the current implementation.*
 
+
+

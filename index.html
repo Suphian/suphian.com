@@ -127,13 +127,15 @@
   </head>
 
   <body>
-    <div id="root">
-      <!-- Fallback content - should be replaced by React -->
-      <div style="padding: 2rem; background: #1a1a1a; color: #fff; min-height: 100vh;">
-        <h1>Loading...</h1>
-        <p>If you see this for more than a few seconds, React may not be loading.</p>
-        <p>Check the browser console (F12) for errors.</p>
-      </div>
+    <div id="root" style="min-height: 100vh;">
+      <!-- Fallback content - hidden by default to prevent flicker -->
+      <!-- Error handling in main.tsx will display errors if React fails to load -->
+      <noscript>
+        <div style="padding: 2rem; background: #1a1a1a; color: #fff; min-height: 100vh;">
+          <h1>JavaScript Required</h1>
+          <p>This application requires JavaScript to run. Please enable JavaScript in your browser.</p>
+        </div>
+      </noscript>
     </div>
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
