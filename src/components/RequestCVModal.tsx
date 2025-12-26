@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ButtonCustom } from "@/components/ui/button-custom";
 import AudioPlayer from "@/components/AudioPlayer";
-import { X } from "lucide-react";
 
 interface RequestCVModalProps {
   open: boolean;
@@ -63,15 +62,7 @@ const RequestCVModal = ({ open, onOpenChange, onGetInTouch }: RequestCVModalProp
 
       {/* Audio Player Modal */}
       <Dialog open={isAudioModalOpen} onOpenChange={setIsAudioModalOpen}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto relative">
-          <button
-            onClick={() => setIsAudioModalOpen(false)}
-            className="absolute right-4 top-4 z-50 rounded-sm opacity-70 hover:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF3B30]"
-            style={{ color: '#FF3B30' }}
-            aria-label="Close"
-          >
-            <X className="h-5 w-5" />
-          </button>
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto relative [&>button]:text-foreground [&>button]:opacity-100 [&>button]:hover:opacity-70 [&>button]:z-50">
           <DialogHeader>
             <DialogTitle>Listen to Resume</DialogTitle>
             <DialogDescription>
