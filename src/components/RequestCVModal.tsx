@@ -75,10 +75,10 @@ const RequestCVModal = ({ open, onOpenChange, onGetInTouch }: RequestCVModalProp
               title="The Resume Reimagined"
             />
           </div>
-          <div className="mt-8 pt-6 border-t">
+          <div className="mt-8 pt-6 border-t flex justify-center">
             <button
               onClick={() => setIsAudioModalOpen(false)}
-              className="w-full text-sm font-mono px-6 py-4 border rounded-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              className="text-xs font-mono px-5 py-2.5 border rounded-md transition-all duration-300 hover:scale-105 active:scale-95"
               style={{ 
                 color: '#FF3B30',
                 borderColor: '#FF3B30',
