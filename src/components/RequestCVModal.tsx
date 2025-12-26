@@ -62,18 +62,43 @@ const RequestCVModal = ({ open, onOpenChange, onGetInTouch }: RequestCVModalProp
 
       {/* Audio Player Modal */}
       <Dialog open={isAudioModalOpen} onOpenChange={setIsAudioModalOpen}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto relative [&>button]:text-foreground [&>button]:opacity-100 [&>button]:hover:opacity-70 [&>button]:z-50">
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto relative [&>button]:text-foreground [&>button]:opacity-100 [&>button]:hover:opacity-70 [&>button]:z-50 flex flex-col">
           <DialogHeader>
             <DialogTitle>Listen to Resume</DialogTitle>
             <DialogDescription>
               The Resume Reimagined - How One Leader Mastered AI, Data, and Impact Across Google, YouTube, and Beyond
             </DialogDescription>
           </DialogHeader>
-          <div className="mt-4">
+          <div className="mt-4 flex-grow">
             <AudioPlayer 
               src="/assets/audio/The_Resume_Reimagined__How_One_Leader_Mastered_AI,_Data,_and_Impact_Across_Google,_YouTube,_and_Beyo.m4a"
               title="The Resume Reimagined"
             />
+          </div>
+          <div className="mt-8 pt-6 border-t">
+            <button
+              onClick={() => setIsAudioModalOpen(false)}
+              className="w-full text-sm font-mono px-6 py-4 border rounded-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              style={{ 
+                color: '#FF3B30',
+                borderColor: '#FF3B30',
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                backdropFilter: 'blur(8px)',
+                boxShadow: '0 0 10px rgba(255, 59, 48, 0.2)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 59, 48, 0.15)';
+                e.currentTarget.style.borderColor = '#FF5C45';
+                e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 59, 48, 0.4), 0 0 30px rgba(255, 59, 48, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+                e.currentTarget.style.borderColor = '#FF3B30';
+                e.currentTarget.style.boxShadow = '0 0 10px rgba(255, 59, 48, 0.2)';
+              }}
+            >
+              Close
+            </button>
           </div>
         </DialogContent>
       </Dialog>

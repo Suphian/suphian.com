@@ -43,12 +43,42 @@ const Podcast = () => {
             An AI-powered conversation exploring career journey, leadership principles, and the intersection of technology and impact.
           </p>
         </div>
+
+        {/* Close Button */}
+        <div className="mt-8">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-full text-sm font-mono px-6 py-4 border rounded-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+            style={{ 
+              color: '#FF3B30',
+              borderColor: '#FF3B30',
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+              backdropFilter: 'blur(8px)',
+              boxShadow: '0 0 10px rgba(255, 59, 48, 0.2)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 59, 48, 0.15)';
+              e.currentTarget.style.borderColor = '#FF5C45';
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 59, 48, 0.4), 0 0 30px rgba(255, 59, 48, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+              e.currentTarget.style.borderColor = '#FF3B30';
+              e.currentTarget.style.boxShadow = '0 0 10px rgba(255, 59, 48, 0.2)';
+            }}
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
 export default Podcast;
+
+
+
 
 
 
