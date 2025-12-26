@@ -14,15 +14,11 @@ export const COUNT_OF_MONTE_CRISTO_QUOTES = [
 export const chipOptions = [
   {
     label: "Referral request",
-    text: "I'd love a referral for your team – here’s a bit about me…"
+    text: "I'd love a referral for your team – here's a bit about me…"
   },
   {
     label: "Job opportunity",
     text: "We have a PM opening that seems aligned with your background. Are you open to chat?"
-  },
-  {
-    label: "Tech chat",
-    text: "I saw your talk on payments infrastructure and would like to exchange ideas on data modeling."
   },
   {
     label: "Request Resume",

@@ -187,7 +187,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
         {submitButton ? submitButton : (
           <button
             type="submit"
-            className="wave-btn bg-accent text-white w-full h-14 mt-8 px-6 py-3 rounded-md font-montserrat font-bold transition-all duration-300 relative overflow-hidden group"
+            className="wave-btn bg-accent text-white w-full h-14 mt-6 px-6 py-3 rounded-md font-bold transition-all duration-300 relative overflow-hidden group"
             disabled={isSubmitting}
             aria-busy={isSubmitting}
             aria-label={isSubmitting ? "Sending..." : "Send Message"}

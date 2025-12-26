@@ -304,9 +304,10 @@
   /* === ContactSheet chips styling === */
   .chips {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
     margin-top: 10px;
+    overflow-x: auto;
   }
   .chip {
     background: #26262c;

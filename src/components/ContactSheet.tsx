@@ -42,39 +42,7 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
               showChips
               chipsBarComponent={<ContactChipsBar textareaId="message" />}
               onSubmitted={() => onOpenChange(false)}
-              extraFields={
-                <div className="mt-12 flex justify-center">
-                  <img
-                    src="/lovable-uploads/db2efd18-0555-427b-89b4-c5cae8a5a143.png"
-                    alt="Astronaut with orange moon"
-                    className="w-auto h-auto max-h-64 object-contain transform scale-130"
-                    loading="lazy"
-                  />
-                </div>
-              }
             />
-          </div>
-          <div className="p-6 md:p-8 border-t bg-secondary/30">
-            <div className="flex space-x-4 justify-center">
-              <a
-                href="https://www.linkedin.com/in/suphian/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Open Suphian's LinkedIn profile"
-              >
-                LinkedIn
-              </a>
-              <a
-                href="https://github.com/Suphian"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Open Suphian's GitHub profile"
-              >
-                GitHub
-              </a>
-            </div>
           </div>
         </div>
       </SheetContent>
