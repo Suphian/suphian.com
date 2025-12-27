@@ -1,8 +1,8 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
-const LazyContactSheet = React.lazy(() => import("./ContactSheet"));
+const LazyContactSheet = React.lazy(() => import("@/features/contact/components/ContactSheet"));
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -95,7 +95,7 @@ const Navbar = () => {
       console.error("❌ Failed to track navbar contact event:", error);
     }
     
-    await import("./ContactSheet");
+    await import("@/features/contact/components/ContactSheet");
     setContactOpen(true);
   };
 

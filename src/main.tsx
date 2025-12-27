@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
+import App from './app/App.tsx'
 import './index.css'
-import { registerServiceWorker } from './utils/serviceWorker'
+import { registerServiceWorker } from './shared/utils/serviceWorker'
 
 console.log('🚀 React app initializing...');
 
@@ -22,7 +22,7 @@ try {
   // Use dynamic import to prevent blocking if analytics files are blocked by ad blockers
   setTimeout(async () => {
     try {
-      const { secureEventTracker } = await import('./utils/analytics/secureEventTracker');
+      const { secureEventTracker } = await import('./shared/utils/analytics/secureEventTracker');
       secureEventTracker.initialize().catch(err => {
         console.warn('Analytics initialization failed (non-critical):', err);
       });

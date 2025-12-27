@@ -1,9 +1,9 @@
 import React from "react";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useContactForm, ContactFormData } from "@/hooks/useContactForm";
-import { COUNT_OF_MONTE_CRISTO_QUOTES, chipOptions } from "@/utils/contactFormConstants";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
+import { Textarea } from "@/shared/components/ui/textarea";
+import { useContactForm, ContactFormData } from "@/features/contact/hooks/useContactForm";
+import { COUNT_OF_MONTE_CRISTO_QUOTES, chipOptions } from "@/features/contact/utils/contactFormConstants";
 
 interface ContactFormProps {
   showPhone?: boolean;

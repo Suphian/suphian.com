@@ -2,8 +2,8 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "@/hooks/use-toast";
-import { sanitizeInput } from "@/utils/security";
+import { useToast } from "@/shared/hooks/use-toast";
+import { sanitizeInput } from "@/shared/utils/security/security";
 import supabase from "@/integrations/supabase/client";
 
 // Enhanced phone validation regex for better security

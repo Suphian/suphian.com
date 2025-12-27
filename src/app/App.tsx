@@ -1,25 +1,25 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/shared/components/ui/toaster";
+import { Toaster as Sonner } from "@/shared/components/ui/sonner";
+import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { useEffect } from "react";
-import { LazyNotFound, LazyRoute } from "./components/LazyRoute";
-import Index from "./pages/Index";
-import Payments from "./pages/Payments";
-import PaymentSuccess from "./pages/PaymentSuccess";
-import PaymentCancel from "./pages/PaymentCancel";
-import ManageBilling from "./pages/ManageBilling";
-import Podcast from "./pages/Podcast";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import Logo from "./components/Logo";
-import ScrollProgress from "./components/ScrollProgress";
-import SEOHead from "./components/SEOHead";
-import ErrorBoundary from "./components/ErrorBoundary";
-import AnimatedBackground from "./components/AnimatedBackground";
-import { useSpacebarGreeting } from "./hooks/useSpacebarGreeting";
+import { LazyNotFound, LazyRoute } from "@/shared/components/common/LazyRoute";
+import Index from "@/features/landing/pages/Index";
+import Payments from "@/features/payments/pages/Payments";
+import PaymentSuccess from "@/features/payments/pages/PaymentSuccess";
+import PaymentCancel from "@/features/payments/pages/PaymentCancel";
+import ManageBilling from "@/features/payments/pages/ManageBilling";
+import Podcast from "@/features/podcast/pages/Podcast";
+import Navbar from "@/shared/components/layout/Navbar";
+import Footer from "@/shared/components/layout/Footer";
+import Logo from "@/shared/components/layout/Logo";
+import ScrollProgress from "@/shared/components/common/ScrollProgress";
+import SEOHead from "@/shared/components/common/SEOHead";
+import ErrorBoundary from "@/shared/components/common/ErrorBoundary";
+import AnimatedBackground from "@/features/landing/components/AnimatedBackground";
+import { useSpacebarGreeting } from "@/features/landing/hooks/useSpacebarGreeting";
 
 
 // Scroll to top on route change

@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState, useCallback, Suspense } from "react";
-import LandingPageCursor from "@/components/LandingPageCursor";
+import LandingPageCursor from "@/features/landing/components/LandingPageCursor";
 
-const RequestCVModal = React.lazy(() => import("@/components/RequestCVModal"));
-const LazyContactSheet = React.lazy(() => import("@/components/ContactSheet"));
-import { initializeRevealAnimations } from "@/lib/animations";
-import { useScrollTracking } from "@/hooks/useScrollTracking";
-import { useEventTracker } from "@/hooks/useEventTracker";
-import ContentSection from "@/components/sections/ContentSection";
+const RequestCVModal = React.lazy(() => import("@/features/landing/components/RequestCVModal"));
+const LazyContactSheet = React.lazy(() => import("@/features/contact/components/ContactSheet"));
+import { initializeRevealAnimations } from "@/shared/lib/animations";
+import { useScrollTracking } from "@/shared/hooks/useScrollTracking";
+import { useEventTracker } from "@/shared/hooks/useEventTracker";
+import ContentSection from "@/features/landing/components/sections/ContentSection";
 
 const Index = () => {
   const landingRef = useRef<HTMLDivElement>(null);
@@ -132,7 +132,7 @@ const Index = () => {
         {/* Content Sections - pass refs for tracking */}
         <ContentSection 
           onRequestCV={async () => {
-            await import("@/components/RequestCVModal");
+            await import("@/features/landing/components/RequestCVModal");
             setIsModalOpen(true);
             track("open_cv_modal", {
               label: "Request CV",
@@ -141,7 +141,7 @@ const Index = () => {
             });
           }} 
           onContactClick={async () => {
-            await import("@/components/ContactSheet");
+            await import("@/features/contact/components/ContactSheet");
             handleContactOpenChange(true);
           }}
           aboutSectionRef={aboutSectionRef}
