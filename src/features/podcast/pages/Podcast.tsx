@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AudioPlayer from '@/components/AudioPlayer';
-import { useEventTracker } from '@/hooks/useEventTracker';
+import AudioPlayer from '@/shared/components/common/AudioPlayer';
+import { useEventTracker } from '@/shared/hooks/useEventTracker';
 
 const Podcast = () => {
   const navigate = useNavigate();

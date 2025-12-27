@@ -6,7 +6,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
-} from "@/components/ui/sheet";
+} from "@/shared/components/ui/sheet";
 import ContactForm from "./ContactForm";
 import ContactChipsBar from "./ContactChipsBar";
 

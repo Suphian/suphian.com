@@ -1,7 +1,7 @@
 import React, { useState, Suspense } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 
-const LazyContactSheet = React.lazy(() => import("./ContactSheet"));
+const LazyContactSheet = React.lazy(() => import("@/features/contact/components/ContactSheet"));
 
 const Footer = () => {
   const [contactOpen, setContactOpen] = useState(false);

@@ -1,9 +1,9 @@
 import React, { useState, useRef, Suspense } from "react";
 import { useLocation } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { WaveButton } from "@/components/ui/wave-button";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
+import { WaveButton } from "@/shared/components/ui/wave-button";
 
-const LazyContactSheet = React.lazy(() => import("./ContactSheet"));
+const LazyContactSheet = React.lazy(() => import("@/features/contact/components/ContactSheet"));
 
 const CallToAction = () => {
   const location = useLocation();

@@ -1,8 +1,8 @@
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ButtonCustom } from "@/components/ui/button-custom";
-import AudioPlayer from "@/components/AudioPlayer";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/shared/components/ui/dialog";
+import { ButtonCustom } from "@/shared/components/ui/button-custom";
+import AudioPlayer from "@/shared/components/common/AudioPlayer";
 
 interface RequestCVModalProps {
   open: boolean;

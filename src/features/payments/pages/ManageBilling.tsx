@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/shared/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { CreditCard, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import supabase from "@/integrations/supabase/client";
-import SEOHead from "@/components/SEOHead";
+import SEOHead from "@/shared/components/common/SEOHead";
 
 const ManageBilling = () => {
   const [email, setEmail] = useState("");

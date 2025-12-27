@@ -32,17 +32,17 @@ export default defineConfig(({ mode }) => ({
             if (id.includes('ua-parser-js')) return 'analytics';
           }
           // Split analytics utilities into separate chunk - load only when needed
-          if (id.includes('/utils/analytics/') || 
-              id.includes('/hooks/useEventTracker') ||
+          if (id.includes('/shared/utils/analytics/') || 
+              id.includes('/shared/hooks/useEventTracker') ||
               id.includes('AnalyticsPageviewListener')) return 'analytics';
           // Split heavy components into separate chunks
-          if (id.includes('/components/StreamingRevenueWidget') || 
-              id.includes('/components/EarningsChart') ||
-              id.includes('/components/ComparisonTable')) return 'widgets';
+          if (id.includes('/features/payments/components/StreamingRevenueWidget') || 
+              id.includes('/features/payments/components/EarningsChart') ||
+              id.includes('/features/payments/components/ComparisonTable')) return 'widgets';
           // Split contact forms into separate chunk
-          if (id.includes('/components/ContactForm') ||
-              id.includes('/components/ContactSheet') ||
-              id.includes('/components/RequestCVModal')) return 'contact';
+          if (id.includes('/features/contact/components/ContactForm') ||
+              id.includes('/features/contact/components/ContactSheet') ||
+              id.includes('/features/landing/components/RequestCVModal')) return 'contact';
         },
         // Optimize asset naming for better caching
         assetFileNames: (assetInfo) => {

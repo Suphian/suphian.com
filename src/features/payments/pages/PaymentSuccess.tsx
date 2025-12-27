@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import { CheckCircle } from "lucide-react";
-import SEOHead from "@/components/SEOHead";
+import SEOHead from "@/shared/components/common/SEOHead";
 
 const PaymentSuccess = () => {
   return (

@@ -2,7 +2,7 @@
 import React, { memo, useCallback } from "react";
 import { Headphones } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 
 interface ActionButtonsProps {
   onRequestCV: () => void;

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Play, Pause, Volume2, VolumeX, SkipBack, SkipForward } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/shared/hooks/use-mobile';
 
 interface AudioPlayerProps {
   src: string;

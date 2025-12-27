@@ -1,8 +1,8 @@
 import { lazy, Suspense } from 'react';
-import { SkeletonLoader } from './ui/skeleton-loader';
+import { SkeletonLoader } from '@/shared/components/ui/skeleton-loader';
 
 // Lazy load components for better performance
-export const LazyIndex = lazy(() => import('@/pages/Index'));
+export const LazyIndex = lazy(() => import('@/features/landing/pages/Index'));
 export const LazyNotFound = lazy(() => import('@/pages/NotFound'));
 
 // Wrapper component for lazy loaded routes

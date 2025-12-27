@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import { Check, Loader2, Rocket, Calendar, Shield, ArrowRight, CheckCircle, Mail, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import supabase from "@/integrations/supabase/client";
-import SEOHead from "@/components/SEOHead";
+import SEOHead from "@/shared/components/common/SEOHead";
 
 const Payments = () => {
   const [searchParams, setSearchParams] = useSearchParams();

@@ -1,16 +1,16 @@
 
 import React, { useState, useEffect, Suspense } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { Badge } from "@/shared/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/components/ui/tooltip";
+import { Button } from "@/shared/components/ui/button";
 import { ChevronDown, ChevronUp, Info, Monitor, Smartphone } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { LocationService, LocationData } from "@/utils/analytics/locationService";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
+import { LocationService, LocationData } from "@/shared/utils/analytics/locationService";
 
 // Lazy load heavy chart components
-const ComparisonTable = React.lazy(() => import("@/components/ComparisonTable").then(m => ({ default: m.ComparisonTable })));
-const EarningsChart = React.lazy(() => import("@/components/EarningsChart").then(m => ({ default: m.EarningsChart })));
+const ComparisonTable = React.lazy(() => import("@/features/payments/components/ComparisonTable").then(m => ({ default: m.ComparisonTable })));
+const EarningsChart = React.lazy(() => import("@/features/payments/components/EarningsChart").then(m => ({ default: m.EarningsChart })));
 
 interface StreamingRates {
   [country: string]: {

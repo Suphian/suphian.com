@@ -1,6 +1,6 @@
 
 import React from "react";
-import { COUNT_OF_MONTE_CRISTO_QUOTES, chipOptions } from "@/utils/contactFormConstants";
+import { COUNT_OF_MONTE_CRISTO_QUOTES, chipOptions } from "@/features/contact/utils/contactFormConstants";
 
 interface ContactChipsBarProps {
   textareaId: string;

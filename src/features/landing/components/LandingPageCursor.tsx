@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import TypingText from "./TypingText";
+import TypingText from "@/shared/components/common/TypingText";
 import HitSpacePrompt from "./HitSpacePrompt";
 
 type AnimationStage = 'greeting' | 'description' | 'deleting-description' | 'passion' | 'deleting-all';

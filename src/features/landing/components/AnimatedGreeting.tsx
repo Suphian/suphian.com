@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Greeting } from "../data/greetings";
-import { useIsMobile } from "../hooks/use-mobile";
+import { Greeting } from "@/features/landing/data/greetings";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 
 interface AnimatedGreetingProps {
   greetings: Greeting[];

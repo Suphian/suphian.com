@@ -4,7 +4,7 @@ import { getTrafficType } from './ipDetection';
 import { SessionManager } from './sessionManager';
 import { EventBatcher } from './eventBatcher';
 import { EventSanitizer } from './eventSanitizer';
-import { validateEventData } from '../security';
+import { validateEventData } from '../security/security';
 import { EventTrackerConfig, EventData, SessionData } from './types';
 
 class SecureEventTracker {

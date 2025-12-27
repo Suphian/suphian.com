@@ -11,7 +11,7 @@ interface UseEventTrackerOptions {
 let secureEventTrackerPromise: Promise<any> | null = null;
 const getSecureEventTracker = async () => {
   if (!secureEventTrackerPromise) {
-    secureEventTrackerPromise = import('@/utils/analytics/secureEventTracker')
+    secureEventTrackerPromise = import('@/shared/utils/analytics/secureEventTracker')
       .then(module => module.secureEventTracker)
       .catch(err => {
         if (import.meta.env.DEV) {
