@@ -15,7 +15,7 @@
 ```bash
 # Clone the repository (if not already done)
 git clone <your-repo-url>
-cd suphiansite
+cd suphian.com
 
 # Install dependencies
 npm install

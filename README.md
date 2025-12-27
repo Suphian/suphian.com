@@ -1,8 +1,8 @@
 # Suphian Tweel – Personal Portfolio & Digital Experience
 
 [![Deploy Status](https://img.shields.io/badge/deploy-live-brightgreen)](https://suphian.com)
-[![Security Status](https://img.shields.io/badge/security-protected-blue)](https://github.com/Suphian/suphiansite)
-[![Tech Stack](https://img.shields.io/badge/stack-React%20%7C%20TypeScript%20%7C%20Supabase-orange)](https://github.com/Suphian/suphiansite)
+[![Security Status](https://img.shields.io/badge/security-protected-blue)](https://github.com/Suphian/suphian.com)
+[![Tech Stack](https://img.shields.io/badge/stack-React%20%7C%20TypeScript%20%7C%20Supabase-orange)](https://github.com/Suphian/suphian.com)
 
 > A sophisticated personal portfolio showcasing expertise in product management, analytics, and modern web development. Built with performance, accessibility, and user experience at its core.
 
