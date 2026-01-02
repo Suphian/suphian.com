@@ -41,7 +41,9 @@ const AppContent = () => {
 
   // Check if we are in a production environment
   const isProduction = window.location.hostname === 'suphian.com' || 
-                       window.location.hostname === 'www.suphian.com';
+                       window.location.hostname === 'www.suphian.com' ||
+                       window.location.hostname === 'suph.ai' ||
+                       window.location.hostname === 'www.suph.ai';
                        
   return (
     <>
