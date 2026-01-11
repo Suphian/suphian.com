@@ -13,7 +13,7 @@ const Podcast = () => {
     // Track page view
     track('page_view', {
       page: '/podcast',
-      title: 'Podcast - The Resume Reimagined',
+      title: "Podcast - GenAI Solves YouTube's $20 Billion Payment Problem",
     });
   }, [track]);
 
@@ -31,16 +31,16 @@ const Podcast = () => {
 
         {/* Audio Player */}
         <div className="bg-black/50 backdrop-blur-sm border rounded-lg p-6 md:p-8" style={{ borderColor: 'rgba(255, 59, 48, 0.2)' }}>
-          <AudioPlayer 
-            src="/assets/audio/The_Resume_Reimagined__How_One_Leader_Mastered_AI,_Data,_and_Impact_Across_Google,_YouTube,_and_Beyo.m4a"
-            title="The Resume Reimagined"
+          <AudioPlayer
+            src="/assets/audio/GenAI_Solves_YouTubes_20_Billion_Payment_Problem.m4a"
+            title="GenAI Solves YouTube's $20 Billion Payment Problem"
           />
         </div>
 
         {/* Description */}
         <div className="mt-8 text-center">
           <p className="text-xs md:text-sm font-mono opacity-60 max-w-2xl mx-auto">
-            An AI-powered conversation exploring career journey, leadership principles, and the intersection of technology and impact.
+            An AI-powered conversation exploring how GenAI is revolutionizing YouTube's $20 billion payment ecosystem.
           </p>
         </div>
 
