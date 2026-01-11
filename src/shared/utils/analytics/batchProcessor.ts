@@ -11,7 +11,7 @@ export class BatchProcessor {
       // Sanitize events to remove client-only fields like 'retried'
       const sanitizedEvents = events.map(({ retried, ...event }) => event);
       
-      const { data, error } = await supabase
+      const { data: _data, error } = await supabase
         .from('events')
         .insert(sanitizedEvents);
 

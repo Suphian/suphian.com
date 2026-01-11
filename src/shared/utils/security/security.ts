@@ -1,5 +1,4 @@
-
-import supabase from '@/integrations/supabase/client';
+import { EventValidator } from '../analytics/eventValidator';
 
 // Enhanced input sanitization helper
 export const sanitizeInput = (input: string, maxLength: number = 1000): string => {
@@ -45,22 +44,14 @@ export const validateSessionData = (sessionData: any): { isValid: boolean; error
   };
 };
 
-// Validate event data
-export const validateEventData = (eventData: any): { isValid: boolean; errors: string[] } => {
-  const errors: string[] = [];
-  
-  if (!eventData.event_name || typeof eventData.event_name !== 'string') {
-    errors.push('Event name is required and must be a string');
-  } else if (!/^[a-zA-Z0-9_-]+$/.test(eventData.event_name)) {
-    errors.push('Event name contains invalid characters');
-  }
-  
-  if (eventData.event_payload && JSON.stringify(eventData.event_payload).length > 10240) {
-    errors.push('Event payload too large (max 10KB)');
-  }
-  
+/**
+ * Validate event data.
+ * @deprecated Use EventValidator.validate() from '../analytics/eventValidator' instead.
+ */
+export const validateEventData = (eventData: { event_name: string; event_payload?: Record<string, unknown> }): { isValid: boolean; errors: string[] } => {
+  const result = EventValidator.validate(eventData.event_name, eventData.event_payload);
   return {
-    isValid: errors.length === 0,
-    errors
+    isValid: result.isValid,
+    errors: result.errors
   };
 };

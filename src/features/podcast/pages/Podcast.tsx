@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AudioPlayer from '@/shared/components/common/AudioPlayer';
 import { useEventTracker } from '@/shared/hooks/useEventTracker';

@@ -2,7 +2,7 @@ import React from "react";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 import { Textarea } from "@/shared/components/ui/textarea";
-import { useContactForm, ContactFormData } from "@/features/contact/hooks/useContactForm";
+import { useContactForm } from "@/features/contact/hooks/useContactForm";
 import { COUNT_OF_MONTE_CRISTO_QUOTES, chipOptions } from "@/features/contact/utils/contactFormConstants";
 
 interface ContactFormProps {
@@ -20,7 +20,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
   source,
   onSubmitted,
   showChips,
-  chipsBarComponent,
+  chipsBarComponent: _chipsBarComponent,
   extraFields,
   submitButton,
 }) => {

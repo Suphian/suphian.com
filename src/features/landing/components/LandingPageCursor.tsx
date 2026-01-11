@@ -6,7 +6,7 @@ type AnimationStage = 'greeting' | 'description' | 'deleting-description' | 'pas
 
 const LandingPageCursor = () => {
   const [currentLanguage, setCurrentLanguage] = useState(0);
-  const [showSpacePrompt, setShowSpacePrompt] = useState(true);
+  const [showSpacePrompt, _setShowSpacePrompt] = useState(true);
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [stage, setStage] = useState<AnimationStage>('greeting');
@@ -194,7 +194,7 @@ const LandingPageCursor = () => {
     }
   }, [stage, currentLanguage, content]);
 
-  const playPronunciation = async () => {
+  const _playPronunciation = async () => {
     const now = Date.now();
     
     if (now - lastAudioPlayRef.current < 60000) {

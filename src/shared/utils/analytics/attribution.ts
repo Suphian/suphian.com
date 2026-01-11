@@ -26,7 +26,7 @@ export function getOriginalAttribution(): Record<string, any> {
 
   // Get UTM parameters, fallback to referrer if not set, only on first page
   const utms = getUrlParams();
-  const hasAnyUtm = Object.values(utms).some(Boolean);
+  const _hasAnyUtm = Object.values(utms).some(Boolean);
   // Landing page path and full URL
   const landing_path = window.location.pathname;
   const landing_full_url = window.location.href;

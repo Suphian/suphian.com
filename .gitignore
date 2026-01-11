@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 .vercel
 .env*.local
+
+# Large media files (should be in cloud storage)
+*.m4a
+!public/*.m4a
+GenAI_Solves_YouTube*

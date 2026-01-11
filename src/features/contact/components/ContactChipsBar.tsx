@@ -8,7 +8,7 @@ interface ContactChipsBarProps {
   value?: string;
 }
 
-const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId, onChange, value }) => {
+const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId, onChange, value: _value }) => {
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     if (!target.classList.contains("chip")) return;

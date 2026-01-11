@@ -20,7 +20,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, title = "The Resume Reim
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const isMobile = useIsMobile();
+  const _isMobile = useIsMobile();
 
   // Initialize audio context and analyser
   useEffect(() => {

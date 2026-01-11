@@ -14,10 +14,10 @@ async function getCachedVisitorMeta(): Promise<Record<string, unknown>> {
   }
   
   if (!visitorMetaPromise) {
-    visitorMetaPromise = getVisitorMetaData().then((meta: Record<string, unknown>) => {
-      cachedVisitorMeta = meta;
-      return meta;
-    }) as Promise<Record<string, unknown>>;
+    visitorMetaPromise = getVisitorMetaData().then((meta) => {
+      cachedVisitorMeta = meta as Record<string, unknown>;
+      return cachedVisitorMeta;
+    });
   }
   
   return visitorMetaPromise;
@@ -51,10 +51,6 @@ export const trackEvent = async (
 
     // Use sendBeacon for critical events during page unload
     if (useBeacon && navigator.sendBeacon) {
-      const data = JSON.stringify({
-        event: eventName,
-        ...enrichedData,
-      });
       // Note: GA4 doesn't directly support sendBeacon, but we can queue it
       // For now, use gtag with transport: 'beacon' option
       window.gtag("event", eventName, {

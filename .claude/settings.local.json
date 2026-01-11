@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(copy:*)",
+      "Bash(ls:*)",
+      "Bash(git -C \"C:/Users/suphi/dev/suphian.com\" status)",
+      "Bash(tree:*)",
+      "Bash(git -C \"C:/Users/suphi/dev/suphian.com\" diff)",
+      "Bash(git -C \"C:/Users/suphi/dev/suphian.com\" log --oneline -5)",
+      "Bash(git -C \"C:/Users/suphi/dev/suphian.com\" add \"src/features/podcast/pages/Podcast.tsx\" \"public/assets/audio/GenAI_Solves_YouTubes_20_Billion_Payment_Problem.m4a\")",
+      "Bash(git -C \"C:/Users/suphi/dev/suphian.com\" commit -m \"$\\(cat <<''EOF''\nfeat: update podcast audio to GenAI YouTube payment problem episode\n\nReplace resume audio with new episode about GenAI solving YouTube''s $20 billion payment problem.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git -C \"C:/Users/suphi/dev/suphian.com\" push)",
+      "Bash(npm audit:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfix: update react-router to patch XSS vulnerability\n\nUpgrade react-router 6.27.0 -> 6.30.3 and @remix-run/router 1.20.0 -> 1.23.2\nFixes GHSA-2w69-qvjg-hvjx \\(high severity XSS via Open Redirects\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(gh api:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

@@ -19,6 +19,8 @@ export interface ReferrerInfo {
   referrer_detail: string;
 }
 
+import { TrafficDetector } from './trafficDetector';
+
 export class VisitorTracking {
   private static readonly VISITOR_KEY = 'analytics_visitor_id';
   private static readonly VISIT_COUNT_KEY = 'analytics_visit_count';
@@ -29,7 +31,7 @@ export class VisitorTracking {
     const existingVisitorId = localStorage.getItem(this.VISITOR_KEY);
     const visitCount = parseInt(localStorage.getItem(this.VISIT_COUNT_KEY) || '0');
     const firstVisit = localStorage.getItem(this.FIRST_VISIT_KEY);
-    const lastVisit = localStorage.getItem(this.LAST_VISIT_KEY);
+    const _lastVisit = localStorage.getItem(this.LAST_VISIT_KEY);
     const now = new Date().toISOString();
 
     if (existingVisitorId && firstVisit) {
@@ -75,7 +77,7 @@ export class VisitorTracking {
 
   static analyzeReferrer(): ReferrerInfo {
     const referrer = document.referrer;
-    const currentUrl = window.location.href;
+    const _currentUrl = window.location.href;
     const urlParams = new URLSearchParams(window.location.search);
     
     // Check for custom source parameters
@@ -157,31 +159,10 @@ export class VisitorTracking {
     }
   }
 
+  /**
+   * @deprecated Use TrafficDetector.isInternalTraffic() instead.
+   */
   static detectInternalTraffic(): boolean {
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    // Check for internal flag
-    if (urlParams.get('internal') === 'true') {
-      return true;
-    }
-    
-    // Check for Lovable-specific tokens/parameters
-    if (urlParams.get('__lovable_token')) {
-      return true;
-    }
-    
-    // Check user agent for known internal patterns
-    const userAgent = navigator.userAgent.toLowerCase();
-    if (userAgent.includes('lovable') || userAgent.includes('internal-qa')) {
-      return true;
-    }
-    
-    // Check for development/localhost domains
-    const hostname = window.location.hostname;
-    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('.lovableproject.com')) {
-      return true;
-    }
-    
-    return false;
+    return TrafficDetector.isInternalTraffic();
   }
 }

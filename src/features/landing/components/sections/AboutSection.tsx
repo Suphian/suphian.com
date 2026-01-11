@@ -1,5 +1,5 @@
 
-import React, { forwardRef, memo } from "react";
+import { forwardRef, memo } from "react";
 import ActionButtons from "./ActionButtons";
 
 interface AboutSectionProps {

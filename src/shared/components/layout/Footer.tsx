@@ -5,7 +5,7 @@ const LazyContactSheet = React.lazy(() => import("@/features/contact/components/
 
 const Footer = () => {
   const [contactOpen, setContactOpen] = useState(false);
-  const isMobile = useIsMobile();
+  const _isMobile = useIsMobile();
   
 
   const handleSocialClick = async (platform: string, url: string) => {

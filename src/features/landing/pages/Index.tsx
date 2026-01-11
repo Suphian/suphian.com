@@ -33,7 +33,7 @@ const Index = () => {
     { name: "experience", ref: experienceSectionRef, threshold: 0.4 }
   ];
 
-  const { viewedSections } = useScrollTracking({
+  const { viewedSections: _viewedSections } = useScrollTracking({
     sections: scrollSections,
     onSectionView: (sectionName, progress) => {
       // Only log engagement events in development mode
@@ -110,12 +110,12 @@ const Index = () => {
       </div>
       
       {/* Transition Section - Minimal Gap */}
-      <div 
+      <div
         ref={parallaxImageRef}
         className="relative"
         style={{
-          paddingTop: '8vh',
-          paddingBottom: '8vh'
+          paddingTop: '4vh',
+          paddingBottom: '4vh'
         }}
       >
       </div>

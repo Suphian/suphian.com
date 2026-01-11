@@ -84,17 +84,32 @@ Security Monitoring   → Basic logging and protection
 
 ```
 src/
-├── components/           # Reusable UI components
-│   ├── ui/              # Base design system components
-│   └── sections/        # Page section components
-├── hooks/               # Custom React hooks
-├── pages/               # Route components
-├── utils/               # Utility functions and helpers
-│   ├── analytics/       # Privacy-first tracking system
-│   ├── security/        # Security utilities and monitoring
-│   └── validation/      # Form and data validation
-├── lib/                 # External library configurations
+├── app/                  # Application entry point
+├── features/             # Feature-based modules
+│   ├── contact/         # Contact form feature
+│   ├── landing/         # Landing page and sections
+│   ├── payments/        # Payment processing
+│   └── projects/        # Project showcase
+├── integrations/         # External service integrations
+│   └── supabase/        # Database client and types
+├── pages/               # Route-level page components
+├── shared/              # Shared code across features
+│   ├── components/      # Reusable UI components
+│   │   ├── common/     # Common components
+│   │   ├── layout/     # Layout components
+│   │   └── ui/         # Base design system
+│   ├── hooks/          # Custom React hooks
+│   ├── lib/            # Library utilities
+│   └── utils/          # Utilities
+│       ├── analytics/  # Privacy-first tracking
+│       └── security/   # Security utilities
 └── styles/              # Global styles and animations
+
+docs/
+├── architecture/         # System design documentation
+├── design/              # UI/UX design specs
+├── guides/              # Development guides
+└── planning/            # Project planning docs
 ```
 
 ---

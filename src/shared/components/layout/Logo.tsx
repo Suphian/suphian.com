@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 const Logo = () => {
   const location = useLocation();
   const isHomepage = location.pathname === "/";
-  const [showLogo, setShowLogo] = useState(false);
+  const [_showLogo, setShowLogo] = useState(false);
 
   useEffect(() => {
     if (!isHomepage) {

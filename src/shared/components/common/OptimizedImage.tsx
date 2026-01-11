@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, memo } from 'react';
-import { SkeletonLoader } from './ui/skeleton-loader';
+import { SkeletonLoader } from '@/shared/components/ui/skeleton-loader';
 
 interface OptimizedImageProps {
   src: string;

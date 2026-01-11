@@ -30,7 +30,7 @@ export default function TypingText({
   }, [displayedText]);
 
   // Helper function to get variable typing speed (more natural)
-  const getTypingSpeed = (char: string, index: number, totalLength: number, previousChar?: string): number => {
+  const getTypingSpeed = (char: string, index: number, _totalLength: number, previousChar?: string): number => {
     let baseSpeed = speed;
     
     // Longer pauses after sentence-ending punctuation (like thinking)

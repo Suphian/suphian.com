@@ -6,7 +6,7 @@ import { WaveButton } from "@/shared/components/ui/wave-button";
 const LazyContactSheet = React.lazy(() => import("@/features/contact/components/ContactSheet"));
 
 const CallToAction = () => {
-  const location = useLocation();
+  const _location = useLocation();
   const [contactOpen, setContactOpen] = useState(false);
   const isMobile = useIsMobile();
   const lastAudioPlayRef = useRef<number>(0);

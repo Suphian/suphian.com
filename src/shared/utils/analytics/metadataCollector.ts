@@ -1,5 +1,9 @@
+/**
+ * @deprecated Use MetadataService from './metadataService' instead.
+ * This file re-exports for backward compatibility.
+ */
 
-import { UAParser } from 'ua-parser-js';
+import { MetadataService } from './metadataService';
 
 export interface BrowserMetadata {
   browser: string;
@@ -18,23 +22,6 @@ export interface BrowserMetadata {
 
 export class MetadataCollector {
   static collectBrowserMetadata(): BrowserMetadata {
-    // console.log('🔒 Collecting browser metadata...');
-    const parser = new UAParser();
-    const result = parser.getResult();
-
-    return {
-      browser: `${result.browser.name} ${result.browser.version}`,
-      os: `${result.os.name} ${result.os.version}`,
-      device_type: result.device.type || 'desktop',
-      screen_width: window.screen.width,
-      screen_height: window.screen.height,
-      viewport_width: window.innerWidth,
-      viewport_height: window.innerHeight,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      locale: navigator.language,
-      referrer: document.referrer || null,
-      landing_url: window.location.href,
-      user_agent: navigator.userAgent
-    };
+    return MetadataService.collectBrowserMetadata();
   }
 }

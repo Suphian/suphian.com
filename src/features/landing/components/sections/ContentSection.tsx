@@ -10,11 +10,11 @@ interface ContentSectionProps {
   experienceSectionRef?: RefObject<HTMLDivElement>;
 }
 
-const ContentSection = ({ 
-  onRequestCV, 
-  onContactClick, 
-  aboutSectionRef, 
-  experienceSectionRef 
+const ContentSection = ({
+  onRequestCV,
+  onContactClick: _onContactClick,
+  aboutSectionRef,
+  experienceSectionRef
 }: ContentSectionProps) => {
   return (
     <div className="pt-0 pb-12">

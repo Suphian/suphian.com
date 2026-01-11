@@ -104,7 +104,7 @@ export class SessionManager {
       }
       
       // Try to insert the session with error handling
-      const { data, error } = await supabase
+      const { data: _data, error } = await supabase
         .from('sessions')
         .insert(this.sessionData);
 

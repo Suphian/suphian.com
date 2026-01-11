@@ -1,7 +1,7 @@
-import React, { forwardRef, useCallback, memo } from "react";
+import { forwardRef, useCallback, memo } from "react";
 import { ExternalLink } from "lucide-react";
 
-const ExperienceSection = memo(forwardRef<HTMLDivElement>((props, ref) => {
+const ExperienceSection = memo(forwardRef<HTMLDivElement>((_props, ref) => {
   const handleExternalLinkClick = useCallback(async (linkTitle: string, url: string) => {
     console.log(`🎯 External link clicked: ${linkTitle}`);
     
