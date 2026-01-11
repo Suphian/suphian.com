@@ -48,6 +48,10 @@ class EngagementTracker {
   private onIdleChange?: (isIdle: boolean) => void;
   private onEngagementMilestone?: (score: number) => void;
 
+  // Guard against recursive updateMetrics calls
+  private isUpdatingMetrics = false;
+  private firedMilestones = new Set<number>();
+
   constructor() {
     this.startTime = Date.now();
     this.lastActivityTime = this.startTime;
@@ -252,20 +256,31 @@ class EngagementTracker {
   }
 
   private updateMetrics(): void {
-    const now = Date.now();
-    this.metrics.totalTimeMs = now - this.startTime;
-    this.metrics.activeTimeMs = this.activeTimeAccumulator;
-    this.metrics.idleTimeMs = this.idleTimeAccumulator;
-    this.metrics.interactionScore = this.calculateEngagementScore();
+    // Guard against recursive calls
+    if (this.isUpdatingMetrics) return;
+    this.isUpdatingMetrics = true;
 
-    // Check for engagement milestones
-    const score = this.metrics.interactionScore;
-    if (score >= 25 && score < 50) {
-      this.onEngagementMilestone?.(25);
-    } else if (score >= 50 && score < 75) {
-      this.onEngagementMilestone?.(50);
-    } else if (score >= 75) {
-      this.onEngagementMilestone?.(75);
+    try {
+      const now = Date.now();
+      this.metrics.totalTimeMs = now - this.startTime;
+      this.metrics.activeTimeMs = this.activeTimeAccumulator;
+      this.metrics.idleTimeMs = this.idleTimeAccumulator;
+      this.metrics.interactionScore = this.calculateEngagementScore();
+
+      // Check for engagement milestones (only fire once per milestone)
+      const score = this.metrics.interactionScore;
+      if (score >= 75 && !this.firedMilestones.has(75)) {
+        this.firedMilestones.add(75);
+        this.onEngagementMilestone?.(75);
+      } else if (score >= 50 && !this.firedMilestones.has(50)) {
+        this.firedMilestones.add(50);
+        this.onEngagementMilestone?.(50);
+      } else if (score >= 25 && !this.firedMilestones.has(25)) {
+        this.firedMilestones.add(25);
+        this.onEngagementMilestone?.(25);
+      }
+    } finally {
+      this.isUpdatingMetrics = false;
     }
   }
 

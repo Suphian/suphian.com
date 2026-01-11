@@ -175,11 +175,11 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
 
       {/* Side Panel */}
       <div
-        className="fixed top-0 right-0 h-full z-[9999] w-80 bg-gray-900/95 backdrop-blur-xl text-white shadow-2xl border-l border-white/10 transform transition-transform duration-300 ease-out overflow-hidden flex flex-col"
+        className="fixed top-0 right-0 h-full z-[9999] w-80 bg-black/95 backdrop-blur-xl text-white shadow-2xl border-l border-[hsl(0,60%,45%)]/20 transform transition-transform duration-300 ease-out overflow-hidden flex flex-col"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between flex-shrink-0">
+        <div className="px-4 py-3 border-b border-[hsl(0,60%,45%)]/10 flex items-center justify-between flex-shrink-0">
           <div>
             <h2 className="text-sm font-semibold flex items-center gap-2">
               <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -191,7 +191,7 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-white/10 rounded-md transition-colors"
+            className="p-1.5 hover:bg-[hsl(0,60%,45%)]/10 rounded-md transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -200,7 +200,7 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
         </div>
 
         {/* Engagement Score */}
-        <div className="px-4 py-3 bg-white/5 flex-shrink-0">
+        <div className="px-4 py-3 bg-[hsl(0,60%,45%)]/5 flex-shrink-0">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-xs text-gray-400">Engagement</span>
             <span
@@ -225,7 +225,7 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-2 px-4 py-3 border-b border-white/10 flex-shrink-0">
+        <div className="grid grid-cols-3 gap-2 px-4 py-3 border-b border-[hsl(0,60%,45%)]/10 flex-shrink-0">
           <div className="text-center">
             <div className="text-base font-bold font-mono text-blue-400">{stats.clicks}</div>
             <div className="text-[10px] text-gray-500">Clicks</div>
@@ -258,7 +258,7 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
                   return (
                     <div
                       key={event.id}
-                      className="flex items-start gap-2 px-2 py-1.5 rounded hover:bg-white/5 transition-colors"
+                      className="flex items-start gap-2 px-2 py-1.5 rounded hover:bg-[hsl(0,60%,45%)]/5 transition-colors"
                     >
                       <span
                         className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs"
@@ -279,7 +279,7 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2 bg-white/5 border-t border-white/10 text-center flex-shrink-0">
+        <div className="px-4 py-2 bg-[hsl(0,60%,45%)]/5 border-t border-[hsl(0,60%,45%)]/10 text-center flex-shrink-0">
           <p className="text-[10px] text-gray-600">
             This data is only visible to you
           </p>
