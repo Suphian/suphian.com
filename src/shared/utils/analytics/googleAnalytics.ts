@@ -1,5 +1,6 @@
 
 import { getVisitorMetaData } from './visitorMetadata';
+import { analyticsConsole } from './consoleLogger';
 
 // Cache visitor metadata to avoid repeated async calls
 let cachedVisitorMeta: Record<string, unknown> | null = null;
@@ -34,10 +35,13 @@ async function getCachedVisitorMeta(): Promise<Record<string, unknown>> {
  * Usage: window.trackEvent("button_click", {label: "CV Request", ...});
  */
 export const trackEvent = async (
-  eventName: string, 
+  eventName: string,
   eventData: Record<string, unknown> = {},
   useBeacon = false
 ) => {
+  // Always log to analytics console for the LiveAnalyticsPanel
+  analyticsConsole.log(eventName, eventData);
+
   if (typeof window.gtag !== "function") {
     return;
   }

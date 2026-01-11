@@ -197,6 +197,8 @@ export const useAdvancedAnalytics = (options: AdvancedAnalyticsOptions = {}) => 
             link_text: link.textContent?.slice(0, 100),
             target: link.target || '_self'
           });
+          // Record for engagement scoring
+          engagementTracker.recordExternalLinkClick();
         }
       } catch {
         // Invalid URL, skip
@@ -298,6 +300,8 @@ export const useAdvancedAnalytics = (options: AdvancedAnalyticsOptions = {}) => 
         current_time: audio.currentTime,
         duration: audio.duration
       });
+      // Record for engagement scoring
+      engagementTracker.recordAudioPlay();
     };
 
     const handlePause = (e: Event) => {
@@ -418,7 +422,10 @@ export const useAdvancedAnalytics = (options: AdvancedAnalyticsOptions = {}) => 
     track,
     getEngagementMetrics: () => engagementTracker.getMetrics(),
     getFormattedMetrics: () => engagementTracker.getFormattedMetrics(),
-    recordSectionView: (sectionId: string) => engagementTracker.recordSectionView(sectionId)
+    recordSectionView: (sectionId: string) => engagementTracker.recordSectionView(sectionId),
+    recordExternalLinkClick: () => engagementTracker.recordExternalLinkClick(),
+    recordAudioPlay: () => engagementTracker.recordAudioPlay(),
+    recordCtaClick: () => engagementTracker.recordCtaClick()
   };
 };
 

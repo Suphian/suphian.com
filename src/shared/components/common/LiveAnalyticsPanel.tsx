@@ -3,8 +3,9 @@
  * User-facing panel showing real-time analytics as they browse
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { engagementTracker } from '@/shared/utils/analytics/engagementTracker';
+import { VisitorTracking } from '@/shared/utils/analytics/visitorTracking';
 
 interface EventDisplay {
   id: string;
@@ -22,6 +23,67 @@ const CATEGORY_CONFIG: Record<string, { emoji: string; color: string; label: str
   engagement: { emoji: '💡', color: '#f59e0b', label: 'Engagement' },
   audio: { emoji: '🔊', color: '#ec4899', label: 'Audio' },
   custom: { emoji: '✨', color: '#6366f1', label: 'Action' },
+};
+
+// 8-bit celebration animation component
+const PixelCelebration = ({ show }: { show: boolean }) => {
+  if (!show) return null;
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden z-50">
+      {/* Pixel confetti */}
+      {[...Array(20)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute w-2 h-2"
+          style={{
+            left: `${Math.random() * 100}%`,
+            backgroundColor: ['#FF3B30', '#FF5C45', '#FF8C7A', '#FFF'][Math.floor(Math.random() * 4)],
+            animation: `pixelFall ${1 + Math.random() * 2}s ease-out forwards`,
+            animationDelay: `${Math.random() * 0.5}s`,
+            imageRendering: 'pixelated',
+          }}
+        />
+      ))}
+
+      {/* Center trophy */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center animate-bounce">
+        <div className="text-4xl mb-2" style={{ imageRendering: 'pixelated' }}>🏆</div>
+        <div
+          className="text-xs font-mono font-bold px-2 py-1 bg-[#FF3B30] text-white"
+          style={{ imageRendering: 'pixelated' }}
+        >
+          100%!
+        </div>
+      </div>
+
+      {/* Pixel sparkles */}
+      {[...Array(8)].map((_, i) => (
+        <div
+          key={`sparkle-${i}`}
+          className="absolute w-1 h-1 bg-white"
+          style={{
+            left: `${20 + (i * 10)}%`,
+            top: `${30 + Math.sin(i) * 20}%`,
+            animation: `pixelSparkle 0.5s ease-in-out infinite`,
+            animationDelay: `${i * 0.1}s`,
+            boxShadow: '0 0 4px #FF3B30',
+          }}
+        />
+      ))}
+
+      <style>{`
+        @keyframes pixelFall {
+          0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(300px) rotate(360deg); opacity: 0; }
+        }
+        @keyframes pixelSparkle {
+          0%, 100% { opacity: 0; transform: scale(0); }
+          50% { opacity: 1; transform: scale(2); }
+        }
+      `}</style>
+    </div>
+  );
 };
 
 // Human-readable event descriptions
@@ -87,7 +149,24 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
   const [events, setEvents] = useState<EventDisplay[]>([]);
   const [engagementScore, setEngagementScore] = useState(0);
   const [stats, setStats] = useState({ clicks: 0, scrollDepth: 0, timeOnPage: 0 });
+  const [showCelebration, setShowCelebration] = useState(false);
   const eventIdCounter = useRef(0);
+  const hasShownCelebration = useRef(false);
+
+  // Get visitor info once on mount
+  const visitorInfo = useMemo(() => {
+    const referrerInfo = VisitorTracking.analyzeReferrer();
+    const visitorData = VisitorTracking.getOrCreateVisitorData();
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    return {
+      source: referrerInfo.referrer_source,
+      sourceDetail: referrerInfo.referrer_detail,
+      visitCount: visitorData.visit_count,
+      timezone,
+      isReturning: visitorData.visit_count > 1
+    };
+  }, []);
 
   const addEvent = useCallback((name: string, payload: Record<string, unknown>) => {
     // Skip internal/debug events
@@ -135,6 +214,13 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
         scrollDepth: metrics.scrollDepthMax,
         timeOnPage: Math.round(metrics.totalTimeMs / 1000)
       });
+
+      // Trigger celebration at 100%
+      if (metrics.interactionScore >= 100 && !hasShownCelebration.current) {
+        hasShownCelebration.current = true;
+        setShowCelebration(true);
+        setTimeout(() => setShowCelebration(false), 4000);
+      }
     }, 1000);
 
     return () => clearInterval(interval);
@@ -151,18 +237,21 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
     });
   };
 
+  // Red branding color scale (oxide red theme)
   const getScoreColor = (score: number) => {
-    if (score < 30) return '#ef4444';
-    if (score < 60) return '#f59e0b';
-    return '#10b981';
+    if (score < 25) return '#8B2020'; // Dark oxide red
+    if (score < 50) return '#B84040'; // Oxide red
+    if (score < 75) return '#D45050'; // Lighter red
+    if (score < 100) return '#FF5C45'; // Bright red
+    return '#FF3B30'; // Full engagement red
   };
 
   const getScoreMessage = (score: number) => {
-    if (score < 20) return "Just getting started...";
-    if (score < 40) return "Warming up!";
-    if (score < 60) return "Getting engaged!";
-    if (score < 80) return "Really exploring!";
-    return "Super engaged! 🎉";
+    if (score < 25) return "Just getting started...";
+    if (score < 50) return "Warming up!";
+    if (score < 75) return "Getting engaged!";
+    if (score < 100) return "Almost there!";
+    return "FULL ENGAGEMENT!";
   };
 
   return (
@@ -178,6 +267,9 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
         className="fixed top-0 right-0 h-full z-[9999] w-80 bg-black/95 backdrop-blur-xl text-white shadow-2xl border-l border-[hsl(0,60%,45%)]/20 transform transition-transform duration-300 ease-out overflow-hidden flex flex-col"
         onClick={e => e.stopPropagation()}
       >
+        {/* 8-bit celebration at 100% */}
+        <PixelCelebration show={showCelebration} />
+
         {/* Header */}
         <div className="px-4 py-3 border-b border-[hsl(0,60%,45%)]/10 flex items-center justify-between flex-shrink-0">
           <div>
@@ -197,6 +289,30 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
+        </div>
+
+        {/* Visitor Info */}
+        <div className="px-4 py-2 border-b border-[hsl(0,60%,45%)]/10 flex-shrink-0">
+          <div className="flex items-center gap-3 text-[10px]">
+            <div className="flex items-center gap-1.5">
+              <span className="text-gray-500">From:</span>
+              <span className="text-[#FF5C45] font-medium capitalize">
+                {visitorInfo.source === 'direct' ? 'Direct' : visitorInfo.sourceDetail}
+              </span>
+            </div>
+            <div className="w-px h-3 bg-gray-700" />
+            <div className="flex items-center gap-1.5">
+              <span className="text-gray-500">Visit:</span>
+              <span className="text-white">
+                #{visitorInfo.visitCount}
+                {visitorInfo.isReturning && <span className="text-[#FF5C45] ml-1">returning</span>}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 mt-1 text-[10px]">
+            <span className="text-gray-600">📍</span>
+            <span className="text-gray-500">{visitorInfo.timezone}</span>
+          </div>
         </div>
 
         {/* Engagement Score */}
