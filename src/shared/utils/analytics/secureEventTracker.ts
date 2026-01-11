@@ -6,6 +6,7 @@ import { EventBatcher } from './eventBatcher';
 import { EventSanitizer } from './eventSanitizer';
 import { validateEventData } from '../security/security';
 import { EventTrackerConfig, EventData, SessionData } from './types';
+import { analyticsConsole } from './consoleLogger';
 
 class SecureEventTracker {
   private config: EventTrackerConfig;
@@ -57,9 +58,7 @@ class SecureEventTracker {
 
       // Process any pending events that were queued before initialization
       if (this.pendingEvents.length > 0) {
-        if (import.meta.env.DEV) {
-          console.log(`🔒 Processing ${this.pendingEvents.length} pending events...`);
-        }
+        analyticsConsole.log('pending_events_processing', { count: this.pendingEvents.length });
         this.pendingEvents.forEach(event => {
           this.trackEvent(event.name, event.payload);
         });
@@ -83,9 +82,11 @@ class SecureEventTracker {
       return;
     }
 
-    if (import.meta.env.DEV) {
-      console.log(`🔒 Tracking event: ${eventName} (${this.isInternalTraffic ? 'INTERNAL' : 'EXTERNAL'} traffic)`, eventPayload);
-    }
+    // Log to analytics console (development only)
+    analyticsConsole.log(eventName, {
+      ...eventPayload,
+      _traffic: this.isInternalTraffic ? 'internal' : 'external'
+    }, this.sessionManager.getSessionId());
 
     const sanitizedPayload = EventSanitizer.sanitizeEventPayload(eventPayload);
 

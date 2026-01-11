@@ -20,6 +20,9 @@ import SEOHead from "@/shared/components/common/SEOHead";
 import ErrorBoundary from "@/shared/components/common/ErrorBoundary";
 import AnimatedBackground from "@/features/landing/components/AnimatedBackground";
 import { useSpacebarGreeting } from "@/features/landing/hooks/useSpacebarGreeting";
+import { AnalyticsDebugOverlay } from "@/shared/components/dev/AnalyticsDebugOverlay";
+import { useAdvancedAnalytics } from "@/shared/hooks/useAdvancedAnalytics";
+import { secureEventTracker } from "@/shared/utils/analytics/secureEventTracker";
 
 
 // Scroll to top on route change
@@ -39,15 +42,30 @@ const AppContent = () => {
   // Enable spacebar greeting functionality
   useSpacebarGreeting();
 
+  // Advanced analytics with all high-value tracking
+  useAdvancedAnalytics({
+    trackFormEngagement: true,
+    trackExternalLinks: true,
+    trackCopyEvents: true,
+    trackErrors: true,
+    trackAudioEngagement: true,
+    trackTimeOnPage: true,
+    onTrack: (eventName, payload) => {
+      // Route all advanced analytics events to the secure tracker
+      secureEventTracker.track(eventName, payload);
+    }
+  });
+
   // Check if we are in a production environment
-  const isProduction = window.location.hostname === 'suphian.com' || 
+  const isProduction = window.location.hostname === 'suphian.com' ||
                        window.location.hostname === 'www.suphian.com' ||
                        window.location.hostname === 'suph.ai' ||
                        window.location.hostname === 'www.suph.ai';
-                       
+
   return (
     <>
       <AnimatedBackground />
+      <AnalyticsDebugOverlay />
       {!isProduction && (
         <div className="fixed top-0 left-0 right-0 z-[100] flex justify-center pointer-events-none">
           <span className="bg-yellow-500/90 text-black text-[10px] font-bold px-3 py-0.5 rounded-b-md shadow-md backdrop-blur-sm pointer-events-auto">

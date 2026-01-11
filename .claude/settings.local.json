@@ -16,7 +16,9 @@
       "Bash(git push:*)",
       "Bash(gh api:*)",
       "Bash(npm run build:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run dev:*)"
     ]
   }
 }
