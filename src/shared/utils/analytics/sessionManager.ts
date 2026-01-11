@@ -41,7 +41,10 @@ export class SessionManager {
 
     // Anonymize IP address for privacy before storing
     const anonymizedIp = ipAddress ? await this.anonymizeIpAddress(ipAddress) : null;
-    
+
+    // Extract only the fields that exist in the sessions table (exclude languages, platform)
+    const { languages: _languages, platform: _platform, ...sessionBrowserMetadata } = browserMetadata as any;
+
     const rawSessionData = {
       session_id: this.sessionId,
       visitor_id: enhancedData.visitorData.visitor_id,
@@ -60,7 +63,7 @@ export class SessionManager {
       utm_content: enhancedData.utmParams.utm_content || null,
       utm_term: enhancedData.utmParams.utm_term || null,
       landing_url: window.location.href,
-      ...browserMetadata,
+      ...sessionBrowserMetadata,
       is_internal_user: enhancedData.isInternal || isInternalTraffic
     };
 

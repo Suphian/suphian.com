@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "@/shared/components/ui/sonner";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { Analytics } from "@vercel/analytics/react";
 import { useEffect } from "react";
 import { LazyNotFound, LazyRoute } from "@/shared/components/common/LazyRoute";
 import Index from "@/features/landing/pages/Index";
@@ -90,7 +89,6 @@ const AppContent = () => {
         </Routes>
       </main>
       <Footer />
-      <Analytics />
     </>
   );
 };
