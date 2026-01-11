@@ -205,7 +205,9 @@ class EngagementTracker {
   private detectRageClick(e: MouseEvent): void {
     const now = Date.now();
     const target = e.target as HTMLElement;
-    const elementDesc = target.tagName + (target.className ? `.${target.className.split(' ')[0]}` : '');
+    // Handle SVG elements where className is SVGAnimatedString, not a string
+    const className = typeof target.className === 'string' ? target.className : target.className?.baseVal || '';
+    const elementDesc = target.tagName + (className ? `.${className.split(' ')[0]}` : '');
 
     const clickData: RageClickData = {
       x: e.clientX,
