@@ -3,11 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/shared/lib/utils";
 
 const LazyContactSheet = React.lazy(() => import("@/features/contact/components/ContactSheet"));
+const LazyLiveAnalyticsPanel = React.lazy(() => import("@/shared/components/common/LiveAnalyticsPanel"));
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [analyticsOpen, setAnalyticsOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(false);
   const location = useLocation();
   const closeMenu = () => setIsOpen(false);
@@ -116,10 +118,10 @@ const Navbar = () => {
           <ul className="hidden md:flex space-x-6 md:space-x-8 items-center justify-end">
             {navLinks.map(link => (
               <li key={link.name}>
-                <Link 
-                  to={link.path} 
+                <Link
+                  to={link.path}
                   className={cn(
-                    "text-xs font-mono py-2 hover:opacity-70 transition-opacity", 
+                    "text-xs font-mono py-2 hover:opacity-70 transition-opacity",
                     isActive(link.path) && !link.scrollTo ? "opacity-100" : "opacity-80"
                   )}
                   style={{ color: 'rgba(255, 255, 255, 0.85)' }}
@@ -129,7 +131,19 @@ const Navbar = () => {
                 </Link>
               </li>
             ))}
-            
+
+            <li>
+              <button
+                onClick={() => setAnalyticsOpen(true)}
+                className="text-xs font-mono px-3 py-2 hover:opacity-70 transition-opacity flex items-center gap-1.5"
+                style={{ color: 'rgba(255, 255, 255, 0.85)' }}
+                title="See your live analytics"
+              >
+                <span>📊</span>
+                <span>Live Stats</span>
+              </button>
+            </li>
+
             <li>
               <button
                 onClick={handleGetInTouchClick}
@@ -145,6 +159,12 @@ const Navbar = () => {
       
       <Suspense fallback={null}>
         <LazyContactSheet open={contactOpen} onOpenChange={setContactOpen} />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        {analyticsOpen && (
+          <LazyLiveAnalyticsPanel isOpen={analyticsOpen} onClose={() => setAnalyticsOpen(false)} />
+        )}
       </Suspense>
     </header>
   );
