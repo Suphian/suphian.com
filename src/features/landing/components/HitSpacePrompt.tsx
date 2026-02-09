@@ -97,6 +97,7 @@ export default function HitSpacePrompt({ onSpacePress }: HitSpacePromptProps) {
       }}
     >
       <button
+        aria-label="Scroll down to content section"
         className="relative text-xs font-mono px-5 py-2.5 border rounded-md transition-all duration-300 hover:scale-105 active:scale-95 space-button-glow"
         style={{ 
           color: '#FF3B30',

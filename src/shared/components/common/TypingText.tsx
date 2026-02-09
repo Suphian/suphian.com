@@ -23,6 +23,9 @@ export default function TypingText({
   const isDeletingRef = useRef<boolean>(false);
   const prevTextPropRef = useRef<string>('');
   const displayedTextRef = useRef<string>('');
+  const prefersReducedMotion = useRef(
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
 
   // Always keep ref in sync with state
   useEffect(() => {
@@ -130,8 +133,16 @@ export default function TypingText({
     if (text === prevTextPropRef.current) {
       return;
     }
-    
+
     prevTextPropRef.current = text;
+
+    // If user prefers reduced motion, show text instantly
+    if (prefersReducedMotion.current) {
+      setDisplayedText(text);
+      setIsTyping(false);
+      if (onComplete) onComplete();
+      return;
+    }
     
     // Clear any existing timeouts
     if (timeoutRef.current) {

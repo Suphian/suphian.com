@@ -16,11 +16,11 @@ const AboutSection = memo(forwardRef<HTMLDivElement, AboutSectionProps>(
     ];
 
     return (
-      <section id="about-section" ref={ref} className="mb-32 md:mb-40 py-12">
+      <section id="about-section" ref={ref} className="mb-32 md:mb-40 py-12" aria-labelledby="about-heading">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
             {/* Editorial heading */}
-            <h2 className="heading-lg mb-16 text-white" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
+            <h2 id="about-heading" className="heading-lg mb-16 text-white" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
               STORY
             </h2>
             

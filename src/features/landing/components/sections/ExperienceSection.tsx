@@ -76,10 +76,10 @@ const ExperienceSection = memo(forwardRef<HTMLDivElement>((_props, ref) => {
   }];
   
   return (
-    <section id="experience-section" ref={ref} className="mb-32 md:mb-40 py-12">
+    <section id="experience-section" ref={ref} className="mb-32 md:mb-40 py-12" aria-labelledby="experience-heading">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto">
-          <h2 className="heading-lg mb-16 text-white" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
+          <h2 id="experience-heading" className="heading-lg mb-16 text-white" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
             EXPERIENCE
           </h2>
           
@@ -88,16 +88,17 @@ const ExperienceSection = memo(forwardRef<HTMLDivElement>((_props, ref) => {
               <div key={index} className="relative">
                 {/* Timeline line (except last) */}
                 {index < experiences.length - 1 && (
-                  <div 
+                  <div
                     className="absolute left-0 top-12 bottom-0 w-px bg-white/10"
                     style={{ left: '0.5rem' }}
+                    aria-hidden="true"
                   />
                 )}
-                
+
                 <div className="flex gap-6 md:gap-8">
                   {/* Timeline dot */}
-                  <div className="flex-shrink-0 relative z-10">
-                    <div 
+                  <div className="flex-shrink-0 relative z-10" aria-hidden="true">
+                    <div
                       className="w-3 h-3 rounded-full bg-white/20 border border-white/30"
                       style={{ marginTop: '0.25rem' }}
                     />
@@ -106,9 +107,9 @@ const ExperienceSection = memo(forwardRef<HTMLDivElement>((_props, ref) => {
                   {/* Content */}
                   <div className="flex-1 pb-8">
                     {/* Period */}
-                    <div 
+                    <div
                       className="text-sm font-mono mb-2"
-                      style={{ color: 'rgba(200, 60, 45, 0.8)' }}
+                      style={{ color: 'rgba(220, 70, 55, 1)' }}
                     >
                       {exp.period}
                     </div>
@@ -133,7 +134,8 @@ const ExperienceSection = memo(forwardRef<HTMLDivElement>((_props, ref) => {
                           onClick={() => handleExternalLinkClick(`${exp.role} at ${exp.company}`, exp.roleUrl)}
                         >
                           <span>{exp.role}</span>
-                          <ExternalLink size={12} />
+                          <ExternalLink size={12} aria-hidden="true" />
+                          <span className="sr-only">(opens in new tab)</span>
                         </a>
                       </div>
                     ) : (
@@ -155,7 +157,7 @@ const ExperienceSection = memo(forwardRef<HTMLDivElement>((_props, ref) => {
                     
                     {/* Links */}
                     {exp.links.length > 0 && (
-                      <ul className="space-y-1.5 pt-2 pl-0 list-none">
+                      <ul className="space-y-1.5 pt-2 pl-0 list-none" role="list">
                         {exp.links.map((link, linkIndex) => (
                           <li key={linkIndex} className="flex items-center gap-2">
                             <span className="text-xs font-mono" style={{ color: 'rgba(200, 60, 45, 0.9)' }}>•</span>
@@ -167,8 +169,9 @@ const ExperienceSection = memo(forwardRef<HTMLDivElement>((_props, ref) => {
                               style={{ color: 'rgba(200, 60, 45, 0.9)' }}
                               onClick={() => handleExternalLinkClick(link.title, link.url)}
                             >
-                              <ExternalLink size={12} />
+                              <ExternalLink size={12} aria-hidden="true" />
                               <span>{link.title}</span>
+                              <span className="sr-only">(opens in new tab)</span>
                             </a>
                           </li>
                         ))}

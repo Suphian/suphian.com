@@ -10,7 +10,6 @@ const LandingPageCursor = () => {
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [stage, setStage] = useState<AnimationStage>('greeting');
-  const lastAudioPlayRef = useRef<number>(0);
   const hasStartedRef = useRef(false);
 
   // Content that rotates through multiple languages
@@ -194,23 +193,6 @@ const LandingPageCursor = () => {
     }
   }, [stage, currentLanguage, content]);
 
-  const _playPronunciation = async () => {
-    const now = Date.now();
-    
-    if (now - lastAudioPlayRef.current < 60000) {
-      return;
-    }
-    
-    try {
-      const audio = new Audio('/suphian-pronunciation.wav');
-      audio.volume = 0.8;
-      await audio.play();
-      lastAudioPlayRef.current = now;
-    } catch (error) {
-      console.error("❌ Failed to play pronunciation audio:", error);
-    }
-  };
-
   const handleSpacePress = async () => {
     // Scroll to content section (where the audio button is)
     // User can then click the button to hear the audio
@@ -253,10 +235,10 @@ const LandingPageCursor = () => {
             dir={isRTL(content[currentLanguage].language) ? "rtl" : "ltr"}
           >
             {(isTyping || displayedText) && (
-              <h1 
+              <h1
                 className="text-3xl md:text-4xl lg:text-5xl font-mono font-normal mb-0 w-full"
                 dir={isRTL(content[currentLanguage].language) ? "rtl" : "ltr"}
-                style={{ 
+                style={{
                   lineHeight: '1.4',
                   margin: 0,
                   padding: 0,
@@ -267,7 +249,7 @@ const LandingPageCursor = () => {
                   letterSpacing: '-0.01em',
                 }}
               >
-                <span className="block" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                <span className="block" style={{ color: 'rgba(255, 255, 255, 0.9)' }} aria-live="polite" aria-atomic="true">
                   <TypingText
                     text={displayedText}
                     speed={60}
@@ -276,7 +258,7 @@ const LandingPageCursor = () => {
                     className=""
                   />
                   {isTyping && (
-                    <span className="inline-block w-0.5 h-6 md:h-8 bg-white ml-1 animate-pulse" style={{ animationDuration: '1s' }} />
+                    <span className="inline-block w-0.5 h-6 md:h-8 bg-white ml-1 animate-pulse" aria-hidden="true" style={{ animationDuration: '1s' }} />
                   )}
                 </span>
               </h1>

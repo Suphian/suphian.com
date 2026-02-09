@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Play, Pause, Volume2, VolumeX, SkipBack, SkipForward } from 'lucide-react';
-import { useIsMobile } from '@/shared/hooks/use-mobile';
 
 interface AudioPlayerProps {
   src: string;
@@ -20,7 +19,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, title = "The Resume Reim
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const _isMobile = useIsMobile();
 
   // Initialize audio context and analyser
   useEffect(() => {
@@ -226,6 +224,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, title = "The Resume Reim
           ref={canvasRef}
           className="w-full h-32 md:h-48"
           style={{ display: 'block' }}
+          role="img"
+          aria-label="Audio waveform visualization"
         />
       </div>
 
@@ -243,6 +243,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, title = "The Resume Reim
             value={currentTime}
             onChange={handleSeek}
             className="flex-1 h-1 bg-white/10 rounded-lg appearance-none cursor-pointer"
+            aria-label="Seek audio position"
+            aria-valuetext={formatTime(currentTime)}
             style={{
               background: `linear-gradient(to right, #FF3B30 0%, #FF3B30 ${(currentTime / duration) * 100}%, rgba(255, 255, 255, 0.1) ${(currentTime / duration) * 100}%, rgba(255, 255, 255, 0.1) 100%)`
             }}
@@ -319,6 +321,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, title = "The Resume Reim
             value={isMuted ? 0 : volume}
             onChange={handleVolumeChange}
             className="w-24 md:w-32 h-1 bg-white/10 rounded-lg appearance-none cursor-pointer"
+            aria-label="Adjust volume"
+            aria-valuetext={`${Math.round((isMuted ? 0 : volume) * 100)}%`}
             style={{
               background: `linear-gradient(to right, #FF3B30 0%, #FF3B30 ${(isMuted ? 0 : volume) * 100}%, rgba(255, 255, 255, 0.1) ${(isMuted ? 0 : volume) * 100}%, rgba(255, 255, 255, 0.1) 100%)`
             }}
@@ -338,10 +342,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, title = "The Resume Reim
 };
 
 export default AudioPlayer;
-
-
-
-
 
 
 

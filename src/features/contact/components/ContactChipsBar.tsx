@@ -37,6 +37,13 @@ const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId, onChange,
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      (e.target as HTMLElement).click();
+    }
+  };
+
   return (
     <div id="chipBar" className="chips mt-2" onClick={handleClick}>
       {chipOptions.map(opt => (
@@ -46,11 +53,12 @@ const ContactChipsBar: React.FC<ContactChipsBarProps> = ({ textareaId, onChange,
           key={opt.label}
           tabIndex={0}
           role="button"
+          onKeyDown={handleKeyDown}
         >
           {opt.label}
         </span>
       ))}
-      <span className="chip" tabIndex={0} role="button">Random</span>
+      <span className="chip" tabIndex={0} role="button" onKeyDown={handleKeyDown}>Random</span>
     </div>
   );
 };

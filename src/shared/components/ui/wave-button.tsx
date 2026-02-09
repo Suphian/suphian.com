@@ -17,7 +17,7 @@ const WaveButton = React.forwardRef<HTMLButtonElement, WaveButtonProps>(
     children,
     ...props
   }, ref) => {
-    const baseStyles = "wave-btn font-montserrat font-bold transition-all duration-300 relative overflow-hidden group rounded-md";
+    const baseStyles = "wave-btn font-montserrat font-bold transition-all duration-300 relative overflow-hidden group rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
     
     const variantStyles = {
       primary: "bg-primary text-background hover:text-primary-foreground",

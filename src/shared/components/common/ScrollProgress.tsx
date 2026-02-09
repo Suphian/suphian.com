@@ -46,13 +46,18 @@ const ScrollProgress = () => {
   }, []);
 
   return (
-    <div 
+    <div
       className="fixed top-0 left-0 w-full h-px z-50"
       style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+      role="progressbar"
+      aria-valuenow={Math.round(scrollProgress)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label="Page scroll progress"
     >
-      <div 
+      <div
         className="h-full transition-all duration-150 ease-out"
-        style={{ 
+        style={{
           width: `${scrollProgress}%`,
           backgroundColor: 'rgba(200, 60, 45, 0.6)'
         }}

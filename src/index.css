@@ -129,11 +129,6 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  /* Transform scale utility */
-  .scale-130 {
-    transform: scale(1.3);
-  }
-
   /* Animation for form elements */
   @keyframes fade-slide-up {
     0% {
@@ -172,30 +167,6 @@
     }
   }
 
-  .form-group {
-    animation: fade-slide-up 0.5s ease-out forwards;
-    animation-delay: calc(var(--index, 0) * 0.1s);
-    opacity: 0;
-  }
-
-  /* Button slide-up animation */
-  .contact-btn .slide-up {
-    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
-  }
-
-  .contact-btn:hover .slide-up {
-    transform: translateY(-100%);
-  }
-
-  /* Button gradient slide-up animation */
-  .contact-btn span:last-child {
-    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
-  }
-
-  .contact-btn:hover span:last-child {
-    transform: translateY(0) !important;
-  }
-
   /* Red outline and placeholder styles for form fields */
   input:focus, textarea:focus {
     @apply border-accent ring-1 ring-accent outline-none;
@@ -203,18 +174,6 @@
 
   input:focus::placeholder, textarea:focus::placeholder {
     @apply text-accent/70;
-  }
-
-  /* Staggered fade-in animation - slow and subtle */
-  .staggered-fade-in > * {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 1s ease-out, transform 1s ease-out;
-  }
-
-  .staggered-fade-in > *.active {
-    opacity: 1;
-    transform: translateY(0);
   }
 
   /* Link underline animation - slow and subtle */
@@ -319,9 +278,13 @@
     transition: background 0.2s;
     user-select: none;
   }
-  .chip:hover, .chip:focus {
+  .chip:hover {
     background: #32323a;
-    outline: none;
+  }
+  .chip:focus-visible {
+    background: #32323a;
+    outline: 2px solid hsl(var(--accent));
+    outline-offset: 2px;
   }
   
   /* Add scroll margin to prevent content from hiding behind navbar */
@@ -350,22 +313,4 @@
     z-index: 1;
   }
 
-  /* Subtle constellation dots */
-  .constellation-dots {
-    position: relative;
-  }
-
-  .constellation-dots::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
-    background-size: 50px 50px;
-    opacity: 0.3;
-    pointer-events: none;
-    z-index: 0;
-  }
 }

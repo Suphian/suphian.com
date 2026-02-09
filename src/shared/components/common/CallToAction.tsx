@@ -1,12 +1,10 @@
 import React, { useState, useRef, Suspense } from "react";
-import { useLocation } from "react-router-dom";
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { WaveButton } from "@/shared/components/ui/wave-button";
 
 const LazyContactSheet = React.lazy(() => import("@/features/contact/components/ContactSheet"));
 
 const CallToAction = () => {
-  const _location = useLocation();
   const [contactOpen, setContactOpen] = useState(false);
   const isMobile = useIsMobile();
   const lastAudioPlayRef = useRef<number>(0);
@@ -107,8 +105,7 @@ const CallToAction = () => {
       type: "hover_interaction",
     });
     
-    // Always try to play pronunciation audio on hover
-    playPronunciation("hover");
+    // Don't auto-play audio on hover - only play on explicit click (WCAG 1.4.2)
     
     // Set timeout for auto-scroll after animation duration (3s)
     hoverTimeoutRef.current = setTimeout(async () => {
@@ -161,7 +158,7 @@ const CallToAction = () => {
           className="flex-1 sm:flex-none sm:w-56 text-center group relative"
         >
           <div className="flex items-center justify-center">
-            <div className="flex items-center space-x-1 mr-3">
+            <div className="flex items-center space-x-1 mr-3" aria-hidden="true">
               <div className="w-1 h-3 bg-[#FF3B30] rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-500"></div>
               <div className="w-1 h-4 bg-[#FF3B30] rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-500" style={{animationDelay: '0.1s'}}></div>
               <div className="w-1 h-2 bg-[#FF3B30] rounded-full opacity-60 group-hover:animate-pulse group-hover:opacity-100 transition-all duration-500" style={{animationDelay: '0.2s'}}></div>

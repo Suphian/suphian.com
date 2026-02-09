@@ -80,7 +80,7 @@ const ActionButtons = memo(({ onRequestCV }: ActionButtonsProps) => {
           e.currentTarget.style.backgroundColor = 'transparent';
         }}
       >
-        <Headphones className="h-4 w-4" />
+        <Headphones className="h-4 w-4" aria-hidden="true" />
         <span>{isMobile ? "Listen" : "Notebook LLM Podcast"}</span>
       </button>
     </div>

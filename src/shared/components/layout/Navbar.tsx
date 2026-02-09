@@ -112,7 +112,7 @@ const Navbar = () => {
       isScrolled || isOpen ? "blur-backdrop" : ""
     )}>
       <div className="container-custom">
-        <nav className="flex justify-between items-center">
+        <nav className="flex justify-between items-center" aria-label="Main navigation">
           <div className="flex-1"></div>
 
           <ul className="hidden md:flex space-x-6 md:space-x-8 items-center justify-end">
@@ -137,9 +137,9 @@ const Navbar = () => {
                 onClick={() => setAnalyticsOpen(true)}
                 className="text-xs font-mono px-3 py-2 hover:opacity-70 transition-opacity flex items-center gap-1.5"
                 style={{ color: 'rgba(255, 255, 255, 0.85)' }}
-                title="See your live analytics"
+                aria-label="View live analytics activity"
               >
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
                 </svg>
                 <span>Activity</span>

@@ -170,11 +170,22 @@ const ContactForm: React.FC<ContactFormProps> = ({
                             key={opt.label}
                             tabIndex={0}
                             role="button"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                (e.target as HTMLElement).click();
+                              }
+                            }}
                           >
                             {opt.label}
                           </span>
                         ))}
-                        <span className="chip" tabIndex={0} role="button">Random</span>
+                        <span className="chip" tabIndex={0} role="button" onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            (e.target as HTMLElement).click();
+                          }
+                        }}>Random</span>
                       </div>
                     )}
                   </>
