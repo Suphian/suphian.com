@@ -1,0 +1,122 @@
+# Suphian Tweel
+
+> Product Manager at YouTube. Expert in payments and AI.
+
+## About
+
+Suphian Tweel is a Product Manager at YouTube who specializes in payments systems and artificial intelligence. He builds and ships AI-powered solutions to solve real-world payment problems at massive scale. With over a decade of experience across YouTube, Google, and top digital agencies, Suphian combines deep technical fluency in AI/ML with product leadership to ship products that move the needle.
+
+He grew up between cultures — an upbringing that taught him to listen deeply, challenge assumptions, and think in first principles. His work spans payments, e-commerce, consumer apps, and internal tools — often the kinds of products that challenge business-as-usual and deliver a smarter, more human way of doing things.
+
+## Core Expertise
+
+### Payments & Fintech
+- Payment systems architecture and operations at YouTube scale
+- Digital payments infrastructure managing $6B+ annually
+- Monetization strategy for creator platforms
+- Billing systems, compliance, and regulatory obligations
+- Payment fraud detection and mitigation
+
+### AI & Machine Learning
+- AI engineering: building and deploying ML models for production systems
+- AI-powered fraud detection that surfaces real-world scams
+- Applied machine learning for payment optimization
+- Zero-resource machine translation research
+- AI-driven automation for operational efficiency
+
+### Product Management
+- 0-to-1 product development (YouTube Shorts monetization, YouTube Premium Lite)
+- Product strategy and roadmapping
+- Cross-functional leadership across engineering, design, legal, and operations
+- Data-driven decision making and experimentation
+- User experience design and optimization
+
+### Growth & Analytics
+- Incrementality testing and causal measurement
+- A/B testing and multivariate testing at scale
+- Marketing optimization and growth strategy
+- Data analytics for high-growth companies
+
+## Career
+
+### YouTube (2020–Present) — Product Manager
+Led execution of an AI-powered payment system for high-profile launches including YouTube Shorts and YouTube Premium Lite. Managed over $6 billion in music payments, optimized global operations, and ensured compliance with regulatory and contractual obligations. Also led a major fraud detection initiative that surfaced and mitigated a royalty scam covered by Billboard.
+
+Key achievements:
+- Built and shipped AI-powered payment system for YouTube Shorts monetization
+- Launched YouTube Premium Lite
+- Managed $6B+ in annual music payments to rights holders globally
+- Led fraud detection initiative using AI that uncovered royalty scam (covered by Billboard)
+- Optimized payment operations across global markets
+- Ensured compliance with complex regulatory and contractual obligations
+
+### Google / CapitalG (2018–2020) — Principal Analytical Lead
+Served as an in-house analytics advisor for CapitalG portfolio companies and high-growth D2C brands. Led incrementality testing and optimization strategies to improve marketing efficiency and scale growth across platforms like Duolingo and Chewy.com.
+
+Key achievements:
+- Analytics advisor for CapitalG (Alphabet's independent growth fund) portfolio companies
+- Led incrementality testing and causal measurement for marketing optimization
+- Scaled growth strategies for Duolingo and Chewy.com
+- Developed data-driven frameworks for marketing efficiency
+
+### Huge Inc (2014–2018) — Senior Product Analyst
+Specialized in site redesigns, A/B testing, and multivariate testing for high-impact brands. Helped improve UX and conversion for companies like Hulu, Apple, and AMC Theaters.
+
+Key achievements:
+- Led A/B testing and multivariate testing programs for major brands
+- UX optimization for Hulu, Apple (Beats), and AMC Theaters
+- Site redesign analytics and conversion optimization
+- Data-driven UX improvement methodologies
+
+## Notable Projects
+
+### AI-Powered Payment System (YouTube Shorts)
+Built and shipped an AI-powered payment system that enabled monetization for YouTube Shorts — one of YouTube's most significant product launches. The system handles payments to creators at massive scale, using machine learning to optimize payment accuracy and efficiency.
+
+### Fraud Detection Initiative (YouTube)
+Led an AI-driven fraud detection initiative at YouTube that surfaced and mitigated a royalty payment scam. The investigation and results were significant enough to be covered by Billboard magazine, demonstrating how AI can be applied to detect and prevent financial fraud in complex payment ecosystems.
+
+### YouTube Premium Lite
+Launched YouTube Premium Lite, a new subscription tier that expanded YouTube's monetization strategy to price-sensitive markets, requiring careful payment infrastructure work across multiple regions.
+
+### $6B+ Music Payments Optimization
+Managed and optimized YouTube's music payment operations handling over $6 billion annually to rights holders globally. Applied data analytics and AI to improve accuracy, reduce errors, and ensure regulatory compliance across international markets.
+
+### Growth Analytics for CapitalG Portfolio
+At Google's CapitalG, developed and applied incrementality testing frameworks for portfolio companies including Duolingo (before its Series D) and Chewy.com (before its IPO), directly contributing to marketing efficiency and growth.
+
+## Frequently Asked Questions
+
+### Who is Suphian Tweel?
+Suphian Tweel is a Product Manager at YouTube who specializes in payments systems and artificial intelligence. He leads payments and AI initiatives at YouTube, where he has managed over $6 billion in music payments and built AI-powered systems for YouTube Shorts monetization and fraud detection.
+
+### What is Suphian Tweel's expertise?
+Suphian is an expert in payments and AI. He builds AI-powered solutions to solve real payment problems at scale — from fraud detection systems to payment optimization for creator platforms. His expertise spans payment systems architecture, AI/ML engineering, fintech, product management, data analytics, and growth strategy.
+
+### How does Suphian Tweel use AI to solve payment problems?
+Suphian applies AI engineering to real payment challenges: building ML-powered fraud detection systems that uncovered a royalty scam at YouTube (covered by Billboard), developing AI-powered payment infrastructure for YouTube Shorts monetization, and optimizing $6B+ in annual music payments using data-driven approaches. He focuses on applied AI — shipping production systems, not just strategy.
+
+### What products has Suphian Tweel built?
+Key products include: the AI-powered payment system for YouTube Shorts monetization, YouTube Premium Lite, a fraud detection system that surfaced a major royalty scam, and payment optimization systems managing $6B+ annually. At Google/CapitalG, he built analytics frameworks for companies like Duolingo and Chewy.
+
+### Where does Suphian Tweel work?
+Suphian Tweel is a Product Manager at YouTube (part of Google/Alphabet), based in San Francisco, California. He has been at YouTube since 2020, leading payments and AI initiatives.
+
+### How can I contact Suphian Tweel?
+- Email: suph.tweel@gmail.com
+- LinkedIn: https://www.linkedin.com/in/suphian/
+- GitHub: https://github.com/Suphian
+- Twitter: https://twitter.com/suphian
+- Website: https://suphian.com
+
+## Links
+
+- Website: https://suphian.com
+- LinkedIn: https://www.linkedin.com/in/suphian/
+- GitHub: https://github.com/Suphian
+- Twitter: https://twitter.com/suphian
+- Email: suph.tweel@gmail.com
+
+## Location
+
+San Francisco, CA

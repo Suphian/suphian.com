@@ -7,9 +7,9 @@ interface SEOHeadProps {
   url?: string;
 }
 
-const SEOHead = ({ 
-  title = "Suphian Tweel – Senior Product Manager",
-  description = "Senior Product Manager at YouTube leading payments and AI initiatives. Expert in fintech, fraud detection, and growth for platforms like YouTube Shorts and Premium.",
+const SEOHead = ({
+  title = "Suphian Tweel – Product Manager at YouTube | Payments & AI Expert",
+  description = "Product Manager at YouTube specializing in payments and AI. Builds AI-powered payment systems at scale — managing $6B+ in music payments, launching YouTube Shorts monetization, and leading AI-driven fraud detection.",
   image = "/assets/images/u1327668621_logo_SUPH_--chaos_15_--ar_23_--profile_aa8enny_--st_b2040bf7-71f1-4263-bf3e-422f9561d81e.png",
   url = window.location.href
 }: SEOHeadProps) => {
@@ -37,7 +37,7 @@ const SEOHead = ({
 
     // Basic meta tags
     updateMetaTag('description', description);
-    updateMetaTag('keywords', 'Senior Product Manager, YouTube Product Manager, AI Product Management, Fintech, Payments, Fraud Detection, Data Analytics, UX Design, Suphian Tweel, San Francisco Product Manager');
+    updateMetaTag('keywords', 'Product Manager, YouTube Product Manager, Payments Expert, AI Engineering, AI Product Manager, Payment Systems, Fintech, Fraud Detection, Digital Payments, Machine Learning, Data Analytics, YouTube Shorts, YouTube Payments, Suphian Tweel');
     updateMetaTag('author', 'Suphian Tweel');
 
     // Get absolute URLs (add cache-busting parameter for social media)
@@ -65,7 +65,7 @@ const SEOHead = ({
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
     updateMetaTag('twitter:image', absoluteImageUrl);
-    updateMetaTag('twitter:image:alt', 'Suphian Tweel - Senior Product Manager at YouTube');
+    updateMetaTag('twitter:image:alt', 'Suphian Tweel – Product Manager at YouTube | Payments & AI Expert');
     updateMetaTag('twitter:site', '@suphian');
     updateMetaTag('twitter:creator', '@suphian');
 
@@ -80,7 +80,7 @@ const SEOHead = ({
     updateMetaTag('geo.placename', 'San Francisco');
     updateMetaTag('geo.position', '37.7749;-122.4194');
     updateMetaTag('ICBM', '37.7749, -122.4194');
-    updateMetaTag('copyright', '© 2025 Suphian Tweel');
+    updateMetaTag('copyright', '© 2026 Suphian Tweel');
     updateMetaTag('reply-to', 'suph.tweel@gmail.com');
     updateMetaTag('format-detection', 'telephone=no');
 
@@ -92,7 +92,7 @@ const SEOHead = ({
     updateMetaTag('ai:index', 'true');
     
     // Additional Open Graph properties
-    updateMetaTag('og:image:alt', 'Suphian Tweel - Senior Product Manager at YouTube');
+    updateMetaTag('og:image:alt', 'Suphian Tweel – Product Manager at YouTube | Payments & AI Expert');
     updateMetaTag('og:image:secure_url', absoluteImageUrl);
     updateMetaTag('og:updated_time', new Date().toISOString());
     
@@ -121,21 +121,21 @@ const SEOHead = ({
       "givenName": "Suphian",
       "familyName": "Tweel",
       "alternateName": "Suphian Tweel",
-      "jobTitle": "Senior Product Manager",
+      "jobTitle": "Product Manager",
       "worksFor": {
         "@type": "Organization",
         "name": "YouTube",
         "sameAs": "https://www.youtube.com",
         "url": "https://www.youtube.com"
       },
-      "description": "Senior Product Manager at YouTube leading payments and AI initiatives. Expert in fintech, fraud detection, and growth for platforms like YouTube Shorts and Premium. Formerly Principal Analytical Lead at Google and Senior Product Analyst at Huge Inc.",
+      "description": "Product Manager at YouTube specializing in payments and AI. Builds AI-powered payment systems at scale — managing $6B+ in music payments, launching YouTube Shorts monetization, and leading AI-driven fraud detection. Formerly Principal Analytical Lead at Google/CapitalG and Senior Product Analyst at Huge Inc.",
       "url": absoluteUrl,
       "image": {
         "@type": "ImageObject",
         "url": absoluteImageUrl,
         "width": 1200,
         "height": 1200,
-        "caption": "Suphian Tweel - Senior Product Manager at YouTube"
+        "caption": "Suphian Tweel – Product Manager at YouTube | Payments & AI Expert"
       },
       "email": "suph.tweel@gmail.com",
       "address": {
@@ -150,19 +150,22 @@ const SEOHead = ({
         "https://twitter.com/suphian"
       ],
       "knowsAbout": [
-        "Product Management",
+        "Payment Systems",
+        "Digital Payments",
+        "AI Engineering",
         "Artificial Intelligence",
         "Machine Learning",
+        "AI-Powered Fraud Detection",
         "Fintech",
-        "Digital Payments",
-        "Fraud Detection",
-        "User Experience Design",
+        "Product Management",
+        "Product Strategy",
         "Data Analytics",
         "YouTube Shorts",
         "Creator Economy",
         "Growth Strategy",
         "Monetization",
-        "Platform Development"
+        "Platform Development",
+        "User Experience Design"
       ],
       "homeLocation": {
         "@type": "Place",
@@ -186,18 +189,20 @@ const SEOHead = ({
       ],
       "hasOccupation": {
         "@type": "Occupation",
-        "name": "Senior Product Manager",
+        "name": "Product Manager",
         "occupationLocation": {
           "@type": "City",
           "name": "San Francisco"
         },
         "skills": [
+          "Payment Systems Architecture",
+          "AI Engineering",
+          "Machine Learning",
+          "Fraud Detection",
+          "Fintech",
           "Product Strategy",
           "Data Analytics",
-          "AI/ML",
-          "Fintech",
-          "Payments",
-          "Fraud Detection"
+          "Cross-functional Leadership"
         ]
       }
     };
@@ -212,7 +217,7 @@ const SEOHead = ({
           "name": "Who is Suphian Tweel?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Suphian Tweel is a Senior Product Manager at YouTube, where he leads payments and AI initiatives. He has managed over $6 billion in music payments and launched monetization for YouTube Shorts. He is an expert in fintech, fraud detection, and growth for platforms like YouTube Shorts and Premium."
+            "text": "Suphian Tweel is a Product Manager at YouTube who specializes in payments systems and artificial intelligence. He builds AI-powered solutions to solve real payment problems at scale — managing over $6 billion in music payments, launching YouTube Shorts monetization, and leading AI-driven fraud detection covered by Billboard."
           }
         },
         {
@@ -220,15 +225,23 @@ const SEOHead = ({
           "name": "What is Suphian Tweel's professional experience?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Suphian Tweel has extensive experience in product management and analytics. He currently serves as Senior Product Manager at YouTube (2020-Present), where he leads payments and AI initiatives. Previously, he was a Principal Analytical Lead at Google (2018-2020) and Senior Product Analyst at Huge Inc (2014-2018)."
+            "text": "Suphian Tweel is a Product Manager at YouTube (2020-Present) leading payments and AI initiatives. Previously, he was a Principal Analytical Lead at Google/CapitalG (2018-2020), advising portfolio companies like Duolingo and Chewy on growth analytics. Before that, he was a Senior Product Analyst at Huge Inc (2014-2018), running A/B testing programs for brands like Hulu, Apple, and AMC Theaters."
           }
         },
         {
           "@type": "Question",
-          "name": "What projects has Suphian Tweel worked on?",
+          "name": "How does Suphian Tweel use AI to solve payment problems?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Suphian has worked on high-profile projects including YouTube Shorts monetization, YouTube Premium Lite, fraud detection systems, and marketing analytics for brands like Duolingo, Chewy, and Apple. He has managed over $6 billion in music payments and launched key monetization features for YouTube."
+            "text": "Suphian applies AI engineering to real payment challenges at YouTube: building ML-powered fraud detection systems that uncovered a royalty scam (covered by Billboard), developing AI-powered payment infrastructure for YouTube Shorts monetization, and optimizing $6B+ in annual music payments. He focuses on applied AI — shipping production systems that solve real problems."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What products has Suphian Tweel built?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Key products include the AI-powered payment system for YouTube Shorts monetization, YouTube Premium Lite, a fraud detection system that surfaced a major royalty scam, and payment optimization systems managing $6B+ annually. At Google/CapitalG, he built analytics frameworks for companies like Duolingo and Chewy."
           }
         },
         {
@@ -236,7 +249,7 @@ const SEOHead = ({
           "name": "What are Suphian Tweel's areas of expertise?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Suphian Tweel specializes in Product Management, Artificial Intelligence, Machine Learning, Fintech, Digital Payments, Fraud Detection, User Experience Design, Data Analytics, YouTube Shorts, Creator Economy, Growth Strategy, Monetization, and Platform Development."
+            "text": "Suphian Tweel is an expert in payments and AI. His core expertise includes payment systems architecture, AI engineering, machine learning, fintech, AI-powered fraud detection, product management, product strategy, data analytics, growth strategy, and monetization for creator platforms."
           }
         },
         {
@@ -244,7 +257,7 @@ const SEOHead = ({
           "name": "Where is Suphian Tweel located?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Suphian Tweel is based in San Francisco, California, where he works as a Senior Product Manager at YouTube."
+            "text": "Suphian Tweel is based in San Francisco, California, where he works as a Product Manager at YouTube."
           }
         },
         {
@@ -264,7 +277,7 @@ const SEOHead = ({
       "@type": "WebSite",
       "name": "Suphian Tweel Portfolio",
       "url": window.location.origin,
-      "description": "Portfolio website of Suphian Tweel, Senior Product Manager at YouTube. Showcasing experience in product management, AI, fintech, and payments.",
+      "description": "Portfolio website of Suphian Tweel, Product Manager at YouTube specializing in payments and AI. Showcasing experience building AI-powered payment systems, fraud detection, and fintech products at scale.",
       "author": {
         "@type": "Person",
         "name": "Suphian Tweel"

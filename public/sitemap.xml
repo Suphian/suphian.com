@@ -5,28 +5,28 @@
   <!-- Homepage -->
   <url>
     <loc>https://suphian.com/</loc>
-    <lastmod>2025-01-03</lastmod>
+    <lastmod>2026-02-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://suphian.com/lovable-uploads/8edd0658-a313-4e0a-953c-1f12e87a1592.png</image:loc>
-      <image:title>Suphian Tweel - Senior Product Manager at YouTube</image:title>
-      <image:caption>Professional headshot of Suphian Tweel, Senior Product Manager leading payments and AI initiatives at YouTube</image:caption>
+      <image:title>Suphian Tweel – Product Manager at YouTube | Payments & AI Expert</image:title>
+      <image:caption>Suphian Tweel, Product Manager at YouTube specializing in payments and AI</image:caption>
     </image:image>
   </url>
-  
+
   <!-- Podcast Page -->
   <url>
     <loc>https://suphian.com/podcast</loc>
-    <lastmod>2025-01-03</lastmod>
+    <lastmod>2026-02-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  
+
   <!-- Customers Page -->
   <url>
     <loc>https://suphian.com/customers</loc>
-    <lastmod>2025-01-03</lastmod>
+    <lastmod>2026-02-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

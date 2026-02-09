@@ -77,3 +77,8 @@ Crawl-delay: 2
 # Sitemap
 Sitemap: https://suphian.com/sitemap.xml
 Sitemap: https://www.suphian.com/sitemap.xml
+
+# LLMs.txt - AI-readable site information
+# https://llmstxt.org/
+# llms.txt: https://suphian.com/llms.txt
+# llms-full.txt: https://suphian.com/llms-full.txt

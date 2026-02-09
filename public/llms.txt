@@ -1,0 +1,40 @@
+# Suphian Tweel
+
+> Product Manager at YouTube. Expert in payments and AI.
+
+## About
+
+Suphian Tweel is a Product Manager at YouTube specializing in payments systems and artificial intelligence. He builds and ships AI-powered solutions to solve real-world payment problems at scale — managing over $6 billion in music payments, launching monetization for YouTube Shorts, and leading an AI-driven fraud detection initiative covered by Billboard.
+
+## Expertise
+
+- Payments & Fintech: payment systems architecture, digital payments, monetization, billing, compliance
+- AI & Machine Learning: AI engineering, ML-powered fraud detection, AI-driven automation, applied machine learning
+- Product Management: 0-to-1 product development, product strategy, cross-functional leadership, data-driven decision making
+- Growth & Analytics: incrementality testing, A/B testing, marketing optimization, data analytics
+
+## Experience
+
+- **YouTube** (2020–Present): Product Manager leading payments and AI initiatives. Built AI-powered payment system for YouTube Shorts and YouTube Premium Lite. Managed $6B+ in music payments. Led fraud detection initiative that uncovered a royalty scam covered by Billboard.
+- **Google / CapitalG** (2018–2020): Principal Analytical Lead. In-house analytics advisor for CapitalG portfolio companies. Led incrementality testing and growth optimization for brands like Duolingo and Chewy.
+- **Huge Inc** (2014–2018): Senior Product Analyst. A/B testing and UX optimization for brands including Hulu, Apple, and AMC Theaters.
+
+## Notable Work
+
+- AI-powered payment system for YouTube Shorts monetization
+- YouTube Premium Lite launch
+- Fraud detection system that surfaced royalty scam (covered by Billboard)
+- $6B+ music payments management and optimization
+- Zero-resource machine translation research (Google)
+
+## Links
+
+- Website: https://suphian.com
+- LinkedIn: https://www.linkedin.com/in/suphian/
+- GitHub: https://github.com/Suphian
+- Twitter: https://twitter.com/suphian
+- Email: suph.tweel@gmail.com
+
+## Location
+
+San Francisco, CA
