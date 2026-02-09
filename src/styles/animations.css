@@ -56,27 +56,17 @@
   animation: float 12s ease-in-out infinite;
 }
 
-.float-animation-slow {
-  animation: float 16s ease-in-out infinite;
-}
-
-.float-animation-slower {
-  animation: float 20s ease-in-out infinite;
-}
-
 /* For reduced motion accessibility */
 @media (prefers-reduced-motion: reduce) {
   .wave-btn:hover {
     animation: none;
     transform: none;
   }
-  
-  .float-animation,
-  .float-animation-slow,
-  .float-animation-slower {
+
+  .float-animation {
     animation: none;
   }
-  
+
   .reveal {
     opacity: 1;
     transform: none;

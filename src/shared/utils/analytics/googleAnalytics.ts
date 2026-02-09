@@ -1,5 +1,5 @@
 
-import { getVisitorMetaData } from './visitorMetadata';
+import { getVisitorMetaData } from './metadataService';
 import { analyticsConsole } from './consoleLogger';
 
 // Cache visitor metadata to avoid repeated async calls

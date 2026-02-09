@@ -2,7 +2,7 @@
 import { SessionData } from './types';
 import { SessionStorage } from './sessionStorage';
 import { LocationService } from './locationService';
-import { MetadataCollector } from './metadataCollector';
+import { MetadataService } from './metadataService';
 import { validateSessionData } from '../security/security';
 import { VisitorTracking } from './visitorTracking';
 import supabase from '@/integrations/supabase/client';
@@ -30,7 +30,7 @@ export class SessionManager {
 
   async collectSessionMetadata(isInternalTraffic: boolean): Promise<void> {
     
-    const browserMetadata = MetadataCollector.collectBrowserMetadata();
+    const browserMetadata = MetadataService.collectBrowserMetadata();
     const { ipAddress, locationData } = await LocationService.fetchLocationData();
     const enhancedData = {
       visitorData: VisitorTracking.getOrCreateVisitorData(),

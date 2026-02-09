@@ -31,7 +31,6 @@ export class VisitorTracking {
     const existingVisitorId = localStorage.getItem(this.VISITOR_KEY);
     const visitCount = parseInt(localStorage.getItem(this.VISIT_COUNT_KEY) || '0');
     const firstVisit = localStorage.getItem(this.FIRST_VISIT_KEY);
-    const _lastVisit = localStorage.getItem(this.LAST_VISIT_KEY);
     const now = new Date().toISOString();
 
     if (existingVisitorId && firstVisit) {
@@ -77,7 +76,6 @@ export class VisitorTracking {
 
   static analyzeReferrer(): ReferrerInfo {
     const referrer = document.referrer;
-    const _currentUrl = window.location.href;
     const urlParams = new URLSearchParams(window.location.search);
     
     // Check for custom source parameters

@@ -1,12 +1,7 @@
-import React, { useState, Suspense } from "react";
-import { useIsMobile } from "@/shared/hooks/use-mobile";
-
-const LazyContactSheet = React.lazy(() => import("@/features/contact/components/ContactSheet"));
+import React from "react";
 
 const Footer = () => {
-  const [contactOpen, setContactOpen] = useState(false);
-  const _isMobile = useIsMobile();
-  
+
 
   const handleSocialClick = async (platform: string, url: string) => {
     
@@ -80,10 +75,6 @@ const Footer = () => {
           </div>
         </div>
         
-        {/* Contact Sheet */}
-        <Suspense fallback={null}>
-          <LazyContactSheet open={contactOpen} onOpenChange={setContactOpen} />
-        </Suspense>
       </div>
     </footer>
   );

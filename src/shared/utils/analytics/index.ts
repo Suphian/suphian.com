@@ -16,7 +16,6 @@ export { engagementTracker } from './engagementTracker';
 
 // Validation & sanitization
 export { EventValidator } from './eventValidator';
-export { EventSanitizer } from './eventSanitizer';
 
 // Traffic detection
 export { TrafficDetector, getTrafficType, isInternalTraffic } from './trafficDetector';
@@ -28,7 +27,7 @@ export { MetadataService } from './metadataService';
 export { VisitorTracking } from './visitorTracking';
 
 // Attribution
-export { Attribution } from './attribution';
+export { getOriginalAttribution } from './attribution';
 
 // Types
 export type { EventData, SessionData, EventTrackerConfig } from './types';

@@ -1,9 +1,9 @@
 
 import supabase from '@/integrations/supabase/client';
-import { getTrafficType } from './ipDetection';
+import { getTrafficType } from './trafficDetector';
 import { SessionManager } from './sessionManager';
 import { EventBatcher } from './eventBatcher';
-import { EventSanitizer } from './eventSanitizer';
+import { EventValidator } from './eventValidator';
 import { validateEventData } from '../security/security';
 import { EventTrackerConfig, EventData, SessionData } from './types';
 import { analyticsConsole } from './consoleLogger';
@@ -88,7 +88,7 @@ class SecureEventTracker {
       _traffic: this.isInternalTraffic ? 'internal' : 'external'
     }, this.sessionManager.getSessionId());
 
-    const sanitizedPayload = EventSanitizer.sanitizeEventPayload(eventPayload);
+    const sanitizedPayload = EventValidator.sanitizePayload(eventPayload);
 
     // Add traffic classification to event payload
     const enrichedPayload = {

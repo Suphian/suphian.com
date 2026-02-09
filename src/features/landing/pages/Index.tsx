@@ -33,7 +33,7 @@ const Index = () => {
     { name: "experience", ref: experienceSectionRef, threshold: 0.4 }
   ];
 
-  const { viewedSections: _viewedSections } = useScrollTracking({
+  useScrollTracking({
     sections: scrollSections,
     onSectionView: (sectionName, progress) => {
       // Only log engagement events in development mode

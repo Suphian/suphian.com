@@ -14,8 +14,6 @@ interface UseScrollTrackingProps {
 
 export const useScrollTracking = ({ sections, onSectionView }: UseScrollTrackingProps) => {
   const viewedSections = useRef<Set<string>>(new Set());
-  const _lastScrollY = useRef(0);
-  const scrollDirection = useRef<'up' | 'down'>('down');
 
   useEffect(() => {
     // Use Intersection Observer for better performance
@@ -70,7 +68,6 @@ export const useScrollTracking = ({ sections, onSectionView }: UseScrollTracking
   }, [sections, onSectionView]);
 
   return {
-    viewedSections: viewedSections.current,
-    scrollDirection: scrollDirection.current
+    viewedSections: viewedSections.current
   };
 };

@@ -74,7 +74,3 @@ export const projects: Project[] = [
     stats: "24 new languages • 300M+ speakers reached • Published research"
   }
 ];
-
-export const getProjectById = (id: string): Project | undefined => {
-  return projects.find((project) => project.id === id);
-};
