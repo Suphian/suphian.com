@@ -3,14 +3,16 @@ import { Toaster as Sonner } from "@/shared/components/ui/sonner";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { LazyNotFound, LazyRoute } from "@/shared/components/common/LazyRoute";
 import Index from "@/features/landing/pages/Index";
-import Payments from "@/features/payments/pages/Payments";
-import PaymentSuccess from "@/features/payments/pages/PaymentSuccess";
-import PaymentCancel from "@/features/payments/pages/PaymentCancel";
-import ManageBilling from "@/features/payments/pages/ManageBilling";
-import Podcast from "@/features/podcast/pages/Podcast";
+
+// Lazy load non-critical routes
+const Payments = lazy(() => import("@/features/payments/pages/Payments"));
+const PaymentSuccess = lazy(() => import("@/features/payments/pages/PaymentSuccess"));
+const PaymentCancel = lazy(() => import("@/features/payments/pages/PaymentCancel"));
+const ManageBilling = lazy(() => import("@/features/payments/pages/ManageBilling"));
+const Podcast = lazy(() => import("@/features/podcast/pages/Podcast"));
 import Navbar from "@/shared/components/layout/Navbar";
 import Footer from "@/shared/components/layout/Footer";
 import Logo from "@/shared/components/layout/Logo";
@@ -20,8 +22,9 @@ import ErrorBoundary from "@/shared/components/common/ErrorBoundary";
 import AnimatedBackground from "@/features/landing/components/AnimatedBackground";
 import { useSpacebarGreeting } from "@/features/landing/hooks/useSpacebarGreeting";
 import { AnalyticsDebugOverlay } from "@/shared/components/dev/AnalyticsDebugOverlay";
-import { useAdvancedAnalytics } from "@/shared/hooks/useAdvancedAnalytics";
-import { secureEventTracker } from "@/shared/utils/analytics/secureEventTracker";
+
+// Lazy load analytics to keep it out of the main bundle
+const LazyAnalytics = lazy(() => import("@/shared/components/analytics/AnalyticsProvider"));
 
 
 // Scroll to top on route change
@@ -41,20 +44,6 @@ const AppContent = () => {
   // Enable spacebar greeting functionality
   useSpacebarGreeting();
 
-  // Advanced analytics with all high-value tracking
-  useAdvancedAnalytics({
-    trackFormEngagement: true,
-    trackExternalLinks: true,
-    trackCopyEvents: true,
-    trackErrors: true,
-    trackAudioEngagement: true,
-    trackTimeOnPage: true,
-    onTrack: (eventName, payload) => {
-      // Route all advanced analytics events to the secure tracker
-      secureEventTracker.track(eventName, payload);
-    }
-  });
-
   // Check if we are in a production environment
   const isProduction = window.location.hostname === 'suphian.com' ||
                        window.location.hostname === 'www.suphian.com' ||
@@ -63,8 +52,15 @@ const AppContent = () => {
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded-md focus:text-sm focus:font-medium"
+      >
+        Skip to main content
+      </a>
       <AnimatedBackground />
       <AnalyticsDebugOverlay />
+      <Suspense fallback={null}><LazyAnalytics /></Suspense>
       {!isProduction && (
         <div className="fixed top-0 left-0 right-0 z-[100] flex justify-center pointer-events-none">
           <span className="bg-yellow-500/90 text-black text-[10px] font-bold px-3 py-0.5 rounded-b-md shadow-md backdrop-blur-sm pointer-events-auto">
@@ -77,14 +73,14 @@ const AppContent = () => {
       <ScrollToTop />
       <Navbar />
       <Logo />
-      <main className="min-h-screen">
+      <main id="main-content" className="min-h-screen">
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/customers" element={<Payments />} />
-          <Route path="/payment-success" element={<PaymentSuccess />} />
-          <Route path="/payment-cancel" element={<PaymentCancel />} />
-          <Route path="/manage-billing" element={<ManageBilling />} />
-          <Route path="/podcast" element={<Podcast />} />
+          <Route path="/customers" element={<LazyRoute><Payments /></LazyRoute>} />
+          <Route path="/payment-success" element={<LazyRoute><PaymentSuccess /></LazyRoute>} />
+          <Route path="/payment-cancel" element={<LazyRoute><PaymentCancel /></LazyRoute>} />
+          <Route path="/manage-billing" element={<LazyRoute><ManageBilling /></LazyRoute>} />
+          <Route path="/podcast" element={<LazyRoute><Podcast /></LazyRoute>} />
           <Route path="*" element={<LazyRoute><LazyNotFound /></LazyRoute>} />
         </Routes>
       </main>

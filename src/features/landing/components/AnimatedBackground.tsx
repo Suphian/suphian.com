@@ -16,7 +16,14 @@ const AnimatedBackground = memo(function AnimatedBackground() {
       canvas.height = window.innerHeight;
     };
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+
+    // Debounce resize to prevent layout thrashing
+    let resizeTimeout: ReturnType<typeof setTimeout>;
+    const debouncedResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(resizeCanvas, 150);
+    };
+    window.addEventListener('resize', debouncedResize);
 
     // Space particles
     const particles: Array<{
@@ -138,8 +145,21 @@ const AnimatedBackground = memo(function AnimatedBackground() {
     let lastFrameTime = 0;
     const targetFPS = 30; // Target 30 FPS instead of 60
     const frameInterval = 1000 / targetFPS;
-    
+
+    // Pause animation when tab is hidden to save CPU
+    let isVisible = !document.hidden;
+    const handleVisibilityChange = () => {
+      isVisible = !document.hidden;
+      if (isVisible) {
+        lastFrameTime = performance.now();
+        animationFrameId = requestAnimationFrame(animate);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     const animate = (currentTime: number) => {
+      if (!isVisible) return;
+
       // Throttle to target FPS
       if (currentTime - lastFrameTime < frameInterval) {
         animationFrameId = requestAnimationFrame(animate);
@@ -171,7 +191,8 @@ const AnimatedBackground = memo(function AnimatedBackground() {
       ctx.fillStyle = nebulaGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Update and draw particles
+      // Update and draw particles (batch shadowBlur to reduce state changes)
+      ctx.shadowBlur = 4;
       particles.forEach((particle) => {
         particle.x += particle.speedX;
         particle.y += particle.speedY;
@@ -182,62 +203,59 @@ const AnimatedBackground = memo(function AnimatedBackground() {
         if (particle.y < 0) particle.y = canvas.height;
         if (particle.y > canvas.height) particle.y = 0;
 
-        // Draw particle with visible glow (optimized - reduced shadow)
         ctx.globalAlpha = particle.opacity;
         ctx.fillStyle = particle.color;
-        ctx.shadowBlur = 4;
         ctx.shadowColor = particle.color;
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0;
       });
 
       ctx.globalAlpha = 1;
 
       // Update and draw twinkling stars
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = '#FB923C';
+      ctx.fillStyle = '#FB923C';
       twinklingStars.forEach((star) => {
         star.twinklePhase += star.twinkleSpeed;
         const twinkle = Math.sin(star.twinklePhase) * 0.3 + 0.7;
         const opacity = star.baseOpacity * twinkle;
-        
+
         ctx.globalAlpha = opacity;
-        ctx.fillStyle = '#FB923C';
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = '#FB923C';
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0;
       });
 
       // Update and draw shooting stars
+      ctx.shadowBlur = 0;
       for (let i = shootingStars.length - 1; i >= 0; i--) {
         const star = shootingStars[i];
         star.x += star.vx;
         star.y += star.vy;
         star.life++;
         star.opacity = 1 - (star.life / star.maxLife);
-        
+
         // Remove if off screen or dead
-        if (star.life >= star.maxLife || 
+        if (star.life >= star.maxLife ||
             star.x < -100 || star.x > canvas.width + 100 ||
             star.y < -100 || star.y > canvas.height + 100) {
           shootingStars.splice(i, 1);
           continue;
         }
-        
+
         // Draw shooting star with trail
         const speed = Math.sqrt(star.vx * star.vx + star.vy * star.vy);
         const trailX = star.x - (star.vx / speed) * star.length;
         const trailY = star.y - (star.vy / speed) * star.length;
-        
+
         const gradient = ctx.createLinearGradient(star.x, star.y, trailX, trailY);
         gradient.addColorStop(0, `rgba(255, 255, 255, ${star.opacity})`);
         gradient.addColorStop(0.3, `rgba(251, 146, 60, ${star.opacity * 0.8})`);
         gradient.addColorStop(0.7, `rgba(249, 115, 22, ${star.opacity * 0.4})`);
         gradient.addColorStop(1, `rgba(249, 115, 22, 0)`);
-        
+
         ctx.strokeStyle = gradient;
         ctx.lineWidth = 2;
         ctx.globalAlpha = star.opacity;
@@ -245,19 +263,18 @@ const AnimatedBackground = memo(function AnimatedBackground() {
         ctx.moveTo(star.x, star.y);
         ctx.lineTo(trailX, trailY);
         ctx.stroke();
-        
+
         // Draw bright head of shooting star
-        ctx.globalAlpha = star.opacity;
         ctx.fillStyle = '#FFFFFF';
         ctx.shadowBlur = 8;
         ctx.shadowColor = '#FB923C';
         ctx.beginPath();
         ctx.arc(star.x, star.y, 2, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0;
       }
 
       ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
 
       // Draw connecting lines between nearby particles (restored visibility)
       for (let i = 0; i < particles.length; i++) {
@@ -290,7 +307,9 @@ const AnimatedBackground = memo(function AnimatedBackground() {
     animate(performance.now());
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener('resize', debouncedResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      clearTimeout(resizeTimeout);
       cancelAnimationFrame(animationFrameId);
       clearInterval(shootingStarInterval);
     };
@@ -300,7 +319,9 @@ const AnimatedBackground = memo(function AnimatedBackground() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 w-full h-full pointer-events-none z-0"
-      style={{ 
+      role="presentation"
+      aria-hidden="true"
+      style={{
         background: '#000000',
         willChange: 'contents'
       }}
