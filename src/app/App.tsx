@@ -4,8 +4,9 @@ import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
-import { LazyNotFound, LazyRoute } from "@/shared/components/common/LazyRoute";
+import { LazyRoute } from "@/shared/components/common/LazyRoute";
 import Index from "@/features/landing/pages/Index";
+import NotFound from "@/pages/NotFound";
 
 // Lazy load non-critical routes
 const Payments = lazy(() => import("@/features/payments/pages/Payments"));
@@ -23,8 +24,14 @@ import AnimatedBackground from "@/features/landing/components/AnimatedBackground
 import { useSpacebarGreeting } from "@/features/landing/hooks/useSpacebarGreeting";
 import { AnalyticsDebugOverlay } from "@/shared/components/dev/AnalyticsDebugOverlay";
 
-// Lazy load analytics to keep it out of the main bundle
-const LazyAnalytics = lazy(() => import("@/shared/components/analytics/AnalyticsProvider"));
+// Lazy load analytics to keep it out of the main bundle (retry once on failure)
+const LazyAnalytics = lazy(() =>
+  import("@/shared/components/analytics/AnalyticsProvider").catch(
+    () => new Promise<void>((r) => setTimeout(r, 1500)).then(
+      () => import("@/shared/components/analytics/AnalyticsProvider")
+    )
+  )
+);
 
 
 // Scroll to top on route change
@@ -60,7 +67,7 @@ const AppContent = () => {
       </a>
       <AnimatedBackground />
       <AnalyticsDebugOverlay />
-      <Suspense fallback={null}><LazyAnalytics /></Suspense>
+      <ErrorBoundary silent><Suspense fallback={null}><LazyAnalytics /></Suspense></ErrorBoundary>
       {!isProduction && (
         <div className="fixed top-0 left-0 right-0 z-[100] flex justify-center pointer-events-none">
           <span className="bg-yellow-500/90 text-black text-[10px] font-bold px-3 py-0.5 rounded-b-md shadow-md backdrop-blur-sm pointer-events-auto">
@@ -81,7 +88,7 @@ const AppContent = () => {
           <Route path="/payment-cancel" element={<LazyRoute><PaymentCancel /></LazyRoute>} />
           <Route path="/manage-billing" element={<LazyRoute><ManageBilling /></LazyRoute>} />
           <Route path="/podcast" element={<LazyRoute><Podcast /></LazyRoute>} />
-          <Route path="*" element={<LazyRoute><LazyNotFound /></LazyRoute>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />

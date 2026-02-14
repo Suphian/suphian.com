@@ -143,12 +143,28 @@ class SecureEventTracker {
   }
 }
 
-// Export secure singleton instance with optimized batching
-export const secureEventTracker = new SecureEventTracker({
-  enableInDevelopment: true,
-  batchSize: 10, // Increased batch size for better efficiency
-  batchIntervalMs: 20000, // 20 seconds - optimized for performance
-  filterInternalTraffic: false // Track internal traffic but classify it
+// Lazy singleton — defers construction to first method call to avoid
+// module-level side-effects that break dynamic chunk imports.
+let _instance: SecureEventTracker | null = null;
+
+function getSecureEventTracker(): SecureEventTracker {
+  if (!_instance) {
+    _instance = new SecureEventTracker({
+      enableInDevelopment: true,
+      batchSize: 10,
+      batchIntervalMs: 20000,
+      filterInternalTraffic: false,
+    });
+  }
+  return _instance;
+}
+
+export const secureEventTracker = new Proxy({} as SecureEventTracker, {
+  get(_target, prop) {
+    const instance = getSecureEventTracker();
+    const value = (instance as any)[prop];
+    return typeof value === 'function' ? value.bind(instance) : value;
+  },
 });
 
 export default secureEventTracker;

@@ -2,6 +2,7 @@ import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
+  silent?: boolean;
 }
 
 interface State {
@@ -25,6 +26,9 @@ class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
+      if (this.props.silent) {
+        return null;
+      }
       return (
         <div style={{ 
           padding: '2rem', 

@@ -1,8 +1,20 @@
 import React, { useEffect, useRef, useState, useCallback, Suspense } from "react";
 import LandingPageCursor from "@/features/landing/components/LandingPageCursor";
 
-const RequestCVModal = React.lazy(() => import("@/features/landing/components/RequestCVModal"));
-const LazyContactSheet = React.lazy(() => import("@/features/contact/components/ContactSheet"));
+const RequestCVModal = React.lazy(() =>
+  import("@/features/landing/components/RequestCVModal").catch(
+    () => new Promise<void>((r) => setTimeout(r, 1500)).then(
+      () => import("@/features/landing/components/RequestCVModal")
+    )
+  )
+);
+const LazyContactSheet = React.lazy(() =>
+  import("@/features/contact/components/ContactSheet").catch(
+    () => new Promise<void>((r) => setTimeout(r, 1500)).then(
+      () => import("@/features/contact/components/ContactSheet")
+    )
+  )
+);
 import { initializeRevealAnimations } from "@/shared/lib/animations";
 import { useScrollTracking } from "@/shared/hooks/useScrollTracking";
 import { useEventTracker } from "@/shared/hooks/useEventTracker";
