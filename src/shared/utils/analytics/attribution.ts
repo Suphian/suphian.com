@@ -15,13 +15,15 @@ function getUrlParams() {
   };
 }
 
-export function getOriginalAttribution(): Record<string, any> {
+export function getOriginalAttribution(): Record<string, unknown> {
   // Choose a key that will persist for the session only
   const key = 'lovable_attribution_data_v2';
-  let cached: any = undefined;
+  let cached: Record<string, unknown> | undefined = undefined;
   try {
     cached = JSON.parse(sessionStorage.getItem(key) || 'null');
-  } catch {}
+  } catch {
+    /* ignore malformed cached attribution */
+  }
   if (cached) return cached;
 
   // Get UTM parameters, fallback to referrer if not set, only on first page

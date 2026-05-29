@@ -10,6 +10,12 @@ const AnimatedBackground = memo(function AnimatedBackground() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Respect reduced-motion: skip the entire particle/star animation loop.
+    // The canvas element keeps its solid black background as a calm backdrop.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
     // Set canvas size
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -60,7 +66,7 @@ const AnimatedBackground = memo(function AnimatedBackground() {
 
     // Create visible particles with space theme - orange focused (reduced for performance)
     const colors = ['#F97316', '#FB923C', '#FDBA74'];
-    const particleCount = Math.min(35, Math.floor((canvas.width * canvas.height) / 30000));
+    const particleCount = Math.min(18, Math.floor((canvas.width * canvas.height) / 40000));
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,

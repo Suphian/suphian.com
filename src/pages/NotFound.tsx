@@ -7,6 +7,7 @@ const NotFound = () => {
           loop
           muted
           playsInline
+          preload="none"
           className="w-full h-full object-cover object-top"
         >
           <source src="/suph-logo-animation.mp4" type="video/mp4" />

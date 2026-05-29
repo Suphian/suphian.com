@@ -29,7 +29,13 @@
       "Bash(npx vite build:*)",
       "Bash(git stash:*)",
       "Bash(npx eslint:*)",
-      "Bash(timeout 15 npx vite:*)"
+      "Bash(timeout 15 npx vite:*)",
+      "Bash(nslookup:*)",
+      "Bash(dig:*)",
+      "Bash(npx vite:*)",
+      "mcp__MCP_DOCKER__browser_navigate",
+      "mcp__MCP_DOCKER__browser_take_screenshot",
+      "Bash(git status:*)"
     ]
   }
 }

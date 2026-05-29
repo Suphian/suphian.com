@@ -9,7 +9,7 @@ export interface EventTrackerConfig {
 export interface SessionData {
   session_id: string;
   ip_address?: string;
-  location?: any;
+  location?: Record<string, unknown> | null;
   browser?: string;
   os?: string;
   device_type?: string;
@@ -28,7 +28,7 @@ export interface SessionData {
 export interface EventData {
   session_id: string;
   event_name: string;
-  event_payload?: any;
+  event_payload?: Record<string, unknown>;
   timestamp: string;
   page_url?: string;
   retried?: boolean;

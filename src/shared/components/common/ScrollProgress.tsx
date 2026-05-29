@@ -38,7 +38,7 @@ const ScrollProgress = () => {
     update();
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize, { passive: true } as any);
+    window.addEventListener('resize', onResize, { passive: true });
     return () => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);

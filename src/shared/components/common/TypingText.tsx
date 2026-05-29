@@ -33,7 +33,7 @@ export default function TypingText({
   }, [displayedText]);
 
   // Helper function to get variable typing speed (more natural)
-  const getTypingSpeed = (char: string, index: number, _totalLength: number, previousChar?: string): number => {
+  const getTypingSpeed = useCallback((char: string, index: number, _totalLength: number, previousChar?: string): number => {
     let baseSpeed = speed;
     
     // Longer pauses after sentence-ending punctuation (like thinking)
@@ -71,12 +71,12 @@ export default function TypingText({
     }
     
     return Math.max(baseSpeed, 20); // Minimum 20ms for responsiveness
-  };
+  }, [speed]);
 
   // Helper function to get deletion speed
-  const getDeletionSpeed = (): number => {
+  const getDeletionSpeed = useCallback((): number => {
     return Math.max(speed / 2, 15); // Minimum 15ms, slower than typing
-  };
+  }, [speed]);
 
   // Natural typing
   const typeNextChar = useCallback((targetText: string, currentIndex: number) => {
@@ -99,7 +99,7 @@ export default function TypingText({
     timeoutRef.current = setTimeout(() => {
       typeNextChar(targetText, currentIndex + 1);
     }, typingSpeed);
-  }, [speed, onComplete]);
+  }, [getTypingSpeed, onComplete]);
 
   // Natural deletion
   const deleteNextChar = useCallback((targetText: string, currentIndex: number, onDeleteComplete?: () => void, targetLength: number = 0) => {
@@ -126,7 +126,7 @@ export default function TypingText({
     timeoutRef.current = setTimeout(() => {
       deleteNextChar(targetText, currentIndex - 1, onDeleteComplete, targetLength);
     }, deletionSpeed);
-  }, [speed, onComplete]);
+  }, [getDeletionSpeed, onComplete]);
 
   useEffect(() => {
     // Only react to text prop changes

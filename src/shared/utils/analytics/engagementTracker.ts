@@ -161,7 +161,7 @@ class EngagementTracker {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     // Store cleanup function
-    (this as any).cleanup = () => {
+    (this as { cleanup?: () => void }).cleanup = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('click', handleClick);
       document.removeEventListener('keydown', handleKeyPress);
@@ -404,7 +404,7 @@ class EngagementTracker {
     if (this.idleCheckInterval) {
       clearInterval(this.idleCheckInterval);
     }
-    (this as any).cleanup?.();
+    (this as { cleanup?: () => void }).cleanup?.();
 
     analyticsConsole.log('engagement_session_ended', this.getFormattedMetrics());
   }

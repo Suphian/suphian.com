@@ -14,7 +14,7 @@ class SecureEventTracker {
   private eventBatcher: EventBatcher;
   private isInitialized = false;
   private isInternalTraffic = false;
-  private pendingEvents: { name: string; payload: any }[] = [];
+  private pendingEvents: { name: string; payload: Record<string, unknown> }[] = [];
 
   constructor(config: EventTrackerConfig = {}) {
     this.config = {
@@ -69,7 +69,7 @@ class SecureEventTracker {
     }
   }
 
-  public trackEvent(eventName: string, eventPayload: any = {}): void {
+  public trackEvent(eventName: string, eventPayload: Record<string, unknown> = {}): void {
     if (!this.isInitialized) {
       this.pendingEvents.push({ name: eventName, payload: eventPayload });
       return;
@@ -131,7 +131,7 @@ class SecureEventTracker {
     this.isInitialized = false;
   }
 
-  public track(eventName: string, eventPayload: any = {}): void {
+  public track(eventName: string, eventPayload: Record<string, unknown> = {}): void {
     this.trackEvent(eventName, eventPayload);
   }
 
@@ -162,7 +162,7 @@ function getSecureEventTracker(): SecureEventTracker {
 export const secureEventTracker = new Proxy({} as SecureEventTracker, {
   get(_target, prop) {
     const instance = getSecureEventTracker();
-    const value = (instance as any)[prop];
+    const value = (instance as unknown as Record<string | symbol, unknown>)[prop];
     return typeof value === 'function' ? value.bind(instance) : value;
   },
 });

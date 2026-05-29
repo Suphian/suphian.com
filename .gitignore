@@ -28,4 +28,6 @@ dist-ssr
 # Large media files (should be in cloud storage)
 *.m4a
 !public/*.m4a
+*.mp4
+!public/*.mp4
 GenAI_Solves_YouTube*

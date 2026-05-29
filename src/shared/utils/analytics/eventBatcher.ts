@@ -1,4 +1,5 @@
 
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { EventData } from './types';
 import { EventBuffer } from './eventBuffer';
 import { BatchProcessor } from './batchProcessor';
@@ -12,9 +13,9 @@ export class EventBatcher {
   private retryDelayMs = 3000;
   private maxRetryDelayMs = 60000;
   private flushCb?: () => Promise<void>;
-  private supabase: any;
+  private supabase?: SupabaseClient;
 
-  constructor(batchSize: number, batchIntervalMs: number, supabase?: any) {
+  constructor(batchSize: number, batchIntervalMs: number, supabase?: SupabaseClient) {
     this.batchSize = batchSize;
     this.batchIntervalMs = batchIntervalMs;
     this.eventBuffer = new EventBuffer();
@@ -52,7 +53,7 @@ export class EventBatcher {
       });
     }
   }
-  async flush(supabase?: any): Promise<void> {
+  async flush(supabase?: SupabaseClient): Promise<void> {
     if (this.eventBuffer.isEmpty()) {
       return;
     }
@@ -115,7 +116,7 @@ export class EventBatcher {
       clearTimeout(this.retryTimer);
     }
     if (typeof window !== 'undefined') {
-      window.removeEventListener('online', this.flushCb as any);
+      window.removeEventListener('online', this.flushCb as unknown as EventListener);
     }
   }
   getBufferSize(): number {

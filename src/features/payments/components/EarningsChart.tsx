@@ -18,7 +18,7 @@ interface EarningsChartProps {
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00', '#ff00ff', '#00ffff', '#ffff00', '#ff0000', '#0000ff'];
 
-export const EarningsChart: React.FC<EarningsChartProps> = ({ streamingRates }) => {
+export const EarningsChart = React.memo(function EarningsChart({ streamingRates }: EarningsChartProps) {
   const countries = Object.entries(streamingRates).filter(([country]) => country !== "Default");
 
   const calculateFinalPayout = (baseRate: number, taxation: number, isMobile: boolean) => {
@@ -114,4 +114,4 @@ export const EarningsChart: React.FC<EarningsChartProps> = ({ streamingRates }) 
       </Card>
     </div>
   );
-};
+});

@@ -1,4 +1,5 @@
 import { EventValidator } from '../analytics/eventValidator';
+import type { SessionData } from '../analytics/types';
 
 // Enhanced input sanitization helper
 export const sanitizeInput = (input: string, maxLength: number = 1000): string => {
@@ -15,7 +16,7 @@ export const sanitizeInput = (input: string, maxLength: number = 1000): string =
 };
 
 // Validate analytics session data
-export const validateSessionData = (sessionData: any): { isValid: boolean; errors: string[] } => {
+export const validateSessionData = (sessionData: Partial<SessionData>): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
   
   if (sessionData.screen_width && (sessionData.screen_width < 0 || sessionData.screen_width > 10000)) {

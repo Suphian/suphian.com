@@ -1,8 +1,9 @@
 
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { EventData } from './types';
 
 export class BatchProcessor {
-  static async processEvents(events: EventData[], supabase: any): Promise<boolean> {
+  static async processEvents(events: EventData[], supabase: SupabaseClient): Promise<boolean> {
     if (!supabase) {
       return false;
     }

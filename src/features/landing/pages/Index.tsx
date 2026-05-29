@@ -25,6 +25,7 @@ const Index = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const aboutSectionRef = useRef<HTMLDivElement>(null);
   const experienceSectionRef = useRef<HTMLDivElement>(null);
+  const projectsSectionRef = useRef<HTMLDivElement>(null);
   const parallaxImageRef = useRef<HTMLDivElement>(null);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,7 +43,8 @@ const Index = () => {
     { name: "landing", ref: landingRef, threshold: 0.5 },
     { name: "parallax-image", ref: parallaxImageRef, threshold: 0.3 },
     { name: "about-story", ref: aboutSectionRef, threshold: 0.4 },
-    { name: "experience", ref: experienceSectionRef, threshold: 0.4 }
+    { name: "experience", ref: experienceSectionRef, threshold: 0.4 },
+    { name: "projects", ref: projectsSectionRef, threshold: 0.4 }
   ];
 
   useScrollTracking({
@@ -65,6 +67,9 @@ const Index = () => {
             break;
           case "experience":
             console.log("💼 User is viewing your experience");
+            break;
+          case "projects":
+            console.log("🛠️ User is viewing your projects");
             break;
         }
       }
@@ -97,7 +102,7 @@ const Index = () => {
         fromModal: true,
       });
     }, 125);
-  }, []);
+  }, [track]);
 
   // Track every time ContactSheet is opened from Index
   const handleContactOpenChange = useCallback((open: boolean) => {
@@ -109,7 +114,7 @@ const Index = () => {
         source: "IndexMainContent",
       });
     }
-  }, []);
+  }, [track]);
 
   return (
     <div className="relative">
@@ -158,6 +163,7 @@ const Index = () => {
           }}
           aboutSectionRef={aboutSectionRef}
           experienceSectionRef={experienceSectionRef}
+          projectsSectionRef={projectsSectionRef}
         />
         
         {/* CV Request Modal - now with onGetInTouch prop */}

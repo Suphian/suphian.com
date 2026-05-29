@@ -47,9 +47,6 @@ export const AnalyticsDebugOverlay = () => {
   const eventIdCounter = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Only show in development
-  if (!import.meta.env.DEV) return null;
-
   const getCategory = (eventName: string): string => {
     if (eventName.includes('page') || eventName.includes('view')) return 'page';
     if (eventName.includes('click') || eventName.includes('tap')) return 'click';
@@ -114,6 +111,10 @@ export const AnalyticsDebugOverlay = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  // Only show in development. Kept after all hooks so hook order stays stable
+  // across renders (React Rules of Hooks).
+  if (!import.meta.env.DEV) return null;
 
   const filteredEvents = filter === 'all'
     ? events

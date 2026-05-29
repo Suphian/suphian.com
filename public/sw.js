@@ -1,33 +1,33 @@
-// Service Worker for efficient caching
-const CACHE_NAME = 'suphian-site-v2';
-const CACHE_VERSION = 2;
+// Service Worker for efficient caching.
+// CACHE_NAME embeds a build id (injected at build time by vite.config.ts) so each
+// deploy automatically invalidates the previous cache. The SW is only registered
+// in production (see main.tsx), so the literal placeholder is never used in dev.
+const BUILD_ID = '__SW_BUILD_ID__';
+const CACHE_NAME = 'suphian-site-' + BUILD_ID;
 
-// Assets to cache immediately (only static assets, not HTML)
+// Small, always-needed static assets to warm the cache on install.
 const PRECACHE_ASSETS = [
-  '/optimized/logo-128.webp',
-  '/optimized/logo-256.webp',
-  '/optimized/astronaut-headphones.webp',
-  '/optimized/astronaut-headphones-600.webp',
-  '/optimized/astronaut-running.webp',
-  '/optimized/astronaut-running-1200.webp'
+  '/assets/textures/background.webp',
+  '/assets/logos/Logo.webp',
 ];
 
 // Cache strategies for different asset types
 const CACHE_STRATEGIES = {
   static: {
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days (reduced from 1 year)
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days — assets are content-hashed or stable
     networkFirst: false,
-    patterns: [/\.(png|jpg|jpeg|webp|woff2|woff|svg|ico)$/]
+    patterns: [/\.(png|jpg|jpeg|webp|avif|woff2|woff|svg|ico|gif)$/]
   },
   scripts: {
-    maxAge: 60 * 60 * 1000, // 1 hour for JS/CSS (they have hash in filename anyway)
+    maxAge: 60 * 60 * 1000, // 1 hour for JS/CSS (hashed filenames anyway)
     networkFirst: true,
     patterns: [/\.(js|css)$/]
   },
   api: {
-    maxAge: 5 * 60 * 1000, // 5 minutes
+    // Never serve cached API / third-party data — always go to network.
+    maxAge: 0,
     networkFirst: true,
-    patterns: [/\/api\//, /supabase\.co/]
+    patterns: [/\/api\//, /supabase\.co/, /ipify\.org/, /stripe\.com/, /googletagmanager\.com/, /google-analytics\.com/]
   },
   html: {
     maxAge: 0, // Always fetch fresh HTML
@@ -40,7 +40,8 @@ const CACHE_STRATEGIES = {
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE_ASSETS))
+      // allSettled so a single missing asset can't abort the whole install.
+      .then(cache => Promise.allSettled(PRECACHE_ASSETS.map(asset => cache.add(asset))))
       .then(() => self.skipWaiting())
   );
 });
@@ -48,15 +49,11 @@ self.addEventListener('install', event => {
 // Activate event - clean up old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
+    caches.keys()
+      .then(cacheNames =>
+        Promise.all(cacheNames.map(name => (name !== CACHE_NAME ? caches.delete(name) : undefined)))
+      )
+      .then(() => self.clients.claim())
   );
 });
 
@@ -65,93 +62,72 @@ self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests
   if (request.method !== 'GET') return;
-  
-  // Skip chrome-extension requests
   if (url.protocol === 'chrome-extension:') return;
-
-  // Skip Lovable preview URLs to avoid caching dev content
-  if (url.hostname.includes('lovable') || url.hostname.includes('localhost')) {
-    return;
-  }
+  // Skip Lovable preview / local dev URLs to avoid caching dev content
+  if (url.hostname.includes('lovable') || url.hostname.includes('localhost')) return;
 
   const strategy = getStrategy(request.url);
-
-  // Use network-first for HTML and dynamic content
   if (strategy.networkFirst) {
     event.respondWith(networkFirst(request, strategy));
   } else {
-    event.respondWith(cacheFirst(request, strategy));
+    event.respondWith(cacheFirst(event, strategy));
   }
 });
 
-// Network-first strategy - always try network, fall back to cache
+// Only cache successful, same-origin ("basic") responses; cross-origin
+// (fonts, supabase, analytics) are left to the browser's HTTP cache.
+async function putInCache(request, response) {
+  if (response && response.status === 200 && response.type === 'basic') {
+    const cache = await caches.open(CACHE_NAME);
+    const headers = new Headers(response.headers);
+    headers.set('sw-cached-date', new Date().toISOString());
+    await cache.put(request, new Response(response.clone().body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    }));
+  }
+  return response;
+}
+
+// Network-first - always try network, fall back to cache when offline
 async function networkFirst(request, strategy) {
   try {
     const response = await fetch(request);
-    
-    // Cache successful responses
-    if (response && response.status === 200 && response.type === 'basic') {
-      const cache = await caches.open(CACHE_NAME);
-      const headers = new Headers(response.headers);
-      headers.set('sw-cached-date', new Date().toISOString());
-      
-      const responseToCache = new Response(response.clone().body, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: headers
-      });
-      
-      cache.put(request, responseToCache);
-    }
-    
-    return response;
+    return await putInCache(request, response);
   } catch (error) {
-    // Fall back to cache on network failure
-    const cachedResponse = await caches.match(request);
-    return cachedResponse || new Response('Offline', { status: 503 });
+    const cached = await caches.match(request);
+    return cached || new Response('Offline', { status: 503 });
   }
 }
 
-// Cache-first strategy - use cache if available and not expired
-async function cacheFirst(request, strategy) {
-  const cachedResponse = await caches.match(request);
-  
-  if (cachedResponse) {
-    const cachedDate = new Date(cachedResponse.headers.get('sw-cached-date') || 0);
-    
-    if (Date.now() - cachedDate.getTime() < strategy.maxAge) {
-      return cachedResponse;
+// Cache-first with stale-while-revalidate: serve cache instantly, and when the
+// entry is stale, still return it immediately while refreshing in the background.
+async function cacheFirst(event, strategy) {
+  const request = event.request;
+  const cached = await caches.match(request);
+
+  if (cached) {
+    const cachedDate = new Date(cached.headers.get('sw-cached-date') || 0);
+    const isStale = Date.now() - cachedDate.getTime() >= strategy.maxAge;
+    if (isStale) {
+      event.waitUntil(fetch(request).then(r => putInCache(request, r)).catch(() => {}));
     }
+    return cached;
   }
 
   try {
     const response = await fetch(request);
-    
-    if (response && response.status === 200 && response.type === 'basic') {
-      const cache = await caches.open(CACHE_NAME);
-      const headers = new Headers(response.headers);
-      headers.set('sw-cached-date', new Date().toISOString());
-      
-      const responseToCache = new Response(response.clone().body, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: headers
-      });
-      
-      cache.put(request, responseToCache);
-    }
-    
-    return response;
+    return await putInCache(request, response);
   } catch (error) {
-    return cachedResponse || new Response('Offline', { status: 503 });
+    return new Response('Offline', { status: 503 });
   }
 }
 
 // Get caching strategy for URL
 function getStrategy(url) {
-  for (const [name, strategy] of Object.entries(CACHE_STRATEGIES)) {
+  for (const strategy of Object.values(CACHE_STRATEGIES)) {
     if (strategy.patterns.some(pattern => pattern.test(url))) {
       return strategy;
     }

@@ -38,7 +38,7 @@ const Payments = () => {
       } else {
         throw new Error("No checkout URL returned");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Checkout error:", error);
       toast.error("Failed to start checkout. Please try again.");
     } finally {

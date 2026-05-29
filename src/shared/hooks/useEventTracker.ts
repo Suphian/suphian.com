@@ -1,5 +1,5 @@
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface UseEventTrackerOptions {
   autoTrackPageViews?: boolean;
@@ -7,8 +7,11 @@ interface UseEventTrackerOptions {
   autoTrackScrollEvents?: boolean;
 }
 
+// Type of the lazily-loaded analytics singleton (kept type-only to avoid a static import)
+type SecureTracker = typeof import('@/shared/utils/analytics/secureEventTracker')['secureEventTracker'];
+
 // Lazy load analytics to prevent blocking if ad blockers interfere
-let secureEventTrackerPromise: Promise<any> | null = null;
+let secureEventTrackerPromise: Promise<SecureTracker | null> | null = null;
 const getSecureEventTracker = async () => {
   if (!secureEventTrackerPromise) {
     secureEventTrackerPromise = import('@/shared/utils/analytics/secureEventTracker')
@@ -30,7 +33,7 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
     autoTrackScrollEvents = true
   } = options;
 
-  const [tracker, setTracker] = useState<any>(null);
+  const [tracker, setTracker] = useState<SecureTracker | null>(null);
   const hasTrackedPageView = useRef(false);
   const lastScrollPercent = useRef(0);
 
@@ -214,9 +217,10 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
     };
   }, [autoTrackPageViews, autoTrackClicks, autoTrackScrollEvents, tracker]);
 
-  // Return tracking functions for manual use (with fallback no-op if tracker not loaded)
-  return {
+  // Return tracking functions for manual use (with fallback no-op if tracker not loaded).
+  // Memoized on `tracker` so callers can safely list `track` in their dependency arrays.
+  return useMemo(() => ({
     track: tracker ? tracker.track.bind(tracker) : () => {},
     getSessionInfo: tracker ? tracker.getSessionInfo.bind(tracker) : () => ({ sessionId: '', sessionData: null })
-  };
+  }), [tracker]);
 };

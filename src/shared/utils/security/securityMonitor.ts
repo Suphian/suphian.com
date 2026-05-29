@@ -6,7 +6,7 @@ export class SecurityMonitor {
   // Log security-related events
   static async logSecurityEvent(
     eventType: 'suspicious_activity' | 'data_access',
-    details: Record<string, any> = {}
+    details: Record<string, unknown> = {}
   ): Promise<void> {
     try {
       // For non-auth events, we don't need user context

@@ -1,5 +1,6 @@
 
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
@@ -64,11 +65,11 @@ export default {
         'cursor-accent': 'hsl(var(--cursor-accent))',
       },
       fontFamily: {
-        sans: ['IBM Plex Mono', 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
-        mono: ['IBM Plex Mono', 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
-        terminal: ['IBM Plex Mono', 'Courier New', 'Monaco', 'Consolas', 'monospace'],
+        sans: ['IBM Plex Mono', 'ui-monospace', 'Consolas', 'Courier New', 'monospace'],
+        mono: ['IBM Plex Mono', 'ui-monospace', 'Consolas', 'Courier New', 'monospace'],
+        terminal: ['IBM Plex Mono', 'ui-monospace', 'Courier New', 'monospace'],
         montserrat: ['Montserrat', 'sans-serif'],
-        cairo: ['Cairo', 'IBM Plex Sans Arabic', 'sans-serif'],
+        cairo: ['Cairo', 'sans-serif'],
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -125,5 +126,5 @@ export default {
       }
     }
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 } satisfies Config;

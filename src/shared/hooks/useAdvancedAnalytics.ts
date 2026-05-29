@@ -50,6 +50,10 @@ export const useAdvancedAnalytics = (options: AdvancedAnalyticsOptions = {}) => 
   useEffect(() => {
     if (!trackFormEngagement) return;
 
+    // Snapshot the ref'd Map so the cleanup below operates on the same instance
+    // that was active while this effect was mounted (it is never reassigned).
+    const formStatesAtMount = formStates.current;
+
     const handleFocus = (e: FocusEvent) => {
       const target = e.target as HTMLElement;
       if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
@@ -162,7 +166,7 @@ export const useAdvancedAnalytics = (options: AdvancedAnalyticsOptions = {}) => 
       document.removeEventListener('submit', handleSubmit, true);
 
       // Track form abandonment on unmount
-      formStates.current.forEach((state, formId) => {
+      formStatesAtMount.forEach((state, formId) => {
         if (!state.submitted && state.fields.size > 0) {
           track('form_abandoned', {
             form_id: formId,

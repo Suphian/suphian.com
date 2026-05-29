@@ -54,7 +54,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   // Rate limit logic per IP
   const now = Date.now();
-  let user = rateLimitMap.get(ip);
+  const user = rateLimitMap.get(ip);
   if (!user || now > user.ts + RATE_LIMIT_WINDOW_MS) {
     // Reset quota for window
     rateLimitMap.set(ip, { count: 1, ts: now });
@@ -113,7 +113,7 @@ const handler = async (req: Request): Promise<Response> => {
       emailData: Parameters<typeof resend.emails.send>[0],
       retries = 2,
       delay = 1000
-    ): Promise<any> => {
+    ): Promise<unknown> => {
       for (let attempt = 0; attempt <= retries; attempt++) {
         try {
           const response = await resend.emails.send(emailData);
@@ -124,7 +124,7 @@ const handler = async (req: Request): Promise<Response> => {
           }
           
           return response;
-        } catch (error: any) {
+        } catch (error) {
           const isLastAttempt = attempt === retries;
           
           if (isLastAttempt) {
@@ -141,7 +141,7 @@ const handler = async (req: Request): Promise<Response> => {
     };
 
     // Send to site owner with retry
-    let emailResponse: any = null;
+    let emailResponse: unknown = null;
     try {
       emailResponse = await sendEmailWithRetry({
         from: "Contact Notification <hello@suphian.com>",
@@ -151,13 +151,13 @@ const handler = async (req: Request): Promise<Response> => {
         reply_to: email ? email : undefined,
       });
       console.log("✅ Owner notification email sent successfully");
-    } catch (error: any) {
+    } catch (error) {
       console.error("❌ Failed to send owner notification email:", error);
       // Continue - we'll still try to send confirmation email
     }
 
     // Send confirmation to submitter (if email provided) with retry
-    let confirmEmailResponse: any = null;
+    let confirmEmailResponse: unknown = null;
     if (email) {
       const thankYouHtml = `
 <!DOCTYPE html>
@@ -262,14 +262,16 @@ const handler = async (req: Request): Promise<Response> => {
           reply_to: "hello@suphian.com",
         });
         console.log("✅ Confirmation email sent successfully to:", email);
-      } catch (error: any) {
+      } catch (error) {
         console.error("❌ Failed to send confirmation email:", error);
         // Continue - form submission was still successful
       }
     }
 
     // Return success even if one email failed (form was submitted to database)
-    const hasErrors = (!emailResponse || emailResponse.error) && (!confirmEmailResponse || confirmEmailResponse.error);
+    const responseHasError = (r: unknown): boolean =>
+      typeof r === "object" && r !== null && "error" in r && Boolean((r as { error?: unknown }).error);
+    const hasErrors = (!emailResponse || responseHasError(emailResponse)) && (!confirmEmailResponse || responseHasError(confirmEmailResponse));
     
     return new Response(
       JSON.stringify({ 
@@ -283,16 +285,17 @@ const handler = async (req: Request): Promise<Response> => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
-  } catch (error: any) {
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error(String(error));
     // Log detailed error information
     console.error("❌ Notify Contact Submit error:", {
-      message: error.message,
-      stack: error.stack,
-      name: error.name,
+      message: err.message,
+      stack: err.stack,
+      name: err.name,
     });
-    
+
     // Return user-friendly error message
-    const errorMessage = error.message || "An unexpected error occurred while processing your submission.";
+    const errorMessage = err.message || "An unexpected error occurred while processing your submission.";
     
     return new Response(
       JSON.stringify({ 

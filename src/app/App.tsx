@@ -45,7 +45,17 @@ const ScrollToTop = () => {
   return null;
 };
 
-const queryClient = new QueryClient();
+// Portfolio data is largely static, so avoid refetch churn on tab focus and
+// keep results fresh for several minutes.
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const AppContent = () => {
   // Enable spacebar greeting functionality

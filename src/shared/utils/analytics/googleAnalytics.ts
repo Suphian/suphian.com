@@ -115,7 +115,7 @@ export function flushEventsOnUnload() {
 // Declare global types
 declare global {
   interface Window {
-    gtag: (key: string, ...args: any[]) => void;
+    gtag: (key: string, ...args: unknown[]) => void;
     trackEvent: (eventName: string, eventData?: Record<string, unknown>) => void;
   }
 }

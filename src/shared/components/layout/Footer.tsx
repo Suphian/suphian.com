@@ -19,7 +19,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="border-t border-white/10 bg-black py-16 md:py-20 relative z-10">
+    <footer className="border-t border-white/10 py-16 md:py-20 relative z-10">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto">
           {/* Minimal footer - document end state */}

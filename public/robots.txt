@@ -53,10 +53,6 @@ User-agent: CCBot
 Allow: /
 Crawl-delay: 1
 
-User-agent: anthropic-ai
-Allow: /
-Crawl-delay: 1
-
 User-agent: Google-Extended
 Allow: /
 Crawl-delay: 1
@@ -72,11 +68,12 @@ Crawl-delay: 1
 # Default rules for all other bots
 User-agent: *
 Allow: /
+Disallow: /payment-success
+Disallow: /payment-cancel
 Crawl-delay: 2
 
 # Sitemap
 Sitemap: https://suphian.com/sitemap.xml
-Sitemap: https://www.suphian.com/sitemap.xml
 
 # LLMs.txt - AI-readable site information
 # https://llmstxt.org/

@@ -25,7 +25,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, title = "The Resume Reim
     if (!audioRef.current) return;
 
     const audio = audioRef.current;
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const AudioContextClass = window.AudioContext ||
+      (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const audioContext = new AudioContextClass();
     const analyser = audioContext.createAnalyser();
     const source = audioContext.createMediaElementSource(audio);
     
@@ -330,11 +333,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, title = "The Resume Reim
         </div>
       </div>
 
-      {/* Hidden Audio Element */}
+      {/* Hidden Audio Element — preload="none" so the large m4a is only
+          fetched once the user actually hits play (duration fills in then). */}
       <audio
         ref={audioRef}
         src={src}
-        preload="metadata"
+        preload="none"
         style={{ display: 'none' }}
       />
     </div>

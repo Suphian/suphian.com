@@ -50,6 +50,11 @@ const Navbar = () => {
       name: "Work",
       path: "/",
       scrollTo: "experience-section"
+    },
+    {
+      name: "Projects",
+      path: "/",
+      scrollTo: "projects-section"
     }
   ];
 

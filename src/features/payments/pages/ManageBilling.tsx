@@ -36,9 +36,10 @@ const ManageBilling = () => {
       } else {
         throw new Error("No portal URL returned");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Portal error:", error);
-      toast.error(error.message || "Failed to access billing portal. Please check your email and try again.");
+      const message = error instanceof Error ? error.message : "";
+      toast.error(message || "Failed to access billing portal. Please check your email and try again.");
     } finally {
       setLoading(false);
     }

@@ -11,6 +11,9 @@ const LandingPageCursor = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [stage, setStage] = useState<AnimationStage>('greeting');
   const hasStartedRef = useRef(false);
+  const prefersReducedMotion = useRef(
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
 
   // Content that rotates through multiple languages
   const content = useMemo(() => [
@@ -128,6 +131,14 @@ const LandingPageCursor = () => {
   useEffect(() => {
     if (!hasStartedRef.current) {
       hasStartedRef.current = true;
+      // Respect reduced motion: show static greeting + description and skip the
+      // auto-cycling typing animation entirely (WCAG 2.2.2 / 2.3.3).
+      if (prefersReducedMotion.current) {
+        setStage('description');
+        setIsTyping(false);
+        setDisplayedText(content[0].greeting + ' ' + content[0].description);
+        return;
+      }
       setStage('greeting');
       setIsTyping(true);
       setDisplayedText(content[0].greeting);
@@ -136,7 +147,12 @@ const LandingPageCursor = () => {
 
   const handleTypingComplete = useCallback(() => {
     setIsTyping(false);
-    
+
+    // Under reduced motion the content is shown statically and must not cycle.
+    if (prefersReducedMotion.current) {
+      return;
+    }
+
     const current = content[currentLanguage];
     
     switch (stage) {
@@ -194,11 +210,12 @@ const LandingPageCursor = () => {
   }, [stage, currentLanguage, content]);
 
   const handleSpacePress = async () => {
-    // Scroll to content section (where the audio button is)
-    // User can then click the button to hear the audio
-    const contentSection = document.getElementById("content-section");
-    if (contentSection) {
-      contentSection.scrollIntoView({
+    // Scroll to the STORY section so it lands at the top of the viewport.
+    // (scroll-margin-top in index.css clears the navbar; min-h-screen on the
+    // section makes it fill the viewport.)
+    const storySection = document.getElementById("about-section");
+    if (storySection) {
+      storySection.scrollIntoView({
         behavior: "smooth",
         block: "start"
       });

@@ -1,4 +1,5 @@
 
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { SessionData } from './types';
 import { SessionStorage } from './sessionStorage';
 import { LocationService } from './locationService';
@@ -43,7 +44,7 @@ export class SessionManager {
     const anonymizedIp = ipAddress ? await this.anonymizeIpAddress(ipAddress) : null;
 
     // Extract only the fields that exist in the sessions table (exclude languages, platform)
-    const { languages: _languages, platform: _platform, ...sessionBrowserMetadata } = browserMetadata as any;
+    const { languages: _languages, platform: _platform, ...sessionBrowserMetadata } = browserMetadata as Record<string, unknown>;
 
     const rawSessionData = {
       session_id: this.sessionId,
@@ -93,7 +94,7 @@ export class SessionManager {
     // console.log('🔒 Enhanced session data prepared:', this.sessionData);
   }
 
-  async storeSession(supabase: any): Promise<void> {
+  async storeSession(supabase: SupabaseClient): Promise<void> {
     if (!this.sessionData || this.sessionStored) {
       if (import.meta.env.DEV) {
         // console.log('🔒 Session already stored or no session data');

@@ -16,7 +16,7 @@ interface ComparisonTableProps {
   streamingRates: StreamingRates;
 }
 
-export const ComparisonTable: React.FC<ComparisonTableProps> = ({ streamingRates }) => {
+export const ComparisonTable = React.memo(function ComparisonTable({ streamingRates }: ComparisonTableProps) {
   const countries = Object.entries(streamingRates).filter(([country]) => country !== "Default");
 
   const calculateFinalPayout = (baseRate: number, taxation: number, isMobile: boolean) => {
@@ -88,4 +88,4 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ streamingRates
       </CardContent>
     </Card>
   );
-};
+});

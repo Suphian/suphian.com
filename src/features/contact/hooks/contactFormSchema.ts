@@ -6,7 +6,7 @@ import { z } from "zod";
 import { sanitizeInput } from "@/shared/utils/security/security";
 
 // Enhanced phone validation regex for better security
-const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+const phoneRegex = /^[+]?[1-9][\d]{0,15}$/;
 
 export const contactFormSchema = z.object({
   name: z.string()

@@ -10,7 +10,7 @@ interface SEOHeadProps {
 const SEOHead = ({
   title = "Suphian Tweel – Product Manager at YouTube | Payments & AI Expert",
   description = "Product Manager at YouTube specializing in payments and AI. Builds AI-powered payment systems at scale — managing $6B+ in music payments, launching YouTube Shorts monetization, and leading AI-driven fraud detection.",
-  image = "/assets/images/u1327668621_logo_SUPH_--chaos_15_--ar_23_--profile_aa8enny_--st_b2040bf7-71f1-4263-bf3e-422f9561d81e.png",
+  image = "/assets/images/og-image.jpg",
   url = window.location.href
 }: SEOHeadProps) => {
   
@@ -51,7 +51,7 @@ const SEOHead = ({
     updateMetaTag('og:image', absoluteImageUrl);
     updateMetaTag('og:image:width', '1200');
     updateMetaTag('og:image:height', '1200');
-    updateMetaTag('og:image:type', 'image/png');
+    updateMetaTag('og:image:type', 'image/jpeg');
     updateMetaTag('og:url', absoluteUrl);
     updateMetaTag('og:type', 'profile');
     updateMetaTag('og:site_name', 'Suphian Tweel Portfolio');

@@ -3,8 +3,6 @@ import App from './app/App.tsx'
 import './index.css'
 import { registerServiceWorker } from './shared/utils/serviceWorker'
 
-console.log('🚀 React app initializing...');
-
 // Check if root element exists
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -18,21 +16,46 @@ try {
   const root = createRoot(rootElement);
   root.render(<App />);
 
-  // Initialize analytics tracking AFTER app renders (non-blocking)
-  // Use dynamic import to prevent blocking if analytics files are blocked by ad blockers
-  setTimeout(async () => {
-    try {
-      const { secureEventTracker } = await import('./shared/utils/analytics/secureEventTracker');
-      secureEventTracker.initialize().catch(err => {
-        console.warn('Analytics initialization failed (non-critical):', err);
+  // Initialize analytics in the background — chained (not awaited) so it never
+  // serializes ahead of React work, and deferred to idle to protect FID/INP.
+  const initAnalytics = () => {
+    import('./shared/utils/analytics/secureEventTracker')
+      .then(({ secureEventTracker }) => secureEventTracker.initialize())
+      .catch((err) => {
+        if (import.meta.env.DEV) {
+          console.warn('Analytics unavailable (non-critical):', err);
+        }
       });
-    } catch (err) {
-      // Silently fail if analytics can't be loaded (e.g., blocked by ad blocker)
-      if (import.meta.env.DEV) {
-        console.warn('Analytics module could not be loaded (may be blocked by ad blocker):', err);
-      }
-    }
-  }, 100);
+  };
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(initAnalytics);
+  } else {
+    setTimeout(initAnalytics, 200);
+  }
+
+  // Report Core Web Vitals (LCP/INP/CLS/FCP/TTFB) to Google Analytics for
+  // real-user monitoring. Loaded as its own chunk; web-vitals' buffered
+  // observers still capture metrics that fired before registration.
+  if (import.meta.env.PROD) {
+    import('web-vitals').then(({ onCLS, onINP, onLCP, onFCP, onTTFB }) => {
+      const report = (metric: { name: string; value: number; id: string }) => {
+        const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+        if (typeof gtag === 'function') {
+          gtag('event', metric.name, {
+            value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
+            metric_id: metric.id,
+            metric_value: metric.value,
+            non_interaction: true,
+          });
+        }
+      };
+      onCLS(report);
+      onINP(report);
+      onLCP(report);
+      onFCP(report);
+      onTTFB(report);
+    }).catch(() => {});
+  }
 
   // Register service worker for efficient caching (production only)
   if (import.meta.env.PROD) {

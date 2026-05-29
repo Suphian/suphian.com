@@ -16,7 +16,7 @@ const AboutSection = memo(forwardRef<HTMLDivElement, AboutSectionProps>(
     ];
 
     return (
-      <section id="about-section" ref={ref} className="mb-32 md:mb-40 py-12" aria-labelledby="about-heading">
+      <section id="about-section" ref={ref} className="min-h-screen mb-32 md:mb-40 py-12" aria-labelledby="about-heading">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
             {/* Editorial heading */}
