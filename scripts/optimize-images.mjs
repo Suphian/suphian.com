@@ -49,6 +49,16 @@ async function run() {
       .toFile(og);
     console.log(`profile logo (${kb(LOGO_SRC)}) -> og-image.jpg (${kb(og)})`);
 
+    // 2b. Wide OG variant — twitter:card summary_large_image expects ~2:1
+    //     (1200x630); the square version gets cropped by Twitter/X and Slack.
+    const ogWide = path.join(IMG_DIR, 'og-image-wide.jpg');
+    await sharp(LOGO_SRC)
+      .resize(1200, 630, { fit: 'contain', background: { r: 0, g: 0, b: 0 } })
+      .flatten({ background: { r: 0, g: 0, b: 0 } })
+      .jpeg({ quality: 82, mozjpeg: true })
+      .toFile(ogWide);
+    console.log(`profile logo (${kb(LOGO_SRC)}) -> og-image-wide.jpg (${kb(ogWide)})`);
+
     // 3. Favicons + PWA icons — small PNGs instead of fetching the 449 KB original.
     for (const [name, size] of [
       ['favicon-256.png', 256],

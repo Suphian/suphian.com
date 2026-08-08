@@ -5,6 +5,12 @@
       "has": [{ "type": "host", "value": "suph.ai" }],
       "destination": "https://suphian.com/:path*",
       "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.suphian.com" }],
+      "destination": "https://suphian.com/:path*",
+      "permanent": true
     }
   ],
   "headers": [
