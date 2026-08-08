@@ -1,5 +1,4 @@
 import { Toaster } from "@/shared/components/ui/toaster";
-import { Toaster as Sonner } from "@/shared/components/ui/sonner";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
@@ -9,10 +8,6 @@ import Index from "@/features/landing/pages/Index";
 import NotFound from "@/pages/NotFound";
 
 // Lazy load non-critical routes
-const Payments = lazy(() => import("@/features/payments/pages/Payments"));
-const PaymentSuccess = lazy(() => import("@/features/payments/pages/PaymentSuccess"));
-const PaymentCancel = lazy(() => import("@/features/payments/pages/PaymentCancel"));
-const ManageBilling = lazy(() => import("@/features/payments/pages/ManageBilling"));
 const Podcast = lazy(() => import("@/features/podcast/pages/Podcast"));
 import Navbar from "@/shared/components/layout/Navbar";
 import Footer from "@/shared/components/layout/Footer";
@@ -93,10 +88,6 @@ const AppContent = () => {
       <main id="main-content" className="min-h-screen">
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/customers" element={<LazyRoute><Payments /></LazyRoute>} />
-          <Route path="/payment-success" element={<LazyRoute><PaymentSuccess /></LazyRoute>} />
-          <Route path="/payment-cancel" element={<LazyRoute><PaymentCancel /></LazyRoute>} />
-          <Route path="/manage-billing" element={<LazyRoute><ManageBilling /></LazyRoute>} />
           <Route path="/podcast" element={<LazyRoute><Podcast /></LazyRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
@@ -111,7 +102,6 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
         <BrowserRouter>
           <AppContent />
         </BrowserRouter>

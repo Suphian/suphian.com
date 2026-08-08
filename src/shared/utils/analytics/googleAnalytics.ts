@@ -112,14 +112,6 @@ export function flushEventsOnUnload() {
   }
 }
 
-// Declare global types
-declare global {
-  interface Window {
-    gtag: (key: string, ...args: unknown[]) => void;
-    trackEvent: (eventName: string, eventData?: Record<string, unknown>) => void;
-  }
-}
-
 // Attach trackEvent to window for global access
 window.trackEvent = trackEvent;
 

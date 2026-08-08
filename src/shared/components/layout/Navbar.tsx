@@ -40,6 +40,19 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, [isHomepage]);
 
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isOpen]);
+
   const navLinks = [
     {
       name: "About",
@@ -161,9 +174,68 @@ const Navbar = () => {
               </button>
             </li>
           </ul>
+
+          <button
+            type="button"
+            className="md:hidden p-2 -mr-2 hover:opacity-70 transition-opacity"
+            style={{ color: 'rgba(255, 255, 255, 0.85)' }}
+            aria-expanded={isOpen}
+            aria-controls="mobile-menu"
+            aria-label="Menu"
+            onClick={() => setIsOpen(prev => !prev)}
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              {isOpen ? (
+                <path d="M6 6l12 12M6 18L18 6" />
+              ) : (
+                <path d="M3 6h18M3 12h18M3 18h18" />
+              )}
+            </svg>
+          </button>
         </nav>
+
+        {isOpen && (
+          <ul id="mobile-menu" className="md:hidden mt-4 pb-2 flex flex-col items-end gap-1">
+            {navLinks.map(link => (
+              <li key={link.name}>
+                <Link
+                  to={link.path}
+                  className="block text-xs font-mono py-3 px-2 hover:opacity-70 transition-opacity"
+                  style={{ color: 'rgba(255, 255, 255, 0.85)' }}
+                  onClick={e => handleNavClick(e, link.scrollTo)}
+                >
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <button
+                onClick={() => {
+                  closeMenu();
+                  setAnalyticsOpen(true);
+                }}
+                className="text-xs font-mono py-3 px-2 hover:opacity-70 transition-opacity"
+                style={{ color: 'rgba(255, 255, 255, 0.85)' }}
+              >
+                Activity
+              </button>
+            </li>
+            <li className="mt-1">
+              <button
+                onClick={() => {
+                  closeMenu();
+                  handleGetInTouchClick();
+                }}
+                className="text-xs font-mono px-4 py-2 border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all"
+                style={{ color: 'rgba(255, 255, 255, 0.85)' }}
+              >
+                Contact
+              </button>
+            </li>
+          </ul>
+        )}
       </div>
-      
+
       <Suspense fallback={null}>
         <LazyContactSheet open={contactOpen} onOpenChange={setContactOpen} />
       </Suspense>

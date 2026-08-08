@@ -8,8 +8,8 @@ interface SEOHeadProps {
 }
 
 const SEOHead = ({
-  title = "Suphian Tweel – Product Manager at YouTube | Payments & AI Expert",
-  description = "Product Manager at YouTube specializing in payments and AI. Builds AI-powered payment systems at scale — managing $6B+ in music payments, launching YouTube Shorts monetization, and leading AI-driven fraud detection.",
+  title = "Suphian Tweel — Senior Product Manager, YouTube",
+  description = "Senior Product Manager at YouTube specializing in payments and AI. Builds AI-powered payment systems at scale — managing $6B+ in music payments, launching YouTube Shorts monetization, and leading AI-driven fraud detection.",
   image = "/assets/images/og-image.jpg",
   url = window.location.href
 }: SEOHeadProps) => {

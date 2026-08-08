@@ -1,10 +1,10 @@
 # Suphian Tweel
 
-> Product Manager at YouTube. Expert in payments and AI.
+> Senior Product Manager at YouTube. Expert in payments and AI.
 
 ## About
 
-Suphian Tweel is a Product Manager at YouTube who specializes in payments systems and artificial intelligence. He builds and ships AI-powered solutions to solve real-world payment problems at massive scale. With over a decade of experience across YouTube, Google, and top digital agencies, Suphian combines deep technical fluency in AI/ML with product leadership to ship products that move the needle.
+Suphian Tweel is a Senior Product Manager at YouTube who specializes in payments systems and artificial intelligence. He builds and ships AI-powered solutions to solve real-world payment problems at massive scale. With over a decade of experience across YouTube, Google, and top digital agencies, Suphian combines deep technical fluency in AI/ML with product leadership to ship products that move the needle.
 
 He grew up between cultures — an upbringing that taught him to listen deeply, challenge assumptions, and think in first principles. His work spans payments, e-commerce, consumer apps, and internal tools — often the kinds of products that challenge business-as-usual and deliver a smarter, more human way of doing things.
 
@@ -39,7 +39,7 @@ He grew up between cultures — an upbringing that taught him to listen deeply, 
 
 ## Career
 
-### YouTube (2020–Present) — Product Manager
+### YouTube (2020–Present) — Senior Product Manager
 Led execution of an AI-powered payment system for high-profile launches including YouTube Shorts and YouTube Premium Lite. Managed over $6 billion in music payments, optimized global operations, and ensured compliance with regulatory and contractual obligations. Also led a major fraud detection initiative that surfaced and mitigated a royalty scam covered by Billboard.
 
 Key achievements:
@@ -88,7 +88,7 @@ At Google's CapitalG, developed and applied incrementality testing frameworks fo
 ## Frequently Asked Questions
 
 ### Who is Suphian Tweel?
-Suphian Tweel is a Product Manager at YouTube who specializes in payments systems and artificial intelligence. He leads payments and AI initiatives at YouTube, where he has managed over $6 billion in music payments and built AI-powered systems for YouTube Shorts monetization and fraud detection.
+Suphian Tweel is a Senior Product Manager at YouTube who specializes in payments systems and artificial intelligence. He leads payments and AI initiatives at YouTube, where he has managed over $6 billion in music payments and built AI-powered systems for YouTube Shorts monetization and fraud detection.
 
 ### What is Suphian Tweel's expertise?
 Suphian is an expert in payments and AI. He builds AI-powered solutions to solve real payment problems at scale — from fraud detection systems to payment optimization for creator platforms. His expertise spans payment systems architecture, AI/ML engineering, fintech, product management, data analytics, and growth strategy.
@@ -100,7 +100,7 @@ Suphian applies AI engineering to real payment challenges: building ML-powered f
 Key products include: the AI-powered payment system for YouTube Shorts monetization, YouTube Premium Lite, a fraud detection system that surfaced a major royalty scam, and payment optimization systems managing $6B+ annually. At Google/CapitalG, he built analytics frameworks for companies like Duolingo and Chewy.
 
 ### Where does Suphian Tweel work?
-Suphian Tweel is a Product Manager at YouTube (part of Google/Alphabet), based in San Francisco, California. He has been at YouTube since 2020, leading payments and AI initiatives.
+Suphian Tweel is a Senior Product Manager at YouTube (part of Google/Alphabet), based in San Francisco, California. He has been at YouTube since 2020, leading payments and AI initiatives.
 
 ### How can I contact Suphian Tweel?
 - Email: suph.tweel@gmail.com

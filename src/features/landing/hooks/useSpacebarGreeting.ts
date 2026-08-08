@@ -28,6 +28,12 @@ export const useSpacebarGreeting = () => {
         return;
       }
 
+      // Don't hijack Space when it would activate an interactive element
+      // (buttons, links, dialog controls) — Space is their activation key
+      if (target.closest?.('button, a, [role="button"], [role="dialog"], summary')) {
+        return;
+      }
+
       // Prevent default scrolling behavior when we trigger the greeting
       event.preventDefault();
 

@@ -117,7 +117,6 @@ const ContactForm: React.FC<ContactFormProps> = ({
                     {...field}
                     className="h-12 border focus:border-accent transition-colors"
                     maxLength={48}
-                    pattern="^(\+?\\d{1,4}[\\s-]?)?((\\(\\d{3,}\\))|\\d{3,})[\\s-]?\\d{3,}[\\s-]?\\d{4,}$"
                   />
                 </FormControl>
                 <FormMessage className="text-accent" />
