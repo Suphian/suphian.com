@@ -266,7 +266,14 @@ const LandingPageCursor = () => {
                   letterSpacing: '-0.01em',
                 }}
               >
-                <span className="block" style={{ color: 'rgba(255, 255, 255, 0.9)' }} aria-live="polite" aria-atomic="true">
+                {/* Static copy for screen readers; the animated text would
+                    otherwise re-announce on every typed character */}
+                <span className="sr-only">
+                  Hi, I'm Suphian. I'm a product manager at YouTube leading payments.
+                  I'm passionate about crafting exceptional experiences powered by
+                  data, design, and cutting-edge tech.
+                </span>
+                <span className="block" style={{ color: 'rgba(255, 255, 255, 0.9)' }} aria-hidden="true">
                   <TypingText
                     text={displayedText}
                     speed={60}
@@ -275,7 +282,7 @@ const LandingPageCursor = () => {
                     className=""
                   />
                   {isTyping && (
-                    <span className="inline-block w-0.5 h-6 md:h-8 bg-white ml-1 animate-pulse" aria-hidden="true" style={{ animationDuration: '1s' }} />
+                    <span className="inline-block w-0.5 h-6 md:h-8 bg-white ml-1 animate-pulse" style={{ animationDuration: '1s' }} />
                   )}
                 </span>
               </h1>

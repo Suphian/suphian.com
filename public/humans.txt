@@ -12,7 +12,7 @@ Analytics: Google Analytics 4
 
 /* SITE */
 
-Last update: 2025/01/03
+Last update: 2026/08/08
 Language: English
 Doctype: HTML5
-IDE: Lovable
+Tooling: Vite + Claude Code

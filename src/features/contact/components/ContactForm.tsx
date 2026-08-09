@@ -10,7 +10,6 @@ interface ContactFormProps {
   source: string;
   onSubmitted?: () => void;
   showChips?: boolean;
-  chipsBarComponent?: React.ReactNode;
   extraFields?: React.ReactNode;
   submitButton?: React.ReactNode;
 }
@@ -20,7 +19,6 @@ const ContactForm: React.FC<ContactFormProps> = ({
   source,
   onSubmitted,
   showChips,
-  chipsBarComponent: _chipsBarComponent,
   extraFields,
   submitButton,
 }) => {
@@ -62,7 +60,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
             render={({ field }) => (
               <FormItem className="space-y-2">
                 <FormLabel className="text-sm font-medium">
-                  Name <span className="text-accent">*</span>
+                  Name <span className="text-accent-text">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -73,7 +71,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
                     aria-required="true"
                   />
                 </FormControl>
-                <FormMessage className="text-accent" />
+                <FormMessage className="text-accent-text" />
               </FormItem>
             )}
         />
@@ -84,7 +82,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
             render={({ field }) => (
               <FormItem className="space-y-2">
                 <FormLabel className="text-sm font-medium">
-                  Email <span className="text-accent">*</span>
+                  Email <span className="text-accent-text">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -96,7 +94,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
                     aria-required="true"
                   />
                 </FormControl>
-                <FormMessage className="text-accent" />
+                <FormMessage className="text-accent-text" />
               </FormItem>
             )}
         />
@@ -117,10 +115,9 @@ const ContactForm: React.FC<ContactFormProps> = ({
                     {...field}
                     className="h-12 border focus:border-accent transition-colors"
                     maxLength={48}
-                    pattern="^(\+?\\d{1,4}[\\s-]?)?((\\(\\d{3,}\\))|\\d{3,})[\\s-]?\\d{3,}[\\s-]?\\d{4,}$"
                   />
                 </FormControl>
-                <FormMessage className="text-accent" />
+                <FormMessage className="text-accent-text" />
               </FormItem>
             )}
         />
@@ -132,7 +129,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
             render={({ field }) => (
               <FormItem className="space-y-2">
                 <FormLabel className="text-sm font-medium">
-                  Message <span className="text-accent">*</span>
+                  Message <span className="text-accent-text">*</span>
                 </FormLabel>
                 <FormControl>
                   <>
@@ -190,7 +187,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
                     )}
                   </>
                 </FormControl>
-                <FormMessage className="text-accent" />
+                <FormMessage className="text-accent-text" />
               </FormItem>
             )}
         />

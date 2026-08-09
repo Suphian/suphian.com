@@ -1,403 +1,120 @@
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
-interface SEOHeadProps {
-  title?: string;
-  description?: string;
-  image?: string;
-  url?: string;
+// Canonical origin — keep in sync with vercel.json redirects and sitemap.xml.
+const SITE_ORIGIN = 'https://suphian.com';
+
+const DEFAULT_TITLE = 'Suphian Tweel — Senior Product Manager, YouTube';
+const DEFAULT_DESCRIPTION =
+  'Senior Product Manager at YouTube specializing in payments and AI. Builds AI-powered payment systems at scale — managing $6B+ in music payments, launching YouTube Shorts monetization, and leading AI-driven fraud detection.';
+const DEFAULT_ROBOTS =
+  'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+
+interface RouteMeta {
+  title: string;
+  description: string;
+  breadcrumb?: string;
+  robots?: string;
 }
 
-const SEOHead = ({
-  title = "Suphian Tweel – Product Manager at YouTube | Payments & AI Expert",
-  description = "Product Manager at YouTube specializing in payments and AI. Builds AI-powered payment systems at scale — managing $6B+ in music payments, launching YouTube Shorts monetization, and leading AI-driven fraud detection.",
-  image = "/assets/images/og-image.jpg",
-  url = window.location.href
-}: SEOHeadProps) => {
-  
+const ROUTE_META: Record<string, RouteMeta> = {
+  '/': {
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+  },
+  '/podcast': {
+    title: 'Podcast — Suphian Tweel',
+    description:
+      "AI-generated podcast on Suphian Tweel's work: how GenAI helps solve YouTube's $20 billion payment problem.",
+    breadcrumb: 'Podcast',
+  },
+};
+
+// Unknown paths render the client-side 404; the SPA rewrite still returns
+// HTTP 200, so noindex is the only signal crawlers get that this isn't a page.
+const NOT_FOUND_META: RouteMeta = {
+  title: 'Page Not Found — Suphian Tweel',
+  description: DEFAULT_DESCRIPTION,
+  robots: 'noindex, follow',
+};
+
+const updateMetaTag = (property: string, content: string) => {
+  // OG and profile tags use property=; everything else (incl. twitter:*) uses name=
+  const attr = property.startsWith('og:') || property.startsWith('profile:')
+    ? 'property'
+    : 'name';
+  let meta =
+    document.querySelector(`meta[property="${property}"]`) ||
+    document.querySelector(`meta[name="${property}"]`);
+
+  if (!meta) {
+    meta = document.createElement('meta');
+    meta.setAttribute(attr, property);
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute('content', content);
+};
+
+const SEOHead = () => {
+  const { pathname } = useLocation();
+
   useEffect(() => {
-    // Update document title
-    document.title = title;
-    
-    // Update meta tags
-    const updateMetaTag = (property: string, content: string) => {
-      let meta = document.querySelector(`meta[property="${property}"]`) || 
-                 document.querySelector(`meta[name="${property}"]`);
-      
-      if (!meta) {
-        meta = document.createElement('meta');
-        if (property.startsWith('og:') || property.startsWith('twitter:')) {
-          meta.setAttribute('property', property);
-        } else {
-          meta.setAttribute('name', property);
-        }
-        document.head.appendChild(meta);
-      }
-      meta.setAttribute('content', content);
-    };
+    const meta = ROUTE_META[pathname] ?? NOT_FOUND_META;
+    const canonicalUrl = pathname === '/' ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}${pathname}`;
 
-    // Basic meta tags
-    updateMetaTag('description', description);
-    updateMetaTag('keywords', 'Product Manager, YouTube Product Manager, Payments Expert, AI Engineering, AI Product Manager, Payment Systems, Fintech, Fraud Detection, Digital Payments, Machine Learning, Data Analytics, YouTube Shorts, YouTube Payments, Suphian Tweel');
-    updateMetaTag('author', 'Suphian Tweel');
+    document.title = meta.title;
+    updateMetaTag('description', meta.description);
+    updateMetaTag('robots', meta.robots ?? DEFAULT_ROBOTS);
 
-    // Get absolute URLs (add cache-busting parameter for social media)
-    const imageWithCacheBust = image.includes('?') ? image : `${image}?v=3`;
-    const absoluteImageUrl = imageWithCacheBust.startsWith('http') ? imageWithCacheBust : `${window.location.origin}${imageWithCacheBust}`;
-    const absoluteUrl = url.startsWith('http') ? url : `${window.location.origin}${url}`;
-    
-    // Open Graph tags
-    updateMetaTag('og:title', title);
-    updateMetaTag('og:description', description);
-    updateMetaTag('og:image', absoluteImageUrl);
-    updateMetaTag('og:image:width', '1200');
-    updateMetaTag('og:image:height', '1200');
-    updateMetaTag('og:image:type', 'image/jpeg');
-    updateMetaTag('og:url', absoluteUrl);
-    updateMetaTag('og:type', 'profile');
-    updateMetaTag('og:site_name', 'Suphian Tweel Portfolio');
-    updateMetaTag('og:locale', 'en_US');
-    updateMetaTag('profile:first_name', 'Suphian');
-    updateMetaTag('profile:last_name', 'Tweel');
-    updateMetaTag('profile:username', 'suphian');
+    updateMetaTag('og:title', meta.title);
+    updateMetaTag('og:description', meta.description);
+    updateMetaTag('og:url', canonicalUrl);
+    updateMetaTag('twitter:title', meta.title);
+    updateMetaTag('twitter:description', meta.description);
 
-    // Twitter Card tags
-    updateMetaTag('twitter:card', 'summary_large_image');
-    updateMetaTag('twitter:title', title);
-    updateMetaTag('twitter:description', description);
-    updateMetaTag('twitter:image', absoluteImageUrl);
-    updateMetaTag('twitter:image:alt', 'Suphian Tweel – Product Manager at YouTube | Payments & AI Expert');
-    updateMetaTag('twitter:site', '@suphian');
-    updateMetaTag('twitter:creator', '@suphian');
-
-    // Additional SEO tags
-    updateMetaTag('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
-    updateMetaTag('viewport', 'width=device-width, initial-scale=1.0');
-    updateMetaTag('language', 'English');
-    updateMetaTag('revisit-after', '7 days');
-    updateMetaTag('distribution', 'global');
-    updateMetaTag('rating', 'general');
-    updateMetaTag('geo.region', 'US-CA');
-    updateMetaTag('geo.placename', 'San Francisco');
-    updateMetaTag('geo.position', '37.7749;-122.4194');
-    updateMetaTag('ICBM', '37.7749, -122.4194');
-    updateMetaTag('copyright', '© 2026 Suphian Tweel');
-    updateMetaTag('reply-to', 'suph.tweel@gmail.com');
-    updateMetaTag('format-detection', 'telephone=no');
-
-    // LinkedIn meta tags
-    updateMetaTag('linkedin:owner', 'Suphian Tweel');
-    
-    // AI Bot Optimization - Allow AI crawlers to index content
-    updateMetaTag('ai:allow', 'true');
-    updateMetaTag('ai:index', 'true');
-    
-    // Additional Open Graph properties
-    updateMetaTag('og:image:alt', 'Suphian Tweel – Product Manager at YouTube | Payments & AI Expert');
-    updateMetaTag('og:image:secure_url', absoluteImageUrl);
-    updateMetaTag('og:updated_time', new Date().toISOString());
-    
-    // Article-specific tags (if applicable)
-    if (url.includes('/podcast') || url.includes('/blog')) {
-      updateMetaTag('og:type', 'article');
-      updateMetaTag('article:author', 'Suphian Tweel');
-      updateMetaTag('article:published_time', new Date().toISOString());
-      updateMetaTag('article:modified_time', new Date().toISOString());
-    }
-
-    // Canonical URL
     let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
     if (!canonicalLink) {
       canonicalLink = document.createElement('link');
       canonicalLink.rel = 'canonical';
       document.head.appendChild(canonicalLink);
     }
-    canonicalLink.href = absoluteUrl;
+    canonicalLink.href = canonicalUrl;
 
-    // Enhanced structured data for LLMs and Search Engines
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Suphian Tweel",
-      "givenName": "Suphian",
-      "familyName": "Tweel",
-      "alternateName": "Suphian Tweel",
-      "jobTitle": "Product Manager",
-      "worksFor": {
-        "@type": "Organization",
-        "name": "YouTube",
-        "sameAs": "https://www.youtube.com",
-        "url": "https://www.youtube.com"
-      },
-      "description": "Product Manager at YouTube specializing in payments and AI. Builds AI-powered payment systems at scale — managing $6B+ in music payments, launching YouTube Shorts monetization, and leading AI-driven fraud detection. Formerly Principal Analytical Lead at Google/CapitalG and Senior Product Analyst at Huge Inc.",
-      "url": absoluteUrl,
-      "image": {
-        "@type": "ImageObject",
-        "url": absoluteImageUrl,
-        "width": 1200,
-        "height": 1200,
-        "caption": "Suphian Tweel – Product Manager at YouTube | Payments & AI Expert"
-      },
-      "email": "suph.tweel@gmail.com",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "San Francisco",
-        "addressRegion": "CA",
-        "addressCountry": "US"
-      },
-      "sameAs": [
-        "https://www.linkedin.com/in/suphian/",
-        "https://github.com/Suphian",
-        "https://twitter.com/suphian"
-      ],
-      "knowsAbout": [
-        "Payment Systems",
-        "Digital Payments",
-        "AI Engineering",
-        "Artificial Intelligence",
-        "Machine Learning",
-        "AI-Powered Fraud Detection",
-        "Fintech",
-        "Product Management",
-        "Product Strategy",
-        "Data Analytics",
-        "YouTube Shorts",
-        "Creator Economy",
-        "Growth Strategy",
-        "Monetization",
-        "Platform Development",
-        "User Experience Design"
-      ],
-      "homeLocation": {
-        "@type": "Place",
-        "name": "San Francisco Bay Area, CA",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "San Francisco",
-          "addressRegion": "CA",
-          "addressCountry": "US"
-        }
-      },
-      "brand": {
-        "@type": "Brand",
-        "name": "Suphian Tweel"
-      },
-      "alumniOf": [
-        {
-          "@type": "Organization",
-          "name": "Google"
-        }
-      ],
-      "hasOccupation": {
-        "@type": "Occupation",
-        "name": "Product Manager",
-        "occupationLocation": {
-          "@type": "City",
-          "name": "San Francisco"
-        },
-        "skills": [
-          "Payment Systems Architecture",
-          "AI Engineering",
-          "Machine Learning",
-          "Fraud Detection",
-          "Fintech",
-          "Product Strategy",
-          "Data Analytics",
-          "Cross-functional Leadership"
-        ]
-      }
-    };
-
-    // FAQ Schema to help LLMs answer specific questions
-    const faqData = {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Who is Suphian Tweel?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Suphian Tweel is a Product Manager at YouTube who specializes in payments systems and artificial intelligence. He builds AI-powered solutions to solve real payment problems at scale — managing over $6 billion in music payments, launching YouTube Shorts monetization, and leading AI-driven fraud detection covered by Billboard."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What is Suphian Tweel's professional experience?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Suphian Tweel is a Product Manager at YouTube (2020-Present) leading payments and AI initiatives. Previously, he was a Principal Analytical Lead at Google/CapitalG (2018-2020), advising portfolio companies like Duolingo and Chewy on growth analytics. Before that, he was a Senior Product Analyst at Huge Inc (2014-2018), running A/B testing programs for brands like Hulu, Apple, and AMC Theaters."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How does Suphian Tweel use AI to solve payment problems?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Suphian applies AI engineering to real payment challenges at YouTube: building ML-powered fraud detection systems that uncovered a royalty scam (covered by Billboard), developing AI-powered payment infrastructure for YouTube Shorts monetization, and optimizing $6B+ in annual music payments. He focuses on applied AI — shipping production systems that solve real problems."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What products has Suphian Tweel built?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Key products include the AI-powered payment system for YouTube Shorts monetization, YouTube Premium Lite, a fraud detection system that surfaced a major royalty scam, and payment optimization systems managing $6B+ annually. At Google/CapitalG, he built analytics frameworks for companies like Duolingo and Chewy."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What are Suphian Tweel's areas of expertise?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Suphian Tweel is an expert in payments and AI. His core expertise includes payment systems architecture, AI engineering, machine learning, fintech, AI-powered fraud detection, product management, product strategy, data analytics, growth strategy, and monetization for creator platforms."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Where is Suphian Tweel located?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Suphian Tweel is based in San Francisco, California, where he works as a Product Manager at YouTube."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How can I contact Suphian Tweel?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "You can reach Suphian Tweel via email at suph.tweel@gmail.com, or connect with him on LinkedIn at linkedin.com/in/suphian, GitHub at github.com/Suphian, or Twitter at twitter.com/suphian."
-          }
-        }
-      ]
-    };
-
-    // WebSite structured data for better search engine understanding
-    const websiteData = {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Suphian Tweel Portfolio",
-      "url": window.location.origin,
-      "description": "Portfolio website of Suphian Tweel, Product Manager at YouTube specializing in payments and AI. Showcasing experience building AI-powered payment systems, fraud detection, and fintech products at scale.",
-      "author": {
-        "@type": "Person",
-        "name": "Suphian Tweel"
-      },
-      "publisher": {
-        "@type": "Person",
-        "name": "Suphian Tweel"
-      },
-      "inLanguage": "en-US",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": `${window.location.origin}/?q={search_term_string}`
-        },
-        "query-input": "required name=search_term_string"
-      }
-    };
-
-    // Organization structured data
-    const organizationData = {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Suphian Tweel",
-      "url": window.location.origin,
-      "logo": absoluteImageUrl,
-      "sameAs": [
-        "https://www.linkedin.com/in/suphian/",
-        "https://github.com/Suphian",
-        "https://twitter.com/suphian"
-      ],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "email": "suph.tweel@gmail.com",
-        "contactType": "Professional"
-      }
-    };
-
-    // BreadcrumbList for navigation structure
+    // BreadcrumbList is the only JSON-LD that varies per route. The static
+    // Person/FAQ/WebSite/Organization blocks in index.html are the single
+    // source of truth — they're what non-JS crawlers see anyway.
     const breadcrumbData = {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
         {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": window.location.origin
-        }
-      ]
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: `${SITE_ORIGIN}/`,
+        },
+        ...(meta.breadcrumb
+          ? [
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: meta.breadcrumb,
+                item: canonicalUrl,
+              },
+            ]
+          : []),
+      ],
     };
 
-    // Add page-specific breadcrumb items
-    if (url.includes('/podcast')) {
-      breadcrumbData.itemListElement.push({
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Podcast",
-        "item": absoluteUrl
-      });
-    } else if (url.includes('/customers')) {
-      breadcrumbData.itemListElement.push({
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Customers",
-        "item": absoluteUrl
-      });
+    let breadcrumbScript = document.querySelector('#structured-data-breadcrumb') as HTMLScriptElement;
+    if (!breadcrumbScript) {
+      breadcrumbScript = document.createElement('script');
+      breadcrumbScript.id = 'structured-data-breadcrumb';
+      breadcrumbScript.type = 'application/ld+json';
+      document.head.appendChild(breadcrumbScript);
     }
-
-    // Add or update Person structured data
-    let structuredDataScript = document.querySelector('#structured-data-person') as HTMLScriptElement;
-    if (!structuredDataScript) {
-      structuredDataScript = document.createElement('script');
-      structuredDataScript.id = 'structured-data-person';
-      structuredDataScript.type = 'application/ld+json';
-      document.head.appendChild(structuredDataScript);
-    }
-    structuredDataScript.textContent = JSON.stringify(structuredData);
-
-    // Add or update FAQ structured data
-    let faqDataScript = document.querySelector('#structured-data-faq') as HTMLScriptElement;
-    if (!faqDataScript) {
-      faqDataScript = document.createElement('script');
-      faqDataScript.id = 'structured-data-faq';
-      faqDataScript.type = 'application/ld+json';
-      document.head.appendChild(faqDataScript);
-    }
-    faqDataScript.textContent = JSON.stringify(faqData);
-
-    // Add or update WebSite structured data
-    let websiteDataScript = document.querySelector('#structured-data-website') as HTMLScriptElement;
-    if (!websiteDataScript) {
-      websiteDataScript = document.createElement('script');
-      websiteDataScript.id = 'structured-data-website';
-      websiteDataScript.type = 'application/ld+json';
-      document.head.appendChild(websiteDataScript);
-    }
-    websiteDataScript.textContent = JSON.stringify(websiteData);
-
-    // Add or update Organization structured data
-    let organizationDataScript = document.querySelector('#structured-data-organization') as HTMLScriptElement;
-    if (!organizationDataScript) {
-      organizationDataScript = document.createElement('script');
-      organizationDataScript.id = 'structured-data-organization';
-      organizationDataScript.type = 'application/ld+json';
-      document.head.appendChild(organizationDataScript);
-    }
-    organizationDataScript.textContent = JSON.stringify(organizationData);
-
-    // Add or update BreadcrumbList structured data
-    let breadcrumbDataScript = document.querySelector('#structured-data-breadcrumb') as HTMLScriptElement;
-    if (!breadcrumbDataScript) {
-      breadcrumbDataScript = document.createElement('script');
-      breadcrumbDataScript.id = 'structured-data-breadcrumb';
-      breadcrumbDataScript.type = 'application/ld+json';
-      document.head.appendChild(breadcrumbDataScript);
-    }
-    breadcrumbDataScript.textContent = JSON.stringify(breadcrumbData);
-
-  }, [title, description, image, url]);
+    breadcrumbScript.textContent = JSON.stringify(breadcrumbData);
+  }, [pathname]);
 
   return null;
 };

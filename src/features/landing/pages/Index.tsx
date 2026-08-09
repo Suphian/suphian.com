@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback, Suspense } from "react";
+import React, { useEffect, useMemo, useRef, useState, useCallback, Suspense } from "react";
 import LandingPageCursor from "@/features/landing/components/LandingPageCursor";
 
 const RequestCVModal = React.lazy(() =>
@@ -38,42 +38,26 @@ const Index = () => {
     autoTrackScrollEvents: true
   });
   
-  // Set up scroll tracking for all major sections
-  const scrollSections = [
+  // Set up scroll tracking for all major sections. Both inputs are memoized —
+  // useScrollTracking's effect depends on them, so fresh identities each render
+  // would tear down and rebuild the IntersectionObserver constantly.
+  const scrollSections = useMemo(() => [
     { name: "landing", ref: landingRef, threshold: 0.5 },
     { name: "parallax-image", ref: parallaxImageRef, threshold: 0.3 },
     { name: "about-story", ref: aboutSectionRef, threshold: 0.4 },
     { name: "experience", ref: experienceSectionRef, threshold: 0.4 },
     { name: "projects", ref: projectsSectionRef, threshold: 0.4 }
-  ];
+  ], []);
+
+  const onSectionView = useCallback((sectionName: string, progress: number) => {
+    if (import.meta.env.DEV) {
+      console.log(`🎯 User engaged with: ${sectionName} section (${Math.round(progress * 100)}% visible)`);
+    }
+  }, []);
 
   useScrollTracking({
     sections: scrollSections,
-    onSectionView: (sectionName, progress) => {
-      // Only log engagement events in development mode
-      if (import.meta.env.DEV) {
-        console.log(`🎯 User engaged with: ${sectionName} section (${Math.round(progress * 100)}% visible)`);
-        
-        // You can add custom logic here for each section
-        switch (sectionName) {
-          case "landing":
-            console.log("👋 User saw the landing/greeting");
-            break;
-          case "parallax-image":
-            console.log("🚀 User saw the astronaut image");
-            break;
-          case "about-story":
-            console.log("📖 User is reading your story");
-            break;
-          case "experience":
-            console.log("💼 User is viewing your experience");
-            break;
-          case "projects":
-            console.log("🛠️ User is viewing your projects");
-            break;
-        }
-      }
-    }
+    onSectionView
   });
   
   useEffect(() => {

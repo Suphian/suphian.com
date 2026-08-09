@@ -28,6 +28,10 @@
     /* Oxide red accent */
     --accent: 0 60% 45%;
     --accent-foreground: 0 0% 95%;
+    /* Lighter variant for accent-colored TEXT on dark backgrounds — the base
+       accent is ~3.5:1 on black (fails WCAG AA); this is ~4.9:1. Keep --accent
+       for fills/borders where white text sits on top. */
+    --accent-text: 0 60% 56%;
 
     --destructive: 0 60% 45%;
     --destructive-foreground: 0 0% 95%;

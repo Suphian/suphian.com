@@ -7,14 +7,10 @@ const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 let client: SupabaseClient | null = null;
 const getClient = (): SupabaseClient => {
   if (!client) {
-    client = createClient(supabaseUrl, supabaseAnonKey, {
-      global: {
-        headers: {
-          'apikey': supabaseAnonKey,
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-        }
-      }
-    });
+    // No custom global headers: supabase-js sets apikey/Authorization itself,
+    // and a hardcoded anon Authorization would override session JWTs if auth
+    // is ever added.
+    client = createClient(supabaseUrl, supabaseAnonKey);
   }
   return client;
 };

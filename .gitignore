@@ -23,6 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+.env
 .env*.local
 
 # Large media files (should be in cloud storage)

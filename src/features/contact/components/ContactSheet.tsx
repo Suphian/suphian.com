@@ -7,7 +7,6 @@ import {
   SheetDescription,
 } from "@/shared/components/ui/sheet";
 import ContactForm from "./ContactForm";
-import ContactChipsBar from "./ContactChipsBar";
 
 interface ContactSheetProps {
   open: boolean;
@@ -39,7 +38,6 @@ const ContactSheet: React.FC<ContactSheetProps> = ({ open, onOpenChange }) => {
               showPhone
               source="ContactSheet"
               showChips
-              chipsBarComponent={<ContactChipsBar textareaId="message" />}
               onSubmitted={() => onOpenChange(false)}
             />
           </div>

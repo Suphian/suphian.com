@@ -68,8 +68,6 @@ Crawl-delay: 1
 # Default rules for all other bots
 User-agent: *
 Allow: /
-Disallow: /payment-success
-Disallow: /payment-cancel
 Crawl-delay: 2
 
 # Sitemap
