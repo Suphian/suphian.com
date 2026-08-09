@@ -60,7 +60,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
             render={({ field }) => (
               <FormItem className="space-y-2">
                 <FormLabel className="text-sm font-medium">
-                  Name <span className="text-accent">*</span>
+                  Name <span className="text-accent-text">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -71,7 +71,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
                     aria-required="true"
                   />
                 </FormControl>
-                <FormMessage className="text-accent" />
+                <FormMessage className="text-accent-text" />
               </FormItem>
             )}
         />
@@ -82,7 +82,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
             render={({ field }) => (
               <FormItem className="space-y-2">
                 <FormLabel className="text-sm font-medium">
-                  Email <span className="text-accent">*</span>
+                  Email <span className="text-accent-text">*</span>
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -94,7 +94,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
                     aria-required="true"
                   />
                 </FormControl>
-                <FormMessage className="text-accent" />
+                <FormMessage className="text-accent-text" />
               </FormItem>
             )}
         />
@@ -117,7 +117,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
                     maxLength={48}
                   />
                 </FormControl>
-                <FormMessage className="text-accent" />
+                <FormMessage className="text-accent-text" />
               </FormItem>
             )}
         />
@@ -129,7 +129,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
             render={({ field }) => (
               <FormItem className="space-y-2">
                 <FormLabel className="text-sm font-medium">
-                  Message <span className="text-accent">*</span>
+                  Message <span className="text-accent-text">*</span>
                 </FormLabel>
                 <FormControl>
                   <>
@@ -187,7 +187,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
                     )}
                   </>
                 </FormControl>
-                <FormMessage className="text-accent" />
+                <FormMessage className="text-accent-text" />
               </FormItem>
             )}
         />

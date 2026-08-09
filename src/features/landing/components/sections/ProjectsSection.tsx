@@ -100,13 +100,13 @@ const ProjectsSection = memo(forwardRef<HTMLDivElement>((_props, ref) => {
                 <ul className="space-y-1.5 pt-2 pl-0 list-none" role="list">
                   {project.links.map((link, linkIndex) => (
                     <li key={linkIndex} className="flex items-center gap-2">
-                      <span className="text-xs font-mono" style={{ color: 'rgba(200, 60, 45, 0.9)' }}>•</span>
+                      <span className="text-xs font-mono" style={{ color: 'hsl(0 60% 56%)' }}>•</span>
                       <a
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs font-mono inline-flex items-center gap-2 hover:opacity-70 transition-opacity"
-                        style={{ color: 'rgba(200, 60, 45, 0.9)' }}
+                        style={{ color: 'hsl(0 60% 56%)' }}
                         onClick={() => handleExternalLinkClick(link.title, link.url)}
                       >
                         <ExternalLink size={12} aria-hidden="true" />
