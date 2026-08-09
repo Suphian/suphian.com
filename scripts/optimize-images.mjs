@@ -1,13 +1,12 @@
 /**
  * One-shot / repeatable image optimizer (run: `npm run optimize:images`).
  *
- * Generates web-optimized derivatives from the large source assets in /public:
- *   - background.png (2.1 MB tiled grain)  -> background.webp (tiny, repeats identically)
- *   - profile logo PNG (449 KB)            -> og-image.jpg (1200x1200, broad crawler support)
- *                                          -> favicon-256.png / apple-touch-icon.png
- *
- * Source files are left untouched so they remain the editable masters; only the
- * references in index.html / index.css / SEOHead point at the optimized output.
+ * Generates web-optimized derivatives from the editable masters in /assets-src
+ * (masters live outside /public so they don't ship to the CDN):
+ *   - background.png (2.1 MB tiled grain) -> background.webp (tiny, repeats identically)
+ *   - logo-master.png (449 KB)            -> og-image.jpg (1200x1200) + og-image-wide.jpg (1200x630)
+ *                                         -> favicon-256.png / apple-touch-icon.png / PWA icons
+ *   - logo-nav.webp (1536x1024)           -> logo-292.webp (navbar logo, renders at <=146px tall)
  */
 import sharp from 'sharp';
 import { fileURLToPath } from 'node:url';
@@ -18,11 +17,11 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const p = (...s) => path.join(root, ...s);
 const kb = (file) => (existsSync(file) ? `${(statSync(file).size / 1024).toFixed(1)} KB` : 'missing');
 
-const BG_SRC = p('public/assets/textures/background.png');
+const BG_SRC = p('assets-src/background.png');
 const BG_OUT = p('public/assets/textures/background.webp');
-const LOGO_SRC = p(
-  'public/assets/images/u1327668621_logo_SUPH_--chaos_15_--ar_23_--profile_aa8enny_--st_b2040bf7-71f1-4263-bf3e-422f9561d81e.png'
-);
+const LOGO_SRC = p('assets-src/logo-master.png');
+const NAV_LOGO_SRC = p('assets-src/logo-nav.webp');
+const NAV_LOGO_OUT = p('public/assets/logos/logo-292.webp');
 const IMG_DIR = p('public/assets/images');
 
 async function run() {
@@ -47,7 +46,7 @@ async function run() {
       .flatten({ background: { r: 0, g: 0, b: 0 } })
       .jpeg({ quality: 82, mozjpeg: true })
       .toFile(og);
-    console.log(`profile logo (${kb(LOGO_SRC)}) -> og-image.jpg (${kb(og)})`);
+    console.log(`logo-master.png (${kb(LOGO_SRC)}) -> og-image.jpg (${kb(og)})`);
 
     // 2b. Wide OG variant — twitter:card summary_large_image expects ~2:1
     //     (1200x630); the square version gets cropped by Twitter/X and Slack.
@@ -57,7 +56,7 @@ async function run() {
       .flatten({ background: { r: 0, g: 0, b: 0 } })
       .jpeg({ quality: 82, mozjpeg: true })
       .toFile(ogWide);
-    console.log(`profile logo (${kb(LOGO_SRC)}) -> og-image-wide.jpg (${kb(ogWide)})`);
+    console.log(`logo-master.png (${kb(LOGO_SRC)}) -> og-image-wide.jpg (${kb(ogWide)})`);
 
     // 3. Favicons + PWA icons — small PNGs instead of fetching the 449 KB original.
     for (const [name, size] of [
@@ -73,6 +72,17 @@ async function run() {
         .toFile(out);
       console.log(`  -> ${name} (${kb(out)})`);
     }
+  }
+
+  // 4. Navbar logo — renders at h-116/146 with w-auto; 292px tall (2x retina)
+  //    replaces shipping the full 1536x1024 master on every cold load.
+  if (existsSync(NAV_LOGO_SRC)) {
+    mkdirSync(path.dirname(NAV_LOGO_OUT), { recursive: true });
+    await sharp(NAV_LOGO_SRC)
+      .resize({ height: 292, withoutEnlargement: true })
+      .webp({ quality: 85 })
+      .toFile(NAV_LOGO_OUT);
+    console.log(`logo-nav.webp (${kb(NAV_LOGO_SRC)}) -> logo-292.webp (${kb(NAV_LOGO_OUT)})`);
   }
 }
 

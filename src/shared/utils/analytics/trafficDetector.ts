@@ -6,13 +6,10 @@
 const DEVELOPMENT_HOSTS = [
   'localhost',
   '127.0.0.1',
-  '0.0.0.0',
-  'lovable.dev',
-  'lovableproject.com'
+  '0.0.0.0'
 ] as const;
 
 const INTERNAL_USER_AGENT_PATTERNS = [
-  'lovable',
   'internal-qa'
 ] as const;
 
@@ -30,11 +27,6 @@ export class TrafficDetector {
       return true;
     }
 
-    // Check for Lovable-specific tokens/parameters
-    if (urlParams.get('__lovable_token')) {
-      return true;
-    }
-
     // Check user agent for known internal patterns
     const userAgent = navigator.userAgent.toLowerCase();
     if (INTERNAL_USER_AGENT_PATTERNS.some(pattern => userAgent.includes(pattern))) {
@@ -49,13 +41,8 @@ export class TrafficDetector {
       return true;
     }
 
-    // Check for subdomains of development hosts
-    if (hostname.endsWith('.lovable.dev') || hostname.endsWith('.lovableproject.com')) {
-      return true;
-    }
-
-    // Check for preview URLs
-    if (hostname.includes('lovable') || hostname.includes('preview')) {
+    // Vercel preview deployments
+    if (hostname.endsWith('.vercel.app') || hostname.includes('preview')) {
       return true;
     }
 

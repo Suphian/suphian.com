@@ -10,7 +10,6 @@ interface ContactFormProps {
   source: string;
   onSubmitted?: () => void;
   showChips?: boolean;
-  chipsBarComponent?: React.ReactNode;
   extraFields?: React.ReactNode;
   submitButton?: React.ReactNode;
 }
@@ -20,7 +19,6 @@ const ContactForm: React.FC<ContactFormProps> = ({
   source,
   onSubmitted,
   showChips,
-  chipsBarComponent: _chipsBarComponent,
   extraFields,
   submitButton,
 }) => {

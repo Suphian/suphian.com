@@ -152,6 +152,7 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
   const [showCelebration, setShowCelebration] = useState(false);
   const eventIdCounter = useRef(0);
   const hasShownCelebration = useRef(false);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   // Get visitor info once on mount
   const visitorInfo = useMemo(() => {
@@ -183,12 +184,17 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
     setEvents(prev => [newEvent, ...prev].slice(0, 30));
   }, []);
 
-  // Listen for analytics events
+  // Listen for analytics events. The restore function must be captured in the
+  // effect's own scope — returning it from inside .then() would hand it to the
+  // promise, not to React, so the wrapper would stack on every open.
   useEffect(() => {
     if (!isOpen) return;
 
-    // Import and intercept analytics console
+    let restore: (() => void) | undefined;
+    let cancelled = false;
+
     import('@/shared/utils/analytics/consoleLogger').then(({ analyticsConsole }) => {
+      if (cancelled) return;
       const originalLog = analyticsConsole.log.bind(analyticsConsole);
 
       analyticsConsole.log = (name: string, payload: Record<string, unknown> = {}) => {
@@ -196,11 +202,27 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
         addEvent(name, payload);
       };
 
-      return () => {
+      restore = () => {
         analyticsConsole.log = originalLog;
       };
     });
+
+    return () => {
+      cancelled = true;
+      restore?.();
+    };
   }, [isOpen, addEvent]);
+
+  // Dialog keyboard behavior: Escape closes, focus moves into the panel
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    panelRef.current?.focus();
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isOpen, onClose]);
 
   // Update engagement metrics
   useEffect(() => {
@@ -264,7 +286,12 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
 
       {/* Side Panel */}
       <div
-        className="fixed top-0 right-0 h-full z-[9999] w-80 bg-black/95 backdrop-blur-xl text-white shadow-2xl border-l border-[hsl(0,60%,45%)]/20 transform transition-transform duration-300 ease-out overflow-hidden flex flex-col"
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Your activity"
+        tabIndex={-1}
+        className="fixed top-0 right-0 h-full z-[9999] w-80 bg-black/95 backdrop-blur-xl text-white shadow-2xl border-l border-[hsl(0,60%,45%)]/20 transform transition-transform duration-300 ease-out overflow-hidden flex flex-col focus:outline-none"
         onClick={e => e.stopPropagation()}
       >
         {/* 8-bit celebration at 100% */}
@@ -283,9 +310,10 @@ export const LiveAnalyticsPanel = ({ isOpen, onClose }: LiveAnalyticsPanelProps)
           </div>
           <button
             onClick={onClose}
+            aria-label="Close"
             className="p-1.5 hover:bg-[hsl(0,60%,45%)]/10 rounded-md transition-colors"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>

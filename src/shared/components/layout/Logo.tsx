@@ -19,14 +19,16 @@ const Logo = () => {
     });
   };
 
-  const logoPath = "/assets/logos/Logo.webp";
+  const logoPath = "/assets/logos/logo-292.webp";
 
   return (
     <div className="fixed top-6 left-6 md:top-10 md:left-10 z-[100]">
       <Link to="/" onClick={handleLogoClick}>
-        <img 
+        <img
           src={logoPath}
-          alt="Suphian Tweel - Product Manager at YouTube" 
+          alt="Suphian Tweel — home"
+          width={438}
+          height={292}
           className="h-[116px] md:h-[146px] w-auto hover:scale-105 transition-transform duration-200"
           loading="eager"
           decoding="async"

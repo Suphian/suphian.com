@@ -8,7 +8,7 @@ const CACHE_NAME = 'suphian-site-' + BUILD_ID;
 // Small, always-needed static assets to warm the cache on install.
 const PRECACHE_ASSETS = [
   '/assets/textures/background.webp',
-  '/assets/logos/Logo.webp',
+  '/assets/logos/logo-292.webp',
 ];
 
 // Cache strategies for different asset types
@@ -64,8 +64,8 @@ self.addEventListener('fetch', event => {
 
   if (request.method !== 'GET') return;
   if (url.protocol === 'chrome-extension:') return;
-  // Skip Lovable preview / local dev URLs to avoid caching dev content
-  if (url.hostname.includes('lovable') || url.hostname.includes('localhost')) return;
+  // Skip local dev URLs to avoid caching dev content
+  if (url.hostname.includes('localhost')) return;
 
   const strategy = getStrategy(request.url);
   if (strategy.networkFirst) {

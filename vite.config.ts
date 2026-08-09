@@ -2,7 +2,6 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import fs from "fs";
-import { componentTagger } from "lovable-tagger";
 import { visualizer } from "rollup-plugin-visualizer";
 
 // Stamps a unique build id into the copied service worker so every production
@@ -28,7 +27,6 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' && componentTagger(),
     // `npm run build:analyze` emits an interactive bundle treemap to dist/stats.html
     mode === 'analyze' && visualizer({
       filename: 'dist/stats.html',
@@ -39,7 +37,12 @@ export default defineConfig(({ mode }) => ({
     injectServiceWorkerBuildId(),
   ].filter(Boolean),
   esbuild: {
-    drop: mode === 'production' ? ['console', 'debugger'] : [],
+    // console.error survives to production so ErrorBoundary/audio failures
+    // are still observable; the noisy levels are stripped as pure calls.
+    drop: mode === 'production' ? ['debugger'] : [],
+    pure: mode === 'production'
+      ? ['console.log', 'console.info', 'console.debug', 'console.warn']
+      : [],
   },
   resolve: {
     alias: {
@@ -56,29 +59,37 @@ export default defineConfig(({ mode }) => ({
             // (e.g. @radix-ui/react-*, lucide-react) and would otherwise be
             // swallowed into the vendor chunk.
             if (id.includes('/react-router') || id.includes('/@remix-run/')) return 'router';
-            if (id.includes('/@tanstack/')) return 'query';
             if (id.includes('/react-hook-form') || id.includes('/@hookform/')) return 'forms';
-            if (id.includes('/recharts') || id.includes('/d3-') || id.includes('/victory-') ||
-                id.includes('/internmap') || id.includes('/delaunator') || id.includes('/robust-predicates')) return 'recharts';
             if (id.includes('/@radix-ui/')) return 'radix';
             if (id.includes('/lucide-react/')) return 'icons';
-            if (id.includes('/emailjs-com/')) return 'email';
             if (id.includes('/ua-parser-js/')) return 'analytics';
+            // Styling foundations are shared by eager AND lazy chunks; without
+            // an explicit home Rollup colors them into a lazy chunk, which then
+            // becomes a static dependency of the entry (defeating the split).
+            if (id.includes('/class-variance-authority/') || id.includes('/clsx/') ||
+                id.includes('/tailwind-merge/')) return 'vendor';
             // React core (loaded on every route) gets a stable vendor chunk.
             if (id.includes('/react/') || id.includes('/react-dom/') ||
                 id.includes('/react-is/') || id.includes('/scheduler/')) return 'vendor';
-            // Everything else (e.g. @supabase, @stripe) is left to Rollup so it
+            // Everything else (e.g. @supabase) is left to Rollup so it
             // stays code-split with the lazy route that uses it.
             return undefined;
           }
-          // Split analytics utilities into separate chunk - load only when needed
-          if (id.includes('/shared/utils/analytics/') || 
-              id.includes('/shared/hooks/useEventTracker') ||
-              id.includes('AnalyticsPageviewListener')) return 'analytics';
-          // Split heavy components into separate chunks
-          if (id.includes('/features/payments/components/StreamingRevenueWidget') || 
-              id.includes('/features/payments/components/EarningsChart') ||
-              id.includes('/features/payments/components/ComparisonTable')) return 'widgets';
+          // Vite's dynamic-import preload helper is referenced by every chunk;
+          // pin it to vendor so it can't drag a lazy chunk into the entry graph.
+          if (id.includes('vite/preload-helper')) return 'vendor';
+          // Shared UI foundations used by both eager chrome (Toaster) and the
+          // lazy contact chunk — same coloring problem as above. They import
+          // from the radix chunk, so they need their own chunk (putting them in
+          // vendor would create a vendor<->radix cycle that breaks React init).
+          if (id.includes('/shared/lib/utils') ||
+              id.includes('/shared/hooks/use-toast') ||
+              id.includes('/shared/components/ui/toast')) return 'ui-shared';
+          // Split analytics utilities into separate chunk - load only when
+          // needed. useEventTracker deliberately stays out: it's imported
+          // statically by eager pages, so putting it here would drag the whole
+          // analytics chunk into the entry's static import graph.
+          if (id.includes('/shared/utils/analytics/')) return 'analytics';
           // Split contact forms into separate chunk
           if (id.includes('/features/contact/components/ContactForm') ||
               id.includes('/features/contact/components/ContactSheet') ||

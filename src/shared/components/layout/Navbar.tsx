@@ -195,7 +195,7 @@ const Navbar = () => {
         </nav>
 
         {isOpen && (
-          <ul id="mobile-menu" className="md:hidden mt-4 pb-2 flex flex-col items-end gap-1">
+          <ul id="mobile-menu" className="md:hidden mt-4 mb-2 flex flex-col items-end gap-1 bg-black/95 backdrop-blur-md border border-white/10 rounded-md px-4 py-3">
             {navLinks.map(link => (
               <li key={link.name}>
                 <Link
