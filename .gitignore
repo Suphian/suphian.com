@@ -32,3 +32,4 @@ dist-ssr
 *.mp4
 !public/*.mp4
 GenAI_Solves_YouTube*
+.playwright-mcp
