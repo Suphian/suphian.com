@@ -1,0 +1,161 @@
+- generic [ref=f6e2]:
+  - region "Notifications (F8)":
+    - list
+  - link "Skip to main content" [ref=f6e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - progressbar "Page scroll progress" [ref=f6e4]
+  - link [ref=f6e6] [cursor=pointer]:
+    - /url: /
+    - img "Suphian Tweel — home" [ref=f6e7]
+  - main [ref=f6e8]:
+    - generic [ref=f6e9]:
+      - generic [ref=f6e11]:
+        - heading "Hi, I'm Suphian. I'm a product manager at YouTube leading payments. I'm passionate about crafting exceptional experiences powered by data, design, and cutting-edge tech." [level=1] [ref=f6e15]:
+          - generic [ref=f6e17]: H
+        - button "Scroll to story section" [ref=f6e22] [cursor=pointer]:
+          - generic [ref=f6e23]:
+            - generic [ref=f6e24]: Space
+            - generic [ref=f6e25]: ↓
+      - generic [ref=f6e29]:
+        - region [ref=f6e30]:
+          - generic [ref=f6e32]:
+            - heading "STORY" [level=2] [ref=f6e33]
+            - generic [ref=f6e34]:
+              - paragraph [ref=f6e35]: I grew up between cultures — the kind of upbringing that teaches you to listen deeply, challenge assumptions, and speak multiple languages (including internet). I've spent my career working with founders, builders and private equity who want to do more than just ship — they want to shake things up.
+              - paragraph [ref=f6e36]: I think data science and AI aren't just the future — they're the foundation. I'm wired for first principles, allergic to fluff, and always looking for people who are smart, egoless, and unafraid to be wrong.
+              - paragraph [ref=f6e37]: "My work spans e-commerce, consumer apps, and internal tools — often the kinds of products that challenge business-as-usual and deliver a smarter, more human way of doing things. What ties it all together is a singular goal: helping ambitious teams think bigger."
+              - paragraph [ref=f6e38]: Technology is going to remake everything — faster than most are ready for. But with the right mindset and a bias for clarity, we can build a future that's big enough for everyone.
+            - generic [ref=f6e40]:
+              - button "Request My Resume" [ref=f6e41] [cursor=pointer]
+              - button "Notebook LLM Podcast" [ref=f6e42] [cursor=pointer]
+        - region [ref=f6e46]:
+          - generic [ref=f6e48]:
+            - heading "EXPERIENCE" [level=2] [ref=f6e49]
+            - generic [ref=f6e50]:
+              - generic [ref=f6e56]:
+                - generic [ref=f6e57]: 2020 - Present
+                - heading "YouTube" [level=3] [ref=f6e58]
+                - paragraph [ref=f6e59]: Senior Product Manager
+                - paragraph [ref=f6e60]: Led execution of an AI-powered payment system for high-profile launches including YouTube Shorts and YouTube Premium Lite. Managed over $6 billion in music payments, optimized global operations, and ensured compliance with regulatory and contractual obligations. Also led a major fraud detection initiative that surfaced and mitigated a royalty scam covered by Billboard.
+                - list [ref=f6e61]:
+                  - listitem [ref=f6e62]:
+                    - generic [ref=f6e63]: •
+                    - link "YouTube Premium Lite Launch (opens in new tab)" [ref=f6e64] [cursor=pointer]:
+                      - /url: https://blog.youtube/news-and-events/introducing-premium-lite/
+                      - generic [ref=f6e69]: YouTube Premium Lite Launch
+                      - generic [ref=f6e70]: (opens in new tab)
+                  - listitem [ref=f6e71]:
+                    - generic [ref=f6e72]: •
+                    - link "YouTube Shorts Updates (opens in new tab)" [ref=f6e73] [cursor=pointer]:
+                      - /url: https://blog.youtube/inside-youtube/shorts-revenue-sharing-update/
+                      - generic [ref=f6e78]: YouTube Shorts Updates
+                      - generic [ref=f6e79]: (opens in new tab)
+                  - listitem [ref=f6e80]:
+                    - generic [ref=f6e81]: •
+                    - 'link "Billboard: YouTube Fraud Detection (opens in new tab)" [ref=f6e82] [cursor=pointer]':
+                      - /url: https://www.billboard.com/pro/youtube-fraud-royalties-scam-irs-latin-chenel-yenddi-mediamuv-adrev/
+                      - generic [ref=f6e87]: "Billboard: YouTube Fraud Detection"
+                      - generic [ref=f6e88]: (opens in new tab)
+                  - listitem [ref=f6e89]:
+                    - generic [ref=f6e90]: •
+                    - 'link "YouTube: $6B Paid to Music Industry (opens in new tab)" [ref=f6e91] [cursor=pointer]':
+                      - /url: https://blog.youtube/creator-and-artist-stories/6-billion-paid-to-the-music-industry-in-12-months/#:~:text=In%20the%2012%20months%20between,B%20to%20the%20music%20industry.&text=Last%20year%20we%20announced%20a,B%20to%20the%20music%20industry.
+                      - generic [ref=f6e96]: "YouTube: $6B Paid to Music Industry"
+                      - generic [ref=f6e97]: (opens in new tab)
+                  - listitem [ref=f6e98]:
+                    - generic [ref=f6e99]: •
+                    - 'link "Google Research: Zero-Resource Machine Translation (opens in new tab)" [ref=f6e100] [cursor=pointer]':
+                      - /url: https://research.google/blog/unlocking-zero-resource-machine-translation-to-support-new-languages-in-google-translate/
+                      - generic [ref=f6e105]: "Google Research: Zero-Resource Machine Translation"
+                      - generic [ref=f6e106]: (opens in new tab)
+              - generic [ref=f6e112]:
+                - generic [ref=f6e113]: 2018 - 2020
+                - heading "Google" [level=3] [ref=f6e114]
+                - paragraph [ref=f6e115]: Principal Analytical Lead
+                - paragraph [ref=f6e116]: Served as an in-house analytics advisor for CapitalG portfolio companies and high-growth D2C brands. Led incrementality testing and optimization strategies to improve marketing efficiency and scale growth across platforms like Duolingo and Chewy.com.
+                - list [ref=f6e117]:
+                  - listitem [ref=f6e118]:
+                    - generic [ref=f6e119]: •
+                    - link "Chewy IPO Announcement (opens in new tab)" [ref=f6e120] [cursor=pointer]:
+                      - /url: https://investor.chewy.com/news-and-events/news/news-details/2019/Chewy-Announces-Pricing-of-Initial-Public-Offering/default.aspx
+                      - generic [ref=f6e125]: Chewy IPO Announcement
+                      - generic [ref=f6e126]: (opens in new tab)
+                  - listitem [ref=f6e127]:
+                    - generic [ref=f6e128]: •
+                    - link "Duolingo Series D Funding (opens in new tab)" [ref=f6e129] [cursor=pointer]:
+                      - /url: https://www.cmu.edu/project-olympus/news/2015/june/duolingo-raises-45-million-series-d-round-led-by-google-capital-now-valued-at-470m.html
+                      - generic [ref=f6e134]: Duolingo Series D Funding
+                      - generic [ref=f6e135]: (opens in new tab)
+              - generic [ref=f6e140]:
+                - generic [ref=f6e141]: 2014 - 2018
+                - heading "Huge Inc" [level=3] [ref=f6e142]
+                - paragraph [ref=f6e143]: Senior Product Analyst
+                - paragraph [ref=f6e144]: Specialized in site redesigns, A/B testing, and multivariate testing for high-impact brands. Helped improve UX and conversion for companies like Hulu, Apple and AMC Theaters.
+                - list [ref=f6e145]:
+                  - listitem [ref=f6e146]:
+                    - generic [ref=f6e147]: •
+                    - 'link "Huge Inc: Google Work (opens in new tab)" [ref=f6e148] [cursor=pointer]':
+                      - /url: https://www.hugeinc.com/work/google/
+                      - generic [ref=f6e153]: "Huge Inc: Google Work"
+                      - generic [ref=f6e154]: (opens in new tab)
+                  - listitem [ref=f6e155]:
+                    - generic [ref=f6e156]: •
+                    - 'link "Bain Capital: Canada Goose IPO (opens in new tab)" [ref=f6e157] [cursor=pointer]':
+                      - /url: https://www.baincapital.com/news/900-parkas-bains-canada-goes-public
+                      - generic [ref=f6e162]: "Bain Capital: Canada Goose IPO"
+                      - generic [ref=f6e163]: (opens in new tab)
+                  - listitem [ref=f6e164]:
+                    - generic [ref=f6e165]: •
+                    - link "Hulu Redesign Project (opens in new tab)" [ref=f6e166] [cursor=pointer]:
+                      - /url: https://workingnotworking.com/projects/112837-hulu-redesign
+                      - generic [ref=f6e171]: Hulu Redesign Project
+                      - generic [ref=f6e172]: (opens in new tab)
+                  - listitem [ref=f6e173]:
+                    - generic [ref=f6e174]: •
+                    - 'link "Apple: Beats Case Study (opens in new tab)" [ref=f6e175] [cursor=pointer]':
+                      - /url: https://elephant.is/case-study/beats/
+                      - generic [ref=f6e180]: "Apple: Beats Case Study"
+                      - generic [ref=f6e181]: (opens in new tab)
+        - region [ref=f6e182]:
+          - generic [ref=f6e184]:
+            - heading "PROJECTS" [level=2] [ref=f6e185]
+            - generic [ref=f6e190]:
+              - generic [ref=f6e191]: Operating system for Merchant Cash Advance
+              - heading "Abacus Labs" [level=3] [ref=f6e192]
+              - paragraph [ref=f6e193]: 3 customers · Live
+              - paragraph [ref=f6e194]: Abacus turns spreadsheet chaos into a real-time command center for MCA operators — deals, underwriting, collections, syndication, and compliance in one place. Operators upload a sheet to get an instant dashboard, then graduate to live bank connections and AI-assisted underwriting. I lead product and engineering, building it as a Turborepo monorepo with a tRPC API on Postgres.
+              - list "Tech stack" [ref=f6e195]:
+                - listitem [ref=f6e196]: React
+                - listitem [ref=f6e197]: Next.js
+                - listitem [ref=f6e198]: tRPC
+                - listitem [ref=f6e199]: Postgres
+                - listitem [ref=f6e200]: Supabase
+                - listitem [ref=f6e201]: Drizzle
+                - listitem [ref=f6e202]: Claude AI
+                - listitem [ref=f6e203]: Plaid
+                - listitem [ref=f6e204]: Stripe
+              - list [ref=f6e205]:
+                - listitem [ref=f6e206]:
+                  - generic [ref=f6e207]: •
+                  - link "Visit abacuslabs.co (opens in new tab)" [ref=f6e208] [cursor=pointer]:
+                    - /url: https://abacuslabs.co
+                    - generic [ref=f6e213]: Visit abacuslabs.co
+                    - generic [ref=f6e214]: (opens in new tab)
+                - listitem [ref=f6e215]:
+                  - generic [ref=f6e216]: •
+                  - link "View on GitHub (opens in new tab)" [ref=f6e217] [cursor=pointer]:
+                    - /url: https://github.com/Suphian/abacus
+                    - generic [ref=f6e222]: View on GitHub
+                    - generic [ref=f6e223]: (opens in new tab)
+  - contentinfo [ref=f6e224]:
+    - generic [ref=f6e227]:
+      - paragraph [ref=f6e229]: © 2026 Suphian Tweel
+      - navigation "Social links" [ref=f6e230]:
+        - link "Email" [ref=f6e231] [cursor=pointer]:
+          - /url: https://mail.google.com/mail/?view=cm&fs=1&to=suph.tweel@gmail.com&su=Hey,%20wanted%20to%20chat
+        - generic [ref=f6e232]: ·
+        - link "LinkedIn" [ref=f6e233] [cursor=pointer]:
+          - /url: https://www.linkedin.com/in/suphian/
+        - generic [ref=f6e234]: ·
+        - link "GitHub" [ref=f6e235] [cursor=pointer]:
+          - /url: https://github.com/Suphian

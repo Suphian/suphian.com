@@ -128,7 +128,10 @@
         document.head.appendChild(script);
         
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);} // eslint-disable-line
+        // Assigned to window so app code (web-vitals, event mirroring) can
+        // feature-detect it; a bare function declaration here would stay
+        // scoped to loadAnalytics and window.gtag would never exist.
+        window.gtag = function(){dataLayer.push(arguments);};
         gtag('js', new Date());
         gtag('config', 'G-8S5FL37K8X');
       }
