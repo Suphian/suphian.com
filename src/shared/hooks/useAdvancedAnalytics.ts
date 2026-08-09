@@ -388,16 +388,6 @@ export const useAdvancedAnalytics = (options: AdvancedAnalyticsOptions = {}) => 
           ? (document.activeElement as HTMLAnchorElement).href
           : undefined
       });
-
-      // Use sendBeacon for reliable tracking on page exit
-      if (navigator.sendBeacon) {
-        const payload = JSON.stringify({
-          event: 'page_exit',
-          ...metrics,
-          timestamp: new Date().toISOString()
-        });
-        navigator.sendBeacon('/api/analytics-beacon', payload);
-      }
     };
 
     const handleVisibilityChange = () => {
