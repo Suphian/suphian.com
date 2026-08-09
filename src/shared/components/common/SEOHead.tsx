@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 // Canonical origin — keep in sync with vercel.json redirects and sitemap.xml.
 const SITE_ORIGIN = 'https://suphian.com';
 
-const DEFAULT_TITLE = 'Suphian Tweel — Senior Product Manager, YouTube';
+const DEFAULT_TITLE = 'Suphian Tweel · Senior Product Manager, YouTube';
 const DEFAULT_DESCRIPTION =
   'Senior Product Manager at YouTube specializing in payments and AI. Builds AI-powered payment systems at scale — managing $6B+ in music payments, launching YouTube Shorts monetization, and leading AI-driven fraud detection.';
 const DEFAULT_ROBOTS =
@@ -23,7 +23,7 @@ const ROUTE_META: Record<string, RouteMeta> = {
     description: DEFAULT_DESCRIPTION,
   },
   '/podcast': {
-    title: 'Podcast — Suphian Tweel',
+    title: 'Podcast · Suphian Tweel',
     description:
       "AI-generated podcast on Suphian Tweel's work: how GenAI helps solve YouTube's $20 billion payment problem.",
     breadcrumb: 'Podcast',
@@ -33,7 +33,7 @@ const ROUTE_META: Record<string, RouteMeta> = {
 // Unknown paths render the client-side 404; the SPA rewrite still returns
 // HTTP 200, so noindex is the only signal crawlers get that this isn't a page.
 const NOT_FOUND_META: RouteMeta = {
-  title: 'Page Not Found — Suphian Tweel',
+  title: 'Page Not Found · Suphian Tweel',
   description: DEFAULT_DESCRIPTION,
   robots: 'noindex, follow',
 };

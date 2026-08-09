@@ -19,9 +19,8 @@ const ProjectsSection = memo(forwardRef<HTMLDivElement>((_props, ref) => {
   const project = {
     tagline: "Operating system for Merchant Cash Advance",
     name: "Abacus Labs",
-    status: "3 customers · Live",
-    description: "Abacus turns spreadsheet chaos into a real-time command center for MCA operators — deals, underwriting, collections, syndication, and compliance in one place. Operators upload a sheet to get an instant dashboard, then graduate to live bank connections and AI-assisted underwriting. I lead product and engineering, building it as a Turborepo monorepo with a tRPC API on Postgres.",
-    stack: ["React", "Next.js", "tRPC", "Postgres", "Supabase", "Drizzle", "Claude AI", "Plaid", "Stripe"],
+    description: "Abacus turns spreadsheet chaos into a real-time command center for MCA operators — deals, underwriting, collections, syndication, and compliance in one place. I lead product and engineering.",
+    stack: ["React", "Next.js", "Postgres", "Supabase", "Claude AI", "Plaid"],
     links: [{
       url: "https://abacuslabs.co",
       title: "Visit abacuslabs.co",
@@ -61,19 +60,11 @@ const ProjectsSection = memo(forwardRef<HTMLDivElement>((_props, ref) => {
 
                 {/* Name */}
                 <h3
-                  className="heading-md mb-1"
+                  className="heading-md mb-6"
                   style={{ color: 'rgba(255, 255, 255, 0.95)' }}
                 >
                   {project.name}
                 </h3>
-
-                {/* Status */}
-                <p
-                  className="text-sm font-mono mb-6"
-                  style={{ color: 'rgba(255, 255, 255, 0.7)' }}
-                >
-                  {project.status}
-                </p>
 
                 {/* Description */}
                 <p
