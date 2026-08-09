@@ -27,6 +27,19 @@ export class VisitorTracking {
   private static readonly FIRST_VISIT_KEY = 'analytics_first_visit';
   private static readonly LAST_VISIT_KEY = 'analytics_last_visit';
 
+  /**
+   * Read the persisted visitor id without touching visit counters.
+   * getOrCreateVisitorData() increments the visit count as a side effect, so
+   * non-analytics callers (e.g. rate limiting) must use this instead.
+   */
+  static getVisitorId(): string | null {
+    try {
+      return localStorage.getItem(this.VISITOR_KEY);
+    } catch {
+      return null;
+    }
+  }
+
   static getOrCreateVisitorData(): VisitorData {
     const existingVisitorId = localStorage.getItem(this.VISITOR_KEY);
     const visitCount = parseInt(localStorage.getItem(this.VISIT_COUNT_KEY) || '0');
@@ -148,7 +161,7 @@ export class VisitorTracking {
           referrer_detail: `Referral from ${domain}`
         };
       }
-    } catch (error) {
+    } catch {
       return {
         referrer,
         referrer_source: 'unknown',

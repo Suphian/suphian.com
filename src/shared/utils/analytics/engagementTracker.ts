@@ -29,8 +29,6 @@ interface RageClickData {
   element: string;
 }
 
-type EngagementCallback = (metrics: EngagementMetrics) => void;
-
 class EngagementTracker {
   private metrics: EngagementMetrics;
   private startTime: number;
@@ -216,7 +214,10 @@ class EngagementTracker {
     const now = Date.now();
     const target = e.target as HTMLElement;
     // Handle SVG elements where className is SVGAnimatedString, not a string
-    const className = typeof target.className === 'string' ? target.className : target.className?.baseVal || '';
+    const rawClassName: unknown = target.className;
+    const className = typeof rawClassName === 'string'
+      ? rawClassName
+      : (rawClassName as SVGAnimatedString | null)?.baseVal || '';
     const elementDesc = target.tagName + (className ? `.${className.split(' ')[0]}` : '');
 
     const clickData: RageClickData = {

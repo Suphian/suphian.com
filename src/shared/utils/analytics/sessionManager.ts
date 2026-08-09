@@ -44,14 +44,14 @@ export class SessionManager {
     const anonymizedIp = ipAddress ? await this.anonymizeIpAddress(ipAddress) : null;
 
     // Extract only the fields that exist in the sessions table (exclude languages, platform)
-    const { languages: _languages, platform: _platform, ...sessionBrowserMetadata } = browserMetadata as Record<string, unknown>;
+    const { languages: _languages, platform: _platform, ...sessionBrowserMetadata } = browserMetadata;
 
-    const rawSessionData = {
+    const rawSessionData: SessionData = {
       session_id: this.sessionId,
       visitor_id: enhancedData.visitorData.visitor_id,
       visit_count: enhancedData.visitorData.visit_count,
       ip_address: anonymizedIp, // Store anonymized IP for privacy
-      location: locationData,
+      location: locationData ? { ...locationData } : null,
       city: locationData?.city || null,
       region: locationData?.region || null,
       country: locationData?.country || null,
@@ -96,29 +96,32 @@ export class SessionManager {
 
   async storeSession(supabase: SupabaseClient): Promise<void> {
     if (!this.sessionData || this.sessionStored) {
-      if (import.meta.env.DEV) {
-        // console.log('🔒 Session already stored or no session data');
-      }
+      return;
+    }
+
+    // The row persists for the whole session, so re-inserting on every page
+    // load in the same tab only ever hits the session_id unique constraint.
+    if (SessionStorage.isSessionRowStored(this.sessionId)) {
+      this.sessionStored = true;
       return;
     }
 
     try {
-      if (import.meta.env.DEV) {
-        // console.log('🔒 Attempting to store session in Supabase...');
-      }
-      
-      // Try to insert the session with error handling
-      const { data: _data, error } = await supabase
+      const { error } = await supabase
         .from('sessions')
         .insert(this.sessionData);
 
       if (error) {
-        console.error('⚠️ Session storage failed:', error.message, error);
-        // Mark as stored regardless to prevent retries
-        this.sessionStored = true;
-        return;
+        // 23505 = duplicate session_id: the row already exists (e.g. storage
+        // was cleared between loads). Expected, not an error.
+        // RLS permits INSERT only here, so upsert isn't an option.
+        if (error.code !== '23505') {
+          console.error('⚠️ Session storage failed:', error.message, error);
+        }
       }
 
+      // Either way the row now exists — don't retry it.
+      SessionStorage.markSessionRowStored(this.sessionId);
       this.sessionStored = true;
     } catch (error) {
       console.error('⚠️ Session storage error:', error);

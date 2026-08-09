@@ -28,7 +28,6 @@ class AnalyticsConsoleLogger {
   private enabled: boolean;
   private eventLog: LoggedEvent[] = [];
   private maxLogSize = 100;
-  private groupedMode = false;
 
   constructor() {
     this.enabled = import.meta.env.DEV;

@@ -90,7 +90,7 @@ export const useEventTracker = (options: UseEventTrackerOptions = {}) => {
             clickY: event.clientY,
             timestamp: new Date().toISOString()
           });
-        } catch (error) {
+        } catch {
           // Fallback for simple string values
           tracker.track('element_click', {
             action: trackData,

@@ -8,8 +8,20 @@ export interface EventTrackerConfig {
 
 export interface SessionData {
   session_id: string;
+  visitor_id?: string;
+  visit_count?: number;
   ip_address?: string;
   location?: Record<string, unknown> | null;
+  city?: string | null;
+  region?: string | null;
+  country?: string | null;
+  referrer_source?: string;
+  referrer_detail?: string;
+  utm_source?: string | null;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
+  utm_content?: string | null;
+  utm_term?: string | null;
   browser?: string;
   os?: string;
   device_type?: string;

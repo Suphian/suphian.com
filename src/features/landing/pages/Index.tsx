@@ -8,16 +8,10 @@ const RequestCVModal = React.lazy(() =>
     )
   )
 );
-const LazyContactSheet = React.lazy(() =>
-  import("@/features/contact/components/ContactSheet").catch(
-    () => new Promise<void>((r) => setTimeout(r, 1500)).then(
-      () => import("@/features/contact/components/ContactSheet")
-    )
-  )
-);
 import { initializeRevealAnimations } from "@/shared/lib/animations";
 import { useScrollTracking } from "@/shared/hooks/useScrollTracking";
 import { useEventTracker } from "@/shared/hooks/useEventTracker";
+import { useContactSheet } from "@/features/contact/context/ContactSheetContext";
 import ContentSection from "@/features/landing/components/sections/ContentSection";
 
 const Index = () => {
@@ -29,8 +23,8 @@ const Index = () => {
   const parallaxImageRef = useRef<HTMLDivElement>(null);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [contactOpen, setContactOpen] = useState(false);
-  
+  const { openContactSheet } = useContactSheet();
+
   // Initialize secure event tracking for this page
   const { track } = useEventTracker({
     autoTrackPageViews: true,
@@ -79,26 +73,9 @@ const Index = () => {
   const handleGetInTouchFromModal = useCallback(() => {
     setIsModalOpen(false);
     setTimeout(() => {
-      setContactOpen(true);
-      track("open_contact_sheet", {
-        label: "Open ContactSheet via CV Modal",
-        page: window.location.pathname,
-        fromModal: true,
-      });
+      openContactSheet("CVModal");
     }, 125);
-  }, [track]);
-
-  // Track every time ContactSheet is opened from Index
-  const handleContactOpenChange = useCallback((open: boolean) => {
-    setContactOpen(open);
-    if (open) {
-      track("open_contact_sheet", {
-        page: window.location.pathname,
-        label: "Open ContactSheet",
-        source: "IndexMainContent",
-      });
-    }
-  }, [track]);
+  }, [openContactSheet]);
 
   return (
     <div className="relative">
@@ -131,7 +108,7 @@ const Index = () => {
         }}
       >
         {/* Content Sections - pass refs for tracking */}
-        <ContentSection 
+        <ContentSection
           onRequestCV={async () => {
             await import("@/features/landing/components/RequestCVModal");
             setIsModalOpen(true);
@@ -140,10 +117,6 @@ const Index = () => {
               page: window.location.pathname,
               source: "IndexHeroContent",
             });
-          }} 
-          onContactClick={async () => {
-            await import("@/features/contact/components/ContactSheet");
-            handleContactOpenChange(true);
           }}
           aboutSectionRef={aboutSectionRef}
           experienceSectionRef={experienceSectionRef}
@@ -165,11 +138,6 @@ const Index = () => {
             }}
             onGetInTouch={handleGetInTouchFromModal}
           />
-        </Suspense>
-
-        {/* Contact Sheet */}
-        <Suspense fallback={null}>
-          <LazyContactSheet open={contactOpen} onOpenChange={handleContactOpenChange} />
         </Suspense>
       </div>
     </div>

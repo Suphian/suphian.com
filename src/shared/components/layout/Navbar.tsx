@@ -1,17 +1,17 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/shared/lib/utils";
+import { useContactSheet } from "@/features/contact/context/ContactSheetContext";
 
-const LazyContactSheet = React.lazy(() => import("@/features/contact/components/ContactSheet"));
 const LazyLiveAnalyticsPanel = React.lazy(() => import("@/shared/components/common/LiveAnalyticsPanel"));
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [contactOpen, setContactOpen] = useState(false);
   const [analyticsOpen, setAnalyticsOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(false);
   const location = useLocation();
+  const { openContactSheet } = useContactSheet();
   const closeMenu = () => setIsOpen(false);
   const isHomepage = location.pathname === "/";
 
@@ -103,7 +103,6 @@ const Navbar = () => {
   };
 
   const handleGetInTouchClick = async () => {
-    
     try {
       await window.trackEvent?.("nav_cta_click", {
         label: "Get in Touch",
@@ -114,9 +113,8 @@ const Navbar = () => {
     } catch (error) {
       console.error("❌ Failed to track navbar contact event:", error);
     }
-    
-    await import("@/features/contact/components/ContactSheet");
-    setContactOpen(true);
+
+    openContactSheet("Navbar");
   };
 
   // Hide navbar on homepage until user scrolls
@@ -235,10 +233,6 @@ const Navbar = () => {
           </ul>
         )}
       </div>
-
-      <Suspense fallback={null}>
-        <LazyContactSheet open={contactOpen} onOpenChange={setContactOpen} />
-      </Suspense>
 
       <Suspense fallback={null}>
         {analyticsOpen && (

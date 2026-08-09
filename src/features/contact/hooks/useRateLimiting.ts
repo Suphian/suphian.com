@@ -4,6 +4,7 @@
 
 import supabase from "@/integrations/supabase/client";
 import { formLogger } from "@/shared/utils/logging";
+import { VisitorTracking } from "@/shared/utils/analytics/visitorTracking";
 
 /**
  * Check if an action is allowed based on server-side rate limiting.
@@ -42,11 +43,25 @@ export async function checkRateLimit(
 
 /**
  * Generate a client identifier for rate limiting.
- * Uses a combination of user agent and URL for browser-based identification.
+ *
+ * Prefers the persisted visitor id: it is stable across navigations and unique
+ * per browser. The previous user-agent + URL scheme let anyone mint a fresh
+ * quota by changing the URL hash, and made every visitor on the same
+ * browser/OS share a single bucket.
+ *
+ * This is still client-supplied and therefore forgeable (clearing storage
+ * resets it); authoritative limiting belongs server-side, keyed on the request
+ * IP inside the edge function.
  */
 export function generateClientIdentifier(): string {
-  const baseIdentifier = window.navigator.userAgent + window.location.href;
-  return 'browser_' + baseIdentifier.slice(0, 50);
+  const visitorId = VisitorTracking.getVisitorId();
+  if (visitorId) {
+    return 'visitor_' + visitorId;
+  }
+
+  // Storage unavailable (private mode / blocked): fall back to a URL-independent
+  // fingerprint so the hash-reset hole stays closed.
+  return 'browser_' + window.navigator.userAgent.slice(0, 50);
 }
 
 /**

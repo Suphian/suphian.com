@@ -6,7 +6,6 @@ import ProjectsSection from "./ProjectsSection";
 
 interface ContentSectionProps {
   onRequestCV: () => void;
-  onContactClick: () => void;
   aboutSectionRef?: RefObject<HTMLDivElement>;
   experienceSectionRef?: RefObject<HTMLDivElement>;
   projectsSectionRef?: RefObject<HTMLDivElement>;
@@ -14,7 +13,6 @@ interface ContentSectionProps {
 
 const ContentSection = ({
   onRequestCV,
-  onContactClick: _onContactClick,
   aboutSectionRef,
   experienceSectionRef,
   projectsSectionRef

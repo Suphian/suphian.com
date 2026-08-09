@@ -16,6 +16,7 @@ import SEOHead from "@/shared/components/common/SEOHead";
 import ErrorBoundary from "@/shared/components/common/ErrorBoundary";
 import AnimatedBackground from "@/features/landing/components/AnimatedBackground";
 import { useSpacebarGreeting } from "@/features/landing/hooks/useSpacebarGreeting";
+import { ContactSheetProvider } from "@/features/contact/context/ContactSheetContext";
 
 // DEV-only: keeps the analytics chunk out of the production entry graph —
 // a static import here would make it an eager dependency of the whole app.
@@ -100,7 +101,9 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <BrowserRouter>
-        <AppContent />
+        <ContactSheetProvider>
+          <AppContent />
+        </ContactSheetProvider>
       </BrowserRouter>
     </TooltipProvider>
   </ErrorBoundary>

@@ -33,15 +33,17 @@ export default function HitSpacePrompt({ onSpacePress }: HitSpacePromptProps) {
     const initialCheckTimeout = setTimeout(checkInitialScroll, 100);
 
     const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.code !== 'Space') return;
+
       // Don't trigger if user is typing in an input, textarea, or other editable element
       const target = e.target as HTMLElement;
-      const isInputField = target.tagName === 'INPUT' || 
-                          target.tagName === 'TEXTAREA' || 
+      const isInputField = target.tagName === 'INPUT' ||
+                          target.tagName === 'TEXTAREA' ||
                           target.isContentEditable ||
-                          target.closest('input, textarea, [contenteditable="true"]');
-      
+                          !!target.closest?.('input, textarea, [contenteditable="true"]');
+
       // Only handle spacebar if not in an input field and prompt is visible
-      if (e.code === 'Space' && isVisible && !isInputField && !hasPressedRef.current) {
+      if (isVisible && !isInputField && !hasPressedRef.current) {
         e.preventDefault();
         hasPressedRef.current = true;
         setIsPressed(true);
