@@ -1,7 +1,8 @@
 project_id = "ujughujunixnwlmtdsxd"
 
-[functions.create-checkout-session]
-verify_jwt = false
-
-[functions.create-portal-session]
-verify_jwt = false
+# notify-contact-submit is the only function this site uses, and it relies on the
+# default verify_jwt = true, so it needs no entry here.
+#
+# The create-checkout-session / create-portal-session entries were removed along
+# with the payments feature. They had verify_jwt = false, which is what made them
+# publicly callable. Don't reintroduce that without a deliberate reason.
