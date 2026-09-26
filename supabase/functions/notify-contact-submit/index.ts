@@ -44,6 +44,201 @@ const getClientIp = (req: Request): string => {
   return ip;
 };
 
+// ---- BEGIN EMAIL TEMPLATES ----
+// The two contact-form emails in the site's brand: red, near-black and white
+// (the redesign's DESIGN-BRIEF.md and the :root tokens in its src/style.css).
+// Email-safe HTML: tables, inline styles, a 600px column, and a bgcolor on
+// every cell that holds text, so a client that drops or inverts a background
+// never leaves white text on white.
+//
+// Values passed in must already be escaped with escapeHTML; nothing here
+// escapes. The block is self-contained (no imports, no Deno APIs) and the
+// BEGIN/END markers are anchors: a preview script extracts this block to
+// render the same HTML outside Deno.
+
+const BRAND = {
+  red: "#FB2726", // the artwork red
+  black: "#080808",
+  surface: "#111111", // raised near-black
+  white: "#FFFFFF",
+  gray: "#ADADAD", // secondary text: 8.9:1 on black
+  grayDim: "#858585", // tertiary text: 5.4:1 on black
+  line: "#262626", // hairline: white at 12% over black, flattened for Outlook
+  // PP Neue Montreal is never embedded or linked: email clients load web fonts
+  // unreliably and its license is personal use only. It shows where installed.
+  font: "'PP Neue Montreal','Helvetica Neue',Helvetica,Arial,sans-serif",
+  site: "https://suphian.com",
+  // The SUPH mark as a PNG (Gmail blocks SVG): 180x180, red on #080808.
+  logo: "https://suphian.com/icons/apple-touch-icon.png",
+  linkedin: "https://www.linkedin.com/in/suphian/",
+  github: "https://github.com/Suphian",
+};
+
+interface OwnerNotificationFields {
+  name: string;
+  firstName: string;
+  email: string;
+  phone: string; // "" when not given
+  message: string; // newlines already turned into <br/>
+  source: string; // what opened the form, e.g. "Navbar"
+}
+
+/** Font, size, line height and color for a run of text. */
+function textStyle(size: number, lineHeight: number, color: string): string {
+  return `font-family:${BRAND.font};font-size:${size}px;line-height:${lineHeight}px;mso-line-height-rule:exactly;color:${color};`;
+}
+
+/** One layout row. The cell repeats the canvas color (see the note above). */
+function emailRow(content: string, padding: string, style = ""): string {
+  return `<tr><td bgcolor="${BRAND.black}" style="padding:${padding};background-color:${BRAND.black};${style}">${content}</td></tr>`;
+}
+
+/** The SUPH mark, linked to the site. With images off, the alt text shows in red. */
+function logoMark(size: number): string {
+  return `<a href="${BRAND.site}" target="_blank" style="text-decoration:none;"><img src="${BRAND.logo}" width="${size}" height="${size}" alt="Suphian Tweel" style="display:block;width:${size}px;height:${size}px;border:0;outline:none;text-decoration:none;${textStyle(16, 20, BRAND.red)}font-weight:600;"></a>`;
+}
+
+/** Big heading closed by a red period, like the site's section headings. */
+function heading(text: string): string {
+  return `<h1 style="margin:0;${textStyle(32, 38, BRAND.white)}font-weight:600;letter-spacing:-0.5px;">${text}<span style="color:${BRAND.red};">.</span></h1>`;
+}
+
+/**
+ * Bulletproof button: a table cell with a link. White fill, near-black text
+ * (20:1); white text on the red would be 3.9:1 and fail AA. Square and 56px
+ * tall like the site's buttons. Outlook ignores padding on links, so it gets
+ * the same padding on the cell through mso-padding-alt.
+ */
+function button(href: string, label: string): string {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td bgcolor="${BRAND.white}" style="background-color:${BRAND.white};mso-padding-alt:16px 24px;">
+      <a href="${href}" target="_blank" style="display:inline-block;padding:16px 24px;${textStyle(18, 24, BRAND.black)}font-weight:600;text-decoration:none;">${label}&nbsp;&nbsp;<span aria-hidden="true">&rarr;</span></a>
+    </td>
+  </tr>
+</table>`;
+}
+
+/** Footer below a hairline, like the site's footer. */
+function footerRow(content: string): string {
+  return emailRow(
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td bgcolor="${BRAND.black}" style="padding:24px 0 0 0;border-top:1px solid ${BRAND.line};background-color:${BRAND.black};${textStyle(16, 24, BRAND.grayDim)}">${content}</td>
+  </tr>
+</table>`,
+    "48px 0 0 0",
+  );
+}
+
+/** The shell both emails share: a full-bleed near-black canvas and a 600px column. */
+function emailDocument(title: string, rows: string[]): string {
+  const { black } = BRAND;
+  return `<!DOCTYPE html>
+<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="dark light">
+<meta name="supported-color-schemes" content="dark light">
+<title>${title}</title>
+<!--[if mso]>
+<noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+<style>body, table, td, h1, p, a, span { font-family: Arial, Helvetica, sans-serif !important; }</style>
+<![endif]-->
+<style>
+  :root { color-scheme: dark light; supported-color-schemes: dark light; }
+</style>
+<style>
+  a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; font-size: inherit !important; font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important; }
+</style>
+</head>
+<body bgcolor="${black}" style="margin:0;padding:0;background-color:${black};-webkit-text-size-adjust:100%;">
+<div role="article" aria-roledescription="email" aria-label="${title}" lang="en" dir="ltr">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${black}" style="background-color:${black};">
+  <tr>
+    <td align="center" bgcolor="${black}" style="padding:48px 20px;background-color:${black};">
+      <!--[if mso]><table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
+      <table role="presentation" align="center" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${black}" style="max-width:600px;margin:0 auto;background-color:${black};">
+${rows.filter(Boolean).join("\n")}
+      </table>
+      <!--[if mso]></td></tr></table><![endif]-->
+    </td>
+  </tr>
+</table>
+</div>
+</body>
+</html>`;
+}
+
+/** To Suphian: who wrote, what they said, how to reach them, what opened the form. */
+function renderOwnerNotification(f: OwnerNotificationFields): string {
+  const { black, surface, white, gray, line, site } = BRAND;
+  const link = (href: string, label: string) =>
+    `<a href="${href}" style="color:${white};text-decoration:underline;">${label}</a>`;
+  // tel: gets digits and "+" only. A phone with anything else in it (an
+  // escaped character, say) is shown as plain text instead.
+  const dial = /^[+\d\s().-]+$/.test(f.phone) ? f.phone.replace(/[^+\d]/g, "") : "";
+  const details: [string, string][] = [
+    ["Email", f.email ? link(`mailto:${f.email}`, f.email) : "Not given"],
+  ];
+  if (f.phone) details.push(["Phone", dial ? link(`tel:${dial}`, f.phone) : f.phone]);
+  details.push(["Opened from", f.source || "Unknown"]);
+
+  const detailRows = details.map(([label, value]) => `  <tr>
+    <td valign="top" width="128" bgcolor="${black}" style="width:128px;padding:12px 16px 12px 0;border-top:1px solid ${line};background-color:${black};${textStyle(16, 28, gray)}">${label}</td>
+    <td valign="top" bgcolor="${black}" style="padding:12px 0;border-top:1px solid ${line};background-color:${black};${textStyle(18, 28, white)}word-break:break-word;">${value}</td>
+  </tr>`).join("\n");
+
+  return emailDocument("New message", [
+    emailRow(logoMark(48), "0 0 32px 0"),
+    emailRow(heading(f.name ? `New message from ${f.name}` : "New message"), "0"),
+    emailRow(
+      `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${surface}" style="background-color:${surface};">
+  <tr>
+    <td bgcolor="${surface}" style="padding:24px;background-color:${surface};${textStyle(18, 28, white)}word-break:break-word;">${f.message || "No message included."}</td>
+  </tr>
+</table>`,
+      "24px 0 0 0",
+    ),
+    emailRow(
+      `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+${detailRows}
+</table>`,
+      "24px 0 0 0",
+      `border-bottom:1px solid ${line};`,
+    ),
+    f.email ? emailRow(button(`mailto:${f.email}`, f.firstName ? `Reply to ${f.firstName}` : "Reply"), "32px 0 0 0") : "",
+    footerRow(`Sent by the contact form on <a href="${site}" target="_blank" style="color:${gray};text-decoration:none;">suphian.com</a>.`),
+  ]);
+}
+
+/** To the person who wrote in: a short thank-you, signed, with his links. */
+function renderThankYou({ firstName }: { firstName: string }): string {
+  const { black, white, gray, grayDim, site, linkedin, github } = BRAND;
+  const footerLink = (href: string, label: string, paddingRight: string) =>
+    `<td bgcolor="${black}" style="padding:0 ${paddingRight} 0 0;background-color:${black};${textStyle(16, 24, gray)}"><a href="${href}" target="_blank" style="color:${gray};text-decoration:none;">${label}</a></td>`;
+
+  return emailDocument("Thanks for reaching out", [
+    emailRow(logoMark(64), "0 0 40px 0"),
+    emailRow(heading(`Thanks for reaching out${firstName ? `, ${firstName}` : ""}`), "0"),
+    emailRow(
+      "Your message just completed its orbit and landed in my inbox. I&rsquo;ll get back to you soon.",
+      "20px 0 0 0",
+      textStyle(18, 28, white),
+    ),
+    emailRow("Suphian", "32px 0 0 0", `${textStyle(18, 28, white)}font-weight:600;`),
+    emailRow("Principal Product Manager at Steadily", "0", textStyle(16, 24, gray)),
+    emailRow(button(site, "Visit suphian.com"), "40px 0 0 0"),
+    footerRow(`<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+  <tr>${footerLink(linkedin, "LinkedIn", "24px")}${footerLink(github, "GitHub", "0")}</tr>
+</table>
+<p style="margin:8px 0 0 0;${textStyle(16, 24, grayDim)}">&copy; ${new Date().getFullYear()} Suphian Tweel</p>`),
+  ]);
+}
+// ---- END EMAIL TEMPLATES ----
+
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -88,16 +283,11 @@ const handler = async (req: Request): Promise<Response> => {
     const messageRaw: string = typeof body.message === "string" ? body.message.slice(0, 2500) : "";
     const message = escapeHTML(messageRaw).replace(/\n/g, "<br/>");
     const source = escapeHTML((body.source ?? "").slice(0, 48));
+    // Optional. Both versions of the site send it; 48 is the form's own limit.
+    const phone = escapeHTML(typeof body.phone === "string" ? body.phone.trim().slice(0, 48) : "");
 
     // Notification to site owner (keep other logic unchanged)
-    const html = `
-      <h2>New Contact Form Submission</h2>
-      <p><strong>Name:</strong> ${name}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>Message:</strong><br/>${message}</p>
-      <hr />
-      <p>Submission Source: ${source || "Unknown"}</p>
-    `;
+    const html = renderOwnerNotification({ name, firstName, email, phone, message, source });
 
     // Validate Resend is configured
     if (!resend) {
@@ -159,100 +349,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send confirmation to submitter (if email provided) with retry
     let confirmEmailResponse: unknown = null;
     if (email) {
-      const thankYouHtml = `
-<!DOCTYPE html>
-<html lang="en" style="margin:0;padding:0;
-  background:linear-gradient(135deg,#101014 0%,#1b1e2f 50%,#2d1b55 100%);">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thanks for reaching out</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
-<body style="margin:0;padding:0;background:linear-gradient(135deg,#101014 0%,#1b1e2f 50%,#2d1b55 100%);
-  font-family:'Inter',Arial,sans-serif;color:#F9FAFB;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr>
-      <td align="center" style="padding:32px 16px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-               style="max-width:640px;background:#000000;
-               border:1px solid #222326;border-radius:16px;
-               box-shadow:0 12px 48px rgba(0,0,0,.55);overflow:hidden;">
-          <tr>
-            <td style="padding:32px 48px 24px 48px;text-align:center;background:#000000;">
-              <img src="https://raw.githubusercontent.com/Suphian/SQL-exercise/master/u1327668621_logo_SUPH_--chaos_15_--ar_23_--profile_aa8enny_--st_b2040bf7-71f1-4263-bf3e-422f9561d81e%20(1).png"
-                   width="140" alt="Running astronaut illustration"
-                   style="display:block;margin:0 auto 28px auto;border-radius:12px;">
-              <h1 style="margin:0 0 4px 0;font-size:28px;line-height:1.3;font-weight:700;
-                         letter-spacing:-0.4px;color:#FFFFFF;">
-                Thanks for reaching out${firstName ? `, ${firstName}` : ""}!
-              </h1>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:16px 48px 32px 48px;text-align:left;">
-              <p style="margin:0 0 16px 0;color:#FFFFFF;font-size:16px;line-height:1.55;font-weight:500;">
-                Your message just completed its orbit and landed in my inbox. Expect a reply within 1–2 business days.
-              </p>
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-                     style="margin:0 0 32px 0;">
-                <tr>
-                  <td style="padding:24px 28px;background:#0A0A0A;
-                             border-left:4px solid #FF4B2B;border-radius:10px;
-                             font-style:italic;font-size:15px;line-height:1.5;color:#D1D5DB;">
-                    ${message || 'No message included.'}
-                  </td>
-                </tr>
-              </table>
-              <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0"
-                     style="margin:0 auto 24px auto;">
-                <tr>
-                  <td align="center" bgcolor="#FF4B2B" style="border-radius:10px;">
-                    <a href="https://suphian.com"
-                       style="display:inline-block;padding:16px 32px;
-                              font-size:15px;font-weight:700;color:#0F0F11;
-                              text-decoration:none;">Visit Suphian.com</a>
-                  </td>
-                </tr>
-              </table>
-              <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0"
-                     style="margin:0 auto;">
-                <tr>
-                  <td style="padding:0 8px;">
-                    <a href="https://linkedin.com/in/suphian"
-                       style="font-size:14px;font-weight:600;color:#E5E7EB;text-decoration:none;">LinkedIn</a>
-                  </td>
-                  <td style="padding:0 8px;">
-                    <a href="https://github.com/suphian"
-                       style="font-size:14px;font-weight:600;color:#E5E7EB;text-decoration:none;">GitHub</a>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:24px 48px;background:#0B0C0D;
-                       border-top:1px solid #222326;text-align:center;
-                       font-size:13px;line-height:1.45;color:#6B7280;">
-              © ${new Date().getFullYear()} Suphian Tweel • New York, NY
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-  <style>
-    @media (prefers-color-scheme: dark) {
-      body { background:#000000 !important; }
-    }
-    @media only screen and (max-width:640px) {
-      h1 { font-size:24px !important; }
-      td { padding-left:24px !important; padding-right:24px !important; }
-    }
-  </style>
-</body>
-</html>
-      `;
+      const thankYouHtml = renderThankYou({ firstName });
       try {
         confirmEmailResponse = await sendEmailWithRetry({
           from: "Contact Notification <hello@suphian.com>",
