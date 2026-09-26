@@ -352,7 +352,7 @@ const handler = async (req: Request): Promise<Response> => {
       const thankYouHtml = renderThankYou({ firstName });
       try {
         confirmEmailResponse = await sendEmailWithRetry({
-          from: "Contact Notification <hello@suphian.com>",
+          from: "Suphian Tweel <hello@suphian.com>",
           to: [email],
           subject: "🌕 Your message reached my inbox!",
           html: thankYouHtml,
