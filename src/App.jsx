@@ -4,7 +4,6 @@ import Wordmark from './wordmark/Wordmark.jsx';
 import { nav } from './content.js';
 import { LIVE } from './lib/backend.js';
 import { isPlainClick, scrollToId, scrollToTop } from './lib/scroll.js';
-import { useSeo } from './hooks/useSeo.js';
 import { UIProvider } from './components/UIProvider.jsx';
 import DryRunBadge from './components/DryRunBadge.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
@@ -31,7 +30,6 @@ function Shell() {
   const navigate = useNavigate();
   const isHome = location.pathname === '/';
 
-  useSeo(location.pathname);
   useRouteScroll(location);
 
   const onHome = useCallback(
