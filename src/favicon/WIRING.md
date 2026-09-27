@@ -39,21 +39,17 @@ with:
 
 ## 2. `src/main.jsx`
 
-Add the import next to the others, and add the call right after `createRoot(rootElement).render(<App />);` inside the `try`:
+Right after `createRoot(rootElement).render(<App />);` inside the `try`, load it after the page has loaded (Suphian 2026-09-27: its chunk stays off the first render's path; `afterFirstPaint` waits for load and the first contentful paint, then an idle moment):
 
 ```js
-import { initFavicon } from './favicon/favicon.js';
-```
-
-```js
-  initFavicon();
+  afterFirstPaint(() => import('./favicon/favicon.js').then(({ initFavicon }) => initFavicon()).catch(() => {}));
 ```
 
 Import `./favicon/favicon.js` by its full path. There is no `src/favicon/index.js`, so a directory import (`'./favicon'`) will not resolve.
 
 It is framework-free, idempotent (safe with StrictMode and HMR) and returns a teardown. Optional manual trigger elsewhere: `import { jiggle } from './favicon/favicon.js'; jiggle(0.6);`. It returns false before the page has loaded, while hidden, or under reduced motion.
 
-Calling it right after `render()` is fine, even though React hasn't committed yet:
+Calling it right after `render()` would also be fine, even though React hasn't committed yet; called after load, it schedules the first-load burst straight away:
 
 - **Nothing happens before the page has loaded.** If `document.readyState` isn't `"complete"`, it waits for window `pageshow`, which follows `load`. The first-load burst runs 450 ms after that, and dock transitions or `jiggle()` calls before it do nothing. Chromium ignores favicon changes until the load event finishes, and Firefox saves any icon set before `pageshow` as the page's favicon in bookmarks and history, so a mid-jiggle frame could end up there.
 - **It reads `<html data-docked>`**, which Wordmark already sets, through a MutationObserver. No wordmark edits are needed. The first value Wordmark writes is taken as a baseline, not a landing. After a restored scroll position (or on an unknown URL, for the render before it redirects home), SUPH renders already docked (null → `"true"`), and that doesn't jiggle. Only a later `"false"` → `"true"` counts as docking.
