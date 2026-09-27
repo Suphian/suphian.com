@@ -25,6 +25,11 @@
    Letters stretch, lean and drop past the viewBox while they move, so never clip them. */
 .say-hello-lettering { display: block; width: 100%; height: auto; aspect-ratio: 1926 / 592; overflow: visible; }
 .say-hello-lettering g { pointer-events: none; }
+/* Off the exact rest layout (SayHello.jsx sets data-moving) the grain filter would be redrawn every frame
+   (WebKit: 24-47 ms frames) and, under a lean, resampled soft. The wordmark's in-motion fill stands in,
+   its mean colour (lettering.js); at rest the filter is back. The solid fallback keeps the letters red
+   if the gradient ever fails to resolve. */
+.say-hello-lettering [data-moving] .letter-silhouette { filter: none; fill: url(#sh-letter-red-moving) #f52827; }
 .say-hello:focus-visible { outline: 1px solid var(--red); outline-offset: 12px; }
 @media (max-width: 639px) {
   .say-hello-wrap { padding-bottom: 48px; }

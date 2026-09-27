@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import { contact } from '../content.js';
 import { track } from '../lib/analytics.js';
-import { LETTERS, LETTERING_DEFS, VIEWBOX } from '../sayhello/lettering.js';
+import { LETTERS, LETTERING_DEFS, LETTERING_MOVING_DEFS, VIEWBOX } from '../sayhello/lettering.js';
 import { createHelloSim, helloTransform } from '../sayhello/motion.js';
 import '../sayhello/sayhello.css';
 
@@ -21,6 +21,9 @@ const idle = () => {};
  *   keyboard activation plays a short tap. The click opens the contact sheet
  *   straight away; the motion never delays it.
  * - prefers-reduced-motion: static letters, no physics.
+ * - Off their exact rest layout, the letters draw a flat fill in place of the
+ *   grain filter (`data-moving`); at rest, and always under reduced motion,
+ *   the grain is there.
  * Without JavaScript, the generated homepage provides the same work copy
  * and an email link. The animated sign-off is an enhancement.
  *
@@ -40,12 +43,28 @@ export default function SayHello({ openContact }) {
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
     const sim = createHelloSim(LETTERS);
     const written = groups.map(() => ({ transform: '', opacity: '' }));
+    const rest = LETTERS.map((letter) => helloTransform(letter, {})); // The static markup's `translate(x 0)`.
     let raf = 0;
     let last = 0;
     let observer = null;
+    let moving = false;
 
+    // Off the exact rest layout (moving, hidden before the entrance, or held
+    // squished or leaning), the letters drop the grain filter for its mean
+    // colour (sayhello.css), as the wordmark does. Redrawn every frame, the
+    // grain held WebKit at 24 to 47 ms a frame here, and a lean resamples it
+    // soft. It returns in the same frame the letters come to rest.
+    function setMoving(next) {
+      if (next === moving) return;
+      moving = next;
+      if (next) word.current.setAttribute('data-moving', '');
+      else word.current.removeAttribute('data-moving');
+    }
+
+    // Writes only: nothing here reads layout.
     function render() {
       const state = sim.read();
+      let offRest = false;
       groups.forEach((group, i) => {
         const transform = helloTransform(LETTERS[i], state[i]);
         const opacity = state[i].opacity >= 1 ? '' : state[i].opacity.toFixed(3);
@@ -56,7 +75,9 @@ export default function SayHello({ openContact }) {
         }
         written[i].transform = transform;
         written[i].opacity = opacity;
+        if (transform !== rest[i] || opacity) offRest = true;
       });
+      setMoving(offRest || !sim.settled);
     }
 
     function frame(now) {
@@ -182,6 +203,7 @@ export default function SayHello({ openContact }) {
       observer?.disconnect();
       reduced.removeEventListener('change', onPreference);
       clearTimeout(touchTimer);
+      word.current?.removeAttribute('data-moving');
       input.current = { move: idle, leave: idle, down: idle, up: idle, cancel: idle, tap: idle };
     };
   }, []);
@@ -200,7 +222,7 @@ export default function SayHello({ openContact }) {
       }}>
       <svg ref={svg} className="say-hello-lettering" viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}
         width={VIEWBOX.width} height={VIEWBOX.height} aria-hidden="true" focusable="false">
-        <defs dangerouslySetInnerHTML={{ __html: LETTERING_DEFS }} />
+        <defs dangerouslySetInnerHTML={{ __html: LETTERING_DEFS + LETTERING_MOVING_DEFS }} />
         <g ref={word}>
           {LETTERS.map((letter) => (
             <g key={letter.id} data-letter={letter.char} transform={`translate(${letter.x} 0)`}
