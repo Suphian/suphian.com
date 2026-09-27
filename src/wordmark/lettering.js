@@ -23,6 +23,21 @@ export const LETTERING_DEFS = `
   </filter>
 `;
 
+/**
+ * The page's fill while the letters move (Wordmark.jsx, wordmark.css): each
+ * letter-red stop shifted to the mean colour letter-surface gives it
+ * (measured over flat swatches in Chromium; WebKit within 2 levels; the same
+ * at every scale), so the tone holds when the grain drops out. The grain
+ * itself is about ±1.5 levels on top. Not part of the exported logos.
+ */
+export const LETTERING_MOVING_DEFS = `
+  <linearGradient id="letter-red-moving" x1="0" y1="0" x2="0" y2="592" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#f52b2a"/>
+    <stop offset=".56" stop-color="#f52827"/>
+    <stop offset="1" stop-color="#f42726"/>
+  </linearGradient>
+`;
+
 const tracedGlyphs = [
   {
     "id": "s",

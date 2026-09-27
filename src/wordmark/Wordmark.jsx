@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useLayoutEffect, useRef, useState } from 'react';
-import { LETTERS, LETTERING_DEFS } from './lettering.js';
+import { LETTERS, LETTERING_DEFS, LETTERING_MOVING_DEFS } from './lettering.js';
 import { MOTION } from './motion.js';
 import { createWordmarkSim, letterTransform, segment } from './physics.js';
 import { dockMetrics, dockTransform, homeLinkBox, homeLinkViewX } from './geometry.js';
@@ -27,7 +27,8 @@ const TuningPanel = import.meta.env.DEV ? lazy(() => import('./TuningPanel.jsx')
  * a soft-body chain of letters squeezed by a piston, and a sprung dock
  * transform. A requestAnimationFrame loop steps the sim and writes SVG
  * attributes while scrolling or unsettled, and stops once everything rests.
- * Scroll itself is never intercepted.
+ * Scroll itself is never intercepted. While the loop moves anything, the
+ * letters draw a flat fill in place of the grain filter (`data-moving`).
  *
  * Docked, SUPH also answers the pointer like the SAY HELLO sign-off, with the
  * same model and values (dockfx.js): a mouse hovering over it bulges the
@@ -42,8 +43,9 @@ const TuningPanel = import.meta.env.DEV ? lazy(() => import('./TuningPanel.jsx')
  *   100svh). Without one, or with `docked`, it renders straight into the
  *   header, without animating on mount. If the hero appears, changes or goes
  *   away later (routing), it re-measures and snaps to the matching state.
- * - Writes to <html>: `--header-opacity`, `--edition-opacity`, `--cue-opacity`
- *   (0..1), `data-docked` and `data-cue` ("visible" | "hidden").
+ * - Writes `--cue-opacity` on the hero, `--header-opacity` and
+ *   `--edition-opacity` on `.header` (0..1; :root holds the defaults), and
+ *   `data-docked` and `data-cue` ("visible" | "hidden") on <html>.
  * - `onHome(event)` runs as soon as the docked SUPH is clicked (the squish
  *   plays while the page scrolls); `label` is its accessible name.
  * - Under prefers-reduced-motion the physics is off: the artwork switches
@@ -66,15 +68,17 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
     const root = document.documentElement;
     const sim = createWordmarkSim({ letters: LETTERS, keep: KEEP, params: MOTION });
     const fx = createDockEffects(); // Hover and press on the docked SUPH: SAY HELLO's model.
-    const written = new Map();
+    const written = new Map(); // Custom property -> { element, text } last written.
     const fxWritten = fxGroups.map(() => null); // null: the first render writes, whatever is there.
     let metrics;
     let heroHeight = 1;
     let heroless = false;
     let heroElement = null;
+    let header = null;
     let raf = 0;
     let staticFrame = 0;
     let last = 0;
+    let moving = false;
 
     const pinned = () => forceDocked || heroless;
     // No chain physics: reduced motion, or pinned to the header. A pinned
@@ -87,17 +91,37 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
     // Where the chain rests while its physics is off.
     const staticProgress = () => (preference.matches && !pinned() ? Number(reducedDocked()) : scrollProgress());
 
-    function setRootVar(name, value) {
+    // Each fade goes on the element whose rules read it, not on <html>: a custom
+    // property changed on <html> restyles the whole page (170 elements, 8-10 ms
+    // a frame at 4x CPU, measured), on the hero or header just their subtree.
+    function setVar(element, name, value) {
+      if (!element) return;
       const text = String(Math.round(value * 1000) / 1000);
-      if (written.get(name) === text) return;
-      written.set(name, text);
-      root.style.setProperty(name, text);
+      const prev = written.get(name);
+      if (prev?.element === element && prev.text === text) return;
+      written.set(name, { element, text });
+      element.style.setProperty(name, text);
+    }
+
+    // While anything moves, the letters drop the grain filter for its mean
+    // colour (wordmark.css). Redrawn every frame, the filter cost WebKit about
+    // a third of its frames and, under a lean (skewX), was resampled and blurred.
+    function setMoving(next) {
+      if (next === moving) return;
+      moving = next;
+      if (next) word.current.setAttribute('data-moving', '');
+      else word.current.removeAttribute('data-moving');
     }
 
     function render() {
       if (!metrics) return;
-      const s = sim.read();
+      // Scroll is read before the first write: read after them, it forced a
+      // style and layout pass every frame.
+      const p = scrollProgress();
       const reduced = preference.matches;
+      const reducedDock = reduced && reducedDocked();
+      const atTop = window.scrollY < 24;
+      const s = sim.read();
       word.current.setAttribute('transform', dockTransform(metrics, s.dock));
       s.letters.forEach((letter, index) => {
         const group = groups[index];
@@ -107,14 +131,13 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
           group.style.visibility = letter.opacity < 0.002 ? 'hidden' : '';
         }
       });
-      const p = scrollProgress();
       const move = clamp01(s.dockRaw);
-      const docked = pinned() || (reduced ? reducedDocked() : p >= 0.995 && move >= 0.98);
-      const cueFade = pinned() ? 0 : reduced ? Number(window.scrollY < 24) : 1 - segment(p, 0, 0.22);
-      setRootVar('--cue-opacity', cueFade);
+      const docked = pinned() || (reduced ? reducedDock : p >= 0.995 && move >= 0.98);
+      const cueFade = pinned() ? 0 : reduced ? Number(atTop) : 1 - segment(p, 0, 0.22);
+      setVar(heroElement, '--cue-opacity', cueFade);
       root.dataset.cue = cueFade <= 0.01 ? 'hidden' : 'visible';
-      setRootVar('--edition-opacity', 1 - segment(move, 0.05, 0.35));
-      setRootVar('--header-opacity', segment(move, 0.75, 1));
+      setVar(header, '--edition-opacity', 1 - segment(move, 0.05, 0.35));
+      setVar(header, '--header-opacity', segment(move, 0.75, 1));
       homeLink.current.hidden = !docked;
       root.dataset.docked = String(docked);
       svg.current.dataset.progress = p.toFixed(4);
@@ -141,6 +164,7 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
         cancelAnimationFrame(raf); // Nothing is moving: stop the loop.
         raf = 0;
         last = 0;
+        setMoving(false);
       } else {
         kick(); // Hover or press still playing on a pinned logo.
       }
@@ -159,9 +183,11 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
         chainMoved = sim.advance(dt);
       }
       fx.advance(dt);
+      const still = sim.settled && fx.settled;
+      setMoving(!still); // Settled: the grain returns with the rest layout, in the same frame.
       if (chainMoved) render();
       else renderFx(); // Only the docked effects moved: the chain's attributes stand.
-      if (sim.settled && fx.settled) last = 0; // Idle: nothing runs until the next scroll or pointer.
+      if (still) last = 0; // Idle: nothing runs until the next scroll or pointer.
       else kick();
     }
 
@@ -187,6 +213,7 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
       const hero = document.querySelector('[data-wordmark-hero]');
       heroElement = hero;
       heroless = !hero;
+      header = document.querySelector('.header');
       heroHeight = Math.max(1, hero ? hero.getBoundingClientRect().height : screenHeight);
       const styles = getComputedStyle(root);
       metrics = dockMetrics({
@@ -262,6 +289,7 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
     return () => {
       cancelAnimationFrame(raf);
       cancelAnimationFrame(staticFrame);
+      word.current?.removeAttribute('data-moving');
       controls.current = null;
       input.current = NO_INPUT;
       heroWatch.disconnect();
@@ -275,7 +303,7 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
   return (
     <>
       <svg ref={svg} className="lettering-layer" viewBox="0 0 1460 900" aria-hidden="true" focusable="false">
-        <defs dangerouslySetInnerHTML={{ __html: LETTERING_DEFS }} />
+        <defs dangerouslySetInnerHTML={{ __html: LETTERING_DEFS + LETTERING_MOVING_DEFS }} />
         <g ref={word} className="wordmark">
           {LETTERS.map((letter, index) => (
             // Outer group: the chain's transform. Inner group: the docked effects' (S U P H only).
