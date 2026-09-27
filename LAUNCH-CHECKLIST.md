@@ -13,11 +13,12 @@ Suphian authorized deployment and the remaining launch/SEO work on 2026-09-26. T
 - [x] Verify protected Vercel preview, including one real contact send.
 - [x] Merge to main, verify production domain/redirects and preserve rollback URL.
 - [x] Deploy rebranded contact emails to Supabase (ACTIVE version 36, JWT verification enabled); the single real preview submission returned both email-provider IDs. Inbox arrival was not independently confirmed.
+- [x] Create and auto verify the Google Search Console URL-prefix property; submit sitemap.xml. Google reports "Sitemap processed successfully", last read 9/26/26, 1 discovered page, 0 videos.
 
 ## Follow-up outside the launch build
 
 - Owner confirmed the PP Neue Montreal license. The supplied Regular/Italic/Semibold files are retained; swap Semibold for licensed Medium when that file is available.
-- Submit sitemap.xml in Google Search Console and Bing Webmaster Tools once property access is available.
+- Bing Webmaster requires a new Google account connection (name/profile picture/email). No new connection/account was created; complete account access and submit sitemap.xml when ready.
 - LinkedIn headline changes remain the owner's editorial choice.
 
 See docs/seo-plan.md for current search guidance and limits, and docs/launch.md for deployment evidence.

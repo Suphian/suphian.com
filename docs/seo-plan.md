@@ -18,9 +18,13 @@ Implemented the technical launch fixes. Search rankings, indexing and inclusion 
 
 Browser QA should verify normal rendering, no-JavaScript readability and bundle-load failure recovery. After deployment, verify the root, robots, sitemap, social card and text resources return HTTP 200, with no production `noindex` header.
 
-## Follow-up requiring account access or new content
+## Search Console result and remaining follow-up
 
-Submit `https://suphian.com/sitemap.xml` in the existing verified Google Search Console and Bing Webmaster properties and inspect the homepage. Review actual impressions and queries after recrawling. Do not infer that a sitemap submission guarantees indexing.
+Created the Google Search Console URL-prefix property `https://suphian.com/` in the owner's signed-in Google account after production launch. Ownership auto verified through the existing domain-provider DNS-CNAME record; no new verification token or site deployment was needed. Keep that DNS verification record in place.
+
+Submitted `https://suphian.com/sitemap.xml`. Google first accepted the submission, then the sitemap detail showed **Sitemap processed successfully**, last read **9/26/26**, **1 discovered page** and **0 videos**. An initial temporary "Couldn't fetch" status resolved without resubmission. This confirms sitemap processing, not homepage indexing or ranking. Review actual impressions and queries after recrawling.
+
+Bing Webmaster Tools has no authenticated session. Its Google sign-in flow requests a new connection allowing access to the owner's name, profile picture and email. Stopped before granting that connection or creating an account. Bing verification and sitemap submission remain owner-dependent.
 
 For stronger AI-product relevance, Suphian can later supply a specific, factual Abacus case study explaining what AI does, his role, and demonstrated outcomes, then align his LinkedIn headline. No unsupported outcomes or deployment claims were added during launch.
 
