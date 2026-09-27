@@ -70,8 +70,12 @@ try {
 
   if (import.meta.env.PROD) {
     // Core Web Vitals to GA4 (only where index.html loaded gtag), then caching.
-    reportWebVitals();
-    registerServiceWorker().catch((error) => console.warn('Service worker registration failed:', error));
+    // Both wait for the first paint: the metrics are buffered, and the service
+    // worker's install only helps the next visit.
+    afterFirstPaint(() => {
+      reportWebVitals();
+      registerServiceWorker().catch((error) => console.warn('Service worker registration failed:', error));
+    });
   }
 } catch (error) {
   console.error('Failed to mount React app:', error);
