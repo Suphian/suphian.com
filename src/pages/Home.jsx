@@ -1,7 +1,7 @@
 import React from 'react';
 import { hero } from '../content.js';
 import { isPlainClick, scrollToId } from '../lib/scroll.js';
-import SayHello from '../components/SayHello.jsx';
+import SayHelloSlot from '../components/SayHelloSlot.jsx';
 import StoryIndex from '../story/StoryIndex.jsx';
 
 export default function Home() {
@@ -33,7 +33,7 @@ export default function Home() {
         </div>
       </section>
       <StoryIndex />
-      <SayHello />
+      <SayHelloSlot />
     </>
   );
 }

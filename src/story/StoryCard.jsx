@@ -21,8 +21,11 @@ const loaded = new Map();
  * image.nudge, measured in logo-geometry.js), a translate of a few percent of
  * its own height, so the mass of its letters, not the box that includes the
  * tail of the g, sits on the centre.
+ *
+ * `imageLoading` is the img's loading attribute: the rail starts 'lazy' and
+ * turns 'eager' after the first paint (StoryIndex); the open view leaves it unset.
  */
-export default function StoryCard({ chapter, className = '', cardRef, ...rest }) {
+export default function StoryCard({ chapter, className = '', cardRef, imageLoading, ...rest }) {
   const { src, nudge } = cardImage(chapter.image);
   const [state, setState] = useState(() => {
     if (!src) return { status: 'missing', aspect: null };
@@ -48,6 +51,7 @@ export default function StoryCard({ chapter, className = '', cardRef, ...rest })
           className="story-card-logo"
           src={src}
           alt=""
+          loading={imageLoading}
           decoding="async"
           draggable="false"
           style={{ width: `${logoWidth(state.aspect)}%`, transform: logoShift(nudge) }}

@@ -5,7 +5,7 @@ import { errors } from './content.js';
 import { registerServiceWorker } from './lib/serviceWorker.js';
 import { reportWebVitals } from './lib/webVitals.js';
 import { startAnalytics } from './lib/analytics.js';
-import { initFavicon } from './favicon/favicon.js';
+import { afterFirstPaint } from './lib/afterFirstPaint.js';
 import './fonts.css';
 import './style.css';
 
@@ -31,15 +31,26 @@ function showLoadError(error) {
 }
 
 try {
+  // No dead ends (Suphian): removed pages like /podcast and any unknown URL show
+  // home. Vercel serves them dist/404.html with a real 404 status; this puts the
+  // address back to /, as the old <Navigate to="/" replace /> did. Before the
+  // first render, so SUPH never starts docked.
+  if (window.location.pathname !== '/') window.history.replaceState(null, '', '/');
   createRoot(rootElement).render(<App />);
-  initFavicon();
+  // The animated favicon never moves before load (its first burst is 450 ms after
+  // it), so its chunk loads then. If the chunk fails, the static icon stays.
+  afterFirstPaint(() => import('./favicon/favicon.js').then(({ initFavicon }) => initFavicon()).catch(() => {}));
   // PostHog + GA4 custom events: a no-op without the key, and off suphian.com unless debugging.
   startAnalytics();
 
   if (import.meta.env.PROD) {
     // Core Web Vitals to GA4 (only where index.html loaded gtag), then caching.
-    reportWebVitals();
-    registerServiceWorker().catch((error) => console.warn('Service worker registration failed:', error));
+    // Both wait for the first paint: the metrics are buffered, and the service
+    // worker's install only helps the next visit.
+    afterFirstPaint(() => {
+      reportWebVitals();
+      registerServiceWorker().catch((error) => console.warn('Service worker registration failed:', error));
+    });
   }
 } catch (error) {
   console.error('Failed to mount React app:', error);

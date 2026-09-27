@@ -54,7 +54,7 @@ The LCP element is the "Scroll for the story" cue.
 
 ### Hosting changes (1 and 2 shipped 2026-09-27 in 0579d81)
 
-1. **Soft 404s (done: `/does-not-exist` now returns 404).** The catch-all rewrite returns 200 and the homepage for every unknown path. The single canonical limits the damage, but Google may report soft 404s. To keep Suphian's "no dead pages" rule while sending crawlers a real status, drop the catch-all rewrite (the app's only route is `/`) and have the build copy `dist/index.html` to `dist/404.html`. Vercel then serves unknown paths with HTTP 404 and the full homepage, and the client router still moves visitors to `/`. Do not redirect every unknown path home; Google also treats that as a soft 404.
+1. **Soft 404s (done: `/does-not-exist` now returns 404).** The catch-all rewrite returns 200 and the homepage for every unknown path. The single canonical limits the damage, but Google may report soft 404s. To keep Suphian's "no dead pages" rule while sending crawlers a real status, drop the catch-all rewrite (the app's only route is `/`) and have the build copy `dist/index.html` to `dist/404.html`. Vercel then serves unknown paths with HTTP 404 and the full homepage, and the app still moves visitors to `/` (`src/main.jsx`). Do not redirect every unknown path home; Google also treats that as a soft 404.
 2. **OG image caching (done).** Add a `Cache-Control` rule for `/og/(.*)` like the icons (`public, max-age=86400, stale-while-revalidate=604800`).
 3. **`http://www` hop.** The two-hop chain comes from Vercel's HTTPS upgrade and cannot be fixed with `vercel.json` redirects. It is harmless. Optionally, set `www.suphian.com` to redirect at the Vercel domain level.
 

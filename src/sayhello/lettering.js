@@ -9,7 +9,7 @@
  * is an independent group (A and O keep their counters). Generated file: edit
  * the script, not the paths.
  */
-import { LETTERING_DEFS as WORDMARK_DEFS } from '../wordmark/lettering.js';
+import { LETTERING_DEFS as WORDMARK_DEFS, LETTERING_MOVING_DEFS as WORDMARK_MOVING_DEFS } from '../wordmark/lettering.js';
 
 export const VIEWBOX = { width: 1926, height: 592 };
 
@@ -25,6 +25,14 @@ export const ID_PREFIX = 'sh-';
 
 /** The wordmark's exact gradient (#letter-red) and grain (#letter-surface), re-id'd. */
 export const LETTERING_DEFS = prefixIds(WORDMARK_DEFS, ID_PREFIX);
+
+/**
+ * The wordmark's in-motion fill (#letter-red-moving: letter-red shifted to the
+ * grain's mean colour), re-id'd. SAY HELLO shares the gradient's units and the
+ * grain's scale, so the same mean holds. The page only (SayHello.jsx,
+ * sayhello.css); the standalone SVG keeps just the grain.
+ */
+export const LETTERING_MOVING_DEFS = prefixIds(WORDMARK_MOVING_DEFS, ID_PREFIX);
 
 const tracedGlyphs = [
   {
