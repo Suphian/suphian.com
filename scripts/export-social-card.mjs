@@ -1,7 +1,9 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
+import sharp from 'sharp';
 import { seo } from '../src/content.js';
+import { createLogoSvg } from '../src/wordmark/lettering.js';
 
 // The site's own traced lettering. All inputs are local; no runtime dependency.
 const asset = (path) => new URL(`../public/${path}`, import.meta.url);
@@ -11,9 +13,10 @@ const asset = (path) => new URL(`../public/${path}`, import.meta.url);
 // between multiple og:image tags. The full-width lettering fits inside its centered 1.91:1
 // crop too. A client may display the square or crop it wide; neither cuts off the name.
 // Twitter gets its own landscape export for summary_large_image.
-// Drop the grain filter but preserve the approved paths, proportions and red gradient.
-// PNG keeps edges crisp; a conservative 250 KB budget keeps both downloads lightweight.
-const svg = (await readFile(asset('logos/full-name.svg'), 'utf8')).replace(/\s*filter="url\(#[^)]*\)"/g, '');
+// Render the homepage's actual paths, gradient and surface texture at 2x, then downsample
+// once for smooth edges. An optimized palette PNG preserves this artwork without JPEG
+// fringes around the red lettering. Both published files stay within a 250 KB budget.
+const svg = createLogoSvg({ idPrefix: 'share-' });
 const logo = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
 const cards = [
   { url: seo.og.image, width: seo.og.imageWidth, height: seo.og.imageHeight },
@@ -25,7 +28,7 @@ const browser = await chromium.launch();
 try {
   for (const { url, width, height } of cards) {
     const card = new URL(url).pathname.slice(1);
-    const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
+    const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 2 });
     await page.setContent(`<!doctype html><html lang="en"><head><meta charset="utf-8"><style>
       html, body { margin: 0; width: ${width}px; height: ${height}px; overflow: hidden; background: #080808; }
       body { display: grid; place-items: center; }
@@ -35,11 +38,16 @@ try {
       <img class="wordmark" src="${logo}" alt="SUPHIAN" />
     </body></html>`);
     await page.evaluate(() => Promise.all([...document.images].map((image) => image.decode())));
-    const shot = await page.screenshot({ path: fileURLToPath(asset(card)), type: 'png' });
+    const master = await page.screenshot({ type: 'png' });
+    const shot = await sharp(master)
+      .resize(width, height, { kernel: 'lanczos3' })
+      .png({ palette: true, quality: 99, dither: 0, effort: 10, compressionLevel: 9 })
+      .toBuffer();
     if (shot.readUInt32BE(16) !== width || shot.readUInt32BE(20) !== height) {
       throw new Error(`Card is ${shot.readUInt32BE(16)} × ${shot.readUInt32BE(20)}, expected ${width} × ${height}`);
     }
     if (shot.length >= 250 * 1024) throw new Error(`${card} exceeds the 250 KB image budget`);
+    await writeFile(fileURLToPath(asset(card)), shot);
     console.log(`Exported public/${card} (${width} × ${height}, ${shot.length} bytes).`);
     await page.close();
   }
