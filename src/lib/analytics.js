@@ -3,7 +3,7 @@
 // outside suphian.com unless the debug flag is on. docs/launch.md lists the events.
 
 // PostHog project API key (phc_…). Public by design, like the GA4 ID in index.html.
-export const POSTHOG_KEY = '';
+export const POSTHOG_KEY = 'phc_rd4iSE4nLz5RbL3Nskbbm8YCKYdx7u2zz9SQmQF3wdZ7'; // Suph.ai org, project 631302 (US)
 // PostHog cloud region, 'us' or 'eu'. The /ingest rewrites in vercel.json must match.
 export const POSTHOG_REGION = 'us';
 // Same-origin reverse proxy (vercel.json rewrites), so ad blockers keep the events.
