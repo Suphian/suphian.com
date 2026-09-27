@@ -25,14 +25,14 @@ try {
     * { box-sizing: border-box; }
     html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
     body { background: #080808; color: #f4f4f2; font-family: Montreal, sans-serif; }
-    .wordmark { position: absolute; left: 56px; top: 44px; width: 1088px; height: 388px; }
+    /* Suphian 2026-09-27: the preview is just the bubbly SUPHIAN, centred (viewBox 1658 × 592). */
+    .wordmark { position: absolute; left: 80px; top: 129px; width: 1040px; height: 371px; }
     .identity { position: absolute; left: 56px; right: 56px; top: 477px; border-top: 1px solid #303030; padding-top: 28px; }
     .name { margin: 0; font-size: 38px; font-weight: 600; line-height: 1.12; letter-spacing: -1px; }
     .discipline { margin: 12px 0 0; color: #a9a9a6; font-size: 26px; line-height: 1.2; letter-spacing: -.3px; }
     .url { position: absolute; right: 0; top: 35px; font-size: 26px; line-height: 1.2; color: #a9a9a6; }
   </style></head><body>
     <img class="wordmark" src="${logo}" alt="SUPHIAN" />
-    <div class="identity"><h1 class="name">Suphian Tweel</h1><p class="discipline">Product · Payments · AI</p><span class="url">suphian.com</span></div>
   </body></html>`);
   await page.evaluate(async () => {
     await document.fonts.ready;
