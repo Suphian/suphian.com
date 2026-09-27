@@ -35,3 +35,24 @@ Google Search Console's https://suphian.com/ URL-prefix property was created aft
 Bing Webmaster remains pending: Google sign-in requests a new connection for name/profile picture/email, so no new connection or account was created. Complete that account step and submit https://suphian.com/sitemap.xml when the owner is ready.
 
 The owner confirmed the font license. The supplied Semibold remains in place of Medium because no Medium file was available. The trial-license PDF and retired artwork are outside public deployment output.
+
+## Analytics
+
+GA4 (G-8S5FL37K8X, index.html) and PostHog run side by side. src/lib/analytics.js sends each custom event below to PostHog and, where gtag has loaded, to GA4 under the same name and properties. Both run on suphian.com only (not dev, previews or local builds) and load after the first interaction or 3s, so neither touches first paint.
+
+PostHog is off until its key is in. Paste the project API key (phc_…, PostHog > Project settings) into POSTHOG_KEY in src/lib/analytics.js; that one line is the switch. While it is empty nothing loads and nothing is sent, the GA4 copies of these events included. For an EU project, also set POSTHOG_REGION to 'eu' and point the three /ingest rewrites in vercel.json at eu-assets.i.posthog.com and eu.i.posthog.com; npm test checks the two agree.
+
+Events go to suphian.com/ingest, which vercel.json rewrites to PostHog US ahead of the SPA fallback, so ad blockers keep them and the CSP needs no PostHog host. The service worker never touches /ingest. posthog-js is a lazy chunk with autocapture, page-leave, heatmaps, web vitals (GA4 has them), session replay, surveys, remote config and remote scripts all off; person profiles are created only for identified visitors, which is nobody today.
+
+- $pageview: once per page load.
+- story_chapter_opened { chapter }: a work or side-project chapter opens; chapter is its content.js id, e.g. steadily.
+- outbound_link_clicked { href, label, chapter? }: a chapter's links, with chapter, and the footer's Email (Gmail), LinkedIn and GitHub links.
+- say_hello_clicked: the SAY HELLO sign-off.
+- contact_opened { source }: the contact sheet opens; source is SayHello, its only opener.
+- contact_submitted { status }: sent, rate_limited, error, dry_run (local) or blocked (honeypot). Never the message, name, email or phone.
+- email_link_clicked: the footer's hello@suphian.com mailto link.
+- section_viewed { section }: story, say_hello or footer, once each per load, when half the section (or half the screen, for a taller one) is in view.
+
+GA4 reports can break events down by chapter, href, label, source, status and section once those are registered as event-scoped custom dimensions in the GA4 admin.
+
+To watch events anywhere, run localStorage.setItem('analytics-debug', '1') in the browser console and reload: analytics then runs on any host, the key still required, and PostHog logs each event to the console. localStorage.removeItem('analytics-debug') turns it off. Vercel deployments, previews included, proxy /ingest to PostHog for real; locally those requests 404. PostHog drops automated browsers (navigator.webdriver), so Playwright runs never reach it.

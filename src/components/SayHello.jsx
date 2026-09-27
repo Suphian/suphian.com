@@ -1,6 +1,8 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import { contact } from '../content.js';
+import { useSectionViewed } from '../hooks/useSectionViewed.js';
 import { useUI } from '../hooks/useUI.js';
+import { track } from '../lib/analytics.js';
 import { LETTERS, LETTERING_DEFS, VIEWBOX } from '../sayhello/lettering.js';
 import { createHelloSim, helloTransform } from '../sayhello/motion.js';
 import '../sayhello/sayhello.css';
@@ -26,10 +28,12 @@ const idle = () => {};
  */
 export default function SayHello() {
   const { openContact } = useUI();
+  const wrap = useRef(null);
   const button = useRef(null);
   const svg = useRef(null);
   const word = useRef(null);
   const input = useRef({ move: idle, leave: idle, down: idle, up: idle, cancel: idle, tap: idle });
+  useSectionViewed(wrap, 'say_hello');
 
   useLayoutEffect(() => {
     const node = button.current;
@@ -185,7 +189,7 @@ export default function SayHello() {
   }, []);
 
   return (
-    <div id="contact" className="say-hello-wrap">
+    <div ref={wrap} id="contact" className="say-hello-wrap">
       <button ref={button} type="button" className="say-hello" aria-label={contact.signoff.label}
         onPointerMove={(event) => input.current.move(event)}
         onPointerLeave={() => input.current.leave()}
@@ -193,6 +197,7 @@ export default function SayHello() {
         onPointerUp={(event) => input.current.up(event)}
         onPointerCancel={() => input.current.cancel()}
         onClick={(event) => {
+          track('say_hello_clicked');
           openContact('SayHello');
           if (event.detail === 0) input.current.tap(); // Keyboard (Enter / Space): no pointer press to show.
         }}>

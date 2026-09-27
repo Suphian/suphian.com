@@ -1,3 +1,4 @@
+import { track } from './analytics.js';
 import { LIVE, getSupabase } from './backend.js';
 import { checkRateLimit, getClientIdentifier } from './rateLimit.js';
 
@@ -15,12 +16,26 @@ async function notify(supabase, body) {
   }
 }
 
+// contact_submitted carries the outcome only: never the message, name, email or phone.
+const STATUS = { sent: 'sent', 'rate-limited': 'rate_limited' };
+
 /**
  * Same order as suphian.com useContactForm: rate limit, insert, then email.
  * Resolves 'sent' or 'rate-limited'; rejects when the insert fails.
  * `data` is the sanitized payload from validateContact().
  */
 export async function submitContact(data, source) {
+  try {
+    const result = await deliver(data, source);
+    track('contact_submitted', { status: LIVE ? STATUS[result] : 'dry_run' });
+    return result;
+  } catch (error) {
+    track('contact_submitted', { status: 'error' });
+    throw error;
+  }
+}
+
+async function deliver(data, source) {
   const rateLimit = {
     p_identifier: getClientIdentifier(),
     p_action: ACTION,

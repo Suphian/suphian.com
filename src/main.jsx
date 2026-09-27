@@ -4,6 +4,7 @@ import App from './App.jsx';
 import { errors } from './content.js';
 import { registerServiceWorker } from './lib/serviceWorker.js';
 import { reportWebVitals } from './lib/webVitals.js';
+import { startAnalytics } from './lib/analytics.js';
 import { initFavicon } from './favicon/favicon.js';
 import './fonts.css';
 import './style.css';
@@ -32,6 +33,8 @@ function showLoadError(error) {
 try {
   createRoot(rootElement).render(<App />);
   initFavicon();
+  // PostHog + GA4 custom events: a no-op without the key, and off suphian.com unless debugging.
+  startAnalytics();
 
   if (import.meta.env.PROD) {
     // Core Web Vitals to GA4 (only where index.html loaded gtag), then caching.

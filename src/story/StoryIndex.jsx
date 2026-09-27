@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { story } from '../content.js';
 import Heading from '../components/Heading.jsx';
+import { useSectionViewed } from '../hooks/useSectionViewed.js';
+import { track as trackEvent } from '../lib/analytics.js';
 import StoryCard from './StoryCard.jsx';
 import StoryDetail from './StoryDetail.jsx';
 import {
@@ -48,6 +50,7 @@ const COUNT = CHAPTERS.length;
 export default function StoryIndex() {
   const [active, setActive] = useState(0);
   const [open, setOpen] = useState(null);
+  const section = useRef(null);
   const track = useRef(null);
   const buttons = useRef([]);
   const titles = useRef([]);
@@ -56,6 +59,7 @@ export default function StoryIndex() {
   const returnTo = useRef(null);
 
   const select = useCallback((index) => setActive(clampIndex(index, COUNT)), []);
+  useSectionViewed(section, 'story');
 
   // Scroll position → chapter. Only a band change moves the selection, so a
   // hover or keyboard pick holds until the reader scrolls into another band.
@@ -114,6 +118,7 @@ export default function StoryIndex() {
   }, []);
 
   const openAt = (index) => {
+    trackEvent('story_chapter_opened', { chapter: CHAPTERS[index].id });
     select(index);
     returnTo.current = index;
     setOpen(index);
@@ -174,7 +179,7 @@ export default function StoryIndex() {
   );
 
   return (
-    <section id={story.id} className="section story" aria-labelledby="story-title" tabIndex={-1} style={{ '--count': COUNT }}>
+    <section ref={section} id={story.id} className="section story" aria-labelledby="story-title" tabIndex={-1} style={{ '--count': COUNT }}>
       {/* Just the heading and the intro line: no actions here (Suphian). */}
       <div className="story-head">
         <Heading id="story-title" className="story-heading" lines={story.heading} />
