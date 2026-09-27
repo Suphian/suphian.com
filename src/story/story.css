@@ -36,6 +36,9 @@
   --card-w: calc(var(--card-h) * .75);
   --card-gap: 20px;
   --band: 36svh;
+  /* The pinned stage's empty tail: from the lower of the list and the card
+     (both centred in the stage) down to the stage's bottom edge. */
+  --stage-tail: calc((100svh - var(--stage-top) - var(--stage-bottom) - max(var(--count, 6) * var(--story-row) + var(--story-divider), var(--card-h))) / 2 + var(--stage-bottom));
 }
 
 /* The heading and the intro line, nothing else */
@@ -64,8 +67,15 @@
   color: var(--ink-body);
 }
 
-/* The pinned track: one band of scroll per chapter. */
-.story-track { position: relative; height: calc(100svh + var(--count, 5) * var(--band)); }
+/* The pinned track: one band of scroll per chapter. It gives back the stage's
+   empty tail, so SAY HELLO starts where the list and card end and its own top
+   padding is the only gap (Suphian: the space before it was too much). The
+   track keeps its height, so the pin still lets go at the same point. */
+.story-track {
+  position: relative;
+  height: calc(100svh + var(--count, 5) * var(--band));
+  margin-bottom: calc(-1 * max(0px, var(--stage-tail)));
+}
 .story-stage {
   position: sticky;
   top: 0;
@@ -329,8 +339,9 @@
 /* ------------------------ Single column (≤ 800px wide or ≤ 560px tall): no pin.
    (560px: below that the six rows and the divider no longer fit the pinned stage.) */
 @media (max-width: 800px), (max-height: 560px) {
-  .story-track { height: auto; }
-  .story-stage { position: static; display: block; height: auto; padding: 0 0 72px; }
+  .story-track { height: auto; margin-bottom: 0; }
+  /* No trailing padding: like every .section, the block after it (SAY HELLO) owns the space above it. */
+  .story-stage { position: static; display: block; height: auto; padding: 0; }
   .story-list-wrap, .story-list-box { display: block; }
   .story-list { padding: 0; border-top: 1px solid var(--hairline); }
   /* The label sits above the side projects; their list's top rule is its hairline. */

@@ -101,3 +101,28 @@ test('the "Side projects" divider is a quiet label: readable, sentence case, sec
   const stacked = /const STACKED = '([^']+)'/.exec(jsx)[1];
   assert.ok(css.includes(`@media ${stacked} {`), `story.css has @media ${stacked}`);
 });
+
+test('one gap between the list and SAY HELLO, and it is SAY HELLO’s top padding', () => {
+  // Suphian: the space after the last side project was too much. It was the stage's
+  // trailing padding (stacked) or its empty tail (pinned) plus SAY HELLO's own padding.
+  const hello = readFileSync(new URL('../sayhello/sayhello.css', import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  const wrap = /(?:^|\})\s*\.say-hello-wrap\s*\{([^}]*)\}/.exec(hello)[1].replace(/\s+/g, ' ');
+  assert.match(wrap, /padding: var\(--space-section\) /, 'the gap is the page’s section spacing');
+  assert.match(wrap, /position: relative/, 'above the pinned stage it overlaps, for paint and pointer');
+  for (const [, body] of hello.matchAll(/@media[^{]*\{\s*\.say-hello-wrap\s*\{([^}]*)\}/g)) {
+    assert.doesNotMatch(body, /padding(-top)?\s*:\s*\d/, 'no breakpoint puts a fixed top padding back');
+  }
+
+  // Pinned: the track gives back the stage's empty tail below the lower of the list and
+  // the card (both centred), so SAY HELLO starts where they end. Its height, and so the
+  // point where the pin lets go, is unchanged.
+  assert.match(rule('.story'), /--stage-tail: calc\(\(100svh - var\(--stage-top\) - var\(--stage-bottom\) - max\(var\(--count, 6\) \* var\(--story-row\) \+ var\(--story-divider\), var\(--card-h\)\)\) \/ 2 \+ var\(--stage-bottom\)\)/);
+  const track = rule('.story-track');
+  assert.match(track, /height: calc\(100svh \+ var\(--count, 5\) \* var\(--band\)\)/);
+  assert.match(track, /margin-bottom: calc\(-1 \* max\(0px, var\(--stage-tail\)\)\)/);
+
+  // Stacked: no pin, no tail, and the stage adds no space after the last row.
+  const stackedBlock = css.split(/@media \(max-width: 800px\), \(max-height: 560px\) \{/)[1];
+  assert.match(stackedBlock, /\.story-track\s*\{[^}]*margin-bottom: 0/);
+  assert.match(stackedBlock, /\.story-stage\s*\{[^}]*padding: 0;/);
+});
