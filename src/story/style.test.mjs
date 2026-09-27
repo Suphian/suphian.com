@@ -102,6 +102,66 @@ test('the "Side projects" divider is a quiet label: readable, sentence case, sec
   assert.ok(css.includes(`@media ${stacked} {`), `story.css has @media ${stacked}`);
 });
 
+// Top-level blocks of the stylesheet: { prelude, body } per rule or @media block.
+const blocks = (source) => {
+  const out = [];
+  let depth = 0;
+  let start = 0;
+  let open = 0;
+  for (let i = 0; i < source.length; i++) {
+    if (source[i] === '{') {
+      if (depth === 0) open = i;
+      depth += 1;
+    } else if (source[i] === '}') {
+      depth -= 1;
+      if (depth === 0) {
+        out.push({ prelude: source.slice(start, open).trim(), body: source.slice(open + 1, i) });
+        start = i + 1;
+      }
+    }
+  }
+  return out;
+};
+
+test('scroll alone picks the chapter: nothing on hover or pointer movement picks one', () => {
+  // Suphian 2026-09-27: "remove the hover state and have it function only through
+  // scroll. Having both is a little confusing. If you click, maybe it opens it."
+  const index = readFileSync(new URL('./StoryIndex.jsx', import.meta.url), 'utf8');
+  assert.doesNotMatch(index, /on(Pointer|Mouse)(Move|Enter|Over|Leave|Out)\b/, 'no hover or pointer-move handler in the index');
+  assert.doesNotMatch(index, /addEventListener\(\s*'(pointer|mouse)(move|over|enter)'/);
+  // A click on a row or a rail card opens its chapter, active or not.
+  assert.match(index, /onClick=\{\(\) => onOpen\(index\)\}[\s\S]*onClick=\{\(\) => onOpen\(index\)\}/);
+  // The one place a chapter opens, so the event fires exactly once per open.
+  assert.equal(index.match(/trackEvent\(/g).length, 1);
+  assert.match(index, /const openAt = useCallback\(\(index\) => \{\s*trackEvent\('story_chapter_opened', \{ chapter: CHAPTERS\[index\]\.id \}\);/);
+});
+
+test('hover is a faint lift for a mouse only, never the active white, and never sticks after a tap', () => {
+  const hoverMedia = /^@media \(hover: hover\) and \(pointer: fine\)/;
+  for (const { prelude, body } of blocks(css)) {
+    if (!prelude.startsWith('@media')) {
+      assert.doesNotMatch(prelude, /:hover/, `${prelude}: hover outside a (hover: hover) block sticks after a tap on iOS`);
+      continue;
+    }
+    if (hoverMedia.test(prelude)) continue;
+    for (const rule of blocks(body)) {
+      if (!rule.prelude.includes(':hover')) continue;
+      // Reduced motion may only switch a hover's movement off.
+      assert.match(prelude, /prefers-reduced-motion/, rule.prelude);
+      assert.match(rule.body.trim(), /^transform: none;?$/, rule.prelude);
+    }
+  }
+  // The row's hover: pinned layout only, rows other than the active one, and a
+  // mid gray, so a hovered row never looks like the chapter scroll picked.
+  const row = blocks(css).find((b) => b.prelude.includes('min-width: 801px') && hoverMedia.test(b.prelude));
+  assert.ok(row, 'a hover block for the pinned list');
+  assert.match(row.prelude, /\(min-height: 561px\)/);
+  const rules = blocks(row.body);
+  assert.deepEqual(rules.map((r) => r.prelude), ['.story-item:not([data-distance="0"]) .story-button:hover']);
+  assert.match(rules[0].body, /color: var\(--ink-muted\)/);
+  assert.doesNotMatch(rules[0].body, /var\(--ink\)|#fff|opacity|transform/i);
+});
+
 test('one gap between the list and SAY HELLO, and it is SAY HELLO’s top padding', () => {
   // Suphian: the space after the last side project was too much. It was the stage's
   // trailing padding (stacked) or its empty tail (pinned) plus SAY HELLO's own padding.

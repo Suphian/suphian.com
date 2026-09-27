@@ -51,7 +51,9 @@ test('indexFromProgress splits progress into equal, finite bands', () => {
   assert.equal(indexFromProgress(0.5, 0), 0);
 });
 
-test('followScroll only overrides a hover/keyboard pick when the band changes', () => {
+// Suphian 2026-09-27: scroll alone picks the chapter; hover no longer does, and
+// the only other pick is the keyboard's (arrow keys, keyboard focus).
+test('followScroll only overrides a keyboard pick when the band changes', () => {
   assert.equal(followScroll(1, 1, 3), 3); // same band: keep the pick
   assert.equal(followScroll(1, 2, 3), 2); // new band: scroll wins
   assert.equal(followScroll(-1, 0, 0), 0); // first measurement

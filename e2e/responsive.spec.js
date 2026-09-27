@@ -73,10 +73,11 @@ for (const size of SIZES) {
       await expect(sheet).toBeHidden();
       await expectUnlocked(page);
 
-      // A story chapter's open view fits the screen.
+      // A story chapter's open view fits the screen. Touch screens tap it open.
       const chapter = page.locator('.story-button').filter({ hasText: 'YouTube' });
       await chapter.scrollIntoViewIfNeeded();
-      await chapter.click();
+      if (size.touch) await chapter.tap();
+      else await chapter.click();
       const detail = page.getByRole('dialog', { name: /YouTube/ });
       await expect(detail).toBeVisible();
       await page.waitForTimeout(900);
@@ -85,6 +86,17 @@ for (const size of SIZES) {
       await shot('4-chapter');
       await page.keyboard.press('Escape');
       await expect(detail).toBeHidden();
+      if (size.touch) {
+        // Suphian 2026-09-27: after the tap, the row looks like any other row at its
+        // distance from the highlight: no sticky hover colour (iOS keeps :hover).
+        await page.waitForTimeout(400);
+        const [tapped, twin] = await chapter.evaluate((el) => {
+          const item = el.closest('.story-item');
+          const other = [...document.querySelectorAll('.story-item')].find((li) => li !== item && li.dataset.distance === item.dataset.distance);
+          return [getComputedStyle(el).color, other ? getComputedStyle(other.querySelector('.story-button')).color : null];
+        });
+        if (twin) expect(tapped, 'the tapped row keeps a hover colour').toBe(twin);
+      }
 
       // SAY HELLO sits on screen at the bottom.
       const hello = page.getByRole('button', { name: 'Say hello: open the contact form' });

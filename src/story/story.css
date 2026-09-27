@@ -1,9 +1,9 @@
 /* ------------------------------------------------------------ Story index
    Replaces About, Work and Projects. Chapter lists (left: the jobs, then the
    side projects under a "Side projects" divider) and image rail (right) in a
-   sticky stage; native scroll through .story-track picks the chapter
-   (StoryIndex.jsx) and --active, one index across both lists, drives the
-   marker and the rail together.
+   sticky stage; native scroll through .story-track, and only scroll, picks the
+   chapter (StoryIndex.jsx) and --active, one index across both lists, drives
+   the marker and the rail together. A mouse over a row never picks it.
    Type per DESIGN-BRIEF.md: fonts only through --font-display / --font-text,
    Regular for body, --weight-strong for headings, list items and buttons,
    sentence case at readable sizes (no tiny uppercase labels), near-black and
@@ -162,7 +162,13 @@
 .story-item[data-distance="1"] .story-button { color: var(--ink-near); }
 .story-item[data-distance="0"] .story-button { color: var(--ink); }
 .story-item[data-distance="0"] .story-item-meta { opacity: 1; transform: none; }
-.story-button:hover { color: var(--ink); }
+/* Suphian 2026-09-27: scroll alone picks the chapter, so a mouse over a row
+   only lifts its text a shade (never to the active white; the marker and the
+   rail stay put) and a click opens it. Pinned layout with a mouse only, so a
+   tap leaves no sticky hover on a touch screen. */
+@media (hover: hover) and (pointer: fine) and (min-width: 801px) and (min-height: 561px) {
+  .story-item:not([data-distance="0"]) .story-button:hover { color: var(--ink-muted); }
+}
 /* While a chapter is open, its title and card are "in" the open view. */
 .story-item[data-hidden] .story-item-name,
 .story-card[data-hidden] { visibility: hidden; }
@@ -272,9 +278,7 @@
   color: var(--ink-muted);
   transition: color .2s ease;
 }
-.story-back:hover { color: var(--ink); }
 .story-back-arrow { color: var(--accent, var(--ink)); transition: transform .3s ease; }
-.story-back:hover .story-back-arrow { transform: translateX(-4px); }
 .story-detail-title {
   margin: clamp(40px, 11svh, 120px) 0 0;
   font-family: var(--font-display);
@@ -325,10 +329,15 @@
   color: var(--ink);
   transition: color .2s ease;
 }
-.story-link:hover { color: #ffffff; }
 .story-link .link-arrow { color: var(--accent, var(--ink)); }
-.story-link:hover .link-arrow { transform: translate(2px, -2px); }
 .story-link:focus-visible { outline-offset: 4px; }
+/* Mouse hovers only: after a tap, iOS would keep them lit. */
+@media (hover: hover) and (pointer: fine) {
+  .story-back:hover { color: var(--ink); }
+  .story-back:hover .story-back-arrow { transform: translateX(-4px); }
+  .story-link:hover { color: #ffffff; }
+  .story-link:hover .link-arrow { transform: translate(2px, -2px); }
+}
 
 /* Two-line rows where name and role no longer fit side by side. */
 @media (max-width: 1080px) and (min-width: 801px) {

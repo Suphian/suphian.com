@@ -67,31 +67,72 @@ test('contact form: validation, then a send that never reaches real Supabase', a
   for (const url of guard.supabaseCalls) expect(url).toMatch(/check_rate_limit|contact_submissions|notify-contact-submit/);
 });
 
+// The scroll band's pick lands a frame after the scroll (rAF, then React).
+const settle = (page) => page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(done, 50)))));
+const highlighted = (page) => page.locator('.story-button[aria-current="true"] .story-item-name');
+
+// Suphian 2026-09-27: scroll alone picks the chapter; a click or tap opens any
+// row, active or not, and opening it doesn't move the highlight.
 for (const [index, name] of CHAPTERS.entries()) {
   test(`story chapter ${index + 1} (${name}) opens from the list and closes`, async ({ page }) => {
     const button = page.locator('.story-button').nth(index);
     await button.scrollIntoViewIfNeeded();
     await expect(button).toContainText(name);
-    await button.click();
+    await settle(page);
+    const picked = await highlighted(page).textContent();
+    if (test.info().project.use.hasTouch) await button.tap();
+    else await button.click();
     const detail = page.getByRole('dialog', { name: new RegExp(name) });
     await expect(detail).toBeVisible();
     await expect(detail.locator('.story-detail-summary')).not.toBeEmpty();
     await page.keyboard.press('Escape');
     await expect(detail).toBeHidden();
     await expectUnlocked(page);
+    await expect(button).toBeFocused();
+    await expect(highlighted(page), 'opening a chapter moved the highlight').toHaveText(picked);
   });
 }
 
-test('story: the active card opens its chapter; Back closes it', async ({ page }) => {
+test('story: hover never moves the highlight or the rail; the active card, Enter and Space open', async ({ page }) => {
   test.skip(test.info().project.name === 'mobile', 'phones use the single-column story (no card rail)');
   const card = page.locator('.story-rail .story-card.is-active');
   await card.scrollIntoViewIfNeeded();
+  await settle(page);
+  const picked = await highlighted(page).textContent();
+  const railIndex = () => page.locator('.story-rail .story-card').evaluateAll((cards) => cards.findIndex((c) => c.classList.contains('is-active')));
+  const rail = await railIndex();
+
+  // A mouse sweeping over every row leaves the scroll's pick and its card alone.
+  for (const row of await page.locator('.story-button').all()) await row.hover();
+  await settle(page);
+  await expect(highlighted(page)).toHaveText(picked);
+  expect(await railIndex()).toBe(rail);
+
+  // The active card opens the active chapter.
   await card.click();
-  const detail = page.getByRole('dialog');
+  let detail = page.getByRole('dialog', { name: new RegExp(picked) });
   await expect(detail).toBeVisible();
   await detail.locator('.story-back').click();
   await expect(detail).toBeHidden();
   await expectUnlocked(page);
+
+  // Keyboard: arrows move the highlight with focus; Space and Enter open the focused row.
+  const rows = page.locator('.story-button');
+  const at = CHAPTERS.indexOf(picked);
+  const next = CHAPTERS[Math.min(at + 1, CHAPTERS.length - 1)];
+  await rows.nth(at).focus();
+  await page.keyboard.press(at + 1 < CHAPTERS.length ? 'ArrowDown' : 'End');
+  await expect(highlighted(page)).toHaveText(next);
+  await expect(rows.nth(CHAPTERS.indexOf(next))).toBeFocused();
+  for (const key of ['Space', 'Enter']) {
+    await page.keyboard.press(key);
+    detail = page.getByRole('dialog', { name: new RegExp(next) });
+    await expect(detail).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(detail).toBeHidden();
+    await expectUnlocked(page);
+    await expect(rows.nth(CHAPTERS.indexOf(next))).toBeFocused();
+  }
 });
 
 test('scrolling docks SUPH; the docked SUPH scrolls back to the top', async ({ page }) => {
