@@ -39,13 +39,17 @@ export const FROM = {
   thankYou: `Suphian Tweel <${INBOX}>`,
 };
 
-/** The thank-you's words, shared by its HTML and plain-text parts. */
+/**
+ * The thank-you's words, shared by its HTML and plain-text parts. Suphian
+ * 2026-09-27: keep it generic, "Looking forward to connecting", no promises
+ * about how or when he replies.
+ */
 const THANK_YOU = {
-  subject: "Thanks for your message",
-  preheader: "It came through. I read every one myself and reply personally.",
-  heading: (firstName: string) => `Thanks for writing${firstName ? `, ${firstName}` : ""}`,
+  subject: "Thanks for reaching out",
+  preheader: "Your message came through. Looking forward to connecting.",
+  heading: (firstName: string) => `Thanks for reaching out${firstName ? `, ${firstName}` : ""}`,
   body: [
-    "Your message came through. I read every one myself and reply personally.",
+    "Your message came through. Looking forward to connecting.",
     "If you think of anything to add, just reply to this email.",
   ],
   signOff: "Suphian",

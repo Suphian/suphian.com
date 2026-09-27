@@ -11,7 +11,20 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## Identity first, Steadily as the role (2026-09-27, latest)
+## Contact emails: generic and on brand (2026-09-27, latest)
+
+Suphian: "I don't love that contact email… Just be like 'Looking forward to connecting.' It should be more generic." The moon/orbit theme, the 🌕 subject and the "Principal Product Manager at Steadily" sign-off are gone. The copy lives in `supabase/functions/notify-contact-submit/emails.ts`, and it goes live only when that function is deployed to Supabase, not through Vercel.
+
+| Field | Was (live until the function redeploys) | Now |
+|---|---|---|
+| Thank-you subject | 🌕 Your message reached my inbox! | Thanks for reaching out |
+| Preview line | (none) | Your message came through. Looking forward to connecting. |
+| Heading | Thanks for reaching out, Jane. | Thanks for reaching out, Jane. |
+| Body | Your message just completed its orbit and landed in my inbox. I'll get back to you soon. | Your message came through. Looking forward to connecting. / If you think of anything to add, just reply to this email. |
+| Sign-off | Suphian / Principal Product Manager at Steadily | Suphian |
+| Owner notification | Contact Notification: "Contact Form Submission" | suphian.com: "New message from {name}" |
+
+## Identity first, Steadily as the role (2026-09-27)
 
 Newest entry; where older sections disagree, this one wins. Suphian: "The Steadily thing isn't a big part of my identity. It's just my role, so I don't want to optimize too much for that." Search, social and assistive text now lead with who he is: a product leader who led payments at YouTube and builds Abacus Labs and suph.app.
 

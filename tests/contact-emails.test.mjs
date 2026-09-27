@@ -37,14 +37,15 @@ test('the thank-you drops the old space theme, the emoji and the Steadily title'
 
 test('the thank-you subject, preview line and greeting', () => {
   const withName = renderThankYou({ name: 'Jane Doe' });
-  assert.equal(withName.subject, 'Thanks for your message');
+  assert.equal(withName.subject, 'Thanks for reaching out');
+  assert.match(withName.text, /Looking forward to connecting\./);
   assert.ok(withName.preheader.length > 0 && withName.preheader.length <= 90);
-  assert.match(withName.html, /Thanks for writing, Jane<span[^>]*>\.<\/span><\/h1>/);
-  assert.match(withName.text, /^Thanks for writing, Jane\.\n/);
+  assert.match(withName.html, /Thanks for reaching out, Jane<span[^>]*>\.<\/span><\/h1>/);
+  assert.match(withName.text, /^Thanks for reaching out, Jane\.\n/);
 
   const noName = renderThankYou({ name: '' });
-  assert.match(noName.html, /Thanks for writing<span[^>]*>\.<\/span><\/h1>/);
-  assert.match(noName.text, /^Thanks for writing\.\n/);
+  assert.match(noName.html, /Thanks for reaching out<span[^>]*>\.<\/span><\/h1>/);
+  assert.match(noName.text, /^Thanks for reaching out\.\n/);
 });
 
 test('the thank-you is signed "Suphian" and nothing else', () => {
@@ -78,7 +79,7 @@ test('names are escaped in the HTML and kept as typed in subjects and text', () 
 
   const thanks = renderThankYou({ name: '<img src=x onerror=alert(1)>' });
   assert.doesNotMatch(thanks.html, /<img src=x/);
-  assert.match(thanks.html, /Thanks for writing<span/);
+  assert.match(thanks.html, /Thanks for reaching out<span/);
 });
 
 test('the thank-you greets only a plain first name', () => {
@@ -90,7 +91,7 @@ test('the thank-you greets only a plain first name', () => {
   assert.equal(greetingName('http://spam.example'), '');
   assert.equal(greetingName('Jane<b>'), '');
   assert.equal(greetingName(''), '');
-  assert.match(renderThankYou({ name: 'Visit spam.example now' }).subject, /^Thanks for your message$/);
+  assert.match(renderThankYou({ name: 'Visit spam.example now' }).subject, /^Thanks for reaching out$/);
 });
 
 test('the owner subject names the sender, then falls back to the address', () => {
