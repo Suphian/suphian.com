@@ -6,10 +6,6 @@ import { dockMetrics, dockTransform, heroViewX, homeLinkBox, homeLinkViewX } fro
 import { HERO_GLYPHS, acceptsHover, acceptsPress, addState, createDockEffects, dockFxTransform } from './dockfx.js';
 import './wordmark.css';
 
-// The single place to tune the motion. It lives in motion.js (DOM-free) so the
-// node tests and the filmstrip use the same values; see that file for units.
-export { MOTION };
-
 const KEEP = 4; // S U P H survive into the docked logo; I A N are absorbed.
 const clamp01 = (n) => Math.max(0, Math.min(1, n));
 const px = (n) => `${Math.round(n * 100) / 100}px`;
@@ -48,8 +44,8 @@ const TuningPanel = import.meta.env.DEV ? lazy(() => import('./TuningPanel.jsx')
  *   100svh). Without one, or with `docked`, it renders straight into the
  *   header, without animating on mount. If the hero appears, changes or goes
  *   away later (routing), it re-measures and snaps to the matching state.
- * - Writes `--cue-opacity` on the hero, `--header-opacity` and
- *   `--edition-opacity` on `.header` (0..1; :root holds the defaults), and
+ * - Writes `--cue-opacity` on the hero, `--header-opacity` on `.header`
+ *   (0..1; :root holds the defaults), and
  *   `data-docked` and `data-cue` ("visible" | "hidden") on <html>.
  * - `onHome(event)` runs as soon as the docked SUPH is clicked (the squish
  *   plays while the page scrolls); `label` is its accessible name.
@@ -144,11 +140,9 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
       const cueFade = pinned() ? 0 : reduced ? Number(atTop) : 1 - segment(p, 0, 0.22);
       setVar(heroElement, '--cue-opacity', cueFade);
       root.dataset.cue = cueFade <= 0.01 ? 'hidden' : 'visible';
-      setVar(header, '--edition-opacity', 1 - segment(move, 0.05, 0.35));
       setVar(header, '--header-opacity', segment(move, 0.75, 1));
       homeLink.current.hidden = !docked;
       root.dataset.docked = String(docked);
-      svg.current.dataset.progress = p.toFixed(4);
       fx.setDocked(docked); // Leaving the header lets go of hover and press; the letters spring back.
       heroFx.setEnabled(!pinned() && p < 0.001); // Likewise the first scroll off the top.
       renderFx();
