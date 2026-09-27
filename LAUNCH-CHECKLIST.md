@@ -1,4 +1,4 @@
-﻿# Launch checklist: new suphian.com
+# Launch checklist: new suphian.com
 
 Suphian authorized deployment and the remaining launch/SEO work on 2026-09-26. The source handoff is suphian-scroll-demo at 8815f8e.
 
@@ -10,9 +10,9 @@ Suphian authorized deployment and the remaining launch/SEO work on 2026-09-26. T
 - [x] Prepare existing GitHub/Vercel project on a launch branch, retaining Supabase backend and migrations.
 - [x] Update CI for Node 24, unit tests and production browser checks.
 - [x] Finish SEO metadata, structured data and crawlable initial HTML, then verify the final build.
-- [ ] Verify protected Vercel preview, including one real contact send.
-- [ ] Merge to main, verify production domain/redirects and preserve rollback URL.
-- [ ] Deploy rebranded contact emails to Supabase and verify delivery acceptance.
+- [x] Verify protected Vercel preview, including one real contact send.
+- [x] Merge to main, verify production domain/redirects and preserve rollback URL.
+- [x] Deploy rebranded contact emails to Supabase (ACTIVE version 36, JWT verification enabled); the single real preview submission returned both email-provider IDs. Inbox arrival was not independently confirmed.
 
 ## Follow-up outside the launch build
 
@@ -21,4 +21,3 @@ Suphian authorized deployment and the remaining launch/SEO work on 2026-09-26. T
 - LinkedIn headline changes remain the owner's editorial choice.
 
 See docs/seo-plan.md for current search guidance and limits, and docs/launch.md for deployment evidence.
-

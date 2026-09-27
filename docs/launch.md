@@ -1,6 +1,12 @@
-﻿# Physics-wordmark launch
+# Physics-wordmark launch
 
 The owner authorized replacing suphian.com with the local redesign on 2026-09-26. The original handoff was suphian-scroll-demo 8815f8e; launch preparation is saved there as 87bf955. The production repository launch branch begins at 40f1576 and includes the two prepared contact-email commits.
+
+## Deployed result
+
+The launch PR #9 merged as 6ddf31a. Vercel production deployment dpl_B7U8jPSTqFRdHLwSpGrezrqfghg7 reached READY and serves https://suphian.com. The single real preview contact submission saved one row (201), returned both email-provider IDs (200), and showed UI success. Rebranded notify-contact-submit is ACTIVE version 36 with JWT verification enabled. No second real contact send was made.
+
+Production checks found an omitted Google Analytics connection host and a missing explicit www.suph.ai root redirect. The follow-up configuration adds only stats.g.doubleclick.net to connect-src, preserving existing analytics behavior, and explicitly redirects that hostname's root. Google documents this Analytics endpoint family at https://developers.google.com/tag-platform/security/guides/csp .
 
 ## Verification
 
