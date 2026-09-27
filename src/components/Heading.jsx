@@ -5,10 +5,10 @@ import React from 'react';
  * The period carries its own class (style.css .heading-period), so other spans
  * inside an h2 keep their own colour.
  */
-export default function Heading({ as: Tag = 'h2', lines, id, className, headingRef, tabIndex }) {
+export default function Heading({ lines, id, className }) {
   const list = Array.isArray(lines) ? lines : [lines];
   return (
-    <Tag id={id} className={className} ref={headingRef} tabIndex={tabIndex}>
+    <h2 id={id} className={className}>
       {list.map((line, index) => (
         <React.Fragment key={index}>
           {index > 0 && <br />}
@@ -16,6 +16,6 @@ export default function Heading({ as: Tag = 'h2', lines, id, className, headingR
         </React.Fragment>
       ))}
       <span className="heading-period">.</span>
-    </Tag>
+    </h2>
   );
 }

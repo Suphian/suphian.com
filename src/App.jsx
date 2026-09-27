@@ -1,10 +1,9 @@
-import React, { Suspense, useCallback, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useLayoutEffect, useRef } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Wordmark from './wordmark/Wordmark.jsx';
 import { nav } from './content.js';
 import { LIVE } from './lib/backend.js';
 import { isPlainClick, scrollToId, scrollToTop } from './lib/scroll.js';
-import { useSeo } from './hooks/useSeo.js';
 import { UIProvider } from './components/UIProvider.jsx';
 import DryRunBadge from './components/DryRunBadge.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
@@ -12,8 +11,8 @@ import Footer from './components/Footer.jsx';
 import Header from './components/Header.jsx';
 import Home from './pages/Home.jsx';
 
-// New route: top of the page, or the #section it asked for (nav links from
-// another route land on /#work). The first load keeps the browser's own restoration.
+// New route (an unknown URL redirecting home): top of the page, or the #section
+// it asked for (a /#work link). The first load keeps the browser's own restoration.
 function useRouteScroll({ pathname, hash }) {
   const first = useRef(true);
   useLayoutEffect(() => {
@@ -31,7 +30,6 @@ function Shell() {
   const navigate = useNavigate();
   const isHome = location.pathname === '/';
 
-  useSeo(location.pathname);
   useRouteScroll(location);
 
   const onHome = useCallback(
@@ -55,13 +53,11 @@ function Shell() {
       <Wordmark docked={!isHome} homeHref="/" onHome={onHome} label={nav.home} />
       <main id="main" tabIndex={-1}>
         <ErrorBoundary key={location.pathname}>
-          <Suspense fallback={<div className="route-loading" />}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              {/* No dead ends (Suphian): removed pages like /podcast and any unknown URL go home. */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* No dead ends (Suphian): removed pages like /podcast and any unknown URL go home. */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </ErrorBoundary>
       </main>
       <Footer />

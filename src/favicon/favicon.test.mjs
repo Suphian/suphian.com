@@ -739,7 +739,7 @@ test('docking triggers a burst only on the false -> true transition', (t) => {
 });
 
 test('a page that renders already docked is not a landing: the first data-docked value is a baseline', (t) => {
-  // Deep link or 404: Wordmark mounts docked and writes "true" in its first
+  // Restored scroll position: Wordmark mounts docked and writes "true" in its first
   // layout effect, shortly after initFavicon() ran with the attribute unset.
   const w = fakeWorld();
   const teardown = initFavicon({ env: w.env, ...NO_BEAT });

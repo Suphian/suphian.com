@@ -9,7 +9,7 @@
  *   - first load (or the first time a tab opened in the background is shown),
  *   - the moment SUPH docks in the header (<html data-docked> going from
  *     "false" to "true"; the first value Wordmark writes is only a baseline,
- *     because on /podcast or the 404 page SUPH is docked from its first render),
+ *     because after a restored scroll position SUPH is docked from its first render),
  *   - returning to the tab after it has been hidden for a while,
  *   - an ambient beat: while the tab stays visible, another burst about every
  *     15 s (ambientEvery, give or take ambientJitter so it never ticks like a
@@ -355,8 +355,9 @@ function createController(env, opts) {
     const previous = lastDocked;
     lastDocked = docked;
     // The first value is only a baseline (Wordmark's first render, docked from
-    // the start on /podcast, the 404 page or a restored scroll position). Only
-    // a later false -> true change is SUPH actually landing in the header.
+    // the start after a restored scroll position, or on an unknown URL for the
+    // render before it redirects home). Only a later false -> true change is
+    // SUPH actually landing in the header.
     if (previous == null || docked !== 'true' || previous === 'true') return;
     // Before load the load burst covers this moment (play() would refuse anyway).
     if (!isLoaded()) return;

@@ -17,9 +17,7 @@ let openDialogs = 0;
 function lockPage() {
   openDialogs += 1;
   if (openDialogs > 1) return;
-  const html = document.documentElement;
-  html.classList.add('is-locked');
-  html.dataset.modal = 'open';
+  document.documentElement.classList.add('is-locked');
   const app = document.getElementById('root');
   if (app) app.inert = true;
 }
@@ -27,9 +25,7 @@ function lockPage() {
 function unlockPage() {
   openDialogs = Math.max(0, openDialogs - 1);
   if (openDialogs > 0) return;
-  const html = document.documentElement;
-  html.classList.remove('is-locked');
-  delete html.dataset.modal;
+  document.documentElement.classList.remove('is-locked');
   const app = document.getElementById('root');
   if (app) app.inert = false;
 }

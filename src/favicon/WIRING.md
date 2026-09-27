@@ -56,7 +56,7 @@ It is framework-free, idempotent (safe with StrictMode and HMR) and returns a te
 Calling it right after `render()` is fine, even though React hasn't committed yet:
 
 - **Nothing happens before the page has loaded.** If `document.readyState` isn't `"complete"`, it waits for window `pageshow`, which follows `load`. The first-load burst runs 450 ms after that, and dock transitions or `jiggle()` calls before it do nothing. Chromium ignores favicon changes until the load event finishes, and Firefox saves any icon set before `pageshow` as the page's favicon in bookmarks and history, so a mid-jiggle frame could end up there.
-- **It reads `<html data-docked>`**, which Wordmark already sets, through a MutationObserver. No wordmark edits are needed. The first value Wordmark writes is taken as a baseline, not a landing. On /podcast, the 404 page or any deep link, SUPH renders already docked (null → `"true"`), and that doesn't jiggle. Only a later `"false"` → `"true"` counts as docking.
+- **It reads `<html data-docked>`**, which Wordmark already sets, through a MutationObserver. No wordmark edits are needed. The first value Wordmark writes is taken as a baseline, not a landing. After a restored scroll position (or on an unknown URL, for the render before it redirects home), SUPH renders already docked (null → `"true"`), and that doesn't jiggle. Only a later `"false"` → `"true"` counts as docking.
 
 ## 3. `public/site.webmanifest` `icons`
 
@@ -89,6 +89,6 @@ Node 21+ expands the quoted glob itself, so it works the same from cmd.exe, Powe
 ## Notes
 
 - **Firefox.** Firefox batches `<link rel=icon>` changes and loads at most about one every 100 ms, plus an idle wait. At 30 fps it would drop about two frames in three, and unevenly. On Gecko (a `Gecko/<version>` user agent, so not Chrome, Safari or Firefox on iOS), the same motion is therefore sampled at 8 fps: 10 frames over the same 1.16 s, each 125 ms or more apart and placed near the motion's extremes. Each variant has its own offset, and hop's air time is set so its crouch, top and landing all fall on that grid. The Firefox rows of `qa/favicon-variant-<name>.png` show what Firefox gets. Frames can still merge if the main thread stays busy through Firefox's idle wait.
-- There is no CSP today. If one is added, `img-src` must allow `data:`, or the animated frames won't show.
+- The Content-Security-Policy in `vercel.json` must keep `data:` in `img-src`, or the animated frames won't show.
 - The static icons (`favicon-suph.svg`, `icons/*.png`) were regenerated with SUPH vertically centred. The favicon's baseline is on row 12 of 16, and the large icons' ink centre is at 49%. They match the canvas rest frame.
 - Regenerate the static icons: `node src/favicon/build-icons.mjs` (only needed if the rest frame ever changes; no variant changes it). QA renders: `node src/favicon/qa-favicon.mjs` writes `qa/favicon-options.png`, `favicon-variant-{wave,hop,jelly,puff}.png`, `favicon-variants-sheet.png` and `favicon-zoom.png` (the default variant). `node src/favicon/qa-favicon.mjs hop jelly` renders just those two strips and a sheet of them. Tests: `node --test "src/favicon/*.test.mjs"`.

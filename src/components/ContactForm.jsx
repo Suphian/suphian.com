@@ -38,7 +38,6 @@ export default function ContactForm({ source, onSubmitted }) {
     if (attempted) setErrors((current) => ({ ...current, [field]: validateField(field, next, contact.validation) }));
   };
 
-
   const onSubmit = async (event) => {
     event.preventDefault();
     if (sending) return;
