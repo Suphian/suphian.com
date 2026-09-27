@@ -46,17 +46,17 @@ test('tracking needs a key, and then suphian.com in production or the debug flag
   assert.equal(shouldTrack({ ...on, prod: false, hostname: '127.0.0.1', debug: true }), true, 'dev with the debug flag');
 });
 
-test('with the committed empty key, track() does nothing, even on suphian.com with the debug flag', async () => {
+test('with the committed key, a preview deployment stays silent', async () => {
   const gtagCalls = [];
   globalThis.window = {
-    location: { hostname: 'suphian.com' },
-    localStorage: { getItem: () => '1' },
+    location: { hostname: 'suphian-abc123-suph.vercel.app' },
+    localStorage: { getItem: () => null },
     gtag: (...args) => gtagCalls.push(args),
   };
   try {
     // A fresh copy of the module, evaluated under the fake window.
     const fresh = await import(`./analytics.js?window=${Date.now()}`);
-    if (fresh.POSTHOG_KEY) return; // The real key is in: nothing left to check here.
+    assert.match(fresh.POSTHOG_KEY, /^phc_/, 'the Suph.ai project key is committed (2026-09-27)');
     assert.equal(fresh.analyticsEnabled, false);
     fresh.track('say_hello_clicked');
     fresh.trackOnce('section_viewed', { section: 'story' });

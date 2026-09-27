@@ -38,8 +38,8 @@ Confident, curious, entrepreneurial, warm, playful. Beautiful design, moving qui
 
 ## No dead pages (Suphian, 2026-09-26)
 - No 404 or dead-end pages. Unknown URLs and removed pages (e.g. `/podcast`) redirect to home: `<Route path="*" element={<Navigate to="/" replace />} />` in `src/App.jsx`.
-- For production, `vercel.json` needs a permanent (301) redirect `/podcast` → `/` for old links, plus the SPA rewrite.
-- `src/pages/NotFound.jsx` and the `notFound` copy are now unused. Delete them in the final cleanup.
+- For production, `vercel.json` needs a permanent (301) redirect `/podcast` → `/` for old links, and no SPA catch-all rewrite: the build copies index.html to 404.html, so unknown paths return a real 404 that still renders the site and sends visitors home (2026-09-27; a test enforces it).
+- `src/pages/NotFound.jsx` and the `notFound` copy were deleted at launch.
 
 ## Execution
 - Work within the existing stack. Preserve routes, links and functionality.

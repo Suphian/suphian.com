@@ -26,7 +26,7 @@ The protected preview injects Vercel's feedback toolbar, which the production CS
 
 Merged the launch pull request after deployed browser checks and the authorized real form send passed. GitHub's Vercel integration deployed main. Deployed notify-contact-submit to Supabase with existing JWT verification and secrets. The form saves a database row before requesting mail; the single real preview send returned both provider IDs. Inbox arrival was not independently confirmed.
 
-Original production rollback target: https://suphian-mmj2nraub-suph.vercel.app (dpl_9pZWAD18kZjY6aWNJVJxpDtuR4LZ, Git commit 47c64f7). Keep this deployment available. Run vercel rollback with that URL from the linked project if needed, then revert the corresponding Git changes to align subsequent builds.
+Original production rollback target: https://suphian-mmj2nraub-suph.vercel.app (dpl_9pZWAD18kZjY6aWNJVJxpDtuR4LZ, Git commit 47c64f7). Keep this deployment available. Run vercel rollback with that URL from the linked project if needed, then revert the corresponding Git changes to align subsequent builds. For the redesigned site itself, use Vercel Instant Rollback to the previous production deployment rather than a hard-coded ID.
 
 ## Remaining account/file-dependent items
 
@@ -40,7 +40,7 @@ The owner confirmed the font license. The supplied Semibold remains in place of 
 
 GA4 (G-8S5FL37K8X, index.html) and PostHog run side by side. src/lib/analytics.js sends each custom event below to PostHog and, where gtag has loaded, to GA4 under the same name and properties. Both run on suphian.com only (not dev, previews or local builds) and load after the first interaction or 3s, so neither touches first paint.
 
-PostHog is off until its key is in. Paste the project API key (phc_…, PostHog > Project settings) into POSTHOG_KEY in src/lib/analytics.js; that one line is the switch. While it is empty nothing loads and nothing is sent, the GA4 copies of these events included. For an EU project, also set POSTHOG_REGION to 'eu' and point the three /ingest rewrites in vercel.json at eu-assets.i.posthog.com and eu.i.posthog.com; npm test checks the two agree.
+PostHog is live since 2026-09-27 (main f053793): POSTHOG_KEY in src/lib/analytics.js holds the key for the Suph.ai org's project 631302 (US), kept separate from the Honest Funding project. Emptying that one line switches it off again; with it empty nothing loads and nothing is sent, the GA4 copies of these events included. For an EU project, also set POSTHOG_REGION to 'eu' and point the three /ingest rewrites in vercel.json at eu-assets.i.posthog.com and eu.i.posthog.com; npm test checks the two agree.
 
 Events go to suphian.com/ingest, which vercel.json rewrites to PostHog US ahead of the SPA fallback, so ad blockers keep them and the CSP needs no PostHog host. The service worker never touches /ingest. posthog-js is a lazy chunk with autocapture, page-leave, heatmaps, web vitals (GA4 has them), session replay, surveys, remote config and remote scripts all off; person profiles are created only for identified visitors, which is nobody today.
 
