@@ -32,8 +32,10 @@ playwright-report/
 
 # Large media files (should be in cloud storage)
 *.m4a
-!public/*.m4a
 *.mp4
-!public/*.mp4
-GenAI_Solves_YouTube*
+
+# Local tool state
 .playwright-mcp
+.remember/
+supabase/.temp/
+supabase/.branches/
