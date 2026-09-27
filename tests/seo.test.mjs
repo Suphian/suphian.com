@@ -73,14 +73,20 @@ test('HTML and JSON-LD serialization cannot introduce markup from content', () =
   assert.deepEqual(JSON.parse(script), schemaGraph());
 });
 
-test('the social card is a JPEG small enough for WhatsApp and iMessage link previews', () => {
+test('the social card is a PNG small enough for WhatsApp and iMessage link previews', () => {
   // Suphian 2026-09-27: shared links must preview on WhatsApp and iMessage. WhatsApp drops
-  // og:image files over about 300 KB; the grainy PNG was 506 KB.
+  // og:image files over about 300 KB (the grainy first card was 506 KB) and crops a square
+  // thumbnail from the middle; the card is the grain-free lettering, centred, at 2x.
   const file = new URL(`../public${new URL(seo.og.image).pathname}`, import.meta.url);
   assert.ok(existsSync(file), `${seo.og.image} is in public/`);
   const bytes = readFileSync(file);
-  assert.deepEqual([...bytes.subarray(0, 3)], [0xff, 0xd8, 0xff], 'a JPEG');
+  assert.deepEqual([...bytes.subarray(1, 4)].map((b) => String.fromCharCode(b)).join(''), 'PNG', 'a PNG');
   assert.ok(bytes.length < 250 * 1024, `${bytes.length} bytes, keep it under 250 KB`);
+  // The og:image:width/height tags must match the file.
+  assert.equal(bytes.readUInt32BE(16), seo.og.imageWidth);
+  assert.equal(bytes.readUInt32BE(20), seo.og.imageHeight);
+  assert.equal(seo.og.imageWidth / seo.og.imageHeight, 1200 / 630, '1.91:1, the shape every app expects');
   assert.equal(seo.twitter.image, seo.og.image);
-  assert.match(html, /<meta property="og:image:type" content="image\/jpeg"/);
+  assert.match(html, /<meta property="og:image:type" content="image\/png"/);
+  assert.match(html, new RegExp(`<meta property="og:image:width" content="${seo.og.imageWidth}"`));
 });

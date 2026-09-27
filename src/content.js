@@ -353,14 +353,17 @@ export const seo = {
   og: {
     type: 'profile',
     siteName: 'Suphian Tweel',
-    image: `${ORIGIN}/og/suphian-wordmark.jpg`,
+    image: `${ORIGIN}/og/suphian-card.png`,
+    // Rendered at 2x by scripts/export-social-card.mjs; the og:image:width/height tags use these.
+    imageWidth: 2400,
+    imageHeight: 1260,
     imageAlt: 'SUPHIAN in inflated red letters on black.',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
     handle: '@suphian',
-    image: `${ORIGIN}/og/suphian-wordmark.jpg`,
+    image: `${ORIGIN}/og/suphian-card.png`,
     imageAlt: 'SUPHIAN in inflated red letters on black.',
   },
   manifest: {
