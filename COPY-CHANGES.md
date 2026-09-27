@@ -11,6 +11,17 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
+## Messaging previews (2026-09-27)
+
+The preview keeps the approved SUPHIAN lettering and existing title, description and alt text.
+The primary Open Graph image is now a versioned 1200 × 1200 PNG with the wordmark at 90% width;
+its centered 1200 × 630 crop also preserves the entire name. Twitter uses a separate landscape
+export. Fresh filenames prevent reuse of the previous image asset when clients fetch the updated
+metadata; already cached messages may retain their original card.
+Suphian requested a professional, high-fidelity result using the homepage's full name. The
+export now reads the homepage's vector source directly, retaining its gradient and subtle
+surface texture, renders at 2×, and downsamples to a compact palette PNG with crisp red edges.
+
 ## Contact emails: generic and on brand (2026-09-27, latest)
 
 Suphian: "I don't love that contact email… Just be like 'Looking forward to connecting.' It should be more generic." The moon/orbit theme, the 🌕 subject and the "Principal Product Manager at Steadily" sign-off are gone. The copy lives in `supabase/functions/notify-contact-submit/emails.ts`, and it goes live only when that function is deployed to Supabase, not through Vercel.
