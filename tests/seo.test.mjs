@@ -74,9 +74,8 @@ test('HTML and JSON-LD serialization cannot introduce markup from content', () =
 });
 
 test('the social card is a PNG small enough for WhatsApp and iMessage link previews', () => {
-  // Suphian 2026-09-27: shared links must preview on WhatsApp and iMessage. WhatsApp drops
-  // og:image files over about 300 KB (the grainy first card was 506 KB) and crops a square
-  // thumbnail from the middle; the card is the grain-free lettering, centred, at 2x.
+  // Keep a lightweight square source for messaging clients, with a separate wide Twitter card.
+  // These are download and metadata checks; native apps control their own card layouts.
   const file = new URL(`../public${new URL(seo.og.image).pathname}`, import.meta.url);
   assert.ok(existsSync(file), `${seo.og.image} is in public/`);
   const bytes = readFileSync(file);
@@ -85,8 +84,16 @@ test('the social card is a PNG small enough for WhatsApp and iMessage link previ
   // The og:image:width/height tags must match the file.
   assert.equal(bytes.readUInt32BE(16), seo.og.imageWidth);
   assert.equal(bytes.readUInt32BE(20), seo.og.imageHeight);
-  assert.equal(seo.og.imageWidth / seo.og.imageHeight, 1200 / 630, '1.91:1, the shape every app expects');
-  assert.equal(seo.twitter.image, seo.og.image);
+  assert.equal(seo.og.imageWidth, 1200);
+  assert.equal(seo.og.imageHeight, 1200);
+  const twitter = readFileSync(new URL(`../public${new URL(seo.twitter.image).pathname}`, import.meta.url));
+  assert.deepEqual(twitter.subarray(0, 8), bytes.subarray(0, 8), 'both cards are PNG');
+  assert.equal(twitter.readUInt32BE(16), 1200);
+  assert.equal(twitter.readUInt32BE(20), 630);
+  assert.ok(twitter.length < 250 * 1024);
+  assert.notEqual(seo.twitter.image, seo.og.image);
+  assert.equal((html.match(/property="og:image" /g) ?? []).length, 1, 'one unambiguous primary image');
+  assert.ok(html.includes(`<meta name="twitter:image" content="${seo.twitter.image}"`));
   assert.match(html, /<meta property="og:image:type" content="image\/png"/);
   assert.match(html, new RegExp(`<meta property="og:image:width" content="${seo.og.imageWidth}"`));
 });
