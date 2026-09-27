@@ -239,15 +239,7 @@ export default function StoryIndex() {
       </div>
 
       <div ref={track} className="story-track">
-        <div
-          className="story-stage"
-          style={{
-            '--active': active,
-            // Dividers above the active row, so the marker steps over them.
-            '--active-group': groupIndexOf(GROUPS, active),
-            '--accent': ACCENTS[active],
-          }}
-        >
+        <div className="story-stage">
           <div className="story-list-wrap">
             <div className="story-list-box">
               {GROUPS.map((group, g) => (
@@ -282,13 +274,25 @@ export default function StoryIndex() {
                   </ol>
                 </React.Fragment>
               ))}
-              <span className="story-marker" aria-hidden="true" />
+              {/* The active index sits on the two elements that read it, the marker
+                  and the rail track, not on the stage: a custom property changed on
+                  the stage restyled all ~70 elements in it on every band change. */}
+              <span
+                className="story-marker"
+                aria-hidden="true"
+                style={{
+                  '--active': active,
+                  // Dividers above the active row, so the marker steps over them.
+                  '--active-group': groupIndexOf(GROUPS, active),
+                  '--accent': ACCENTS[active],
+                }}
+              />
             </div>
           </div>
 
           {/* Mouse shortcut only: the lists are the accessible control. */}
           <div className="story-rail" aria-hidden="true">
-            <div className="story-rail-track">
+            <div className="story-rail-track" style={{ '--active': active }}>
               {CHAPTERS.map((chapter, index) => (
                 <RailCard
                   key={chapter.id}

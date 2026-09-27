@@ -41,6 +41,16 @@
   --stage-tail: calc((100svh - var(--stage-top) - var(--stage-bottom) - max(var(--count, 6) * var(--story-row) + var(--story-divider), var(--card-h))) / 2 + var(--stage-bottom));
 }
 
+/* The active index lives on the two elements that read it, the marker and the
+   rail track (StoryIndex.jsx). Not inherited, so a band change restyles those
+   two and not the cards inside the track (Suphian 2026-09-27: smoother scroll).
+   Browsers without @property inherit it, which only costs a little restyling. */
+@property --active {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
 /* The heading and the intro line, nothing else */
 .story-head {
   display: grid;

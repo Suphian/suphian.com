@@ -97,7 +97,12 @@ test('one continuous index: six chapter buttons, one tab stop, the first chapter
   assert.deepEqual(buttons.map((b) => b['aria-current'] ?? null), ['true', null, null, null, null, null]);
   // The section knows every chapter, for the scroll bands and the marker.
   assert.match(html, /<section[^>]*style="--count:6"/);
-  assert.match(html, /class="story-stage" style="--active:0;--active-group:0;/);
+  // The active index sits on the two elements that read it, the marker and the rail
+  // track, not on the stage: changed on the stage, it restyled everything inside it
+  // on every band change (Suphian 2026-09-27: the scroll through the chapters was clunky).
+  assert.match(html, /<div class="story-stage">/);
+  assert.match(html, /<span class="story-marker" aria-hidden="true" style="--active:0;--active-group:0;--accent:#6C1D72">/);
+  assert.match(html, /<div class="story-rail-track" style="--active:0">/);
 });
 
 test('the rail has one card per chapter, in list order', () => {

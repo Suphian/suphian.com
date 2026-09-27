@@ -162,6 +162,14 @@ test('hover is a faint lift for a mouse only, never the active white, and never 
   assert.doesNotMatch(rules[0].body, /var\(--ink\)|#fff|opacity|transform/i);
 });
 
+test('a band change restyles the marker and the rail track, not the whole stage', () => {
+  // The two rules that read the active index, and the index not inherited by the
+  // cards inside the track (render.test.mjs checks where StoryIndex sets it).
+  assert.match(rule('.story-marker'), /var\(--active, 0\)/);
+  assert.match(rule('.story-rail-track'), /var\(--active, 0\)/);
+  assert.match(css, /@property --active \{\s*syntax: '<number>';\s*inherits: false;\s*initial-value: 0;\s*\}/);
+});
+
 test('one gap between the list and SAY HELLO, and it is SAY HELLO’s top padding', () => {
   // Suphian: the space after the last side project was too much. It was the stage's
   // trailing padding (stacked) or its empty tail (pinned) plus SAY HELLO's own padding.
