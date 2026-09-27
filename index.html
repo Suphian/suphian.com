@@ -61,6 +61,11 @@
       html[data-enhancing] .static-profile { display: none; }
     </style>
     <script>
+      // A load or reload opens at the top, where the wordmark starts (Suphian
+      // 2026-09-27: reloads put him back at SAY HELLO). Set before the body
+      // parses, so the browser never restores against the static profile either.
+      // A /#section link still opens there (App.jsx).
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
       document.documentElement.setAttribute('data-enhancing', '');
       setTimeout(function () { document.documentElement.removeAttribute('data-enhancing'); }, 2000);
     </script>
