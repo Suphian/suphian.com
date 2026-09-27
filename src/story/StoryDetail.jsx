@@ -146,7 +146,9 @@ export default function StoryDetail({ chapter, index, originFor, onClosed }) {
         <div className="story-detail-body" data-fade>
           <div id={metaId}>
             <p className="story-detail-role">{chapter.role}</p>
-            <p className="story-detail-years">{chapter.period}</p>
+            <p className="story-detail-years">
+              {chapter.location ? `${chapter.period} · ${chapter.location}` : chapter.period}
+            </p>
           </div>
           {chapter.summary && <p className="story-detail-summary">{chapter.summary}</p>}
           {chapter.links?.length > 0 && (

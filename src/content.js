@@ -19,7 +19,7 @@
  * nav            { skip, home }
  * hero           { srTitle, edition: [3], cue: [2], cueHref }
  * story          { id, heading: [lines], intro, labels: { list, sideProjects, back },
- *                  chapters: [{ id, name, kind?, role, period, image: { src, nudge }, color, summary,
+ *                  chapters: [{ id, name, kind?, role, period, location, image: { src, nudge }, color, summary,
  *                  links: [{ label, href }] }] }
  *                  (replaces about, work and projects, 2026-09-26; jobs newest first, then the side
  *                  projects, kind: 'side')
@@ -140,6 +140,8 @@ export const story = {
       name: 'Steadily',
       role: 'Principal Product Manager',
       period: '2026 – Present',
+      // Where he worked, shown in the open card after the years (Suphian, 2026-09-27).
+      location: 'Austin, Texas',
       image: { src: '/work/steadily.svg', nudge: 0 },
       color: '#6C1D72', // Steadily purple: the card's fill (Suphian: company colors)
       // Not on the old site. Only the title, start date, Steadily's own description and the
@@ -152,6 +154,7 @@ export const story = {
       name: 'YouTube',
       role: 'Senior Product Manager',
       period: '2020 – 2026',
+      location: 'New York City',
       image: { src: '/work/youtube.svg', nudge: 0 },
       color: '#FF0000', // YouTube red: the card's fill (Suphian: company colors)
       // Past role, past tense. He did NOT do AI at YouTube: "AI-powered payment system" → "payment system".
@@ -184,6 +187,7 @@ export const story = {
       name: 'Google',
       role: 'Principal Analytical Lead',
       period: '2018 – 2020',
+      location: 'Ann Arbor, Michigan',
       image: { src: '/work/google.svg', nudge: 0.018 },
       color: '#4285F4', // Google blue: the card's fill (Suphian: company colors)
       summary:
@@ -204,6 +208,7 @@ export const story = {
       name: 'Huge',
       role: 'Senior Product Analyst',
       period: '2014 – 2018',
+      location: 'DUMBO, Brooklyn',
       image: { src: '/work/huge.svg', nudge: 0.026 },
       color: '#FF0090', // Huge magenta: the card's fill (Suphian: company colors)
       summary:
@@ -226,6 +231,7 @@ export const story = {
       kind: 'side',
       role: 'Side project',
       period: 'Current',
+      location: 'Internet', // Suphian: the side projects' location "can be internet"
       // A raster mark with even 4px margins on every side and no descender: nothing to nudge.
       image: { src: '/work/abacus-white.png', nudge: 0 },
       color: '#000000', // Abacus Labs black: the card's fill (Suphian: company colors)
@@ -240,6 +246,7 @@ export const story = {
       kind: 'side',
       role: 'Side project',
       period: 'New build every month',
+      location: 'Internet',
       // The game's crown emblem as a white mark, like the other logos (Suphian: "just put the crown logo").
       // A mark with no descender: its measured nudge is 0.
       image: { src: '/work/suph-app.svg', nudge: 0 },

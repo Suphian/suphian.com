@@ -72,13 +72,18 @@ export function renderStaticProfile() {
         ${groups.map(([label, chapters]) => `<section><h2>${escapeHtml(label)}</h2>${chapters.map((chapter) => `
           <article id="${escapeHtml(chapter.id)}">
             <h3>${escapeHtml(chapter.name)}</h3>
-            <p>${escapeHtml(`${chapter.role} · ${chapter.period}`)}</p>
+            <p>${escapeHtml(chapterMeta(chapter))}</p>
             <p>${escapeHtml(chapter.summary)}</p>
             <ul>${chapter.links.map((link) => `<li>${linkHtml(link)}</li>`).join('')}</ul>
           </article>`).join('')}</section>`).join('')}
       </section>
       <footer><h2>Contact</h2><p>${linkHtml(footer.email)}</p><ul>${footer.links.filter((link) => link.label !== 'Email').map((link) => `<li>${linkHtml(link)}</li>`).join('')}</ul></footer>
     </main>`;
+}
+
+// Role, years and, for jobs, the city (Suphian 2026-09-27), as the open card shows them.
+function chapterMeta(chapter) {
+  return [chapter.role, chapter.period, chapter.location].filter(Boolean).join(' · ');
 }
 
 export function renderSeoHtml(template) {
@@ -90,7 +95,7 @@ export function crawlerResources() {
   const intro = `# ${site.fullName}\n\n> ${seo.home.description}\n\n${hero.edition.join(' / ')}\n\n${story.intro}\n`;
   const links = `\n## Contact and profiles\n\n- [Email ${site.email}](mailto:${site.email})\n- [LinkedIn](${site.social.linkedin})\n- [GitHub](${site.social.github})\n`;
   const chapters = story.chapters.map((chapter) =>
-    `### ${chapter.name}\n\n${chapter.role} · ${chapter.period}\n\n${chapter.summary}\n\n${chapter.links.map(linkLine).join('\n')}`,
+    `### ${chapter.name}\n\n${chapterMeta(chapter)}\n\n${chapter.summary}\n\n${chapter.links.map(linkLine).join('\n')}`,
   ).join('\n\n');
   return {
     'robots.txt': `# Public pages and assets are crawlable. Existing training-crawler access is unchanged.\nUser-agent: *\nAllow: /\n\n# OpenAI search discovery (independent of GPTBot training controls).\nUser-agent: OAI-SearchBot\nAllow: /\n\nSitemap: ${seo.origin}/sitemap.xml\n`,

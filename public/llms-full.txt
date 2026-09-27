@@ -10,7 +10,7 @@ I’m Suphian. I work in product and like turning ideas into things people can t
 
 ### Steadily
 
-Principal Product Manager · 2026 – Present
+Principal Product Manager · 2026 – Present · Austin, Texas
 
 Steadily sells landlord insurance for rental property owners and investors.
 
@@ -18,7 +18,7 @@ Steadily sells landlord insurance for rental property owners and investors.
 
 ### YouTube
 
-Senior Product Manager · 2020 – 2026
+Senior Product Manager · 2020 – 2026 · New York City
 
 Led execution of a payment system for high-profile launches including YouTube Shorts and YouTube Premium Lite. Managed over $6 billion in music payments, optimized global operations, and ensured compliance with regulatory and contractual obligations. Also led a major fraud detection initiative that surfaced and mitigated a royalty scam covered by Billboard.
 
@@ -29,7 +29,7 @@ Led execution of a payment system for high-profile launches including YouTube Sh
 
 ### Google
 
-Principal Analytical Lead · 2018 – 2020
+Principal Analytical Lead · 2018 – 2020 · Ann Arbor, Michigan
 
 Served as an in-house analytics advisor for CapitalG portfolio companies and high-growth D2C brands. Led incrementality testing and optimization strategies to improve marketing efficiency and scale growth across platforms like Duolingo and Chewy.com.
 
@@ -38,7 +38,7 @@ Served as an in-house analytics advisor for CapitalG portfolio companies and hig
 
 ### Huge
 
-Senior Product Analyst · 2014 – 2018
+Senior Product Analyst · 2014 – 2018 · DUMBO, Brooklyn
 
 Specialized in site redesigns, A/B testing, and multivariate testing for high-impact brands. Helped improve UX and conversion for companies like Hulu, Apple and AMC Theaters.
 
@@ -49,7 +49,7 @@ Specialized in site redesigns, A/B testing, and multivariate testing for high-im
 
 ### Abacus Labs
 
-Side project · Current
+Side project · Current · Internet
 
 Abacus turns spreadsheet chaos into a real-time command center for MCA operators — deals, underwriting, collections, syndication, and compliance in one place. I lead product and engineering.
 
@@ -57,7 +57,7 @@ Abacus turns spreadsheet chaos into a real-time command center for MCA operators
 
 ### suph.app
 
-Side project · New build every month
+Side project · New build every month · Internet
 
 Every month I make something. This month it’s The Toga Is Dead, a 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.
 

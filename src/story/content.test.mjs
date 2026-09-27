@@ -21,12 +21,12 @@ test('jobs run newest to oldest, then the side projects: Steadily â†’ YouTube â†
   assert.equal(new Set(story.chapters.map((c) => c.id)).size, story.chapters.length);
 });
 
-test('each chapter is only role, years, summary and links (plus its card, and the side-project flag)', () => {
+test('each chapter is only role, years, place, summary and links (plus its card, and the side-project flag)', () => {
   for (const c of story.chapters) {
     const optional = ['kind'].filter((key) => key in c);
     assert.deepEqual(
       Object.keys(c).sort(),
-      ['color', 'id', 'image', 'links', 'name', 'period', 'role', 'summary', ...optional].sort(),
+      ['color', 'id', 'image', 'links', 'location', 'name', 'period', 'role', 'summary', ...optional].sort(),
       `${c.id} has extra or missing fields`,
     );
     // The flag takes one value: a side project.
@@ -204,4 +204,17 @@ test('the retired sections are gone from content.js', () => {
   // Nothing reads these any more: the 404's legacy logo video and the old scroll-progress label.
   assert.equal(content.notFound, undefined);
   assert.equal(content.common.scrollProgress, undefined);
+});
+
+test('jobs name the city he worked in; side projects live on the internet', () => {
+  // Suphian 2026-09-27: shown in the open card after the years.
+  const where = Object.fromEntries(story.chapters.map((chapter) => [chapter.id, chapter.location]));
+  assert.deepEqual(where, {
+    steadily: 'Austin, Texas',
+    youtube: 'New York City',
+    google: 'Ann Arbor, Michigan',
+    huge: 'DUMBO, Brooklyn',
+    abacus: 'Internet',
+    'suph-app': 'Internet',
+  });
 });
