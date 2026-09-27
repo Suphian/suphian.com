@@ -66,7 +66,10 @@ const HOME_DESCRIPTION =
 export const site = {
   name: 'Suphian',
   fullName: 'Suphian Tweel',
-  title: 'Principal Product Manager, Steadily',
+  // Visible under his name in the no-JavaScript profile (the first line non-rendering crawlers read)
+  // and humans.txt. PROPOSAL (2026-09-27), pending Suphian's OK: identity first, not the current role.
+  // Was 'Principal Product Manager, Steadily'.
+  title: 'Product leader. Led payments at YouTube; builds Abacus Labs and suph.app.',
   description: HOME_DESCRIPTION,
   url: ORIGIN,
   email: EMAIL,

@@ -20,6 +20,7 @@ Newest entry; where older sections disagree, this one wins. Suphian: "The Steadi
 | `HOME_DESCRIPTION` (→ meta, OG and Twitter descriptions, manifest, Person/WebSite/ProfilePage JSON-LD, the llms.txt summary) | Principal Product Manager at Steadily. Previously led payments at YouTube. Builds side projects with Abacus Labs and suph.app. (126 characters) | Product leader. Led payments at YouTube, 2020 – 2026. Builds Abacus Labs, a command center for MCA operators, and something new every month at suph.app. (152 characters) |
 | `hero.srTitle` (the page's h1 once React renders; visually hidden) | Suphian Tweel. Principal product manager at Steadily. Previously led payments at YouTube. | Suphian Tweel. Product leader. Previously led payments at YouTube. Builds Abacus Labs and suph.app. |
 | `HOME_TITLE` | Suphian Tweel · Product, Payments & AI | Unchanged: it already leads with the positioning and never named Steadily. |
+| `site.title` (**proposal, pending Suphian's OK**; visible under his name in the no-JavaScript profile, and `humans.txt`) | Principal Product Manager, Steadily | Product leader. Led payments at YouTube; builds Abacus Labs and suph.app. |
 
 - Facts only. "A command center for MCA operators" is the Abacus chapter's own wording, "every month" is suph.app's, and 2020 – 2026 is the YouTube chapter's years.
 - No new AI claim. AI stays the site's positioning (title, edition, social card); the description names no AI work, so "no AI at YouTube" and its `content.test.mjs` guard still hold.
