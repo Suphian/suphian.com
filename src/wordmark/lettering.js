@@ -5,7 +5,17 @@
  * Raster tracing approximates the source edge and procedural grain approximates
  * its surface texture. No font outlines or raster images are embedded.
  */
-export const FULL_VIEWBOX = { width: 1661, height: 592 };
+
+/**
+ * Suphian (2026-09-27): "a little too much space between SUPH and IAN". Every
+ * traced seam is 4.4-5.2 units at its closest (H to I 4.7), so I, A and N move
+ * left together by this much: H to I becomes the tightest seam (1.7) and still
+ * doesn't touch (they fuse past about 4.7). S U P H and the docked logo
+ * (compactX, COMPACT_VIEWBOX) stay exactly as traced.
+ */
+const IAN_SHIFT = -3;
+
+export const FULL_VIEWBOX = { width: 1661 + IAN_SHIFT, height: 592 };
 export const COMPACT_VIEWBOX = { width: 1044, height: 592 };
 
 export const LETTERING_DEFS = `
@@ -99,6 +109,7 @@ const tracedGlyphs = [
 
 export const LETTERS = tracedGlyphs.map(glyph => ({
   ...glyph,
+  x: glyph.compactX == null ? glyph.x + IAN_SHIFT : glyph.x,
   markup: `<path class="letter-silhouette" d="${glyph.path}" fill="url(#letter-red)" fill-rule="evenodd" filter="url(#letter-surface)"/>`,
 }));
 

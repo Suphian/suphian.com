@@ -5,7 +5,7 @@
  * tuning panel (`?tune`) can change them without a reload.
  *
  * Units: progress values are fractions of the scroll travel (0 = hero,
- * 1 = docked). Lengths are lettering viewBox units (the full word is 1661
+ * 1 = docked). Lengths are lettering viewBox units (the full word is 1658
  * wide). Stiffness values are spring rates in 1/s² for a 250-unit letter of
  * mass 1, so sqrt(stiffness) is roughly that letter's bounce in rad/s.
  */
