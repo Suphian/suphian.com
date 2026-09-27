@@ -3,6 +3,7 @@ import { story } from '../content.js';
 import Heading from '../components/Heading.jsx';
 import { useSectionViewed } from '../hooks/useSectionViewed.js';
 import { track as trackEvent } from '../lib/analytics.js';
+import { afterFirstPaint } from '../lib/afterFirstPaint.js';
 import StoryCard from './StoryCard.jsx';
 import StoryDetail from './StoryDetail.jsx';
 import {
@@ -60,6 +61,17 @@ export default function StoryIndex() {
 
   const select = useCallback((index) => setActive(clampIndex(index, COUNT)), []);
   useSectionViewed(section, 'story');
+
+  // Rail logos (345 kB, the Abacus PNG most of it) start lazy, so only cards on
+  // screen load with the first paint (none on phones, where the rail is hidden),
+  // then all of them right after it, so the open view still paints its logo on
+  // the first frame. Suphian 2026-09-27: snappier in aggregate.
+  const [railImages, setRailImages] = useState('lazy');
+  useEffect(() => {
+    let live = true;
+    afterFirstPaint(() => live && setRailImages('eager'));
+    return () => { live = false; };
+  }, []);
 
   // Scroll position → chapter. Only a band change moves the selection, so a
   // hover or keyboard pick holds until the reader scrolls into another band.
@@ -228,6 +240,7 @@ export default function StoryIndex() {
                     cards.current[index] = element;
                   }}
                   chapter={chapter}
+                  imageLoading={railImages}
                   className={index === active ? 'is-active' : ''}
                   data-hidden={open === index || undefined}
                   onClick={() => (index === active ? openAt(index) : select(index))}
