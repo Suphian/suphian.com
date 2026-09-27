@@ -31,8 +31,9 @@ export function indexFromProgress(progress, count) {
 }
 
 /**
- * Scroll only takes over when the band changes, so a chapter picked by hover
- * or keyboard survives small scrolls inside the same band.
+ * Scroll only takes over when the band changes, so a chapter picked with the
+ * keyboard survives small scrolls inside the same band. (Hover never picks:
+ * Suphian 2026-09-27.)
  */
 export function followScroll(previousBand, band, active) {
   return band === previousBand ? active : band;

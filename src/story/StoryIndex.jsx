@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { story } from '../content.js';
 import Heading from '../components/Heading.jsx';
 import { useSectionViewed } from '../hooks/useSectionViewed.js';
@@ -31,6 +31,74 @@ const STACKED = '(max-width: 800px), (max-height: 560px)';
 const GROUPS = chapterGroups(story.chapters, { work: story.labels.list, side: story.labels.sideProjects });
 const CHAPTERS = GROUPS.flatMap((group) => group.chapters);
 const COUNT = CHAPTERS.length;
+const ACCENTS = CHAPTERS.map((chapter) => accentFor(chapter.color));
+
+// Keyboard focus draws a ring (:focus-visible); the focus a mouse click gives a
+// button (Chrome, Firefox) doesn't. Without :focus-visible support: never.
+const isKeyboardFocus = (element) => {
+  try {
+    return element.matches(':focus-visible');
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * One chapter row. Memoised, like RailCard: a band change re-renders only the
+ * rows whose distance from the active chapter changed (at most four) and the
+ * two cards that swap is-active, not the whole list and rail.
+ */
+const StoryRow = memo(function StoryRow({ chapter, index, distance, hidden, buttons, titles, onOpen, onStep, onKeyboardFocus }) {
+  return (
+    <li
+      className="story-item"
+      style={{ '--item-accent': ACCENTS[index] }}
+      data-distance={distance}
+      data-hidden={hidden || undefined}
+    >
+      <button
+        ref={(element) => {
+          buttons.current[index] = element;
+        }}
+        type="button"
+        className="story-button"
+        aria-current={distance === 0 ? 'true' : undefined}
+        aria-haspopup="dialog"
+        tabIndex={distance === 0 ? 0 : -1}
+        onFocus={(event) => onKeyboardFocus(event, index)}
+        onKeyDown={(event) => onStep(event, index)}
+        onClick={() => onOpen(index)}
+      >
+        <span
+          ref={(element) => {
+            titles.current[index] = element;
+          }}
+          className="story-item-name"
+        >
+          {chapter.name}
+        </span>{' '}
+        <span className="story-item-meta">{metaLine(chapter)}</span>
+        <span className="story-item-arrow" aria-hidden="true">→</span>
+      </button>
+    </li>
+  );
+});
+
+/** One rail card. A click opens its chapter; the active card is the one in view. */
+const RailCard = memo(function RailCard({ chapter, index, isActive, hidden, imageLoading, cards, onOpen }) {
+  return (
+    <StoryCard
+      cardRef={(element) => {
+        cards.current[index] = element;
+      }}
+      chapter={chapter}
+      imageLoading={imageLoading}
+      className={isActive ? 'is-active' : ''}
+      data-hidden={hidden || undefined}
+      onClick={() => onOpen(index)}
+    />
+  );
+});
 
 /**
  * The story index (replaces About, Work and Projects): the heading and the
@@ -39,11 +107,16 @@ const COUNT = CHAPTERS.length;
  * - The chapters are two lists: "Work" (the jobs) and, under a quiet "Side
  *   projects" divider, the side projects (content.js kind: 'side'). Selection
  *   treats them as one list of COUNT chapters.
- * - Native scroll through the taller track picks the chapter. Nothing listens
- *   to wheel or touch, and the list is finite.
- * - Mouse movement over a chapter, focus, arrow keys (Home/End too) and clicks
- *   also pick. Enter or click opens the chapter (StoryDetail); Back or Escape
- *   closes it and focus returns here.
+ * - Scroll alone picks the chapter: native scroll through the taller track.
+ *   Nothing listens to wheel or touch, and the list is finite. A mouse over a
+ *   row never moves the highlight, the marker or the rail (Suphian 2026-09-27:
+ *   "remove the hover state and have it function only through scroll. Having
+ *   both is a little confusing. If you click, maybe it opens it.").
+ * - A click, tap, Enter or Space on any row opens that chapter (StoryDetail),
+ *   active or not, and so does a click on a rail card. Opening doesn't move
+ *   the highlight. Back or Escape closes it and focus returns to the row.
+ * - Keyboard: arrow keys (Home/End too) move the highlight and focus, and
+ *   keyboard focus on a row highlights it, so the ring and the highlight agree.
  * - ≤ 800px wide (or ≤ 560px tall): a plain single-column list, no pinning; a
  *   tap opens the chapter full screen.
  * - Every mark takes its chapter's accent (accentFor), never a fixed red.
@@ -58,6 +131,9 @@ export default function StoryIndex() {
   const cards = useRef([]);
   const band = useRef(-1);
   const returnTo = useRef(null);
+  // True from a chapter opening until focus is back on its row: the focus the
+  // open view's trap hands back to its opener on close is not a pick.
+  const handingBack = useRef(false);
 
   const select = useCallback((index) => setActive(clampIndex(index, COUNT)), []);
   useSectionViewed(section, 'story');
@@ -73,8 +149,9 @@ export default function StoryIndex() {
     return () => { live = false; };
   }, []);
 
-  // Scroll position → chapter. Only a band change moves the selection, so a
-  // hover or keyboard pick holds until the reader scrolls into another band.
+  // Scroll position → chapter: one rect read per frame, and a state change only
+  // when the band changes, so nothing re-renders while the scroll stays inside
+  // a band. A keyboard pick holds until the reader scrolls into another band.
   useEffect(() => {
     const node = track.current;
     if (!node) return undefined;
@@ -108,11 +185,13 @@ export default function StoryIndex() {
   }, []);
 
   // After the open view unmounts (and the page is interactive again), focus
-  // goes back to the chapter that opened it.
+  // goes back to the chapter that opened it. Handing focus back is not a pick:
+  // the highlight stays where the scroll put it.
   useEffect(() => {
     if (open !== null || returnTo.current === null) return;
     buttons.current[returnTo.current]?.focus({ preventScroll: true });
     returnTo.current = null;
+    handingBack.current = false;
   }, [open]);
 
   // Where the FLIP flies from and back to: the list title and the rail card, if on screen.
@@ -129,66 +208,27 @@ export default function StoryIndex() {
     };
   }, []);
 
-  const openAt = (index) => {
+  // The one place a chapter opens, so story_chapter_opened fires once per open.
+  const openAt = useCallback((index) => {
     trackEvent('story_chapter_opened', { chapter: CHAPTERS[index].id });
-    select(index);
     returnTo.current = index;
+    handingBack.current = true;
     setOpen(index);
-  };
+  }, []);
   const onClosed = useCallback(() => setOpen(null), []);
 
   // One index across both lists: ArrowDown from the last job lands on the first side project.
-  const onKeyDown = (event, index) => {
+  const onStep = useCallback((event, index) => {
     const next = stepIndex(index, event.key, COUNT);
     if (next === null) return;
     event.preventDefault();
     select(next);
     buttons.current[next]?.focus({ preventScroll: true });
-  };
+  }, [select]);
 
-  // Real mouse movement only: the synthetic moves browsers send after a scroll
-  // (movement 0) must not steal the chapter that scrolling just picked.
-  const onPointerMove = (event, index) => {
-    if (event.pointerType !== 'mouse' || index === active) return;
-    if (event.movementX === 0 && event.movementY === 0) return;
-    select(index);
-  };
-
-  const renderItem = (chapter, index) => (
-    <li
-      key={chapter.id}
-      className="story-item"
-      style={{ '--item-accent': accentFor(chapter.color) }}
-      data-distance={distanceBucket(index, active)}
-      data-hidden={open === index || undefined}
-    >
-      <button
-        ref={(element) => {
-          buttons.current[index] = element;
-        }}
-        type="button"
-        className="story-button"
-        aria-current={index === active ? 'true' : undefined}
-        aria-haspopup="dialog"
-        tabIndex={index === active ? 0 : -1}
-        onPointerMove={(event) => onPointerMove(event, index)}
-        onFocus={() => select(index)}
-        onKeyDown={(event) => onKeyDown(event, index)}
-        onClick={() => openAt(index)}
-      >
-        <span
-          ref={(element) => {
-            titles.current[index] = element;
-          }}
-          className="story-item-name"
-        >
-          {chapter.name}
-        </span>{' '}
-        <span className="story-item-meta">{metaLine(chapter)}</span>
-        <span className="story-item-arrow" aria-hidden="true">→</span>
-      </button>
-    </li>
-  );
+  const onKeyboardFocus = useCallback((event, index) => {
+    if (!handingBack.current && isKeyboardFocus(event.currentTarget)) select(index);
+  }, [select]);
 
   return (
     <section ref={section} id={story.id} className="section story" aria-labelledby="story-title" tabIndex={-1} style={{ '--count': COUNT }}>
@@ -199,15 +239,7 @@ export default function StoryIndex() {
       </div>
 
       <div ref={track} className="story-track">
-        <div
-          className="story-stage"
-          style={{
-            '--active': active,
-            // Dividers above the active row, so the marker steps over them.
-            '--active-group': groupIndexOf(GROUPS, active),
-            '--accent': accentFor(CHAPTERS[active]?.color),
-          }}
-        >
+        <div className="story-stage">
           <div className="story-list-wrap">
             <div className="story-list-box">
               {GROUPS.map((group, g) => (
@@ -222,28 +254,55 @@ export default function StoryIndex() {
                   )}
                   {/* role="list": Safari drops list semantics from unstyled lists. */}
                   <ol className="story-list" role="list" aria-label={group.label}>
-                    {group.chapters.map((chapter, offset) => renderItem(chapter, group.start + offset))}
+                    {group.chapters.map((chapter, offset) => {
+                      const index = group.start + offset;
+                      return (
+                        <StoryRow
+                          key={chapter.id}
+                          chapter={chapter}
+                          index={index}
+                          distance={distanceBucket(index, active)}
+                          hidden={open === index}
+                          buttons={buttons}
+                          titles={titles}
+                          onOpen={openAt}
+                          onStep={onStep}
+                          onKeyboardFocus={onKeyboardFocus}
+                        />
+                      );
+                    })}
                   </ol>
                 </React.Fragment>
               ))}
-              <span className="story-marker" aria-hidden="true" />
+              {/* The active index sits on the two elements that read it, the marker
+                  and the rail track, not on the stage: a custom property changed on
+                  the stage restyled all ~70 elements in it on every band change. */}
+              <span
+                className="story-marker"
+                aria-hidden="true"
+                style={{
+                  '--active': active,
+                  // Dividers above the active row, so the marker steps over them.
+                  '--active-group': groupIndexOf(GROUPS, active),
+                  '--accent': ACCENTS[active],
+                }}
+              />
             </div>
           </div>
 
           {/* Mouse shortcut only: the lists are the accessible control. */}
           <div className="story-rail" aria-hidden="true">
-            <div className="story-rail-track">
+            <div className="story-rail-track" style={{ '--active': active }}>
               {CHAPTERS.map((chapter, index) => (
-                <StoryCard
+                <RailCard
                   key={chapter.id}
-                  cardRef={(element) => {
-                    cards.current[index] = element;
-                  }}
                   chapter={chapter}
+                  index={index}
+                  isActive={index === active}
+                  hidden={open === index}
                   imageLoading={railImages}
-                  className={index === active ? 'is-active' : ''}
-                  data-hidden={open === index || undefined}
-                  onClick={() => (index === active ? openAt(index) : select(index))}
+                  cards={cards}
+                  onOpen={openAt}
                 />
               ))}
             </div>
