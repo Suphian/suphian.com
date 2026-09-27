@@ -353,14 +353,14 @@ export const seo = {
   og: {
     type: 'profile',
     siteName: 'Suphian Tweel',
-    image: `${ORIGIN}/og/suphian.png`,
+    image: `${ORIGIN}/og/suphian.jpg`,
     imageAlt: 'Suphian Tweel. Product / Payments / AI.',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
     handle: '@suphian',
-    image: `${ORIGIN}/og/suphian.png`,
+    image: `${ORIGIN}/og/suphian.jpg`,
     imageAlt: 'Suphian Tweel. Product / Payments / AI.',
   },
   manifest: {

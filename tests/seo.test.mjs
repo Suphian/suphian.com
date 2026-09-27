@@ -72,3 +72,15 @@ test('HTML and JSON-LD serialization cannot introduce markup from content', () =
   const script = html.match(/id="structured-data-profile" type="application\/ld\+json">(.*?)<\/script>/)[1];
   assert.deepEqual(JSON.parse(script), schemaGraph());
 });
+
+test('the social card is a JPEG small enough for WhatsApp and iMessage link previews', () => {
+  // Suphian 2026-09-27: shared links must preview on WhatsApp and iMessage. WhatsApp drops
+  // og:image files over about 300 KB; the grainy PNG was 506 KB.
+  const file = new URL(`../public${new URL(seo.og.image).pathname}`, import.meta.url);
+  assert.ok(existsSync(file), `${seo.og.image} is in public/`);
+  const bytes = readFileSync(file);
+  assert.deepEqual([...bytes.subarray(0, 3)], [0xff, 0xd8, 0xff], 'a JPEG');
+  assert.ok(bytes.length < 250 * 1024, `${bytes.length} bytes, keep it under 250 KB`);
+  assert.equal(seo.twitter.image, seo.og.image);
+  assert.match(html, /<meta property="og:image:type" content="image\/jpeg"/);
+});

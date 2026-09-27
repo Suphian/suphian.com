@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
+import { seo } from '../src/content.js';
 
 // Use the site's own vector and typeface. All inputs are local; no runtime dependency.
 const asset = (path) => new URL(`../public/${path}`, import.meta.url);
@@ -10,6 +11,10 @@ const [logo, regular, semibold] = await Promise.all([
   dataUrl('fonts/PPNeueMontreal-Semibold.woff2', 'font/woff2'),
 ]);
 
+// The card's path comes from content.js (seo.og.image). A JPEG: the lettering's grain made the
+// PNG 506 KB, and WhatsApp drops link-preview images over about 300 KB (Suphian 2026-09-27:
+// previews on WhatsApp and iMessage must work, and look nice).
+const card = new URL(seo.og.image).pathname.slice(1);
 await mkdir(asset('og/'), { recursive: true });
 const browser = await chromium.launch();
 try {
@@ -33,7 +38,7 @@ try {
     await document.fonts.ready;
     await Promise.all([...document.images].map((image) => image.decode()));
   });
-  await page.screenshot({ path: asset('og/suphian.png').pathname.replace(/^\/([A-Za-z]:)/, '$1') });
+  await page.screenshot({ path: asset(card).pathname.replace(/^\/([A-Za-z]:)/, '$1'), type: 'jpeg', quality: 88 });
 } finally {
   await browser.close();
 }
@@ -51,4 +56,4 @@ ico.writeUInt32LE(png.length, 14);
 ico.writeUInt32LE(22, 18);
 png.copy(ico, 22);
 await writeFile(asset('favicon.ico'), ico);
-console.log('Exported public/og/suphian.png (1200 × 630) and public/favicon.ico (32 × 32).');
+console.log(`Exported public/${card} (1200 × 630) and public/favicon.ico (32 × 32).`);

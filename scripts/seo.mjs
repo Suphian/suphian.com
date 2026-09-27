@@ -42,7 +42,7 @@ export function renderSeoHead() {
     meta('og:title', seo.home.ogTitle, true), meta('og:description', seo.home.description, true),
     meta('og:url', canonical, true), meta('og:locale', seo.og.locale, true),
     meta('og:image', seo.og.image, true), meta('og:image:width', '1200', true),
-    meta('og:image:height', '630', true), meta('og:image:type', 'image/png', true),
+    meta('og:image:height', '630', true), meta('og:image:type', 'image/jpeg', true),
     meta('og:image:alt', seo.og.imageAlt, true),
     meta('profile:first_name', structuredData.person.givenName, true),
     meta('profile:last_name', structuredData.person.familyName, true),
