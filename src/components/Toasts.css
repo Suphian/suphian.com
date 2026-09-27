@@ -1,0 +1,40 @@
+.toasts {
+  position: fixed;
+  z-index: 80;
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: min(25rem, calc(100vw - 32px));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+/* Local dry run: clear the 42px pill (16 + 42 + 8). The pill hides while an overlay is open. */
+.toasts--above-pill { bottom: calc(66px + env(safe-area-inset-bottom, 0px)); }
+html.is-locked .toasts--above-pill { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+.toast {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: var(--space-3);
+  padding: 20px 8px 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  color: var(--white);
+  pointer-events: auto;
+  animation: toast-in .35s cubic-bezier(.2, .7, .2, 1);
+}
+.toast--error { border-color: var(--red); }
+.toast-title { font-weight: var(--weight-strong, 600); font-size: var(--fs-body); line-height: 1.4; letter-spacing: 0; color: var(--white); }
+.toast-description { margin-top: var(--space-1); font-weight: 400; font-size: var(--fs-small); line-height: 1.5; color: var(--gray); }
+/* The 44px close box, centred on the title's first line. */
+.toast-close { align-self: start; margin-top: -10px; }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast { animation: none; }
+}

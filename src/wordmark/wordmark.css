@@ -1,0 +1,9 @@
+/* Owned by src/wordmark — the fixed lettering layer and the docked SUPH link. */
+.lettering-layer { position: fixed; inset: 0; z-index: 20; width: 100%; height: 100dvh; pointer-events: none; overflow: hidden; }
+.wordmark { will-change: transform; }
+/* measure() sets left, top, width and height from the dock metrics: the docked SUPH plus 6px all round
+   (geometry.js homeLinkBox), so the link always covers the letters it moves. */
+.home-link { position: fixed; left: 0; top: 0; pointer-events: auto; z-index: 30; -webkit-tap-highlight-color: transparent; }
+@media (prefers-reduced-motion: reduce) {
+  .wordmark { will-change: auto; }
+}

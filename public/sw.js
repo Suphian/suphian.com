@@ -1,14 +1,14 @@
 // Service Worker for efficient caching.
-// CACHE_NAME embeds a build id (injected at build time by vite.config.ts) so each
+// CACHE_NAME embeds a build id (injected at build time by vite.config.js) so each
 // deploy automatically invalidates the previous cache. The SW is only registered
-// in production (see main.tsx), so the literal placeholder is never used in dev.
+// in production (see src/main.jsx), so the literal placeholder is never used in dev.
 const BUILD_ID = '__SW_BUILD_ID__';
 const CACHE_NAME = 'suphian-site-' + BUILD_ID;
 
 // Small, always-needed static assets to warm the cache on install.
 const PRECACHE_ASSETS = [
-  '/assets/textures/background.webp',
-  '/assets/logos/logo-292.webp',
+  '/logos/compact-logo.svg',
+  '/icons/favicon-32.png',
 ];
 
 // Cache strategies for different asset types
@@ -64,8 +64,8 @@ self.addEventListener('fetch', event => {
 
   if (request.method !== 'GET') return;
   if (url.protocol === 'chrome-extension:') return;
-  // Skip local dev URLs to avoid caching dev content
-  if (url.hostname.includes('localhost')) return;
+  // Skip local URLs (dev server and preview share 127.0.0.1:4173) to avoid caching dev content
+  if (url.hostname.includes('localhost') || url.hostname === '127.0.0.1' || url.hostname === '[::1]') return;
 
   const strategy = getStrategy(request.url);
   if (strategy.networkFirst) {

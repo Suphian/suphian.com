@@ -1,35 +1,17 @@
-# Contributing
+﻿# Contributing
 
-This is a personal site with a single maintainer, so the workflow is deliberately light.
+Use Node 24. Before pushing, run npm test and npm run e2e:prod. The browser suite mocks contact requests and tests the production build with the same CSP as Vercel. CI runs both suites on pull requests and main.
 
-## Deploying
+Push a branch for a protected Vercel preview. To run browser tests against it, set E2E_BASE_URL to the deployment origin and E2E_STORAGE_STATE to authenticated browser state if protected. Never disable deployment protection for tests.
 
-`main` is production. Vercel builds and deploys every push to it automatically, and
-`vercel.json` applies the redirects, cache rules, and security headers at the edge.
+The main branch is production. A merge deploys the Vite build to suphian.com. Restore the previous production deployment using vercel rollback <deployment-url> from a directory linked to suph/suphian.com; revert the Git commit as well to keep future deployments aligned.
 
-Every push and pull request also runs CI (`.github/workflows/ci.yml`): lint, then
-typecheck, then build. Keep it green.
+Supabase functions deploy separately. After confirming the site's email-logo asset is live:
 
-## Before you push
-
-```bash
-npm run lint && npm run typecheck && npm run build
-npm run preview:local   # serve the production build on :8080 and click through
+```sh
+npx supabase functions deploy notify-contact-submit --project-ref ujughujunixnwlmtdsxd --use-api
 ```
 
-Verify against the production build, not just the dev server — the chunk splitting,
-service worker, and `console` stripping only exist in a real build.
+Preserve JWT verification and existing secrets. A real contact test writes a row and sends notification/confirmation emails; use the owner's address and a clearly labeled test message. Verify both email IDs in the function response in addition to the UI success message.
 
-For anything risky, push a branch first. Vercel gives every branch a preview
-deployment, which is also the only way to exercise the `vercel.json` headers and
-redirects, since those don't apply under `vite preview`.
-
-Rolling back is a one-click revert to the previous deployment in the Vercel dashboard,
-or a `git revert` plus push.
-
-## Notes
-
-- Everything in `public/` ships to the CDN verbatim. Editable image masters belong in
-  `assets-src/`; run `npm run optimize:images` to regenerate the derivatives.
-- Unused locals, parameters, and variables are compile and lint errors. That's on
-  purpose — dead code accumulated badly here once already.
+Everything under public/ ships to the CDN. Keep license documents, original artwork, screenshots, and credentials outside it. Do not commit .env, .vercel, or authenticated browser state.

@@ -1,0 +1,106 @@
+.sheet { position: fixed; inset: 0; z-index: 60; }
+.sheet[hidden] { display: none; }
+.sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+.sheet-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(37.5rem, 100%);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: calc(var(--space-5) + var(--safe-top)) calc(var(--space-7) + var(--safe-right)) calc(var(--space-8) + var(--safe-bottom)) var(--space-7);
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+  transform: translateX(100%);
+  transition: transform .45s cubic-bezier(.2, .7, .2, 1);
+}
+.sheet[data-state="open"] .sheet-backdrop { opacity: 1; }
+.sheet[data-state="open"] .sheet-panel { transform: none; }
+/* Just the close button: the heading below already says "Contact". */
+.sheet-top { display: flex; justify-content: flex-end; }
+.sheet-top .icon-button { margin-right: -12px; }
+.sheet-title {
+  margin: var(--space-6) 0 var(--space-7);
+  font-weight: var(--weight-strong, 600);
+  font-size: var(--fs-heading);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.contact-form { display: grid; gap: var(--space-6); }
+.honeypot { display: none; }
+.field { display: grid; gap: var(--space-2); }
+.field-label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-weight: 400;
+  font-size: var(--fs-small);
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: var(--gray);
+  transition: color .2s ease;
+}
+.field-mark { color: var(--red); }
+.field-optional { color: var(--gray-dim); letter-spacing: 0; }
+.field input,
+.field textarea {
+  width: 100%;
+  padding: var(--space-3) 0;
+  border: 0;
+  border-bottom: 1px solid var(--line-strong); /* 3.2:1, the field's only boundary */
+  border-radius: 0;
+  background: transparent;
+  color: var(--white);
+  caret-color: var(--red);
+  font: inherit;
+  font-weight: 400;
+  font-size: var(--fs-body); /* 18px: readable, and no iOS focus zoom */
+  line-height: 1.5;
+  letter-spacing: 0;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.field textarea { min-height: 10rem; resize: vertical; }
+.field input::placeholder,
+.field textarea::placeholder { color: var(--gray-dim); opacity: 1; }
+.field input:hover,
+.field textarea:hover { border-bottom-color: rgb(255 255 255 / .6); }
+.field input:focus-visible,
+.field textarea:focus-visible { outline: none; border-bottom-color: var(--red); box-shadow: 0 1px 0 var(--red); }
+.field:focus-within .field-label { color: var(--white); }
+.field[data-invalid] input,
+.field[data-invalid] textarea { border-bottom-color: var(--red); }
+.field-error { color: var(--red); font-weight: 400; font-size: var(--fs-small); line-height: 1.5; }
+/* Chrome paints autofilled fields light blue; keep them on the panel. */
+.field input:-webkit-autofill,
+.field input:-webkit-autofill:hover,
+.field input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--white);
+  box-shadow: inset 0 0 0 100px var(--surface);
+  caret-color: var(--red);
+}
+.field input:-webkit-autofill:focus-visible { box-shadow: inset 0 0 0 100px var(--surface), 0 1px 0 var(--red); }
+
+.contact-submit { width: 100%; min-height: 56px; margin-top: var(--space-2); justify-content: space-between; }
+
+@media (max-width: 639px) {
+  .sheet-panel {
+    padding-right: calc(var(--frame) + var(--safe-right));
+    padding-left: calc(var(--frame) + var(--safe-left));
+    border-left: 0;
+  }
+  .sheet-title { margin: var(--space-5) 0 40px; }
+  .contact-form { gap: var(--space-5); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sheet-panel { transform: none; opacity: 0; transition: opacity .15s linear; }
+  .sheet[data-state="open"] .sheet-panel { opacity: 1; }
+  .sheet-backdrop { transition-duration: .15s; }
+}

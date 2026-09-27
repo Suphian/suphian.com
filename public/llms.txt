@@ -1,40 +1,18 @@
 # Suphian Tweel
 
-> Senior Product Manager at YouTube. Expert in payments and AI.
+> Principal Product Manager at Steadily. Previously led payments at YouTube. Builds side projects with Abacus Labs and suph.app.
 
-## About
+Product / Payments / AI
 
-Suphian Tweel is a Senior Product Manager at YouTube specializing in payments systems and artificial intelligence. He builds and ships AI-powered solutions to solve real-world payment problems at scale — managing over $6 billion in music payments, launching monetization for YouTube Shorts, and leading an AI-driven fraud detection initiative covered by Billboard.
+I’m Suphian. I work in product and like turning ideas into things people can try, use, or enjoy. I care about how they work, how they look, and what happens when they meet the real world. In my free time I build cool stuff with Abacus Labs.
 
-## Expertise
+## Pages
 
-- Payments & Fintech: payment systems architecture, digital payments, monetization, billing, compliance
-- AI & Machine Learning: AI engineering, ML-powered fraud detection, AI-driven automation, applied machine learning
-- Product Management: 0-to-1 product development, product strategy, cross-functional leadership, data-driven decision making
-- Growth & Analytics: incrementality testing, A/B testing, marketing optimization, data analytics
+- [Portfolio](https://suphian.com/): Work at Steadily, YouTube, Google and Huge; side projects at Abacus Labs and suph.app.
+- [Full text](https://suphian.com/llms-full.txt): The same approved work summaries and reference links.
 
-## Experience
+## Contact and profiles
 
-- **YouTube** (2020–Present): Senior Product Manager leading payments and AI initiatives. Built AI-powered payment system for YouTube Shorts and YouTube Premium Lite. Managed $6B+ in music payments. Led fraud detection initiative that uncovered a royalty scam covered by Billboard.
-- **Google / CapitalG** (2018–2020): Principal Analytical Lead. In-house analytics advisor for CapitalG portfolio companies. Led incrementality testing and growth optimization for brands like Duolingo and Chewy.
-- **Huge Inc** (2014–2018): Senior Product Analyst. A/B testing and UX optimization for brands including Hulu, Apple, and AMC Theaters.
-
-## Notable Work
-
-- AI-powered payment system for YouTube Shorts monetization
-- YouTube Premium Lite launch
-- Fraud detection system that surfaced royalty scam (covered by Billboard)
-- $6B+ music payments management and optimization
-- Zero-resource machine translation research (Google)
-
-## Links
-
-- Website: https://suphian.com
-- LinkedIn: https://www.linkedin.com/in/suphian/
-- GitHub: https://github.com/Suphian
-- Twitter: https://twitter.com/suphian
-- Email: suph.tweel@gmail.com
-
-## Location
-
-San Francisco, CA
+- [Email hello@suphian.com](mailto:hello@suphian.com)
+- [LinkedIn](https://www.linkedin.com/in/suphian/)
+- [GitHub](https://github.com/Suphian)

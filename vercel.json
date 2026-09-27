@@ -1,29 +1,12 @@
 {
   "redirects": [
-    {
-      "source": "/",
-      "has": [{ "type": "host", "value": "suph.ai" }],
-      "destination": "https://suphian.com/",
-      "permanent": true
-    },
-    {
-      "source": "/",
-      "has": [{ "type": "host", "value": "www.suphian.com" }],
-      "destination": "https://suphian.com/",
-      "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "suph.ai" }],
-      "destination": "https://suphian.com/:path*",
-      "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.suphian.com" }],
-      "destination": "https://suphian.com/:path*",
-      "permanent": true
-    }
+    { "source": "/:path*", "has": [{ "type": "host", "value": "www.suph.ai" }], "destination": "https://suphian.com/:path*", "permanent": true },
+    { "source": "/", "has": [{ "type": "host", "value": "suph.ai" }], "destination": "https://suphian.com/", "permanent": true },
+    { "source": "/", "has": [{ "type": "host", "value": "www.suphian.com" }], "destination": "https://suphian.com/", "permanent": true },
+    { "source": "/:path*", "has": [{ "type": "host", "value": "suph.ai" }], "destination": "https://suphian.com/:path*", "permanent": true },
+    { "source": "/:path*", "has": [{ "type": "host", "value": "www.suphian.com" }], "destination": "https://suphian.com/:path*", "permanent": true },
+    { "source": "/podcast", "destination": "/", "permanent": true },
+    { "source": "/podcast/:path*", "destination": "/", "permanent": true }
   ],
   "headers": [
     {
@@ -36,60 +19,17 @@
         { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains" },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://www.google.com; media-src 'self'; connect-src 'self' https://ujughujunixnwlmtdsxd.supabase.co https://www.googletagmanager.com https://api.ipify.org https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://www.google.com; media-src 'self'; connect-src 'self' https://ujughujunixnwlmtdsxd.supabase.co https://www.googletagmanager.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com; worker-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
         }
       ]
     },
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/assets/(images|logos|audio|textures)/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, stale-while-revalidate=604800"
-        }
-      ]
-    },
-    {
-      "source": "/(.*).(mp4|wav|m4a)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=2592000"
-        }
-      ]
-    },
-    {
-      "source": "/sw.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/index.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    }
+    { "source": "/assets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+    { "source": "/assets/(images|logos|audio|textures)/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }] },
+    { "source": "/(icons|logos|work|contact)/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }] },
+    { "source": "/fonts/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=2592000" }] },
+    { "source": "/(.*).(mp4|wav|m4a)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000" }] },
+    { "source": "/sw.js", "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }] },
+    { "source": "/index.html", "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }] }
   ],
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

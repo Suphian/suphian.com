@@ -1,0 +1,306 @@
+import React, { Suspense, lazy, useLayoutEffect, useRef, useState } from 'react';
+import { LETTERS, LETTERING_DEFS } from './lettering.js';
+import { MOTION } from './motion.js';
+import { createWordmarkSim, letterTransform, segment } from './physics.js';
+import { dockMetrics, dockTransform, homeLinkBox, homeLinkViewX } from './geometry.js';
+import { acceptsHover, acceptsPress, createDockEffects } from './dockfx.js';
+import './wordmark.css';
+
+// The single place to tune the motion. It lives in motion.js (DOM-free) so the
+// node tests and the filmstrip use the same values; see that file for units.
+export { MOTION };
+
+const KEEP = 4; // S U P H survive into the docked logo; I A N are absorbed.
+const clamp01 = (n) => Math.max(0, Math.min(1, n));
+const px = (n) => `${Math.round(n * 100) / 100}px`;
+const idle = () => {};
+const NO_INPUT = { move: idle, leave: idle, down: idle, up: idle, tap: idle };
+
+// Dev-only tuning panel. import.meta.env.DEV is false in production builds, so
+// this branch and the panel's chunk are dropped from the bundle entirely.
+const TuningPanel = import.meta.env.DEV ? lazy(() => import('./TuningPanel.jsx')) : null;
+
+/**
+ * The fixed SUPHIAN lettering layer and the docked SUPH home link.
+ *
+ * Motion: native scroll only sets targets on a small physics sim (physics.js):
+ * a soft-body chain of letters squeezed by a piston, and a sprung dock
+ * transform. A requestAnimationFrame loop steps the sim and writes SVG
+ * attributes while scrolling or unsettled, and stops once everything rests.
+ * Scroll itself is never intercepted.
+ *
+ * Docked, SUPH also answers the pointer like the SAY HELLO sign-off, with the
+ * same model and values (dockfx.js): a mouse hovering over it bulges the
+ * letters near the cursor and leans their neighbours away, a press squishes
+ * them and they pop back on release, and Enter plays a short tap. That motion
+ * sits on an inner group inside each letter's group, so it composes with the
+ * chain's transform instead of fighting it, and it steps in the same loop,
+ * which sleeps once both are at rest. Undocking lets go of hover and press.
+ *
+ * Page contract:
+ * - Measures the element marked `[data-wordmark-hero]` (the opening viewport,
+ *   100svh). Without one, or with `docked`, it renders straight into the
+ *   header, without animating on mount. If the hero appears, changes or goes
+ *   away later (routing), it re-measures and snaps to the matching state.
+ * - Writes to <html>: `--header-opacity`, `--edition-opacity`, `--cue-opacity`
+ *   (0..1), `data-docked` and `data-cue` ("visible" | "hidden").
+ * - `onHome(event)` runs as soon as the docked SUPH is clicked (the squish
+ *   plays while the page scrolls); `label` is its accessible name.
+ * - Under prefers-reduced-motion the physics is off: the artwork switches
+ *   directly between the hero and the header at 58% of the opening viewport,
+ *   and the docked SUPH doesn't move under the pointer.
+ */
+export default function Wordmark({ docked: forceDocked = false, homeHref = '/', onHome, label = 'SUPH — back to top' }) {
+  const svg = useRef(null);
+  const word = useRef(null);
+  const homeLink = useRef(null);
+  const controls = useRef(null); // Handed to the dev tuning panel.
+  const input = useRef(NO_INPUT); // Pointer and keyboard handlers for the docked SUPH, bound by the effect.
+  const [tuning] = useState(() => Boolean(TuningPanel) && new URLSearchParams(window.location.search).has('tune'));
+
+  useLayoutEffect(() => {
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const groups = [...word.current.querySelectorAll('[data-letter]')];
+    const fxGroups = [...word.current.querySelectorAll('[data-dock-fx]')]; // S U P H's inner groups.
+    const root = document.documentElement;
+    const sim = createWordmarkSim({ letters: LETTERS, keep: KEEP, params: MOTION });
+    const fx = createDockEffects(); // Hover and press on the docked SUPH: SAY HELLO's model.
+    const written = new Map();
+    const fxWritten = fxGroups.map(() => null); // null: the first render writes, whatever is there.
+    let metrics;
+    let heroHeight = 1;
+    let heroless = false;
+    let heroElement = null;
+    let raf = 0;
+    let staticFrame = 0;
+    let last = 0;
+
+    const pinned = () => forceDocked || heroless;
+    // No chain physics: reduced motion, or pinned to the header. A pinned
+    // logo still answers hover and press; reduced motion doesn't.
+    const physicsOff = () => preference.matches || pinned();
+    const scrollProgress = () => (pinned() ? 1 : clamp01(window.scrollY / (heroHeight * MOTION.travel)));
+    // Reduced motion keeps both end states with an instantaneous handoff, so
+    // the screen never contains a small second copy of the logo.
+    const reducedDocked = () => pinned() || window.scrollY >= heroHeight * 0.58;
+    // Where the chain rests while its physics is off.
+    const staticProgress = () => (preference.matches && !pinned() ? Number(reducedDocked()) : scrollProgress());
+
+    function setRootVar(name, value) {
+      const text = String(Math.round(value * 1000) / 1000);
+      if (written.get(name) === text) return;
+      written.set(name, text);
+      root.style.setProperty(name, text);
+    }
+
+    function render() {
+      if (!metrics) return;
+      const s = sim.read();
+      const reduced = preference.matches;
+      word.current.setAttribute('transform', dockTransform(metrics, s.dock));
+      s.letters.forEach((letter, index) => {
+        const group = groups[index];
+        group.setAttribute('transform', letterTransform(letter));
+        if (index >= KEEP) {
+          group.setAttribute('opacity', letter.opacity.toFixed(3));
+          group.style.visibility = letter.opacity < 0.002 ? 'hidden' : '';
+        }
+      });
+      const p = scrollProgress();
+      const move = clamp01(s.dockRaw);
+      const docked = pinned() || (reduced ? reducedDocked() : p >= 0.995 && move >= 0.98);
+      const cueFade = pinned() ? 0 : reduced ? Number(window.scrollY < 24) : 1 - segment(p, 0, 0.22);
+      setRootVar('--cue-opacity', cueFade);
+      root.dataset.cue = cueFade <= 0.01 ? 'hidden' : 'visible';
+      setRootVar('--edition-opacity', 1 - segment(move, 0.05, 0.35));
+      setRootVar('--header-opacity', segment(move, 0.75, 1));
+      homeLink.current.hidden = !docked;
+      root.dataset.docked = String(docked);
+      svg.current.dataset.progress = p.toFixed(4);
+      fx.setDocked(docked); // Leaving the header lets go of hover and press; the letters spring back.
+      renderFx();
+    }
+
+    /** The docked effects: S U P H's inner groups, under the chain's transforms. */
+    function renderFx() {
+      fx.transforms().forEach((transform, index) => {
+        if (transform === fxWritten[index]) return;
+        fxWritten[index] = transform;
+        if (transform) fxGroups[index].setAttribute('transform', transform);
+        else fxGroups[index].removeAttribute('transform'); // At rest: no transform at all.
+      });
+    }
+
+    // Physics off (reduced motion, pinned to the header): jump to the rest state.
+    function renderStatic() {
+      staticFrame = 0;
+      sim.snap(staticProgress());
+      render();
+      if (fx.settled) {
+        cancelAnimationFrame(raf); // Nothing is moving: stop the loop.
+        raf = 0;
+        last = 0;
+      } else {
+        kick(); // Hover or press still playing on a pinned logo.
+      }
+    }
+
+    function frame(now) {
+      raf = 0;
+      const dt = last ? (now - last) / 1000 : 1 / 60;
+      last = now;
+      let chainMoved;
+      if (physicsOff()) {
+        chainMoved = !sim.settled; // renderStatic keeps the chain at rest; this is a safety net.
+        if (chainMoved) sim.snap(staticProgress());
+      } else {
+        sim.setTarget(scrollProgress());
+        chainMoved = sim.advance(dt);
+      }
+      fx.advance(dt);
+      if (chainMoved) render();
+      else renderFx(); // Only the docked effects moved: the chain's attributes stand.
+      if (sim.settled && fx.settled) last = 0; // Idle: nothing runs until the next scroll or pointer.
+      else kick();
+    }
+
+    function kick() {
+      if (!raf) raf = requestAnimationFrame(frame);
+    }
+
+    function onScroll() {
+      if (!metrics) return;
+      if (physicsOff()) {
+        if (!staticFrame) staticFrame = requestAnimationFrame(renderStatic);
+        return;
+      }
+      sim.setTarget(scrollProgress());
+      kick();
+    }
+
+    /** @param {boolean} snap jump straight to rest (mount, bfcache restore, preference change) */
+    function measure(snap) {
+      const width = document.documentElement.clientWidth;
+      const screenHeight = window.innerHeight;
+      // svh is stable while mobile browser chrome opens and closes.
+      const hero = document.querySelector('[data-wordmark-hero]');
+      heroElement = hero;
+      heroless = !hero;
+      heroHeight = Math.max(1, hero ? hero.getBoundingClientRect().height : screenHeight);
+      const styles = getComputedStyle(root);
+      metrics = dockMetrics({
+        width,
+        heroHeight,
+        safeTop: parseFloat(styles.getPropertyValue('--safe-top')) || 0,
+        safeLeft: parseFloat(styles.getPropertyValue('--safe-left')) || 0,
+        safeRight: parseFloat(styles.getPropertyValue('--safe-right')) || 0,
+      }, MOTION);
+      svg.current.setAttribute('viewBox', `0 0 ${width} ${screenHeight}`);
+      svg.current.style.height = `${screenHeight}px`;
+      // The link covers the docked SUPH exactly (plus a margin), from the same metrics.
+      const box = homeLinkBox(metrics);
+      Object.assign(homeLink.current.style, { left: px(box.left), top: px(box.top), width: px(box.width), height: px(box.height) });
+      if (snap || physicsOff()) {
+        renderStatic();
+      } else {
+        sim.setTarget(scrollProgress());
+        render();
+        kick();
+      }
+    }
+
+    // Pointer and keyboard on the docked SUPH, with SAY HELLO's rules. fx
+    // ignores them unless the logo is docked and motion is allowed.
+    const wake = () => { if (!fx.settled) kick(); };
+    input.current = {
+      move(event) {
+        if (!acceptsHover(event, finePointer.matches)) return;
+        fx.hover(homeLinkViewX(event.clientX, homeLink.current.getBoundingClientRect()));
+        wake();
+      },
+      leave() { fx.leave(); wake(); },
+      down(event) {
+        if (!acceptsPress(event)) return;
+        fx.press(true);
+        wake();
+      },
+      up() { fx.press(false); wake(); },
+      tap() { fx.tap(); wake(); },
+    };
+
+    const onResize = () => measure(false);
+    const onRestore = () => measure(true);
+    // Reduced motion switched on mid-flight: the docked SUPH drops straight to rest too.
+    const onPreference = () => {
+      fx.setReduced(preference.matches);
+      measure(true);
+    };
+    // Routes can mount, swap or remove the hero after this effect runs (lazy
+    // pages, client-side navigation). Re-measure, without animating, when it changes.
+    const heroWatch = new MutationObserver(() => {
+      if (document.querySelector('[data-wordmark-hero]') !== heroElement) measure(true);
+    });
+    heroWatch.observe(document.body, { childList: true, subtree: true });
+    fx.setReduced(preference.matches);
+    measure(true);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    window.addEventListener('pageshow', onRestore);
+    preference.addEventListener('change', onPreference);
+    controls.current = {
+      sim,
+      /** Re-measure and let the sim re-settle under changed MOTION values. */
+      update() {
+        measure(false);
+        if (!preference.matches && !pinned()) {
+          sim.wake();
+          kick();
+        }
+      },
+    };
+    return () => {
+      cancelAnimationFrame(raf);
+      cancelAnimationFrame(staticFrame);
+      controls.current = null;
+      input.current = NO_INPUT;
+      heroWatch.disconnect();
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('pageshow', onRestore);
+      preference.removeEventListener('change', onPreference);
+    };
+  }, [forceDocked]);
+
+  return (
+    <>
+      <svg ref={svg} className="lettering-layer" viewBox="0 0 1460 900" aria-hidden="true" focusable="false">
+        <defs dangerouslySetInnerHTML={{ __html: LETTERING_DEFS }} />
+        <g ref={word} className="wordmark">
+          {LETTERS.map((letter, index) => (
+            // Outer group: the chain's transform. Inner group: the docked effects' (S U P H only).
+            <g key={letter.id} data-letter={letter.char} transform={`translate(${letter.x} 0)`}>
+              <g data-dock-fx={index < KEEP ? '' : undefined} dangerouslySetInnerHTML={{ __html: letter.markup }} />
+            </g>
+          ))}
+        </g>
+      </svg>
+      {/* draggable={false}: a press and hold that drifts a few px would otherwise start a link drag and cancel the squish. */}
+      <a ref={homeLink} className="home-link" href={homeHref} aria-label={label} hidden draggable={false}
+        onPointerMove={(event) => input.current.move(event)}
+        onPointerLeave={() => input.current.leave()}
+        onPointerDown={(event) => input.current.down(event)}
+        onPointerUp={() => input.current.up()}
+        onPointerCancel={() => input.current.up()}
+        onClick={(event) => {
+          onHome?.(event); // Straight away; the squish plays while the page scrolls.
+          if (event.detail === 0) input.current.tap(); // Keyboard (Enter): no pointer press to show.
+        }} />
+      {tuning && (
+        <Suspense fallback={null}>
+          <TuningPanel controls={controls} />
+        </Suspense>
+      )}
+    </>
+  );
+}
