@@ -1,15 +1,20 @@
 /* SAY HELLO sign-off: traced lettering that opens the contact sheet. Not a section.
-   Owned by src/sayhello and src/components/SayHello.jsx; motion lives in motion.js. */
+   Owned by src/sayhello and src/components/SayHello.jsx (the lazy chunk) and SayHelloSlot.jsx (its wrapper and
+   same-size placeholder); motion lives in motion.js. */
 /* Sized as a sign-off, not a billboard (Suphian: it was overpowering the footer), centered on the page.
    The one gap after the story list is this top padding: the page's section spacing, as every .section
    opens (Suphian: the space before it was too much; the list adds none, story.css).
    position: relative keeps it above the pinned stage, whose empty tail it overlaps, for paint and pointer. */
 .say-hello-wrap { position: relative; padding: var(--space-section) var(--gutter) 72px; scroll-margin-top: 86px; }
-.say-hello {
+/* SayHelloSlot's empty placeholder shares the button's box until the lettering loads. */
+.say-hello,
+.say-hello-placeholder {
   display: block;
   width: min(100%, 560px);
   margin-inline: auto;
   min-height: 44px;
+}
+.say-hello {
   padding: 0;
   border: 0;
   background: none;
@@ -23,5 +28,5 @@
 .say-hello:focus-visible { outline: 1px solid var(--red); outline-offset: 12px; }
 @media (max-width: 639px) {
   .say-hello-wrap { padding-bottom: 48px; }
-  .say-hello { width: min(80%, 320px); }
+  .say-hello, .say-hello-placeholder { width: min(80%, 320px); }
 }
