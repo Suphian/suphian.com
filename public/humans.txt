@@ -1,6 +1,6 @@
 /* TEAM */
 Name: Suphian Tweel
-Title: Principal Product Manager, Steadily
+Title: Product leader. Led payments at YouTube; builds Abacus Labs and suph.app.
 Contact: hello@suphian.com
 
 /* SITE */

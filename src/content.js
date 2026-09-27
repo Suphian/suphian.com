@@ -27,7 +27,7 @@
  *                  fields: { name|email|phone|message: { label, placeholder, required } },
  *                  validation: {...}, submit, sending, toasts: { success|rateLimited|error|blocked: { title, description } } }
  * footer         { copyright(year?), label, links: [{ label, href, ariaLabel }], backToTop }
- * seo            { origin, robots, home: { title, description, ogTitle },
+ * seo            { origin, robots, lastModified, home: { title, description, ogTitle },
  *                  og: { type, siteName, image, imageAlt, locale }, twitter: { card, handle, image, imageAlt },
  *                  manifest: { name, shortName, description } }
  * structuredData { person, website }
@@ -51,9 +51,13 @@ const GMAIL_COMPOSE =
 
 // Role update (2026-09-26): Principal PM at Steadily since July 2026; YouTube is past (2020 – 2026).
 const HOME_TITLE = 'Suphian Tweel · Product, Payments & AI';
-// Accurate, concise search summary. AI is a topic in the site edition, never a claim about YouTube.
+// Suphian 2026-09-27: "The Steadily thing isn't a big part of my identity. It's just my role."
+// Search and social text lead with who he is: a product leader, payments at YouTube, then what he
+// builds. Steadily stays a work chapter and the JSON-LD employer. AI is the site's positioning (the
+// title and edition): never a claim about YouTube, and no Abacus AI facts are supplied yet, so none here.
+// "Command center for MCA operators" is the Abacus chapter's own wording. 152 characters.
 const HOME_DESCRIPTION =
-  'Principal Product Manager at Steadily. Previously led payments at YouTube. Builds side projects with Abacus Labs and suph.app.';
+  'Product leader. Led payments at YouTube, 2020 – 2026. Builds Abacus Labs, a command center for MCA operators, and something new every month at suph.app.';
 
 // ---------------------------------------------------------------------------
 // Site
@@ -62,7 +66,10 @@ const HOME_DESCRIPTION =
 export const site = {
   name: 'Suphian',
   fullName: 'Suphian Tweel',
-  title: 'Principal Product Manager, Steadily',
+  // Visible under his name in the no-JavaScript profile (the first line non-rendering crawlers read)
+  // and humans.txt. PROPOSAL (2026-09-27), pending Suphian's OK: identity first, not the current role.
+  // Was 'Principal Product Manager, Steadily'.
+  title: 'Product leader. Led payments at YouTube; builds Abacus Labs and suph.app.',
   description: HOME_DESCRIPTION,
   url: ORIGIN,
   email: EMAIL,
@@ -94,7 +101,8 @@ export const nav = {
 // ---------------------------------------------------------------------------
 
 export const hero = {
-  srTitle: 'Suphian Tweel. Principal product manager at Steadily. Previously led payments at YouTube.',
+  // The page's h1 once React renders (visually hidden). Identity first, not the current role (Suphian 2026-09-27).
+  srTitle: 'Suphian Tweel. Product leader. Previously led payments at YouTube. Builds Abacus Labs and suph.app.',
   edition: ['Product', 'Payments', 'AI'],
   cue: ['Scroll', 'for the story'],
   // The story index (story.id).
@@ -336,6 +344,10 @@ export const footer = {
 export const seo = {
   origin: ORIGIN,
   robots: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+  // The homepage's last real content or metadata change: the sitemap <lastmod> and the
+  // ProfilePage dateModified. Bump it with the copy, never on every build (Google only
+  // trusts lastmod that stays accurate).
+  lastModified: '2026-09-27',
   home: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
@@ -371,17 +383,22 @@ export const structuredData = {
     name: 'Suphian Tweel',
     givenName: 'Suphian',
     familyName: 'Tweel',
+    description: HOME_DESCRIPTION,
+    // His current role, stated accurately; it no longer leads the description (Suphian 2026-09-27).
     jobTitle: 'Principal Product Manager',
     worksFor: { name: 'Steadily', url: 'https://steadily.com' },
-    description: HOME_DESCRIPTION,
-    url: ORIGIN,
+    // The side project he leads product and engineering for (the Abacus chapter). Affiliation
+    // only: no founder, owner or employer claim.
+    affiliation: [{ name: 'Abacus Labs', url: 'https://abacuslabs.co' }],
+    // The canonical homepage URL, trailing slash included, like the ProfilePage and <link rel="canonical">.
+    url: `${ORIGIN}/`,
     email: EMAIL,
     sameAs: [LINKEDIN, GITHUB],
     knowsAbout: ['Product Management', 'Payments', 'Artificial Intelligence', 'Fraud Detection', 'Data Analytics'],
   },
   website: {
     name: 'Suphian Tweel',
-    url: ORIGIN,
+    url: `${ORIGIN}/`,
     description: HOME_DESCRIPTION,
     inLanguage: 'en-US',
   },

@@ -11,9 +11,25 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## Story index, facts and cleanup (2026-09-26, latest)
+## Identity first, Steadily as the role (2026-09-27, latest)
 
-Newest entry. Where the older sections below disagree, this one wins; they're kept as a record, with superseded "After" values corrected in place.
+Newest entry; where older sections disagree, this one wins. Suphian: "The Steadily thing isn't a big part of my identity. It's just my role, so I don't want to optimize too much for that." Search, social and assistive text now lead with who he is: a product leader who led payments at YouTube and builds Abacus Labs and suph.app.
+
+| Where | Before | After |
+|---|---|---|
+| `HOME_DESCRIPTION` (→ meta, OG and Twitter descriptions, manifest, Person/WebSite/ProfilePage JSON-LD, the llms.txt summary) | Principal Product Manager at Steadily. Previously led payments at YouTube. Builds side projects with Abacus Labs and suph.app. (126 characters) | Product leader. Led payments at YouTube, 2020 – 2026. Builds Abacus Labs, a command center for MCA operators, and something new every month at suph.app. (152 characters) |
+| `hero.srTitle` (the page's h1 once React renders; visually hidden) | Suphian Tweel. Principal product manager at Steadily. Previously led payments at YouTube. | Suphian Tweel. Product leader. Previously led payments at YouTube. Builds Abacus Labs and suph.app. |
+| `HOME_TITLE` | Suphian Tweel · Product, Payments & AI | Unchanged: it already leads with the positioning and never named Steadily. |
+| `site.title` (**proposal, pending Suphian's OK**; visible under his name in the no-JavaScript profile, and `humans.txt`) | Principal Product Manager, Steadily | Product leader. Led payments at YouTube; builds Abacus Labs and suph.app. |
+
+- Facts only. "A command center for MCA operators" is the Abacus chapter's own wording, "every month" is suph.app's, and 2020 – 2026 is the YouTube chapter's years.
+- No new AI claim. AI stays the site's positioning (title, edition, social card); the description names no AI work, so "no AI at YouTube" and its `content.test.mjs` guard still hold.
+- Steadily is unchanged as a work chapter and stays the JSON-LD employer (`jobTitle`, `worksFor`), which is accurate. It no longer leads any summary.
+- JSON-LD (not reader copy): the Person gains `affiliation` Abacus Labs (no founder, owner or employer claim); Person and WebSite `url` are now the canonical `https://suphian.com/`; the ProfilePage gains `dateModified`, the same date as the sitemap `<lastmod>` (`seo.lastModified`).
+
+## Story index, facts and cleanup (2026-09-26)
+
+Where the older sections below disagree, this one wins; they're kept as a record, with superseded "After" values corrected in place.
 
 ### The story index replaces About (01), Work (02) and Projects (03)
 
