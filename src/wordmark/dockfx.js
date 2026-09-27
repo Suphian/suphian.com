@@ -1,12 +1,14 @@
 /**
- * Docked effects: motion that plays on the docked SUPH only, layered on top of
- * the chain (physics.js) without touching it. DOM-free, so it imports in plain
- * Node (tests/dock-effects.test.mjs, tests/dock-hover-film.mjs).
+ * Docked effects: pointer motion layered on top of the chain (physics.js)
+ * without touching it, on the docked SUPH and, with the same model, on the
+ * hero SUPHIAN (Suphian, 2026-09-27: "Can I have that on the main image as
+ * well?"). DOM-free, so it imports in plain Node (tests/dock-effects.test.mjs,
+ * tests/hero-hover.test.mjs, tests/dock-hover-film.mjs).
  *
- * Composition. Each kept letter is two nested groups (Wordmark.jsx):
+ * Composition. Each letter is two nested groups (Wordmark.jsx):
  *
  *   <g data-letter>      outer: the chain's letterTransform (position, squeeze, lean)
- *     <g data-dock-fx>   inner: this module's transform, in the glyph's own units
+ *     <g data-fx>        inner: this module's transform, in the glyph's own units
  *       <path/>
  *
  * The inner transform draws the glyph at x = 0, because the outer group has
@@ -29,15 +31,33 @@
  * HELLO's 163 to 316. The same numbers give the same motion relative to each
  * letter; the docked logo is only drawn smaller.
  *
- * Gating. Input only lands while the logo is docked and motion is allowed.
- * Undocking lets go of hover and press, and the letters spring back to rest.
- * Reduced motion drops straight to rest and ignores input.
+ * Gating. Input only lands while the effect is enabled and motion is allowed:
+ * the dock's while the logo is docked, the hero's while the page is at the
+ * top. Disabling lets go of hover and press, and the letters spring back to
+ * rest. Reduced motion drops straight to rest and ignores input.
+ *
+ * Two glyph sets. The dock's is S U P H in compact-viewBox units; the hero's
+ * is all seven letters in full-viewBox units. Only the hover distances use
+ * those x values: a letter's state is in its own units either way, so on S U
+ * P H the two effects' states simply combine (addState) into one transform.
  */
 import { LETTERS } from './lettering.js';
 import { HELLO_MOTION, createHelloSim, helloTransform } from '../sayhello/motion.js';
 
 /** S U P H, the letters that survive into the docked logo, in compact-viewBox units. */
 export const DOCK_GLYPHS = LETTERS.filter((l) => l.compactX != null).map((l) => ({ x: l.compactX, width: l.width }));
+
+/** All seven letters of the hero SUPHIAN, in full-viewBox units (the dotted I is one glyph). */
+export const HERO_GLYPHS = LETTERS.map((l) => ({ x: l.x, width: l.width }));
+
+/** Adds one effect's state for a letter onto `into`: lifts and leans add, scales multiply. */
+export function addState(into, { y, sx, sy, skew }) {
+  into.y += y;
+  into.sx *= sx;
+  into.sy *= sy;
+  into.skew += skew;
+  return into;
+}
 
 /** SAY HELLO's hover rule: a mouse, on a device that can hover with a fine pointer. */
 export const acceptsHover = (event, finePointer) => event.pointerType === 'mouse' && Boolean(finePointer);
@@ -60,17 +80,17 @@ export function dockFxTransform(width, { y = 0, sx = 1, sy = 1, skew = 0 }) {
 
 /**
  * @param {object} [options]
- * @param {{x:number,width:number}[]} [options.glyphs] docked letters, compact-viewBox units
+ * @param {{x:number,width:number}[]} [options.glyphs] DOCK_GLYPHS (default) or HERO_GLYPHS
  * @param {typeof HELLO_MOTION} [options.params] the touch layer's values (SAY HELLO's, read live)
  */
 export function createDockEffects({ glyphs = DOCK_GLYPHS, params = HELLO_MOTION } = {}) {
   const touch = createHelloSim(glyphs, params); // Hover and press: SAY HELLO's model, unchanged.
   const layers = [touch];
   const out = glyphs.map(() => ({ y: 0, sx: 1, sy: 1, skew: 0 }));
-  let docked = false;
+  let enabled = false;
   let reduced = false;
 
-  const live = () => docked && !reduced;
+  const live = () => enabled && !reduced;
 
   /** Release a press. Only when one is held, so a stray pointerup never wakes the loop. */
   function release() {
@@ -88,26 +108,24 @@ export function createDockEffects({ glyphs = DOCK_GLYPHS, params = HELLO_MOTION 
     for (const o of out) { o.y = 0; o.sx = 1; o.sy = 1; o.skew = 0; }
     for (const layer of layers) {
       const states = layer.read();
-      out.forEach((o, i) => {
-        const s = states[i];
-        o.y += s.y;
-        o.sx *= s.sx;
-        o.sy *= s.sy;
-        o.skew += s.skew;
-      });
+      out.forEach((o, i) => addState(o, states[i]));
     }
     return out;
+  }
+
+  /** Input lands (true) or not. Turning it off lets go of hover and press. */
+  function setEnabled(next) {
+    const was = enabled;
+    enabled = Boolean(next);
+    if (was && !enabled) letGo();
   }
 
   return {
     glyphs,
     params,
-    /** Docked in the header (true) or not. Leaving it lets go of hover and press. */
-    setDocked(next) {
-      const was = docked;
-      docked = Boolean(next);
-      if (was && !docked) letGo();
-    },
+    setEnabled,
+    /** The dock's gate: docked in the header (true) or not. */
+    setDocked: setEnabled,
     /** prefers-reduced-motion: straight to rest, and input is ignored while it holds. */
     setReduced(next) {
       reduced = Boolean(next);
@@ -142,8 +160,8 @@ export function createDockEffects({ glyphs = DOCK_GLYPHS, params = HELLO_MOTION 
       return read().map((state, i) => dockFxTransform(glyphs[i].width, state));
     },
     get settled() { return layers.every((layer) => layer.settled); },
-    get docked() { return docked; },
-    /** True while input can move the letters: docked, and motion allowed. */
+    get enabled() { return enabled; },
+    /** True while input can move the letters: enabled, and motion allowed. */
     get active() { return live(); },
     get pressed() { return touch.pressed; },
   };

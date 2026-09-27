@@ -74,6 +74,21 @@ export function homeLinkViewX(clientX, rect) {
   return ((clientX - rect.left - HOME_LINK_PAD) / logo) * COMPACT_VIEWBOX.width;
 }
 
+/**
+ * A pointer over the hero SUPHIAN, in full-viewBox units (the letters' own x),
+ * or null unless it is over the word's box plus HOME_LINK_PAD. The hero word
+ * sits at dockTransform's start, translate(margin startY) scale(startScale),
+ * in the fixed layer's viewport px, which are client px.
+ */
+export function heroViewX(clientX, clientY, { margin, startY, startScale }) {
+  if (!(startScale > 0) || !Number.isFinite(clientX) || !Number.isFinite(clientY)) return null;
+  const x = (clientX - margin) / startScale;
+  const y = (clientY - startY) / startScale;
+  const pad = HOME_LINK_PAD / startScale;
+  if (x < -pad || x > FULL_VIEWBOX.width + pad || y < -pad || y > FULL_VIEWBOX.height + pad) return null;
+  return x;
+}
+
 const round = (n, places = 3) => {
   const f = 10 ** places;
   return String(Math.round(n * f) / f);

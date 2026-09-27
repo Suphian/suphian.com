@@ -2,8 +2,8 @@ import React, { Suspense, lazy, useLayoutEffect, useRef, useState } from 'react'
 import { LETTERS, LETTERING_DEFS, LETTERING_MOVING_DEFS } from './lettering.js';
 import { MOTION } from './motion.js';
 import { createWordmarkSim, letterTransform, segment } from './physics.js';
-import { dockMetrics, dockTransform, homeLinkBox, homeLinkViewX } from './geometry.js';
-import { acceptsHover, acceptsPress, createDockEffects } from './dockfx.js';
+import { dockMetrics, dockTransform, heroViewX, homeLinkBox, homeLinkViewX } from './geometry.js';
+import { HERO_GLYPHS, acceptsHover, acceptsPress, addState, createDockEffects, dockFxTransform } from './dockfx.js';
 import './wordmark.css';
 
 // The single place to tune the motion. It lives in motion.js (DOM-free) so the
@@ -15,6 +15,7 @@ const clamp01 = (n) => Math.max(0, Math.min(1, n));
 const px = (n) => `${Math.round(n * 100) / 100}px`;
 const idle = () => {};
 const NO_INPUT = { move: idle, leave: idle, down: idle, up: idle, tap: idle };
+const AT_REST = { y: 0, sx: 1, sy: 1, skew: 0 }; // An inner group's state with no effect on it.
 
 // Dev-only tuning panel. import.meta.env.DEV is false in production builds, so
 // this branch and the panel's chunk are dropped from the bundle entirely.
@@ -27,8 +28,8 @@ const TuningPanel = import.meta.env.DEV ? lazy(() => import('./TuningPanel.jsx')
  * a soft-body chain of letters squeezed by a piston, and a sprung dock
  * transform. A requestAnimationFrame loop steps the sim and writes SVG
  * attributes while scrolling or unsettled, and stops once everything rests.
- * Scroll itself is never intercepted. While the loop moves anything, the
- * letters draw a flat fill in place of the grain filter (`data-moving`).
+ * Scroll itself is never intercepted. Off their exact rest layout, the letters
+ * draw a flat fill in place of the grain filter (`data-moving`).
  *
  * Docked, SUPH also answers the pointer like the SAY HELLO sign-off, with the
  * same model and values (dockfx.js): a mouse hovering over it bulges the
@@ -37,6 +38,10 @@ const TuningPanel = import.meta.env.DEV ? lazy(() => import('./TuningPanel.jsx')
  * sits on an inner group inside each letter's group, so it composes with the
  * chain's transform instead of fighting it, and it steps in the same loop,
  * which sleeps once both are at rest. Undocking lets go of hover and press.
+ * The hero SUPHIAN answers a hovering mouse the same way, all seven letters,
+ * while the page is at the top (Suphian, 2026-09-27); the first scroll lets go
+ * and the letters settle as the chain starts to move. No press on the hero,
+ * and nothing on touch screens.
  *
  * Page contract:
  * - Measures the element marked `[data-wordmark-hero]` (the opening viewport,
@@ -50,7 +55,7 @@ const TuningPanel = import.meta.env.DEV ? lazy(() => import('./TuningPanel.jsx')
  *   plays while the page scrolls); `label` is its accessible name.
  * - Under prefers-reduced-motion the physics is off: the artwork switches
  *   directly between the hero and the header at 58% of the opening viewport,
- *   and the docked SUPH doesn't move under the pointer.
+ *   and neither the hero nor the docked SUPH moves under the pointer.
  */
 export default function Wordmark({ docked: forceDocked = false, homeHref = '/', onHome, label = 'SUPH — back to top' }) {
   const svg = useRef(null);
@@ -64,10 +69,12 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
     const groups = [...word.current.querySelectorAll('[data-letter]')];
-    const fxGroups = [...word.current.querySelectorAll('[data-dock-fx]')]; // S U P H's inner groups.
+    const fxGroups = [...word.current.querySelectorAll('[data-fx]')]; // Every letter's inner group.
     const root = document.documentElement;
     const sim = createWordmarkSim({ letters: LETTERS, keep: KEEP, params: MOTION });
     const fx = createDockEffects(); // Hover and press on the docked SUPH: SAY HELLO's model.
+    const heroFx = createDockEffects({ glyphs: HERO_GLYPHS }); // The same, on the hero SUPHIAN: hover only.
+    const fxStates = fxGroups.map(() => ({ y: 0, sx: 1, sy: 1, skew: 0 }));
     const written = new Map(); // Custom property -> { element, text } last written.
     const fxWritten = fxGroups.map(() => null); // null: the first render writes, whatever is there.
     let metrics;
@@ -103,9 +110,10 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
       element.style.setProperty(name, text);
     }
 
-    // While anything moves, the letters drop the grain filter for its mean
-    // colour (wordmark.css). Redrawn every frame, the filter cost WebKit about
-    // a third of its frames and, under a lean (skewX), was resampled and blurred.
+    // Off the exact rest layout (moving, or leaning under the cursor), the
+    // letters drop the grain filter for its mean colour (wordmark.css). Redrawn
+    // every frame, the filter cost WebKit about 30% of its frames and, under a
+    // lean (skewX), was resampled and blurred.
     function setMoving(next) {
       if (next === moving) return;
       moving = next;
@@ -142,16 +150,22 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
       root.dataset.docked = String(docked);
       svg.current.dataset.progress = p.toFixed(4);
       fx.setDocked(docked); // Leaving the header lets go of hover and press; the letters spring back.
+      heroFx.setEnabled(!pinned() && p < 0.001); // Likewise the first scroll off the top.
       renderFx();
     }
 
-    /** The docked effects: S U P H's inner groups, under the chain's transforms. */
+    /** The inner groups, under the chain's transforms: the hero's hover on all seven letters, the dock's on S U P H. */
     function renderFx() {
-      fx.transforms().forEach((transform, index) => {
+      const dock = fx.read();
+      const hero = heroFx.read();
+      fxGroups.forEach((group, index) => {
+        const state = addState(Object.assign(fxStates[index], AT_REST), hero[index]);
+        if (index < KEEP) addState(state, dock[index]);
+        const transform = dockFxTransform(LETTERS[index].width, state);
         if (transform === fxWritten[index]) return;
         fxWritten[index] = transform;
-        if (transform) fxGroups[index].setAttribute('transform', transform);
-        else fxGroups[index].removeAttribute('transform'); // At rest: no transform at all.
+        if (transform) group.setAttribute('transform', transform);
+        else group.removeAttribute('transform'); // At rest: no transform at all.
       });
     }
 
@@ -160,11 +174,11 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
       staticFrame = 0;
       sim.snap(staticProgress());
       render();
-      if (fx.settled) {
+      if (fx.settled && heroFx.settled) {
         cancelAnimationFrame(raf); // Nothing is moving: stop the loop.
         raf = 0;
         last = 0;
-        setMoving(false);
+        setMoving(fxWritten.some(Boolean));
       } else {
         kick(); // Hover or press still playing on a pinned logo.
       }
@@ -183,10 +197,13 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
         chainMoved = sim.advance(dt);
       }
       fx.advance(dt);
-      const still = sim.settled && fx.settled;
-      setMoving(!still); // Settled: the grain returns with the rest layout, in the same frame.
+      heroFx.advance(dt);
       if (chainMoved) render();
-      else renderFx(); // Only the docked effects moved: the chain's attributes stand.
+      else renderFx(); // Only the pointer effects moved: the chain's attributes stand.
+      const still = sim.settled && fx.settled && heroFx.settled;
+      // The grain only draws on the exact rest layout, returning with it in the
+      // same frame: moving, or held leaning under a still cursor, it resamples soft.
+      setMoving(!still || fxWritten.some(Boolean));
       if (still) last = 0; // Idle: nothing runs until the next scroll or pointer.
       else kick();
     }
@@ -239,7 +256,7 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
 
     // Pointer and keyboard on the docked SUPH, with SAY HELLO's rules. fx
     // ignores them unless the logo is docked and motion is allowed.
-    const wake = () => { if (!fx.settled) kick(); };
+    const wake = () => { if (!fx.settled || !heroFx.settled) kick(); };
     input.current = {
       move(event) {
         if (!acceptsHover(event, finePointer.matches)) return;
@@ -255,12 +272,22 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
       up() { fx.press(false); wake(); },
       tap() { fx.tap(); wake(); },
     };
+    // The hero: a hovering mouse anywhere over the word, mapped from the same
+    // metrics as the letters (the lettering layer takes no pointer events).
+    // heroFx ignores it unless the page is at the top and motion is allowed.
+    const onPointerMove = (event) => {
+      if (!heroFx.active || !metrics || !acceptsHover(event, finePointer.matches)) return;
+      heroFx.hover(heroViewX(event.clientX, event.clientY, metrics));
+      wake();
+    };
+    const onPointerGone = () => { heroFx.leave(); wake(); };
 
     const onResize = () => measure(false);
     const onRestore = () => measure(true);
-    // Reduced motion switched on mid-flight: the docked SUPH drops straight to rest too.
+    // Reduced motion switched on mid-flight: the docked SUPH and the hero drop straight to rest too.
     const onPreference = () => {
       fx.setReduced(preference.matches);
+      heroFx.setReduced(preference.matches);
       measure(true);
     };
     // Routes can mount, swap or remove the hero after this effect runs (lazy
@@ -270,10 +297,14 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
     });
     heroWatch.observe(document.body, { childList: true, subtree: true });
     fx.setReduced(preference.matches);
+    heroFx.setReduced(preference.matches);
     measure(true);
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
     window.addEventListener('pageshow', onRestore);
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('blur', onPointerGone);
+    root.addEventListener('pointerleave', onPointerGone);
     preference.addEventListener('change', onPreference);
     controls.current = {
       sim,
@@ -296,6 +327,9 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('pageshow', onRestore);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('blur', onPointerGone);
+      root.removeEventListener('pointerleave', onPointerGone);
       preference.removeEventListener('change', onPreference);
     };
   }, [forceDocked]);
@@ -306,9 +340,9 @@ export default function Wordmark({ docked: forceDocked = false, homeHref = '/', 
         <defs dangerouslySetInnerHTML={{ __html: LETTERING_DEFS + LETTERING_MOVING_DEFS }} />
         <g ref={word} className="wordmark">
           {LETTERS.map((letter, index) => (
-            // Outer group: the chain's transform. Inner group: the docked effects' (S U P H only).
+            // Outer group: the chain's transform. Inner group: the pointer effects' (dockfx.js).
             <g key={letter.id} data-letter={letter.char} transform={`translate(${letter.x} 0)`}>
-              <g data-dock-fx={index < KEEP ? '' : undefined} dangerouslySetInnerHTML={{ __html: letter.markup }} />
+              <g data-fx="" dangerouslySetInnerHTML={{ __html: letter.markup }} />
             </g>
           ))}
         </g>

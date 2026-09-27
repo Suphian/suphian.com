@@ -112,7 +112,7 @@ for (let f = 0; f <= Math.round(END * FPS); f++) {
   if (fx.settled && stats.settledAt[phase] === undefined) stats.settledAt[phase] = t - phaseStart;
   if (wanted.has(f)) {
     frames.push({
-      t, phase, settled: fx.settled, pressed: fx.pressed, docked: fx.docked,
+      t, phase, settled: fx.settled, pressed: fx.pressed, docked: fx.enabled,
       viewX: clientX === null ? null : homeLinkViewX(clientX, box), clientX,
       letters: letters.map((l) => ({ ...l })), inner: fx.transforms(),
     });
