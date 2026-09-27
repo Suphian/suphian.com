@@ -14,7 +14,8 @@ import Home from './pages/Home.jsx';
 // was 21 kB gzip of the first load). Unknown URLs are sent home in main.jsx.
 
 // A /#work link: that section, once React has replaced the static profile. Otherwise
-// the browser's own scroll restoration stands.
+// the page opens at the top: index.html turns the browser's scroll restoration
+// off and main.jsx starts at 0 (Suphian 2026-09-27).
 function useInitialHash() {
   useLayoutEffect(() => {
     const { hash } = window.location;

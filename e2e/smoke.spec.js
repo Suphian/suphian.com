@@ -113,6 +113,55 @@ test('removed pages redirect home (no dead ends)', async ({ page }) => {
   }
 });
 
+// Suphian 2026-09-27: "When I load the page sometimes it takes me all the way to
+// the bottom." A load opens at the hero, where the wordmark starts; only a
+// /#section link opens somewhere else.
+test.describe('a load opens at the top', () => {
+  const scrollY = (page) => page.evaluate(() => Math.round(window.scrollY));
+  const toBottom = (page) => page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+
+  test('a reload from SAY HELLO opens at the top', async ({ page }) => {
+    // The browser's own restoration races React's first commit, so it only
+    // sometimes lands: reload twice.
+    for (let run = 0; run < 2; run += 1) {
+      await toBottom(page);
+      await expect.poll(() => scrollY(page)).toBeGreaterThan(300);
+      await page.waitForTimeout(300); // the offset reaches the history entry
+      await page.reload();
+      await expect(page.locator('.hero')).toBeAttached();
+      await page.waitForTimeout(500); // past the browser's restore
+      expect(await scrollY(page)).toBe(0);
+    }
+  });
+
+  test('a scrolled static profile hands over at the top', async ({ page }) => {
+    // Hold the app's entry past the 2 s fallback, so the no-JS profile shows first.
+    let release;
+    const held = new Promise((resolve) => { release = resolve; });
+    await page.route(/\/(assets\/index-[\w-]+\.js|src\/main\.jsx)(\?|$)/, async (route) => {
+      await held;
+      await route.continue();
+    });
+    await page.goto('/', { waitUntil: 'commit' });
+    const profile = page.locator('.static-profile');
+    await expect(profile).toBeVisible({ timeout: 8_000 });
+    await toBottom(page);
+    expect(await scrollY(page)).toBeGreaterThan(300);
+    release();
+    await expect(page.locator('.hero')).toBeAttached();
+    await expect(profile).toHaveCount(0);
+    expect(await scrollY(page)).toBe(0);
+  });
+
+  test('a /#work link still opens at that section', async ({ page }) => {
+    await page.goto('about:blank');
+    await page.goto('/#work');
+    await expect(page.locator('.hero')).toBeAttached();
+    await expect.poll(() => page.locator('#work').evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBeLessThan(120);
+    expect(await scrollY(page)).toBeGreaterThan(300);
+  });
+});
+
 test.describe('reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
   test('contact sheet and a story chapter still work', async ({ page }) => {

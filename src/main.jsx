@@ -6,6 +6,7 @@ import { registerServiceWorker } from './lib/serviceWorker.js';
 import { reportWebVitals } from './lib/webVitals.js';
 import { startAnalytics } from './lib/analytics.js';
 import { afterFirstPaint } from './lib/afterFirstPaint.js';
+import { scrollToTop } from './lib/scroll.js';
 import './fonts.css';
 import './style.css';
 
@@ -36,6 +37,11 @@ try {
   // address back to /, as the old <Navigate to="/" replace /> did. Before the
   // first render, so SUPH never starts docked.
   if (window.location.pathname !== '/') window.history.replaceState(null, '', '/');
+  // Top of the page before the first render, so the wordmark measures the hero
+  // (Suphian 2026-09-27). A slow bundle leaves the static profile on screen, and
+  // whatever it was scrolled to would carry over: on phones it is longer than
+  // the app, so a flick down it landed at SAY HELLO. A /#section is App.jsx's.
+  if (!window.location.hash) scrollToTop({ instant: true });
   createRoot(rootElement).render(<App />);
   // The animated favicon never moves before load (its first burst is 450 ms after
   // it), so its chunk loads then. If the chunk fails, the static icon stays.
