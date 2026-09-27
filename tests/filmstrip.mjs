@@ -83,7 +83,7 @@ const ROW_H = Math.ceil(HEAD + FULL_VIEWBOX.height * LS + 14);
 const SHEET_W = LABEL_W + LOCAL_W + 20 + SCREEN_W + 14;
 const metrics = dockMetrics(VIEW, MOTION);
 const localOrigin = (row) => [LABEL_W + 12, row * ROW_H + HEAD];
-const guideXs = [...LETTERS.slice(0, 4).map((l) => l.x), 1040, 1657];
+const guideXs = [...LETTERS.slice(0, 4).map((l) => l.x), LETTERS[3].x + LETTERS[3].width, LETTERS[6].x + LETTERS[6].width];
 
 // ---------- SVG contact sheet ----------
 function svgSheet(rows) {

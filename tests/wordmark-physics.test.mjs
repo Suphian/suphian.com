@@ -8,7 +8,7 @@ import { dockMetrics, dockTransform } from '../src/wordmark/geometry.js';
 const KEEP = 4;
 const SUPH = [0, 1, 2, 3];
 const IAN = [4, 5, 6];
-const FULL_RIGHT = LETTERS[6].x + LETTERS[6].width; // 1657
+const FULL_RIGHT = LETTERS[6].x + LETTERS[6].width; // 1654
 const COMPACT_RIGHT = LETTERS[3].x + LETTERS[3].width; // 1040
 const PISTON_TRAVEL = FULL_RIGHT - COMPACT_RIGHT;
 const OVERSHOOT = 0.06; // Allowed overshoot, as a fraction of the distance travelled.

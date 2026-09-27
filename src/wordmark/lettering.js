@@ -5,7 +5,17 @@
  * Raster tracing approximates the source edge and procedural grain approximates
  * its surface texture. No font outlines or raster images are embedded.
  */
-export const FULL_VIEWBOX = { width: 1661, height: 592 };
+
+/**
+ * Suphian (2026-09-27): "a little too much space between SUPH and IAN". Every
+ * traced seam is 4.4-5.2 units at its closest (H to I 4.7), so I, A and N move
+ * left together by this much: H to I becomes the tightest seam (1.7) and still
+ * doesn't touch (they fuse past about 4.7). S U P H and the docked logo
+ * (compactX, COMPACT_VIEWBOX) stay exactly as traced.
+ */
+const IAN_SHIFT = -3;
+
+export const FULL_VIEWBOX = { width: 1661 + IAN_SHIFT, height: 592 };
 export const COMPACT_VIEWBOX = { width: 1044, height: 592 };
 
 export const LETTERING_DEFS = `
@@ -21,6 +31,21 @@ export const LETTERING_DEFS = `
     <feComposite in="soft-noise" in2="SourceAlpha" operator="in" result="clipped-noise"/>
     <feBlend in="SourceGraphic" in2="clipped-noise" mode="soft-light"/>
   </filter>
+`;
+
+/**
+ * The page's fill while the letters move (Wordmark.jsx, wordmark.css): each
+ * letter-red stop shifted to the mean colour letter-surface gives it
+ * (measured over flat swatches in Chromium; WebKit within 2 levels; the same
+ * at every scale), so the tone holds when the grain drops out. The grain
+ * itself is about ±1.5 levels on top. Not part of the exported logos.
+ */
+export const LETTERING_MOVING_DEFS = `
+  <linearGradient id="letter-red-moving" x1="0" y1="0" x2="0" y2="592" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#f52b2a"/>
+    <stop offset=".56" stop-color="#f52827"/>
+    <stop offset="1" stop-color="#f42726"/>
+  </linearGradient>
 `;
 
 const tracedGlyphs = [
@@ -84,6 +109,7 @@ const tracedGlyphs = [
 
 export const LETTERS = tracedGlyphs.map(glyph => ({
   ...glyph,
+  x: glyph.compactX == null ? glyph.x + IAN_SHIFT : glyph.x,
   markup: `<path class="letter-silhouette" d="${glyph.path}" fill="url(#letter-red)" fill-rule="evenodd" filter="url(#letter-surface)"/>`,
 }));
 
