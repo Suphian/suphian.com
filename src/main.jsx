@@ -31,6 +31,11 @@ function showLoadError(error) {
 }
 
 try {
+  // No dead ends (Suphian): removed pages like /podcast and any unknown URL show
+  // home. Vercel serves them dist/404.html with a real 404 status; this puts the
+  // address back to /, as the old <Navigate to="/" replace /> did. Before the
+  // first render, so SUPH never starts docked.
+  if (window.location.pathname !== '/') window.history.replaceState(null, '', '/');
   createRoot(rootElement).render(<App />);
   initFavicon();
   // PostHog + GA4 custom events: a no-op without the key, and off suphian.com unless debugging.

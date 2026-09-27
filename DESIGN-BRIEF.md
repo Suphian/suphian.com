@@ -37,7 +37,7 @@ Confident, curious, entrepreneurial, warm, playful. Beautiful design, moving qui
 - **Override (Suphian): keep the bouncing.** The SUPH dock layers (landing bounce, scroll jiggle, hover/press squish, idle breathing) stay.
 
 ## No dead pages (Suphian, 2026-09-26)
-- No 404 or dead-end pages. Unknown URLs and removed pages (e.g. `/podcast`) redirect to home: `<Route path="*" element={<Navigate to="/" replace />} />` in `src/App.jsx`.
+- No 404 or dead-end pages. Unknown URLs and removed pages (e.g. `/podcast`) redirect to home: `src/main.jsx` puts any other path back to `/` before the first render (no router since 2026-09-27; Vercel serves them `dist/404.html` with a real 404 status).
 - For production, `vercel.json` needs a permanent (301) redirect `/podcast` → `/` for old links, plus the SPA rewrite.
 - `src/pages/NotFound.jsx` and the `notFound` copy are now unused. Delete them in the final cleanup.
 
