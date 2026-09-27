@@ -30,13 +30,3 @@ export async function registerServiceWorker() {
     return undefined;
   }
 }
-
-export async function unregisterServiceWorker() {
-  if (!('serviceWorker' in navigator)) return;
-  try {
-    const registration = await navigator.serviceWorker.getRegistration();
-    if (registration) await registration.unregister();
-  } catch (error) {
-    console.error('Service worker unregistration failed:', error);
-  }
-}

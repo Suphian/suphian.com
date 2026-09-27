@@ -3,7 +3,7 @@ import { common } from '../content.js';
 import { track } from '../lib/analytics.js';
 
 /** `chapter` (a story chapter id) travels with the outbound_link_clicked event. */
-export default function ExternalLink({ href, children, className = 'text-link', chapter }) {
+export default function ExternalLink({ href, children, className, chapter }) {
   const label = typeof children === 'string' ? children : undefined;
   return (
     <a className={className} href={href} target="_blank" rel="noopener noreferrer"

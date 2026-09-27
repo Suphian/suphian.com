@@ -4,7 +4,7 @@ import test from 'node:test';
 import * as content from '../content.js';
 import { chapterGroups, groupIndexOf, metaLine, stepIndex } from './logic.js';
 
-const { story, nav, hero } = content;
+const { story, hero } = content;
 const publicDir = new URL('../../public/', import.meta.url);
 const strings = (value) =>
   typeof value === 'string'
@@ -194,8 +194,7 @@ test('the story offers no resume or CV action, and no podcast', () => {
   for (const text of strings(story)) assert.doesNotMatch(text, /resume|\bCV\b|podcast/i, text);
 });
 
-test('nav and the hero cue point at the index', () => {
-  assert.ok(nav.links.some((link) => link.id === story.id));
+test('the hero cue points at the index', () => {
   assert.equal(hero.cueHref, `#${story.id}`);
 });
 

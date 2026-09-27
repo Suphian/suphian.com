@@ -36,6 +36,18 @@ const injectServiceWorkerBuildId = () => ({
   },
 });
 
+// Vercel serves dist/404.html, with a real 404 status, for any path nothing else
+// matches. It is the full profile, so a mistyped URL still lands on the site and
+// the app sends it home, while search engines stop seeing every path as a
+// duplicate homepage (a soft 404).
+const notFoundPage = () => ({
+  name: 'not-found-page',
+  apply: 'build',
+  closeBundle() {
+    fs.copyFileSync(path.resolve(root, 'dist/index.html'), path.resolve(root, 'dist/404.html'));
+  },
+});
+
 // Same address as the package.json scripts, which also pass these as flags.
 const address = { host: '127.0.0.1', port: 4173, strictPort: true };
 
@@ -50,7 +62,7 @@ const vercelHeaders = Object.fromEntries(
 export default defineConfig(({ mode }) => ({
   server: address,
   preview: { ...address, headers: vercelHeaders },
-  plugins: [staticSeo(), injectServiceWorkerBuildId()],
+  plugins: [staticSeo(), injectServiceWorkerBuildId(), notFoundPage()],
   esbuild: {
     // console.error survives production so real failures stay observable.
     drop: mode === 'production' ? ['debugger'] : [],

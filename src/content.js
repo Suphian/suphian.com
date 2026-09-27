@@ -9,14 +9,14 @@
  * - Big section headings are arrays of lines: the UI joins them with <br />
  *   and appends the red period itself, so no heading ends in ".".
  *   Plain-text form: heading.join(' ') + '.'.
- * - Short labels (edition, cue, nav) are written in sentence case; some older
- *   parts of the design uppercase them in CSS. The story index never does.
+ * - Short labels (edition, cue, nav) are written in sentence case, and nothing
+ *   uppercases them in CSS.
  * - The copyright year is not hard-coded: call footer.copyright().
  * - Asset paths are the real paths from suphian.com/public.
  *
  * Shape
- * site           { name, fullName, title, description, url, email, location, social: { linkedin, github, twitter } }
- * nav            { skip, label, home, links: [{ id, label }], contact }
+ * site           { fullName, title, email, social: { linkedin, github } }
+ * nav            { skip, home }
  * hero           { srTitle, edition: [3], cue: [2], cueHref }
  * story          { id, heading: [lines], intro, labels: { list, sideProjects, back },
  *                  chapters: [{ id, name, kind?, role, period, image: { src, nudge }, color, summary,
@@ -26,10 +26,10 @@
  * contact        { title, signoff: { label }, requiredMark, optionalMark,
  *                  fields: { name|email|phone|message: { label, placeholder, required } },
  *                  validation: {...}, submit, sending, toasts: { success|rateLimited|error|blocked: { title, description } } }
- * footer         { copyright(year?), label, links: [{ label, href, ariaLabel }], backToTop }
+ * footer         { copyright(year?), label, email: { label, href }, links: [{ label, href, ariaLabel }], backToTop }
  * seo            { origin, robots, lastModified, home: { title, description, ogTitle },
  *                  og: { type, siteName, image, imageAlt, locale }, twitter: { card, handle, image, imageAlt },
- *                  manifest: { name, shortName, description } }
+ *                  manifest: { name, description } }
  * structuredData { person, website }
  * errors         { boundary: { title, details, reload }, appLoad: { title, reload } }
  * common         { close, opensInNewTab }
@@ -44,7 +44,6 @@ const ORIGIN = 'https://suphian.com';
 const EMAIL = 'hello@suphian.com';
 const LINKEDIN = 'https://www.linkedin.com/in/suphian/';
 const GITHUB = 'https://github.com/Suphian';
-const TWITTER = 'https://twitter.com/suphian';
 // Footer "Email" link opens Gmail compose with a prefilled subject (from Footer.tsx).
 const GMAIL_COMPOSE =
   'https://mail.google.com/mail/?view=cm&fs=1&to=hello@suphian.com&su=Hey,%20wanted%20to%20chat';
@@ -64,20 +63,15 @@ const HOME_DESCRIPTION =
 // ---------------------------------------------------------------------------
 
 export const site = {
-  name: 'Suphian',
   fullName: 'Suphian Tweel',
   // Visible under his name in the no-JavaScript profile (the first line non-rendering crawlers read)
   // and humans.txt. PROPOSAL (2026-09-27), pending Suphian's OK: identity first, not the current role.
   // Was 'Principal Product Manager, Steadily'.
   title: 'Product leader. Led payments at YouTube; builds Abacus Labs and suph.app.',
-  description: HOME_DESCRIPTION,
-  url: ORIGIN,
   email: EMAIL,
-  location: 'San Francisco, CA',
   social: {
     linkedin: LINKEDIN,
     github: GITHUB,
-    twitter: TWITTER,
   },
 };
 
@@ -87,13 +81,8 @@ export const site = {
 
 export const nav = {
   skip: 'Skip to main content',
-  // Screen readers already announce "navigation"; "Main navigation" read twice.
-  label: 'Main',
   // Accessible name for the home link / docked SUPH wordmark.
   home: 'Suphian Tweel, back to top',
-  // One section link (the story index) plus the Contact button.
-  links: [{ id: 'work', label: 'Work' }],
-  contact: 'Contact',
 };
 
 // ---------------------------------------------------------------------------
@@ -114,7 +103,7 @@ export const hero = {
 // ---------------------------------------------------------------------------
 
 export const story = {
-  // Section id: nav "Work" and the hero cue scroll here.
+  // Section id: the hero cue scrolls here.
   id: 'work',
   // Suphian's own headline and intro (2026-09-26). Use exactly; the UI adds the red period.
   heading: ['Good ideas deserve', 'to get made'],
@@ -338,7 +327,7 @@ export const footer = {
 };
 
 // ---------------------------------------------------------------------------
-// SEO (index.html + SEOHead.tsx + site.webmanifest)
+// SEO (index.html via scripts/seo.mjs, site.webmanifest, crawler text files)
 // ---------------------------------------------------------------------------
 
 export const seo = {
@@ -369,7 +358,6 @@ export const seo = {
   },
   manifest: {
     name: HOME_TITLE,
-    shortName: 'Suphian Tweel',
     description: HOME_DESCRIPTION,
   },
 };
@@ -409,13 +397,13 @@ export const structuredData = {
 // ---------------------------------------------------------------------------
 
 export const errors = {
-  // ErrorBoundary.tsx
+  // ErrorBoundary.jsx
   boundary: {
     title: 'Something went wrong',
     details: 'Error details',
     reload: 'Reload page',
   },
-  // main.tsx mount failure
+  // main.jsx mount failure
   appLoad: {
     title: 'The site failed to load',
     reload: 'Reload page',

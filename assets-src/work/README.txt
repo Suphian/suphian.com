@@ -1,7 +1,7 @@
 Story index cards: one image per chapter, set on the company color
 (src/content.js story.chapters[].color).
 
-  steadily.svg   youtube.svg   google.svg   huge.svg   abacus-white.png   suph-app.webp
+  steadily.svg   youtube.svg   google.svg   huge.svg   abacus-white.png   suph-app.svg
 
 Logo cards (every chapter but suph.app): a white logo, centred on both axes.
 - White marks on a transparent background. SVGs need a viewBox tight to the ink,
@@ -12,7 +12,7 @@ Logo cards (every chapter but suph.app): a white logo, centred on both axes.
   `node --test src/story/` and copy the measured value into content.js.
 - abacus-black.png is the dark version of the Abacus mark (not used on the cards).
 
-Screenshot cards (imageFit: 'cover'): suph-app.webp, the game's welcome screen
+Screenshot cards (imageFit: 'cover'): suph-app.svg, the game's welcome screen
 (1170 x 1548, portrait, about the cards' 3:4). It fills the card, anchored at its
 top; no logo sizing and no nudge.
 

@@ -209,7 +209,7 @@ export default function StoryIndex() {
                     </div>
                   )}
                   {/* role="list": Safari drops list semantics from unstyled lists. */}
-                  <ol className="story-list" role="list" aria-label={group.label} data-kind={group.kind}>
+                  <ol className="story-list" role="list" aria-label={group.label}>
                     {group.chapters.map((chapter, offset) => renderItem(chapter, group.start + offset))}
                   </ol>
                 </React.Fragment>

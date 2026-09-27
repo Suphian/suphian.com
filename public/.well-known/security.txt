@@ -1,5 +1,5 @@
-Contact: mailto:suph.tweel@gmail.com
-Expires: 2026-12-31T23:59:59.000Z
+Contact: mailto:hello@suphian.com
+Expires: 2027-09-27T23:59:59.000Z
 Preferred-Languages: en
 Canonical: https://suphian.com/.well-known/security.txt
 
@@ -8,9 +8,9 @@ Canonical: https://suphian.com/.well-known/security.txt
 If you discover a security vulnerability, please report it responsibly:
 
 1. Do NOT open a public issue
-2. Send details to suph.tweel@gmail.com
+2. Send details to hello@suphian.com
 3. Include steps to reproduce the vulnerability
 
 Acknowledgment within 48 hours.
 
-Last updated: 2026-08-08
+Last updated: 2026-09-27

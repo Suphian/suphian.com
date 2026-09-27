@@ -192,11 +192,12 @@ test('contact_submitted sends the outcome only, never what the visitor typed', (
   }
 });
 
-test('vercel.json proxies /ingest to PostHog, ahead of the SPA fallback', () => {
+test('vercel.json proxies /ingest to PostHog, and no catch-all rewrite swallows unknown paths', () => {
   const { rewrites } = vercel;
   const sources = rewrites.map((rule) => rule.source);
-  const catchAll = sources.indexOf('/(.*)');
-  assert.ok(catchAll >= 0, 'the SPA fallback is still there');
+  // Unknown paths get dist/404.html with a real 404 status (vite.config.js notFoundPage),
+  // so a catch-all rewrite to /index.html must not come back.
+  assert.equal(sources.indexOf('/(.*)'), -1, 'no SPA catch-all rewrite');
   const expected = {
     [`${POSTHOG_API_HOST}/static/:path(.*)`]: `https://${POSTHOG_REGION}-assets.i.posthog.com/static/:path`,
     [`${POSTHOG_API_HOST}/array/:path(.*)`]: `https://${POSTHOG_REGION}-assets.i.posthog.com/array/:path`,
@@ -210,7 +211,6 @@ test('vercel.json proxies /ingest to PostHog, ahead of the SPA fallback', () => 
   }
   // Specific before general: the /ingest catch-all would swallow /static and /array.
   assert.deepEqual(order, [...order].sort((a, b) => a - b));
-  assert.ok(order.every((index) => index < catchAll), '/ingest rules come before /(.*)');
 });
 
 test('the CSP already allows the same-origin proxy and bundled SDK, and no PostHog host directly', () => {
