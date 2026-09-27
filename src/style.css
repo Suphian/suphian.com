@@ -173,7 +173,6 @@ h2 { margin: 0; font-family: var(--font-display); font-weight: var(--weight-stro
 .footer a.footer-email:hover { color: var(--white); }
 
 /* --------------------------------------------------------------- Pages */
-.route-loading { min-height: 100svh; }
 .page, .error-state { min-height: 100svh; padding: calc(86px + 70px) var(--gutter) 110px; }
 .page-title { margin: 0; padding: 72px 0 88px; font-family: var(--font-display); font-size: var(--fs-display); font-weight: var(--weight-strong, 600); letter-spacing: -0.035em; line-height: 1.02; }
 

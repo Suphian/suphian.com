@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useLayoutEffect, useRef } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Wordmark from './wordmark/Wordmark.jsx';
 import { nav } from './content.js';
@@ -53,13 +53,11 @@ function Shell() {
       <Wordmark docked={!isHome} homeHref="/" onHome={onHome} label={nav.home} />
       <main id="main" tabIndex={-1}>
         <ErrorBoundary key={location.pathname}>
-          <Suspense fallback={<div className="route-loading" />}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              {/* No dead ends (Suphian): removed pages like /podcast and any unknown URL go home. */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* No dead ends (Suphian): removed pages like /podcast and any unknown URL go home. */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </ErrorBoundary>
       </main>
       <Footer />
