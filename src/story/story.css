@@ -1,0 +1,377 @@
+/* ------------------------------------------------------------ Story index
+   Replaces About, Work and Projects. Chapter lists (left: the jobs, then the
+   side projects under a "Side projects" divider) and image rail (right) in a
+   sticky stage; native scroll through .story-track picks the chapter
+   (StoryIndex.jsx) and --active, one index across both lists, drives the
+   marker and the rail together.
+   Type per DESIGN-BRIEF.md: fonts only through --font-display / --font-text,
+   Regular for body, --weight-strong for headings, list items and buttons,
+   sentence case at readable sizes (no tiny uppercase labels), near-black and
+   white. Color comes from the companies: each card wears its company color
+   (--card-color) and every chapter mark takes that chapter's accent (--accent,
+   --item-accent; logic.js accentFor), never a fixed red. Every text color
+   below meets WCAG AA on #080808. */
+
+.story,
+.story-detail {
+  --story-ease: cubic-bezier(.2, .8, .2, 1);
+  --ink: #f4f4f1;        /* 18.2:1 */
+  --ink-body: #d2d2d2;   /* 13.3:1 */
+  --ink-muted: #a8a8a3;  /*  8.4:1 */
+  --ink-near: #8f8f8a;   /*  6.2:1: list neighbours */
+  --ink-far: #6e6e69;    /*  3.9:1: further list items (large text only) */
+  --hairline: #272727;
+}
+
+.story {
+  --stage-top: 104px;
+  --stage-bottom: 36px;
+  /* The "Side projects" divider between the two lists. */
+  --story-divider: clamp(44px, 7svh, 64px);
+  /* The rows share the stage's height with the divider, so every chapter fits
+     even in a short window (--count is set on the section: one row per chapter). */
+  --story-fit: calc((100svh - var(--stage-top) - var(--stage-bottom) - var(--story-divider)) / var(--count, 6));
+  --story-row: clamp(52px, min(9svh, var(--story-fit)), 84px);
+  --card-h: min(62svh, 600px, 42vw);
+  --card-w: calc(var(--card-h) * .75);
+  --card-gap: 20px;
+  --band: 36svh;
+}
+
+/* The heading and the intro line, nothing else */
+.story-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 440px);
+  align-items: end;
+  gap: 40px 7vw;
+  padding: 88px 0 56px;
+  border-top: 1px solid var(--hairline);
+}
+.story-heading {
+  font-family: var(--font-display);
+  font-weight: var(--weight-strong);
+  font-size: clamp(52px, 7vw, 112px);
+  line-height: .98;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+}
+.story-intro {
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: clamp(18px, 1.4vw, 21px);
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  color: var(--ink-body);
+}
+
+/* The pinned track: one band of scroll per chapter. */
+.story-track { position: relative; height: calc(100svh + var(--count, 5) * var(--band)); }
+.story-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  padding: var(--stage-top) 0 var(--stage-bottom);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--card-w);
+  gap: 6vw;
+}
+
+/* Chapter lists (the jobs, then the side projects): static and vertically centred;
+   the marker slides to the active row, stepping over the divider (--active-group
+   is 1 below it). */
+.story-list-wrap { display: flex; align-items: center; min-height: 0; }
+.story-list-box { position: relative; width: 100%; }
+.story-list { margin: 0; padding: 0 0 0 48px; list-style: none; }
+.story-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 2px;
+  background: var(--accent, var(--ink));
+  transform: translateY(calc(var(--story-row) * (var(--active, 0) + .5) + var(--story-divider) * var(--active-group, 0) - 1px));
+  transition: transform .45s var(--story-ease), background-color .45s ease;
+}
+/* "Side projects": a quiet label and hairline between the jobs and the side
+   projects. Not a chapter (no button, never selected); exactly --story-divider
+   tall so the marker can step over it. Sentence case, secondary gray. */
+.story-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: var(--story-divider);
+  padding-left: 48px;
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.4;
+  white-space: nowrap;
+  color: var(--ink-muted);
+}
+.story-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--hairline);
+}
+.story-item { height: var(--story-row); }
+.story-button {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: baseline;
+  gap: 2px 20px;
+  width: 100%;
+  height: 100%;
+  min-height: 44px;
+  text-align: left;
+  color: var(--ink-far);
+  transition: color .3s ease;
+}
+.story-item-name {
+  font-family: var(--font-display);
+  font-weight: var(--weight-strong);
+  font-size: clamp(26px, 2.8vw, 50px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+/* Role · years beside the active chapter: sentence case at a readable size. */
+.story-item-meta {
+  font-family: var(--font-text);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.4;
+  white-space: nowrap;
+  color: var(--ink-muted);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity .3s ease, transform .45s var(--story-ease);
+}
+.story-item-arrow { display: none; }
+.story-item[data-distance="1"] .story-button { color: var(--ink-near); }
+.story-item[data-distance="0"] .story-button { color: var(--ink); }
+.story-item[data-distance="0"] .story-item-meta { opacity: 1; transform: none; }
+.story-button:hover { color: var(--ink); }
+/* While a chapter is open, its title and card are "in" the open view. */
+.story-item[data-hidden] .story-item-name,
+.story-card[data-hidden] { visibility: hidden; }
+
+/* Image rail: the active card centred, neighbours cropped and faded at the edges. */
+.story-rail {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 13%, #000 87%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 13%, #000 87%, transparent 100%);
+}
+.story-rail-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  display: grid;
+  gap: var(--card-gap);
+  transform: translateY(calc(var(--card-h) * -.5 - (var(--card-h) + var(--card-gap)) * var(--active, 0)));
+  transition: transform .5s var(--story-ease);
+}
+/* Every card wears its company color (Suphian's pick); the active one is full strength. */
+.story-rail .story-card {
+  width: var(--card-w);
+  height: var(--card-h);
+  cursor: pointer;
+  opacity: .32;
+  transition: opacity .45s ease;
+}
+.story-rail .story-card.is-active { opacity: 1; }
+
+/* Card: the chapter's white logo on its company color, or the name set in type.
+   One grid cell, centred on both axes; the hairline keeps a black card visible
+   on the near-black page. */
+.story-card {
+  position: relative;
+  overflow: hidden;
+  container-type: inline-size;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 6px;
+  background: var(--card-color, #080808);
+  transform-origin: 0 0;
+}
+.story-card-logo {
+  display: block;
+  place-self: center;
+  height: auto;
+  max-height: 42%;
+  object-fit: contain;
+  object-position: 50% 50%;
+  opacity: 0;
+  transition: opacity .4s ease;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.story-card[data-status="loaded"] .story-card-logo { opacity: 1; }
+.story-card-name {
+  place-self: center;
+  max-width: 100%;
+  padding: 0 9cqw;
+  font-family: var(--font-display);
+  font-weight: var(--weight-strong);
+  font-size: 12cqw;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  text-align: center;
+  color: #ffffff;
+}
+
+/* ------------------------------------------------------ Open chapter view */
+.story-detail {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  font-family: var(--font-text);
+  color: var(--ink-body);
+}
+.story-detail-backdrop { position: fixed; inset: 0; z-index: -1; background: #080808; }
+.story-detail-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' opacity='.4' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+}
+.story-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "top media" "body media";
+  column-gap: 6vw;
+  min-height: 100%;
+  padding: 0 var(--gutter);
+}
+.story-detail-top { grid-area: top; padding-top: calc(28px + var(--safe-top)); }
+.story-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-weight: var(--weight-strong);
+  font-size: 17px;
+  color: var(--ink-muted);
+  transition: color .2s ease;
+}
+.story-back:hover { color: var(--ink); }
+.story-back-arrow { color: var(--accent, var(--ink)); transition: transform .3s ease; }
+.story-back:hover .story-back-arrow { transform: translateX(-4px); }
+.story-detail-title {
+  margin: clamp(40px, 11svh, 120px) 0 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-strong);
+  font-size: clamp(52px, 6.4vw, 104px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+}
+/* The name stays white; only the period takes the chapter's accent (it is not
+   Heading's red .heading-period). */
+.story-detail-name { display: inline-block; transform-origin: 0 0; color: var(--ink); }
+.story-detail-period { color: var(--accent, var(--ink)); }
+.story-detail-media {
+  grid-area: media;
+  align-self: start;
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 24px 0;
+}
+.story-card--panel { width: min(100%, (100svh - 48px) * .75); aspect-ratio: 3 / 4; }
+.story-detail-body { grid-area: body; max-width: 600px; padding: 36px 0 104px; }
+.story-detail-role {
+  font-family: var(--font-display);
+  font-weight: var(--weight-strong);
+  font-size: clamp(21px, 1.7vw, 26px);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.story-detail-years { margin-top: 6px; font-size: 18px; line-height: 1.5; color: var(--ink-muted); }
+.story-detail-summary { margin-top: 30px; font-size: clamp(18px, 1.3vw, 20px); line-height: 1.6; color: var(--ink-body); }
+.story-links { margin: 40px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--hairline); }
+.story-links li { border-bottom: 1px solid var(--hairline); }
+.story-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 56px;
+  padding: 12px 0;
+  font-weight: var(--weight-strong);
+  font-size: 17px;
+  line-height: 1.35;
+  color: var(--ink);
+  transition: color .2s ease;
+}
+.story-link:hover { color: #ffffff; }
+.story-link .link-arrow { color: var(--accent, var(--ink)); }
+.story-link:hover .link-arrow { transform: translate(2px, -2px); }
+.story-link:focus-visible { outline-offset: 4px; }
+
+/* Two-line rows where name and role no longer fit side by side. */
+@media (max-width: 1080px) and (min-width: 801px) {
+  .story { --story-row: clamp(58px, min(11svh, var(--story-fit)), 100px); }
+  .story-item-meta { flex-basis: 100%; }
+}
+
+/* ------------------------ Single column (≤ 800px wide or ≤ 560px tall): no pin.
+   (560px: below that the six rows and the divider no longer fit the pinned stage.) */
+@media (max-width: 800px), (max-height: 560px) {
+  .story-track { height: auto; }
+  .story-stage { position: static; display: block; height: auto; padding: 0 0 72px; }
+  .story-list-wrap, .story-list-box { display: block; }
+  .story-list { padding: 0; border-top: 1px solid var(--hairline); }
+  /* The label sits above the side projects; their list's top rule is its hairline. */
+  .story-divider { height: auto; padding: 56px 0 14px; white-space: normal; }
+  .story-divider::after { display: none; }
+  .story-marker, .story-rail { display: none; }
+  .story-item { height: auto; border-bottom: 1px solid var(--hairline); }
+  .story-item[data-distance] .story-button {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px 16px;
+    min-height: 96px;
+    padding: 20px 0;
+    color: var(--ink);
+  }
+  .story-item[data-distance] .story-item-name { font-size: clamp(28px, 8vw, 36px); white-space: normal; }
+  .story-item[data-distance] .story-item-meta { grid-row: 2; opacity: 1; transform: none; white-space: normal; }
+  .story-item-arrow { display: block; grid-column: 2; grid-row: 1 / span 2; font-size: 22px; color: var(--item-accent, var(--ink)); }
+}
+
+@media (max-width: 800px) {
+  .story-head { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 64px 0 48px; }
+  .story-heading { font-size: clamp(48px, 13vw, 76px); }
+
+  .story-detail-grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "top" "media" "body"; padding: 0 24px; }
+  .story-detail-top { padding-top: calc(16px + var(--safe-top)); }
+  .story-detail-title { margin-top: 28px; font-size: clamp(44px, 12vw, 64px); }
+  .story-detail-media { position: static; height: auto; display: block; padding: 28px 0 0; }
+  .story-card--panel { width: 100%; aspect-ratio: 16 / 10; }
+  .story-detail-body { max-width: none; padding: 32px 0 calc(72px + env(safe-area-inset-bottom, 0px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-marker,
+  .story-rail-track,
+  .story-button,
+  .story-item-meta,
+  .story-rail .story-card,
+  .story-card-logo,
+  .story-back-arrow { transition: none; }
+  .story-back:hover .story-back-arrow,
+  .story-link:hover .link-arrow { transform: none; }
+}

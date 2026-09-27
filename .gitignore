@@ -25,6 +25,10 @@ dist-ssr
 .vercel
 .env
 .env*.local
+.env.*
+!.env.example
+qa/
+playwright-report/
 
 # Large media files (should be in cloud storage)
 *.m4a

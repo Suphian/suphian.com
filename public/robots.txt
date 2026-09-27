@@ -1,79 +1,9 @@
-# Search Engine Crawlers
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 1
-
-User-agent: Bingbot
-Allow: /
-Crawl-delay: 1
-
-User-agent: Slurp
-Allow: /
-Crawl-delay: 1
-
-# Social Media Crawlers
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: LinkedInBot
-Allow: /
-
-User-agent: WhatsApp
-Allow: /
-
-# AI and LLM Crawlers - Allow indexing for AI training and search
-User-agent: GPTBot
-Allow: /
-Crawl-delay: 1
-
-User-agent: ChatGPT-User
-Allow: /
-Crawl-delay: 1
-
-User-agent: anthropic-ai
-Allow: /
-Crawl-delay: 1
-
-User-agent: Claude-Web
-Allow: /
-Crawl-delay: 1
-
-User-agent: PerplexityBot
-Allow: /
-Crawl-delay: 1
-
-User-agent: Applebot-Extended
-Allow: /
-Crawl-delay: 1
-
-User-agent: CCBot
-Allow: /
-Crawl-delay: 1
-
-User-agent: Google-Extended
-Allow: /
-Crawl-delay: 1
-
-User-agent: Omgilibot
-Allow: /
-Crawl-delay: 1
-
-User-agent: FacebookBot
-Allow: /
-Crawl-delay: 1
-
-# Default rules for all other bots
+# Public pages and assets are crawlable. Existing training-crawler access is unchanged.
 User-agent: *
 Allow: /
-Crawl-delay: 2
 
-# Sitemap
+# OpenAI search discovery (independent of GPTBot training controls).
+User-agent: OAI-SearchBot
+Allow: /
+
 Sitemap: https://suphian.com/sitemap.xml
-
-# LLMs.txt - AI-readable site information
-# https://llmstxt.org/
-# llms.txt: https://suphian.com/llms.txt
-# llms-full.txt: https://suphian.com/llms-full.txt

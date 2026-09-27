@@ -1,0 +1,10 @@
+qa/
+assets-src/
+supabase/
+.claude/
+.github/
+e2e/
+tests/
+*.md
+**/*.test.mjs
+dev-server*.log

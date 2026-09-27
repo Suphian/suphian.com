@@ -1,0 +1,24 @@
+/* SAY HELLO sign-off: traced lettering that opens the contact sheet. Not a section.
+   Owned by src/sayhello and src/components/SayHello.jsx; motion lives in motion.js. */
+/* Sized as a sign-off, not a billboard (Suphian: it was overpowering the footer), centered on the page. */
+.say-hello-wrap { padding: 96px var(--gutter) 72px; scroll-margin-top: 86px; }
+.say-hello {
+  display: block;
+  width: min(100%, 560px);
+  margin-inline: auto;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+/* The width/height attributes plus aspect-ratio reserve the box before paint (no layout shift).
+   Letters stretch, lean and drop past the viewBox while they move, so never clip them. */
+.say-hello-lettering { display: block; width: 100%; height: auto; aspect-ratio: 1926 / 592; overflow: visible; }
+.say-hello-lettering g { pointer-events: none; }
+.say-hello:focus-visible { outline: 1px solid var(--red); outline-offset: 12px; }
+@media (max-width: 639px) {
+  .say-hello-wrap { padding: 72px var(--gutter) 48px; }
+  .say-hello { width: min(80%, 320px); }
+}
