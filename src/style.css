@@ -25,12 +25,12 @@
 :root {
   --red: #fb2726;                        /* the artwork's top stop (LETTERING_DEFS) */
   --black: #080808;
-  --surface: #111111;                    /* raised near-black: sheet, modal, toasts, pill */
+  --surface: #111111;                    /* raised near-black: sheet, toasts, pill */
   --white: #ffffff;
   --gray: #adadad;                       /* secondary text */
   --gray-dim: #858585;                   /* tertiary text */
   --line: rgb(255 255 255 / .12);        /* decorative hairlines */
-  --line-strong: rgb(255 255 255 / .36); /* 3.2:1: field, button and chip boundaries (WCAG 1.4.11) */
+  --line-strong: rgb(255 255 255 / .36); /* 3.2:1: field, button and toast boundaries (WCAG 1.4.11) */
   --scrim: rgb(8 8 8 / .82);
 
   /* Type scale: nothing readable under 16px; clamps are linear from 360 to 1440px. */

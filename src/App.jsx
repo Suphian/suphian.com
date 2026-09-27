@@ -11,8 +11,8 @@ import Footer from './components/Footer.jsx';
 import Header from './components/Header.jsx';
 import Home from './pages/Home.jsx';
 
-// New route: top of the page, or the #section it asked for (nav links from
-// another route land on /#work). The first load keeps the browser's own restoration.
+// New route (an unknown URL redirecting home): top of the page, or the #section
+// it asked for (a /#work link). The first load keeps the browser's own restoration.
 function useRouteScroll({ pathname, hash }) {
   const first = useRef(true);
   useLayoutEffect(() => {
