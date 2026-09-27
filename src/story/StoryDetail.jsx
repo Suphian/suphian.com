@@ -153,7 +153,7 @@ export default function StoryDetail({ chapter, index, originFor, onClosed }) {
             <ul className="story-links">
               {chapter.links.map((link) => (
                 <li key={link.href}>
-                  <ExternalLink href={link.href} className="story-link">
+                  <ExternalLink href={link.href} className="story-link" chapter={chapter.id}>
                     {link.label}
                   </ExternalLink>
                 </li>

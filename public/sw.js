@@ -66,6 +66,8 @@ self.addEventListener('fetch', event => {
   if (url.protocol === 'chrome-extension:') return;
   // Skip local URLs (dev server and preview share 127.0.0.1:4173) to avoid caching dev content
   if (url.hostname.includes('localhost') || url.hostname === '127.0.0.1' || url.hostname === '[::1]') return;
+  // Analytics (the PostHog proxy in vercel.json) goes straight to the network, never the cache.
+  if (url.origin === self.location.origin && url.pathname.startsWith('/ingest/')) return;
 
   const strategy = getStrategy(request.url);
   if (strategy.networkFirst) {

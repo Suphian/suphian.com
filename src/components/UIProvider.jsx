@@ -1,4 +1,5 @@
 import React, { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
+import { track } from '../lib/analytics.js';
 import Toasts from './Toasts.jsx';
 import { UIContext } from './uiContext.js';
 
@@ -19,7 +20,10 @@ export function UIProvider({ children }) {
   const [toasts, setToasts] = useState([]);
   const toastId = useRef(0);
 
-  const openContact = useCallback((source = 'unknown') => setContact({ open: true, source, used: true }), []);
+  const openContact = useCallback((source = 'unknown') => {
+    track('contact_opened', { source });
+    setContact({ open: true, source, used: true });
+  }, []);
   const closeContact = useCallback(() => setContact((state) => ({ ...state, open: false })), []);
 
   const toast = useCallback((next) => {

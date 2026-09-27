@@ -1,6 +1,7 @@
 import React, { useId, useRef, useState } from 'react';
 import { contact } from '../content.js';
 import { LIMITS, validateContact, validateField } from '../lib/validation.js';
+import { track } from '../lib/analytics.js';
 import { submitContact } from '../lib/contactSubmit.js';
 import { useUI } from '../hooks/useUI.js';
 
@@ -47,6 +48,7 @@ export default function ContactForm({ source, onSubmitted }) {
     setErrors(found);
     if (!data) {
       if (found.website) {
+        track('contact_submitted', { status: 'blocked' });
         toast({ ...contact.toasts.blocked, tone: 'error' });
         return;
       }
