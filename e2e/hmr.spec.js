@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'node:fs';
-import { contactDialog, expect, test } from './guard.js';
+import { contactDialog, expect, openContact, test } from './guard.js';
 
 // Regression for the "useUI must be used within UIProvider" crash: in dev, a hot
 // reload that bumps UIProvider.jsx's ?t= timestamp used to give the lazily loaded
@@ -18,6 +18,6 @@ test('contact sheet opens after UIProvider.jsx hot-reloads', async ({ page }) =>
     writeFileSync(FILE, original);
   }
   await page.waitForTimeout(1500);
-  await page.getByRole('navigation').getByRole('button', { name: 'Contact' }).click();
+  await openContact(page);
   await contactDialog(page);
 });
