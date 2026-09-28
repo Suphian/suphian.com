@@ -74,7 +74,7 @@ test('HTML and JSON-LD serialization cannot introduce markup from content', () =
 });
 
 test('the social card is a PNG small enough for WhatsApp and iMessage link previews', () => {
-  // Keep a lightweight square source for messaging clients, with a separate wide Twitter card.
+  // Publish the approved Editorial artwork consistently across messaging and Twitter cards.
   // These are download and metadata checks; native apps control their own card layouts.
   const file = new URL(`../public${new URL(seo.og.image).pathname}`, import.meta.url);
   assert.ok(existsSync(file), `${seo.og.image} is in public/`);
@@ -85,13 +85,18 @@ test('the social card is a PNG small enough for WhatsApp and iMessage link previ
   assert.equal(bytes.readUInt32BE(16), seo.og.imageWidth);
   assert.equal(bytes.readUInt32BE(20), seo.og.imageHeight);
   assert.equal(seo.og.imageWidth, 1200);
-  assert.equal(seo.og.imageHeight, 1200);
+  assert.equal(seo.og.imageHeight, 630);
   const twitter = readFileSync(new URL(`../public${new URL(seo.twitter.image).pathname}`, import.meta.url));
   assert.deepEqual(twitter.subarray(0, 8), bytes.subarray(0, 8), 'both cards are PNG');
   assert.equal(twitter.readUInt32BE(16), 1200);
   assert.equal(twitter.readUInt32BE(20), 630);
   assert.ok(twitter.length < 250 * 1024);
-  assert.notEqual(seo.twitter.image, seo.og.image);
+  assert.equal(seo.twitter.image, seo.og.image);
+  assert.equal(seo.home.ogTitle, 'Suphian Tweel');
+  assert.equal(seo.home.ogDescription, 'Product, payments & AI. Good ideas deserve to get made.');
+  for (const tag of ['og:description', 'twitter:description']) {
+    assert.ok(html.includes(`="${tag}" content="${escapeHtml(seo.home.ogDescription)}"`));
+  }
   assert.equal((html.match(/property="og:image" /g) ?? []).length, 1, 'one unambiguous primary image');
   assert.ok(html.includes(`<meta name="twitter:image" content="${seo.twitter.image}"`));
   assert.match(html, /<meta property="og:image:type" content="image\/png"/);

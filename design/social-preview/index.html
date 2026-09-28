@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#fafafa" />
+    <title>Suphian — Preview studio</title>
+    <link rel="stylesheet" href="./studio.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="wordmark" href="https://suphian.com/" target="_blank" rel="noopener">SUPHIAN<span class="header-divider"></span><span class="studio-name">Preview studio</span></a>
+      <span class="review-status"><span></span>Design review</span>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">Suphian.com</p>
+          <h1 id="page-title">Link preview directions.</h1>
+        </div>
+        <p class="intro-copy">Three layouts using your homepage artwork. <br />Compare them at full size and in a conversation.</p>
+      </section>
+
+      <section class="artwork-section" aria-label="Preview art directions">
+        <div class="artwork-toolbar">
+          <div class="direction-switcher" role="group" aria-label="Choose an art direction">
+            <button class="direction-button" type="button" data-direction="signature" aria-pressed="false"><span class="direction-number">01</span>Signature</button>
+            <button class="direction-button is-selected" type="button" data-direction="editorial" aria-pressed="true"><span class="direction-number">02</span>Editorial<span class="recommended-marker" aria-label="Your pick"></span></button>
+            <button class="direction-button" type="button" data-direction="contrast" aria-pressed="false"><span class="direction-number">03</span>Contrast</button>
+          </div>
+          <div class="viewer-control" role="group" aria-label="Viewer background">
+            <button class="viewer-button is-selected" type="button" data-theme="light" aria-label="Light viewer background" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg></button>
+            <button class="viewer-button" type="button" data-theme="dark" aria-label="Dark viewer background" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.2 15.1A8.6 8.6 0 0 1 8.9 3.8 8.6 8.6 0 1 0 20.2 15.1Z"/></svg></button>
+          </div>
+        </div>
+
+        <div class="artwork-viewer" id="artwork-viewer" data-theme="light">
+          <div class="viewer-topline"><span id="viewer-label">02 / EDITORIAL</span><span>1200 × 630</span></div>
+          <a class="hero-image-link" id="hero-image-link" href="./assets/editorial.png" target="_blank" rel="noopener" aria-label="Open Editorial artwork at full size"><img class="hero-image" id="hero-image" src="./assets/editorial.png" width="1200" height="630" alt="Editorial social preview featuring the full Suphian artwork" /></a>
+          <div class="viewer-bottomline"><span>Artwork preview</span><span>suphian.com</span></div>
+        </div>
+
+        <div class="artwork-caption">
+          <div class="direction-description"><div class="caption-heading"><h2 id="direction-title">Editorial</h2><span class="recommendation" id="recommendation">Your pick</span></div><p id="direction-description">The homepage statement leads, paired with the full wordmark and your name. More editorial and personal.</p></div>
+          <div class="asset-actions"><a class="download-link" id="download-link" href="./assets/editorial.png" download="suphian-editorial-1200x630.png">Download PNG<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg></a><a class="fullsize-link" id="fullsize-link" href="./assets/editorial.png" target="_blank" rel="noopener">Open full size<span aria-hidden="true">↗</span></a></div>
+        </div>
+      </section>
+
+      <section class="context-section" aria-labelledby="context-title">
+        <div class="section-heading"><div><p class="eyebrow">THE REAL SIZE TEST</p><h2 id="context-title">Good in a conversation.</h2></div><p>Layout mockups at messaging-card size. <br />Actual iMessage and WhatsApp rendering can vary.</p></div>
+        <div class="context-grid">
+          <article class="context-panel imessage-panel"><div class="panel-heading"><h3>iMessage</h3><span>Layout mockup</span></div><div class="message-scene"><p class="conversation-note">Take a look at this.</p><div class="message-card imessage-card"><img class="context-image" data-selected-image src="./assets/editorial.png" width="1200" height="630" alt="Editorial artwork at iMessage card size" /><div class="message-card-copy"><strong data-selected-title>Suphian Tweel</strong><span class="imessage-domain">suphian.com</span></div></div><span class="delivery-label">Delivered</span></div></article>
+          <article class="context-panel whatsapp-panel"><div class="panel-heading"><h3>WhatsApp</h3><span>Layout mockup</span></div><div class="message-scene"><div class="whatsapp-bubble"><div class="message-card whatsapp-card"><img class="context-image" data-selected-image src="./assets/editorial.png" width="1200" height="630" alt="Editorial artwork at WhatsApp card size" /><div class="message-card-copy"><span class="whatsapp-domain">suphian.com</span><strong data-selected-title>Suphian Tweel</strong><span class="whatsapp-description" data-selected-description>Product, payments & AI. Good ideas deserve to get made.</span></div></div><div class="whatsapp-linkline"><span>https://suphian.com</span><span class="message-time">9:41 <span class="read-ticks" aria-label="Read">✓✓</span></span></div></div></div></article>
+        </div>
+      </section>
+
+      <section class="comparison-section" aria-labelledby="comparison-title">
+        <div class="section-heading"><div><p class="eyebrow">SIDE BY SIDE</p><h2 id="comparison-title">A clearer first impression.</h2></div><p>The previous image and your selected direction, <br />shown at exactly the same width.</p></div>
+        <div class="comparison-grid"><figure class="comparison-item current-comparison"><figcaption><span>Previous</span><span class="comparison-dimension">1200 × 1200</span></figcaption><div class="comparison-surface"><img src="./assets/current.png" width="1200" height="1200" alt="Previous Suphian social preview, shown at the same width as the proposed preview" /></div></figure><figure class="comparison-item new-comparison"><figcaption><span id="comparison-label">Editorial</span><span class="comparison-dimension">1200 × 630</span></figcaption><div class="comparison-surface"><img data-selected-image src="./assets/editorial.png" width="1200" height="630" alt="Proposed Editorial social preview, shown at the same width as the previous preview" /></div></figure></div>
+      </section>
+
+      <section class="metadata-section" aria-label="Suggested preview text"><div><p class="eyebrow">THE WORDS AROUND IT</p><h2>Keep it simple.</h2></div><dl class="metadata-list"><div><dt>Title</dt><dd data-selected-title>Suphian Tweel</dd></div><div><dt>Description</dt><dd data-selected-description>Product, payments & AI. Good ideas deserve to get made.</dd></div></dl></section>
+    </main>
+    <footer class="site-footer"><span>SUPHIAN</span><p>A design study for a better first impression.</p><span>Made for the share.</span></footer>
+    <div class="sr-only" role="status" aria-live="polite" id="selection-status"></div>
+    <script type="module" src="./studio.js"></script>
+  </body>
+</html>

@@ -11,7 +11,19 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## Messaging previews (2026-09-27)
+## Editorial messaging preview (2026-09-27, latest)
+
+Suphian chose Editorial after reviewing Signature, Editorial and Contrast, and asked to save all
+three. The review gallery, PNGs and reproducible renderer live in `design/social-preview/` and
+`scripts/render-preview-directions.mjs`. The selected 1200 × 630 full-color PNG is published
+without re-encoding: the homepage statement on the left, full red SUPHIAN wordmark on the right.
+
+The Open Graph and Twitter title is now **Suphian Tweel**; the description is **Product, payments
+& AI. Good ideas deserve to get made.** Search descriptions and structured profile copy stay as
+recorded below. Image alt text describes the complete Editorial composition. Both social metadata
+formats point to the same new image URL; older image URLs remain available for cached cards.
+
+## Messaging previews (2026-09-27, superseded design)
 
 The preview keeps the approved SUPHIAN lettering and existing title, description and alt text.
 The primary Open Graph image is now a versioned 1200 × 1200 PNG with the wordmark at 90% width;
