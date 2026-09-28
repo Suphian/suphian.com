@@ -1,0 +1,5 @@
+# Reproducible build, browser QA captures, and standalone renderer exports.
+dist/
+screenshots/
+assets/*.html
+assets/fonts/

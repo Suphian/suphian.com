@@ -27,7 +27,7 @@
  *                  fields: { name|email|phone|message: { label, placeholder, required } },
  *                  validation: {...}, submit, sending, toasts: { success|rateLimited|error|blocked: { title, description } } }
  * footer         { copyright(year?), label, email: { label, href }, links: [{ label, href, ariaLabel }], backToTop }
- * seo            { origin, robots, lastModified, home: { title, description, ogTitle },
+ * seo            { origin, robots, lastModified, home: { title, description, ogTitle, ogDescription },
  *                  og: { type, siteName, image, imageAlt, locale }, twitter: { card, handle, image, imageAlt },
  *                  manifest: { name, description } }
  * structuredData { person, website }
@@ -51,7 +51,7 @@ const GMAIL_COMPOSE =
 // Role update (2026-09-26): Principal PM at Steadily since July 2026; YouTube is past (2020 – 2026).
 const HOME_TITLE = 'Suphian Tweel · Product, Payments & AI';
 // Suphian 2026-09-27: "The Steadily thing isn't a big part of my identity. It's just my role."
-// Search and social text lead with who he is: a product leader, payments at YouTube, then what he
+// Search text leads with who he is: a product leader, payments at YouTube, then what he
 // builds. Steadily stays a work chapter and the JSON-LD employer. AI is the site's positioning (the
 // title and edition): never a claim about YouTube, and no Abacus AI facts are supplied yet, so none here.
 // "Command center for MCA operators" is the Abacus chapter's own wording. 152 characters.
@@ -347,25 +347,26 @@ export const seo = {
   home: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    // One title everywhere: index.html and SEOHead used to disagree.
-    ogTitle: HOME_TITLE,
+    // Approved with the Editorial preview: concise text for a conversation card.
+    ogTitle: 'Suphian Tweel',
+    ogDescription: 'Product, payments & AI. Good ideas deserve to get made.',
   },
   og: {
     type: 'profile',
     siteName: 'Suphian Tweel',
-    // A square source fills messaging thumbnails; the centered lettering also fits a wide crop.
+    // Suphian selected Editorial from the three preserved preview directions.
     // Change the filename when replacing artwork so clients don't reuse a cached image.
-    image: `${ORIGIN}/og/suphian-share-20260927-v2.png`,
+    image: `${ORIGIN}/og/suphian-editorial-20260927.png`,
     imageWidth: 1200,
-    imageHeight: 1200,
-    imageAlt: 'SUPHIAN in inflated red letters on black.',
+    imageHeight: 630,
+    imageAlt: 'Good ideas deserve to get made. Suphian Tweel, Product / Payments / AI, with the red SUPHIAN wordmark.',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
     handle: '@suphian',
-    image: `${ORIGIN}/og/suphian-wide-20260927-v2.png`,
-    imageAlt: 'SUPHIAN in inflated red letters on black.',
+    image: `${ORIGIN}/og/suphian-editorial-20260927.png`,
+    imageAlt: 'Good ideas deserve to get made. Suphian Tweel, Product / Payments / AI, with the red SUPHIAN wordmark.',
   },
   manifest: {
     name: HOME_TITLE,

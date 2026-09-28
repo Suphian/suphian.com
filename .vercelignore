@@ -1,5 +1,6 @@
 qa/
 assets-src/
+design/
 supabase/
 .claude/
 .github/
