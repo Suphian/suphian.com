@@ -14,17 +14,17 @@
     <meta property="og:title" content="Suphian — Preview studio" />
     <meta property="og:description" content="Three social preview designs. Signature, Editorial and Contrast." />
     <meta property="og:url" content="https://suphian-preview-studio.vercel.app/" />
-    <meta property="og:image" content="https://suphian.com/og/suphian-editorial-20260927.png" />
-    <meta property="og:image:secure_url" content="https://suphian.com/og/suphian-editorial-20260927.png" />
+    <meta property="og:image" content="https://suphian.com/og/suphian-signature-square-20260927.png" />
+    <meta property="og:image:secure_url" content="https://suphian.com/og/suphian-signature-square-20260927.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Good ideas deserve to get made. Suphian Tweel, Product / Payments / AI, with the full red SUPHIAN wordmark." />
+    <meta property="og:image:height" content="1200" />
+    <meta property="og:image:alt" content="The complete red SUPHIAN signature on a dark background." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Suphian — Preview studio" />
     <meta name="twitter:description" content="Three social preview designs. Signature, Editorial and Contrast." />
-    <meta name="twitter:image" content="https://suphian.com/og/suphian-editorial-20260927.png" />
-    <meta name="twitter:image:alt" content="Good ideas deserve to get made. Suphian Tweel and the full red SUPHIAN wordmark." />
+    <meta name="twitter:image" content="https://suphian.com/og/suphian-signature-square-20260927.png" />
+    <meta name="twitter:image:alt" content="The complete red SUPHIAN signature on a dark background." />
     <link rel="stylesheet" href="./studio.css" />
   </head>
   <body>
@@ -45,8 +45,8 @@
       <section class="artwork-section" aria-label="Preview art directions">
         <div class="artwork-toolbar">
           <div class="direction-switcher" role="group" aria-label="Choose an art direction">
-            <button class="direction-button" type="button" data-direction="signature" aria-pressed="false"><span class="direction-number">01</span>Signature</button>
-            <button class="direction-button is-selected" type="button" data-direction="editorial" aria-pressed="true"><span class="direction-number">02</span>Editorial<span class="recommended-marker" aria-label="Your pick"></span></button>
+            <button class="direction-button is-selected" type="button" data-direction="signature" aria-pressed="true"><span class="direction-number">01</span>Signature<span class="recommended-marker" aria-label="Selected"></span></button>
+            <button class="direction-button" type="button" data-direction="editorial" aria-pressed="false"><span class="direction-number">02</span>Editorial</button>
             <button class="direction-button" type="button" data-direction="contrast" aria-pressed="false"><span class="direction-number">03</span>Contrast</button>
           </div>
           <div class="viewer-control" role="group" aria-label="Viewer background">
@@ -56,28 +56,33 @@
         </div>
 
         <div class="artwork-viewer" id="artwork-viewer" data-theme="light">
-          <div class="viewer-topline"><span id="viewer-label">02 / EDITORIAL</span><span>1200 × 630</span></div>
-          <a class="hero-image-link" id="hero-image-link" href="./assets/editorial.png" target="_blank" rel="noopener" aria-label="Open Editorial artwork at full size"><img class="hero-image" id="hero-image" src="./assets/editorial.png" width="1200" height="630" alt="Editorial social preview featuring the full Suphian artwork" /></a>
+          <div class="viewer-topline"><span id="viewer-label">01 / SIGNATURE</span><span>1200 × 630</span></div>
+          <a class="hero-image-link" id="hero-image-link" href="./assets/signature.png" target="_blank" rel="noopener" aria-label="Open Signature artwork at full size"><img class="hero-image" id="hero-image" src="./assets/signature.png" width="1200" height="630" alt="Signature social preview featuring the full Suphian artwork" /></a>
           <div class="viewer-bottomline"><span>Artwork preview</span><span>suphian.com</span></div>
         </div>
 
         <div class="artwork-caption">
-          <div class="direction-description"><div class="caption-heading"><h2 id="direction-title">Editorial</h2><span class="recommendation" id="recommendation">Your pick</span></div><p id="direction-description">The homepage statement leads, paired with the full wordmark and your name. More editorial and personal.</p></div>
-          <div class="asset-actions"><a class="download-link" id="download-link" href="./assets/editorial.png" download="suphian-editorial-1200x630.png">Download PNG<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg></a><a class="fullsize-link" id="fullsize-link" href="./assets/editorial.png" target="_blank" rel="noopener">Open full size<span aria-hidden="true">↗</span></a></div>
+          <div class="direction-description"><div class="caption-heading"><h2 id="direction-title">Signature</h2><span class="recommendation" id="recommendation">Selected</span></div><p id="direction-description">The full homepage wordmark on a dark, softly lit background. A dedicated square export keeps the whole signature visible in compact and wide messaging cards.</p></div>
+          <div class="asset-actions"><a class="download-link" id="download-link" href="./assets/signature.png" download="suphian-signature-1200x630.png">Download original PNG<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg></a><a class="fullsize-link" id="fullsize-link" href="./assets/signature.png" target="_blank" rel="noopener">Open full size<span aria-hidden="true">↗</span></a></div>
+        </div>
+        <div class="messaging-export" id="messaging-export">
+          <p><strong>The messaging export</strong><span>1200 × 1200. The full signature stays inside square and wide center crops.</span></p>
+          <a class="download-link" id="square-download-link" href="./assets/signature-square.png" download="suphian-signature-1200x1200.png">Download square PNG<span aria-hidden="true">↓</span></a>
         </div>
       </section>
 
       <section class="context-section" aria-labelledby="context-title">
         <div class="section-heading"><div><p class="eyebrow">THE REAL SIZE TEST</p><h2 id="context-title">Good in a conversation.</h2></div><p>Layout mockups at messaging-card size. <br />Actual iMessage and WhatsApp rendering can vary.</p></div>
         <div class="context-grid">
-          <article class="context-panel imessage-panel"><div class="panel-heading"><h3>iMessage</h3><span>Layout mockup</span></div><div class="message-scene"><p class="conversation-note">Take a look at this.</p><div class="message-card imessage-card"><img class="context-image" data-selected-image src="./assets/editorial.png" width="1200" height="630" alt="Editorial artwork at iMessage card size" /><div class="message-card-copy"><strong data-selected-title>Suphian Tweel</strong><span class="imessage-domain">suphian.com</span></div></div><span class="delivery-label">Delivered</span></div></article>
-          <article class="context-panel whatsapp-panel"><div class="panel-heading"><h3>WhatsApp</h3><span>Layout mockup</span></div><div class="message-scene"><div class="whatsapp-bubble"><div class="message-card whatsapp-card"><img class="context-image" data-selected-image src="./assets/editorial.png" width="1200" height="630" alt="Editorial artwork at WhatsApp card size" /><div class="message-card-copy"><span class="whatsapp-domain">suphian.com</span><strong data-selected-title>Suphian Tweel</strong><span class="whatsapp-description" data-selected-description>Product, payments & AI. Good ideas deserve to get made.</span></div></div><div class="whatsapp-linkline"><span>https://suphian.com</span><span class="message-time">9:41 <span class="read-ticks" aria-label="Read">✓✓</span></span></div></div></div></article>
+          <article class="context-panel whatsapp-panel compact-panel"><div class="panel-heading"><h3>WhatsApp · compact</h3><span>Square crop mockup</span></div><div class="compact-content"><div class="message-scene"><div class="whatsapp-bubble"><div class="message-card whatsapp-card compact-card"><img class="compact-image" data-selected-image src="./assets/signature-square.png" width="1200" height="1200" alt="Full Signature artwork in a square WhatsApp thumbnail" /><div class="message-card-copy"><strong data-selected-title>Suphian Tweel</strong><span class="whatsapp-description" data-selected-description>Product, payments &amp; AI. Good ideas deserve to get made.</span><span class="whatsapp-domain">suphian.com</span></div></div><div class="whatsapp-linkline"><span>https://suphian.com</span><span class="message-time">9:41 <span class="read-ticks" aria-label="Read">✓✓</span></span></div></div></div><p class="crop-explanation">Compact cards use a square thumbnail. This simulates a center crop, including the clipping in the saved wide designs. Apps control the final layout.</p></div></article>
+          <article class="context-panel imessage-panel"><div class="panel-heading"><h3>iMessage</h3><span>Layout mockup</span></div><div class="message-scene"><p class="conversation-note">Take a look at this.</p><div class="message-card imessage-card"><img class="context-image" data-selected-image src="./assets/signature-square.png" width="1200" height="1200" alt="Signature artwork at iMessage card size" /><div class="message-card-copy"><strong data-selected-title>Suphian Tweel</strong><span class="imessage-domain">suphian.com</span></div></div><span class="delivery-label">Delivered</span></div></article>
+          <article class="context-panel whatsapp-panel"><div class="panel-heading"><h3>WhatsApp</h3><span>Layout mockup</span></div><div class="message-scene"><div class="whatsapp-bubble"><div class="message-card whatsapp-card"><img class="context-image" data-selected-image src="./assets/signature-square.png" width="1200" height="1200" alt="Signature artwork at WhatsApp card size" /><div class="message-card-copy"><span class="whatsapp-domain">suphian.com</span><strong data-selected-title>Suphian Tweel</strong><span class="whatsapp-description" data-selected-description>Product, payments & AI. Good ideas deserve to get made.</span></div></div><div class="whatsapp-linkline"><span>https://suphian.com</span><span class="message-time">9:41 <span class="read-ticks" aria-label="Read">✓✓</span></span></div></div></div></article>
         </div>
       </section>
 
       <section class="comparison-section" aria-labelledby="comparison-title">
         <div class="section-heading"><div><p class="eyebrow">SIDE BY SIDE</p><h2 id="comparison-title">A clearer first impression.</h2></div><p>The previous image and your selected direction, <br />shown at exactly the same width.</p></div>
-        <div class="comparison-grid"><figure class="comparison-item current-comparison"><figcaption><span>Previous</span><span class="comparison-dimension">1200 × 1200</span></figcaption><div class="comparison-surface"><img src="./assets/current.png" width="1200" height="1200" alt="Previous Suphian social preview, shown at the same width as the proposed preview" /></div></figure><figure class="comparison-item new-comparison"><figcaption><span id="comparison-label">Editorial</span><span class="comparison-dimension">1200 × 630</span></figcaption><div class="comparison-surface"><img data-selected-image src="./assets/editorial.png" width="1200" height="630" alt="Proposed Editorial social preview, shown at the same width as the previous preview" /></div></figure></div>
+        <div class="comparison-grid"><figure class="comparison-item current-comparison"><figcaption><span>Previous</span><span class="comparison-dimension">1200 × 1200</span></figcaption><div class="comparison-surface"><img src="./assets/current.png" width="1200" height="1200" alt="Previous Suphian social preview, shown at the same width as the proposed preview" /></div></figure><figure class="comparison-item new-comparison"><figcaption><span id="comparison-label">Signature</span><span class="comparison-dimension">1200 × 630</span></figcaption><div class="comparison-surface"><img data-selected-image src="./assets/signature.png" width="1200" height="630" alt="Proposed Signature social preview, shown at the same width as the previous preview" /></div></figure></div>
       </section>
 
       <section class="metadata-section" aria-label="Suggested preview text"><div><p class="eyebrow">THE WORDS AROUND IT</p><h2>Keep it simple.</h2></div><dl class="metadata-list"><div><dt>Title</dt><dd data-selected-title>Suphian Tweel</dd></div><div><dt>Description</dt><dd data-selected-description>Product, payments & AI. Good ideas deserve to get made.</dd></div></dl></section>

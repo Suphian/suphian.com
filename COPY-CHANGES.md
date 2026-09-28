@@ -11,7 +11,20 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## Editorial messaging preview (2026-09-27, latest)
+## Signature messaging preview (2026-09-27, latest)
+
+After a real WhatsApp screenshot showed Editorial cropped into a square thumbnail, Suphian
+chose the full Signature design for both WhatsApp and iMessage. The primary image is now square,
+with the full red SUPHIAN centered inside the area shared by square and wide crops. Twitter
+gets a dedicated landscape export. The dark gradient, subtle diagonal and homepage vector
+lettering keep Signature's original design. Social title and description remain unchanged;
+alt text now describes Signature. Both asset URLs are fresh.
+
+All three original designs remain saved. The review studio now includes the compact square
+WhatsApp layout that exposed this issue, alongside the wide mockups, and identifies Signature
+as selected. These simulations test composition, not native-app behavior.
+
+## Editorial messaging preview (2026-09-27, superseded selection)
 
 Suphian chose Editorial after reviewing Signature, Editorial and Contrast, and asked to save all
 three. The review gallery, PNGs and reproducible renderer live in `design/social-preview/` and

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import test from 'node:test';
+import sharp from 'sharp';
 import { hero, site, story, seo } from '../src/content.js';
 import { crawlerResources, escapeHtml, renderSeoHtml, schemaGraph } from '../scripts/seo.mjs';
 
@@ -74,7 +75,7 @@ test('HTML and JSON-LD serialization cannot introduce markup from content', () =
 });
 
 test('the social card is a PNG small enough for WhatsApp and iMessage link previews', () => {
-  // Publish the approved Editorial artwork consistently across messaging and Twitter cards.
+  // Square Signature protects the compact messaging thumbnail; Twitter uses its wide export.
   // These are download and metadata checks; native apps control their own card layouts.
   const file = new URL(`../public${new URL(seo.og.image).pathname}`, import.meta.url);
   assert.ok(existsSync(file), `${seo.og.image} is in public/`);
@@ -85,13 +86,13 @@ test('the social card is a PNG small enough for WhatsApp and iMessage link previ
   assert.equal(bytes.readUInt32BE(16), seo.og.imageWidth);
   assert.equal(bytes.readUInt32BE(20), seo.og.imageHeight);
   assert.equal(seo.og.imageWidth, 1200);
-  assert.equal(seo.og.imageHeight, 630);
+  assert.equal(seo.og.imageHeight, 1200);
   const twitter = readFileSync(new URL(`../public${new URL(seo.twitter.image).pathname}`, import.meta.url));
   assert.deepEqual(twitter.subarray(0, 8), bytes.subarray(0, 8), 'both cards are PNG');
   assert.equal(twitter.readUInt32BE(16), 1200);
   assert.equal(twitter.readUInt32BE(20), 630);
   assert.ok(twitter.length < 250 * 1024);
-  assert.equal(seo.twitter.image, seo.og.image);
+  assert.notEqual(seo.twitter.image, seo.og.image);
   assert.equal(seo.home.ogTitle, 'Suphian Tweel');
   assert.equal(seo.home.ogDescription, 'Product, payments & AI. Good ideas deserve to get made.');
   for (const tag of ['og:description', 'twitter:description']) {
@@ -101,4 +102,33 @@ test('the social card is a PNG small enough for WhatsApp and iMessage link previ
   assert.ok(html.includes(`<meta name="twitter:image" content="${seo.twitter.image}"`));
   assert.match(html, /<meta property="og:image:type" content="image\/png"/);
   assert.match(html, new RegExp(`<meta property="og:image:width" content="${seo.og.imageWidth}"`));
+});
+
+test('the rendered full wordmark survives square thumbnails and a centered wide crop', async () => {
+  // Regression for the real WhatsApp screenshot: a wide Editorial composition lost
+  // both headline and logo when centered into a square. Check the artwork pixels,
+  // not only declared metadata dimensions or a large-card mockup.
+  const file = new URL(`../public${new URL(seo.og.image).pathname}`, import.meta.url);
+  const { data, info } = await sharp(readFileSync(file)).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const bounds = { left: info.width, top: info.height, right: -1, bottom: -1 };
+  let redPixels = 0;
+  for (let y = 0; y < info.height; y++) {
+    for (let x = 0; x < info.width; x++) {
+      const offset = (y * info.width + x) * info.channels;
+      const [r, g, b] = data.subarray(offset, offset + 3);
+      if (r > 150 && g < 100 && b < 100 && r - g > 80) {
+        redPixels++;
+        bounds.left = Math.min(bounds.left, x);
+        bounds.right = Math.max(bounds.right, x);
+        bounds.top = Math.min(bounds.top, y);
+        bounds.bottom = Math.max(bounds.bottom, y);
+      }
+    }
+  }
+  assert.ok(redPixels > 200000, 'the full wordmark has substantial visual presence');
+  assert.ok(bounds.right - bounds.left > 1000, 'the name fills the square thumbnail width');
+  assert.ok(bounds.left >= 32 && bounds.right < info.width - 32, 'square crop preserves both ends');
+  const wideCropTop = (info.height - 630) / 2;
+  assert.ok(bounds.top >= wideCropTop + 32 && bounds.bottom < wideCropTop + 630 - 32,
+    `wide crop preserves all red artwork: ${JSON.stringify(bounds)}`);
 });

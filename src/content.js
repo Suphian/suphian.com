@@ -347,26 +347,26 @@ export const seo = {
   home: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    // Approved with the Editorial preview: concise text for a conversation card.
+    // Concise text for a conversation card, kept with the Signature design.
     ogTitle: 'Suphian Tweel',
     ogDescription: 'Product, payments & AI. Good ideas deserve to get made.',
   },
   og: {
     type: 'profile',
     siteName: 'Suphian Tweel',
-    // Suphian selected Editorial from the three preserved preview directions.
+    // Signature's centered full name fits both square thumbnails and wide crops.
     // Change the filename when replacing artwork so clients don't reuse a cached image.
-    image: `${ORIGIN}/og/suphian-editorial-20260927.png`,
+    image: `${ORIGIN}/og/suphian-signature-square-20260927.png`,
     imageWidth: 1200,
-    imageHeight: 630,
-    imageAlt: 'Good ideas deserve to get made. Suphian Tweel, Product / Payments / AI, with the red SUPHIAN wordmark.',
+    imageHeight: 1200,
+    imageAlt: 'The full SUPHIAN wordmark in red on a softly lit dark background.',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
     handle: '@suphian',
-    image: `${ORIGIN}/og/suphian-editorial-20260927.png`,
-    imageAlt: 'Good ideas deserve to get made. Suphian Tweel, Product / Payments / AI, with the red SUPHIAN wordmark.',
+    image: `${ORIGIN}/og/suphian-signature-wide-20260927.png`,
+    imageAlt: 'The full SUPHIAN wordmark in red on a softly lit dark background.',
   },
   manifest: {
     name: HOME_TITLE,

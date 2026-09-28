@@ -2,7 +2,7 @@ const directions = {
   signature: {
     name: 'Signature',
     number: '01',
-    description: 'The full homepage wordmark on a dark, softly lit background. The closest direction to the website.',
+    description: 'The full homepage wordmark on a dark, softly lit background. A dedicated square export keeps the whole signature visible in compact and wide messaging cards.',
     title: 'Suphian Tweel',
     subtitle: 'Product, payments & AI. Good ideas deserve to get made.',
   },
@@ -27,6 +27,7 @@ const sources = {
   editorial: new URL('./assets/editorial.png', import.meta.url).href,
   contrast: new URL('./assets/contrast.png', import.meta.url).href,
 };
+const signatureSquare = new URL('./assets/signature-square.png', import.meta.url).href;
 const directionButtons = [...document.querySelectorAll('[data-direction]')];
 const themeButtons = [...document.querySelectorAll('[data-theme]')].filter(element => element.tagName === 'BUTTON');
 
@@ -49,12 +50,16 @@ function selectDirection(key) {
   document.getElementById('viewer-label').textContent = `${direction.number} / ${direction.name.toUpperCase()}`;
   document.getElementById('direction-title').textContent = direction.name;
   document.getElementById('direction-description').textContent = direction.description;
-  document.getElementById('recommendation').hidden = key !== 'editorial';
+  document.getElementById('recommendation').hidden = key !== 'signature';
+  document.getElementById('messaging-export').hidden = key !== 'signature';
   document.getElementById('comparison-label').textContent = direction.name;
 
   document.querySelectorAll('[data-selected-image]').forEach(img => {
-    img.src = source;
-    const context = img.closest('.imessage-panel') ? 'iMessage card size' : img.closest('.whatsapp-panel') ? 'WhatsApp card size' : 'the same width as the previous preview';
+    const isMessaging = Boolean(img.closest('.context-panel'));
+    img.src = key === 'signature' && isMessaging ? signatureSquare : source;
+    img.width = 1200;
+    img.height = key === 'signature' && isMessaging ? 1200 : 630;
+    const context = img.closest('.compact-panel') ? 'a square center-cropped WhatsApp thumbnail' : img.closest('.imessage-panel') ? 'iMessage card size' : img.closest('.whatsapp-panel') ? 'WhatsApp card size' : 'the same width as the previous preview';
     img.alt = `${direction.name} social preview shown at ${context}`;
   });
   document.querySelectorAll('[data-selected-title]').forEach(element => { element.textContent = direction.title; });
@@ -92,7 +97,8 @@ themeButtons.forEach(button => button.addEventListener('click', () => {
 }));
 
 const requestedDirection = new URLSearchParams(window.location.search).get('direction');
-selectDirection(requestedDirection && Object.hasOwn(directions, requestedDirection) ? requestedDirection : 'editorial');
+document.getElementById('square-download-link').href = signatureSquare;
+selectDirection(requestedDirection && Object.hasOwn(directions, requestedDirection) ? requestedDirection : 'signature');
 
 Object.keys(directions).forEach(key => {
   const img = new Image();

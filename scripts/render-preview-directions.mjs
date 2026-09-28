@@ -4,8 +4,8 @@ import { chromium } from '@playwright/test';
 import sharp from 'sharp';
 import { createLogoSvg } from '../src/wordmark/lettering.js';
 
-// Preserved social-preview directions. Editorial was selected for production
-// on 2026-09-27; keep Signature and Contrast available in the review studio.
+// Preserved original social-preview directions. Production now uses Signature
+// square/wide exports from export-social-card.mjs; keep these originals intact.
 // Run from any working directory: node scripts/render-preview-directions.mjs
 const out = new URL('../design/social-preview/assets/', import.meta.url);
 await mkdir(out, { recursive: true });

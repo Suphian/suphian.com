@@ -93,7 +93,7 @@ npm run e2e:hmr                   # dev-server hot-reload regression; run it on 
 | `node src/favicon/build-icons.mjs` | `public/favicon-suph.svg` and `public/icons/*.png` (no browser needed) |
 | `node src/favicon/qa-favicon.mjs` | Favicon QA sheets in `qa/` |
 | `node scripts/trace-say-hello.mjs` | `public/contact/say-hello.svg` from `src/sayhello/lettering.js` |
-| `node scripts/export-social-card.mjs` | Copies the approved Editorial PNG from the saved design gallery into `public/og/` without re-encoding; also exports `public/favicon.ico` |
+| `node scripts/export-social-card.mjs` | Renders Signature as a centered square for messaging and a landscape Twitter card, saves matching gallery exports, and exports `public/favicon.ico` (needs Playwright Chromium) |
 | `node scripts/render-preview-directions.mjs` | Regenerates all three 1200 × 630 preview designs from the homepage vector and local fonts (needs Playwright Chromium). Saved designs and review gallery: [design/social-preview/](design/social-preview/README.md) |
 | `node scripts/preview-contact-emails.mjs [out-dir] [--no-png]` | Both emails as HTML, text and (unless `--no-png`) phone and desktop PNGs, in `<tmp>/suphian-email-preview` by default. Sends nothing. |
 
