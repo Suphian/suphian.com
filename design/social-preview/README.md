@@ -1,5 +1,7 @@
 # Suphian social preview studio
 
+Public gallery: [suphian-preview-studio.vercel.app](https://suphian-preview-studio.vercel.app/).
+
 All three approved designs are preserved here as 1200 × 630 PNGs:
 
 - [Signature](assets/signature.png): the full red wordmark on a softly lit dark canvas.
@@ -33,3 +35,20 @@ node scripts/render-preview-directions.mjs
 The renderer uses the shared SVG wordmark from `src/wordmark/lettering.js` and the existing PP Neue Montreal font files. It renders at twice the final resolution, then creates full RGB PNGs at 1200 × 630. The editable compositions live in `scripts/render-preview-directions.mjs`.
 
 Regeneration writes the three PNGs and standalone HTML inspection exports to `assets/`. The HTML exports, build output, and QA screenshots are ignored. The archived previous preview is never regenerated.
+
+## Publish the gallery
+
+The separate Vercel project is `suph/suphian-preview-studio`. Deploy the built static files from an isolated staging directory so the main site's project link remains untouched. From the repository root in PowerShell:
+
+```powershell
+npx.cmd vite build design/social-preview --config design/social-preview/vite.config.mjs
+if ($LASTEXITCODE -ne 0) { throw 'Gallery build failed' }
+$galleryStage = Join-Path $env:TEMP ('suphian-preview-studio-' + [guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $galleryStage | Out-Null
+Copy-Item -LiteralPath 'design/social-preview/dist/index.html', 'design/social-preview/dist/assets', 'design/social-preview/vercel.json' -Destination $galleryStage -Recurse
+vercel.cmd link --yes --scope suph --project suphian-preview-studio --cwd $galleryStage
+if ($LASTEXITCODE -ne 0) { throw 'Gallery project linking failed' }
+vercel.cmd deploy --prod --yes --scope suph --cwd $galleryStage
+```
+
+The stable public address is `https://suphian-preview-studio.vercel.app/`. The gallery's canonical and sharing metadata use that address; its sharing image is the approved Editorial asset on `suphian.com`. The static Vercel configuration adds `X-Robots-Tag: noindex, nofollow` and does not change deployment protection settings.
