@@ -142,11 +142,13 @@ export function chapterView(chapter, index = 0) {
 }
 
 /**
- * The line beside the active item: "Role · Years", the same for every chapter
- * (Suphian 2026-09-28: suph.app takes Abacus Labs' format). Skips empty parts,
- * so suph.app, which has no role, reads just "Current".
+ * The line beside the active item in the list: "Role · Years" for a job. The
+ * studio's chapters (kind: 'side', Abacus Labs and suph.app) have none. Suphian
+ * 2026-09-28: "on the studio I don't need to say anything for Abacus Labs and
+ * suph.app" on the homepage; their open cards keep role and years.
  */
-export const metaLine = (chapter) => [chapter.role, chapter.period].filter(Boolean).join(' · ');
+export const metaLine = (chapter) =>
+  chapter.kind === 'side' ? '' : [chapter.role, chapter.period].filter(Boolean).join(' · ');
 
 /**
  * The chapters as the list shows them: two labelled lists, the jobs ('work')

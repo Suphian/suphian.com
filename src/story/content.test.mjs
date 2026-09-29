@@ -144,10 +144,11 @@ test('side projects are marked as side projects, not jobs (Suphian)', () => {
   // The flag: exactly Abacus Labs and suph.app; the four jobs carry none.
   assert.deepEqual(story.chapters.filter((c) => c.kind === 'side').map((c) => c.id), SIDE);
   for (const id of JOBS) assert.equal(chapter(id).kind, undefined, id);
-  // The meta line beside each name, in one format (Suphian 2026-09-28: "the same format as
-  // Abacus Labs"). suph.app has no role, so it reads just its years, with no stray separator.
-  assert.equal(metaLine(chapter('abacus')), 'Founder · Current');
-  assert.equal(metaLine(chapter('suph-app')), 'Current');
+  // No line beside the studio's names on the homepage (Suphian 2026-09-28: "on the studio I
+  // don't need to say anything for Abacus Labs and suph.app"); their open cards keep it.
+  assert.equal(metaLine(chapter('abacus')), '');
+  assert.equal(metaLine(chapter('suph-app')), '');
+  assert.equal(chapter('abacus').role, 'Founder', 'the card still says Founder');
   // The second list's label and its divider: sentence case, not a tiny uppercase label.
   assert.equal(story.labels.sideProjects, 'Studio'); // Suphian 2026-09-28: not "side projects"
   assert.equal(story.labels.list, 'Work');

@@ -11,7 +11,11 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## suph.app: Abacus Labs' format, weekend experiments, forest green (2026-09-28, latest)
+## Studio rows: no line beside the name (2026-09-28, latest)
+
+Suphian: "On the studio I don't need to say 'Current'… I don't need to say anything for Abacus Labs and suph.app on the homepage." The list rows for Abacus Labs and suph.app show only the name; the jobs keep "Role · Years". The open cards keep "Founder" / "Current · Internet".
+
+## suph.app: Abacus Labs' format, weekend experiments, forest green (2026-09-28)
 
 Suphian: "With the same format as Abacus Labs, like founder, current, internet. I like that format." Then: "Maybe I don't need a title on it." On the paragraph (his words, lightly tightened), he doesn't want to promise a project every month. On colour: "I don't know if I love the mustard colour… maybe green, the kind of forest green that the Quran website uses."
 

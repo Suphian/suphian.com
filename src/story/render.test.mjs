@@ -73,15 +73,15 @@ test('the chapters render as two labelled lists: "Work", then "Studio"', () => {
   assert.deepEqual(text(lists[1].body, 'story-item-name'), ['Abacus Labs', 'suph.app']);
 });
 
-test('the studio’s meta lines share one format: "Founder · Current", and suph.app’s "Current" (Suphian 2026-09-28)', () => {
-  // "With the same format as Abacus Labs", then "Maybe I don't need a title on it": no role,
-  // so just the years, with no stray separator, build name or month.
-  assert.deepEqual(text(lists[1].body, 'story-item-meta'), ['Founder · Current', 'Current']);
-  assert.doesNotMatch(text(lists[1].body, 'story-item-meta')[1], /·|Toga|August|Internet/);
+test('the studio’s rows carry no meta line on the homepage (Suphian 2026-09-28)', () => {
+  // "On the studio I don't need to say anything for Abacus Labs and suph.app": no meta
+  // element at all, not an empty one; the four jobs keep theirs.
+  assert.deepEqual(text(lists[1].body, 'story-item-meta'), []);
+  assert.equal(text(lists[0].body, 'story-item-meta').length, 4);
   assert.deepEqual(text(lists[1].body, 'story-item-name'), ['Abacus Labs', 'suph.app']);
   for (const meta of text(lists[0].body, 'story-item-meta')) assert.doesNotMatch(meta, /side project/i, meta);
-  // Every meta line is the chapter's own role · years.
-  assert.deepEqual(text(html, 'story-item-meta'), story.chapters.map(metaLine));
+  // Every meta line is the chapter's own role · years; the studio's are absent.
+  assert.deepEqual(text(html, 'story-item-meta'), story.chapters.map(metaLine).filter(Boolean));
 });
 
 test('the "Studio" divider renders exactly once, between the lists, and is not a chapter', () => {

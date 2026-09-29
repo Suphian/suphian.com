@@ -159,7 +159,7 @@ test('suph.app’s card: years, his paragraph, then one line and one link per pr
   const row = suphApp(page);
   await row.scrollIntoViewIfNeeded();
   await expect(row.locator('.story-item-name')).toHaveText('suph.app');
-  await expect(row.locator('.story-item-meta')).toHaveText('Current');
+  await expect(row.locator('.story-item-meta')).toHaveCount(0); // Suphian 2026-09-28: nothing beside the studio's names
   const detail = await openSuphApp(page);
 
   // Like every chapter, minus the title: the years line (the dialog's description), the

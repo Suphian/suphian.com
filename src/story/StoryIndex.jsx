@@ -79,8 +79,13 @@ const StoryRow = memo(function StoryRow({ chapter, index, distance, hidden, butt
           className="story-item-name"
         >
           {chapter.name}
-        </span>{' '}
-        <span className="story-item-meta">{metaLine(chapter)}</span>
+        </span>
+        {metaLine(chapter) && (
+          <>
+            {' '}
+            <span className="story-item-meta">{metaLine(chapter)}</span>
+          </>
+        )}
         <span className="story-item-arrow" aria-hidden="true">→</span>
       </button>
     </li>
