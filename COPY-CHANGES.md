@@ -11,7 +11,17 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## suph.app: a list, not a toggle (2026-09-28, latest)
+## suph.app pages live (2026-09-28, latest)
+
+Suphian: "App is live with the three different projects." suph.app is now a hub (the third card is "Coming soon", not listed here).
+
+| Link | Was | Now |
+|---|---|---|
+| Play The Toga Is Dead | https://suph.app | https://suph.app/Toga |
+| Quran Art | See Quran Art on GitHub → github.com/Suphian/quran-art | See Quran Art → https://suph.app/Quran |
+| Visit suph.app | https://suph.app | unchanged |
+
+## suph.app: a list, not a toggle (2026-09-28)
 
 Suphian reviewed the month toggle: "No, you did it wrong. Don't want the next arrows. Remove the next arrows. It should just be a list." On the open card: "Just say suph.app. This is a place where I put a different project out every month. And then you can go to each one of the individual projects", and "It should have a link to the main suph.app homepage as well". On the row: "Why does suph.app have 'The Toga Is Dead · August 2026 · Internet'? Seems way too unnecessary."
 

@@ -189,13 +189,13 @@ test('suph.app’s open card: the intro line, Visit suph.app, then every build, 
       month: ['2026-08', 'August 2026'],
       name: 'The Toga Is Dead',
       summary: app.builds[0].summary,
-      links: [['Play The Toga Is Dead', 'https://suph.app']],
+      links: [['Play The Toga Is Dead', 'https://suph.app/Toga']],
     },
     {
       month: ['2026-07', 'July 2026'],
       name: 'Quran Art',
       summary: app.builds[1].summary,
-      links: [['See Quran Art on GitHub', 'https://github.com/Suphian/quran-art']],
+      links: [['See Quran Art', 'https://suph.app/Quran']],
     },
   ]);
   noToggle(markup);

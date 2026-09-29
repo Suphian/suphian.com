@@ -273,13 +273,12 @@ export const story = {
       // Adding a new month: put a new build at the TOP of this list:
       //   { month: 'YYYY-MM', slug, name, summary, image: { src, nudge }, color?, links: [{ label, href }] }
       // - month: the month it shipped. The site writes it out ("October 2026").
-      // - slug: short, lowercase and unique. Suphian's plan (2026-09-28) is one path per build,
-      //   suph.app/<slug>. Those paths don't exist yet, so links point at what works today; when
-      //   suph.app/<slug> goes live, point that build's link there.
+      // - slug: short, lowercase and unique. suph.app (live 2026-09-28) has one page per build, at a
+      //   capitalized path (suph.app/Toga, suph.app/Quran); a new build links to its page there.
       // - image: a white mark in public/work with a viewBox tight to its ink (assets-src/work/README.txt);
       //   `node --test src/story/` measures its nudge. color: optional, the card's fill (white must reach 3:1 on it).
       // - summary: only facts Suphian has confirmed, without repeating the name printed above it.
-      // - links: where to find it today.
+      // - links: its page on suph.app.
       // Then log the copy in COPY-CHANGES.md, run `node scripts/sync-seo.mjs` and `npm test`.
       builds: [
         {
@@ -294,7 +293,8 @@ export const story = {
           // A mark with no descender: its measured nudge is 0.
           image: { src: '/work/suph-app.svg', nudge: 0 },
           // suph.app itself serves the game today; suph.app/toga does not exist yet.
-          links: [{ label: 'Play The Toga Is Dead', href: 'https://suph.app' }],
+          // Suphian 2026-09-28: suph.app is now a hub with a page per project.
+          links: [{ label: 'Play The Toga Is Dead', href: 'https://suph.app/Toga' }],
         },
         {
           // Suphian 2026-09-28: "'the Quran GitHub' should be from the previous month", July 2026.
@@ -309,7 +309,7 @@ export const story = {
           // with no descender (nudge 0).
           image: { src: '/work/quran-art.svg', nudge: 0 },
           // suph.app/quran does not exist yet: the code on GitHub is what works today.
-          links: [{ label: 'See Quran Art on GitHub', href: 'https://github.com/Suphian/quran-art' }],
+          links: [{ label: 'See Quran Art', href: 'https://suph.app/Quran' }],
         },
       ],
     },

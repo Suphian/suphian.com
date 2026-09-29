@@ -194,7 +194,7 @@ test('suph.app: Suphian’s monthly builds, with his facts only', () => {
     'A 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.',
   );
   // suph.app itself serves the game; suph.app/toga does not exist yet.
-  assert.deepEqual(toga.links, [{ label: 'Play The Toga Is Dead', href: 'https://suph.app' }]);
+  assert.deepEqual(toga.links, [{ label: 'Play The Toga Is Dead', href: 'https://suph.app/Toga' }]);
   // Quran Art: from its README only, without the dataset attribution (it looks wrong).
   // Its star is a placeholder until Suphian supplies artwork.
   assert.deepEqual(quran.image, { src: '/work/quran-art.svg', nudge: 0 });
@@ -205,10 +205,11 @@ test('suph.app: Suphian’s monthly builds, with his facts only', () => {
   );
   for (const build of app.builds) assert.ok(!build.summary.includes(build.name), `${build.slug}: the summary repeats the name`);
   assert.doesNotMatch(quran.summary, /Qatar|Oxford|corpus|dataset/i);
-  assert.deepEqual(quran.links, [{ label: 'See Quran Art on GitHub', href: 'https://github.com/Suphian/quran-art' }]);
-  // Suphian's planned suph.app/<slug> paths 404 today: no build links to one yet.
+  assert.deepEqual(quran.links, [{ label: 'See Quran Art', href: 'https://suph.app/Quran' }]);
+  // suph.app went live 2026-09-28 with a page per build (suph.app/Toga, suph.app/Quran):
+  // every build links to its own page, matched by slug.
   for (const build of app.builds) {
-    for (const link of build.links) assert.doesNotMatch(link.href, /^https:\/\/suph\.app\/./, link.href);
+    assert.ok(build.links.some((link) => link.href.toLowerCase() === `https://suph.app/${build.slug}`), build.slug);
   }
 });
 

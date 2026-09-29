@@ -171,8 +171,8 @@ test('suph.app lists every build by month under its intro and link; the image fo
   await expect(builds).toHaveCount(2);
   await expect(builds.locator('.story-build-month')).toHaveText(['August 2026', 'July 2026']);
   await expect(builds.locator('.story-build-name')).toHaveText(['The Toga Is Dead', 'Quran Art']);
-  await expect(builds.nth(0).getByRole('link', { name: /Play The Toga Is Dead/ })).toHaveAttribute('href', 'https://suph.app');
-  await expect(builds.nth(1).getByRole('link', { name: /See Quran Art on GitHub/ })).toHaveAttribute('href', 'https://github.com/Suphian/quran-art');
+  await expect(builds.nth(0).getByRole('link', { name: /Play The Toga Is Dead/ })).toHaveAttribute('href', 'https://suph.app/Toga');
+  await expect(builds.nth(1).getByRole('link', { name: /See Quran Art/ })).toHaveAttribute('href', 'https://suph.app/Quran');
   await expect(detail.getByRole('button')).toHaveText([/Back/]);
   await expect(detail).not.toContainText(/Previous|Next/);
 
