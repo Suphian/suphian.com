@@ -1,13 +1,17 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  buildsOf,
   cardImage,
   chapterGroups,
+  chapterView,
   clampIndex,
   distanceBucket,
   flipDelta,
   followScroll,
+  formatMonth,
   groupIndexOf,
+  hasMonthToggle,
   indexFromProgress,
   isVisibleRect,
   logoShift,
@@ -104,6 +108,72 @@ test('metaLine joins role and period', () => {
   assert.equal(metaLine({ role: 'Side project', period: 'Current' }), 'Side project · Current');
   assert.equal(metaLine({ role: 'Side project', period: 'New build every month' }), 'Side project · New build every month');
   assert.equal(metaLine({ role: 'Role' }), 'Role');
+});
+
+// A made-up chapter of monthly builds: fixtures only, nothing here is published.
+const MONTHLY = {
+  id: 'fixture',
+  name: 'fixture.app',
+  role: 'Playground',
+  period: 'New build every month',
+  location: 'Internet',
+  color: '#AC8243',
+  builds: [
+    { month: '2026-10', slug: 'newer', name: 'Newer', summary: 'Newer summary.', image: { src: '/work/newer.svg', nudge: 0 }, color: '#123456', links: [{ label: 'Newer', href: 'https://example.com/newer' }] },
+    { month: '2026-08', slug: 'older', name: 'Older', summary: 'Older summary.', image: { src: '/work/older.svg', nudge: 0.01 }, links: [{ label: 'Older', href: 'https://example.com/older' }] },
+  ],
+};
+
+test('formatMonth writes a build’s month out in full: "September 2026"', () => {
+  assert.equal(formatMonth('2026-09'), 'September 2026');
+  assert.equal(formatMonth('2025-07'), 'July 2025');
+  assert.equal(formatMonth('2027-01'), 'January 2027');
+  assert.equal(formatMonth('2026-12'), 'December 2026');
+  // Never abbreviated, and the same names Intl uses for en-US.
+  for (let m = 1; m <= 12; m++) {
+    const month = `2026-${String(m).padStart(2, '0')}`;
+    const expected = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(Date.UTC(2026, m - 1, 1));
+    assert.equal(formatMonth(month), expected, month);
+  }
+  for (const bad of ['2026-9', '2026-13', '2026-00', 'September 2026', '2026-09-01', '', null, undefined]) assert.equal(formatMonth(bad), '', String(bad));
+});
+
+test('buildsOf and hasMonthToggle: the toggle needs two or more builds', () => {
+  assert.deepEqual(buildsOf({ id: 'job' }), []);
+  assert.deepEqual(buildsOf(null), []);
+  assert.equal(buildsOf(MONTHLY), MONTHLY.builds);
+  assert.equal(hasMonthToggle(MONTHLY.builds), true);
+  assert.equal(hasMonthToggle(MONTHLY.builds.slice(0, 1)), false);
+  assert.equal(hasMonthToggle([]), false);
+  assert.equal(hasMonthToggle(undefined), false);
+});
+
+test('chapterView shows one build: the newest unless asked, its name and month as the role and years lines', () => {
+  const newest = chapterView(MONTHLY);
+  assert.equal(newest.id, 'fixture');
+  assert.equal(newest.name, 'fixture.app', 'the chapter keeps its own name');
+  assert.equal(newest.role, 'Newer');
+  assert.equal(newest.period, 'October 2026');
+  assert.equal(newest.location, 'Internet');
+  assert.deepEqual(newest.image, { src: '/work/newer.svg', nudge: 0 });
+  assert.equal(newest.color, '#123456', 'a build’s own color wins');
+  assert.equal(newest.summary, 'Newer summary.');
+  assert.deepEqual(newest.links, MONTHLY.builds[0].links);
+  const older = chapterView(MONTHLY, 1);
+  assert.equal(older.role, 'Older');
+  assert.equal(older.period, 'August 2026');
+  assert.equal(older.color, '#AC8243', 'otherwise the chapter’s color');
+  // Out-of-range steps stop at the ends.
+  assert.equal(chapterView(MONTHLY, 9).role, 'Older');
+  assert.equal(chapterView(MONTHLY, -1).role, 'Newer');
+  // A chapter without builds comes back as it is.
+  const job = { id: 'job', role: 'Role', period: 'Years', image: { src: '/work/job.svg', nudge: 0 }, summary: 'S', links: [] };
+  assert.equal(chapterView(job), job);
+});
+
+test('metaLine names the newest build, its month and place for a chapter of builds', () => {
+  assert.equal(metaLine(MONTHLY), 'Newer · October 2026 · Internet');
+  assert.equal(metaLine({ ...MONTHLY, location: undefined }), 'Newer · October 2026');
 });
 
 test('chapterGroups: jobs first, then side projects, one continuous index', () => {

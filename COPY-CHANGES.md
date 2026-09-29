@@ -11,7 +11,30 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## Share card text (2026-09-28, latest)
+## suph.app by month (2026-09-28, latest)
+
+Suphian: "For the suph.app maybe we can just [display] 'The Toga Is Dead' and show the month next to it as well. As I have different [projects], I can show the different months that were there… As you toggle through the months, you can get different icons." And: "When you click the suph.app card you should see all of my projects, and it should say the month. 'Play The Toga Is Dead' should be from last month, and 'the Quran GitHub' should be from the previous month… on the main suphian.com it always shows the latest project."
+
+suph.app is now a list of monthly builds (`builds` in `src/content.js`), newest first. The row and the rail card show the latest one. The open card starts on it, and a month toggle (← Previous · month · Next →) steps back through the rest, swapping the name, month, icon, summary and links.
+
+| Field | Was | Now |
+|---|---|---|
+| suph.app row meta | Playground · New build every month | The Toga Is Dead · August 2026 · Internet |
+| Open card, role line | Playground | The Toga Is Dead (the build on show) |
+| Open card, years line | New build every month · Internet | August 2026 · Internet with one build; with two or more, the month toggle takes its place |
+| The Toga Is Dead summary | Every month I make something. This month it’s The Toga Is Dead, a 3D board game you play in the browser: … | The Toga Is Dead is a 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire. |
+| New build: Quran Art (July 2026) | (none) | Quran Art maps how the Qur’an uses Arabic demonstratives, words like hādhā (“this”), and turns them into simple geometric artwork: one image per surah, gathered in a gallery. Link: See Quran Art on GitHub → github.com/Suphian/quran-art |
+| Month toggle labels | (none) | Previous, Next; the group is named "Month" for screen readers |
+| No-JS profile and llms-full.txt | suph.app: Playground · New build every month · Internet, then the one summary | The same chapter line, then every build as "Name · Month" with its summary and links, newest first |
+
+Notes for Suphian to confirm:
+- The months are his: August 2026 and July 2026. The Quran Art repo's commits are dated 2025-07-07, which the site doesn't use.
+- Quran Art's card uses a **placeholder** white eight-point star (`public/work/quran-art.svg`) until he supplies artwork. It sits on the same gold as the crown.
+- The Quran Art summary comes from the repo's README only. It leaves out the dataset attribution, which looks inaccurate.
+- Each build has a `slug` (`toga`, `quran`) for the planned suph.app/<slug> pages. Those 404 today, so the links stay on suph.app and GitHub.
+- The meta description, llms.txt and the JSON-LD are unchanged.
+
+## Share card text (2026-09-28)
 
 Suphian's LinkedIn Featured card read "Suphian Tweel / Suphian Tweel" (og:title, then og:site_name). "I'd love for it to have something else on there."
 

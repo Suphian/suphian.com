@@ -1,15 +1,20 @@
-import React, { useCallback, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { story } from '../content.js';
 import ExternalLink from '../components/ExternalLink.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { track } from '../lib/analytics.js';
 import { prefersReducedMotion } from '../lib/scroll.js';
-import StoryCard from './StoryCard.jsx';
-import { accentFor, flipDelta, toTransform } from './logic.js';
+import StoryCard, { preloadCardImage } from './StoryCard.jsx';
+import StoryMonths from './StoryMonths.jsx';
+import { accentFor, buildsOf, chapterView, clampIndex, flipDelta, hasMonthToggle, toTransform } from './logic.js';
 
 const EASE = 'cubic-bezier(.2, .8, .2, 1)';
 const OPEN_MS = 680;
 const CLOSE_MS = 540;
+// suph.app's month swap: the old build fades out, the new one fades in.
+const SWAP_OUT_MS = 140;
+const SWAP_IN_MS = 240;
 const fontSize = (element) => parseFloat(getComputedStyle(element).fontSize) || 1;
 // Uniform scale from the card's width: the rail card and the panel share one aspect ratio.
 const cardScale = (first, last) => (first.width > 0 && last.width > 0 ? first.width / last.width : 1);
@@ -21,6 +26,12 @@ const cardScale = (first, last) => (first.width > 0 && last.width > 0 ? first.wi
  * card into the image panel, measured from `originFor(index)`; the rest fades
  * in. Reduced motion: no animation, same structure. Escape or Back closes, and
  * focus returns to the chapter in the list (StoryIndex).
+ *
+ * A chapter made of monthly builds (suph.app) always opens on its newest build:
+ * this view mounts fresh on every open. With two or more builds, the month
+ * toggle (StoryMonths) steps through them, and the build's name, month, card
+ * image, summary and links crossfade (instant under reduced motion). Each step
+ * sends suph_app_month_viewed { month }; opening sends nothing extra.
  */
 export default function StoryDetail({ chapter, index, originFor, onClosed }) {
   const dialog = useRef(null);
@@ -32,8 +43,70 @@ export default function StoryDetail({ chapter, index, originFor, onClosed }) {
   const closing = useRef(false);
   const titleId = `story-detail-${chapter.id}`;
   const metaId = `${titleId}-meta`;
+  const monthId = `${titleId}-month`;
+
+  const builds = buildsOf(chapter);
+  const toggles = hasMonthToggle(builds);
+  const [shown, setShown] = useState(0);
+  const view = chapterView(chapter, shown);
+  const shownRef = useRef(0);
+  const target = useRef(0);
+  const swapOut = useRef(null);
+  const swapped = useRef(false);
 
   const fading = () => [...dialog.current.querySelectorAll('[data-fade]')];
+  // What changes with the month: the build's name and month, summary and links, and the panel's logo.
+  const swapping = () => [...dialog.current.querySelectorAll('[data-swap], .story-card--panel > .story-card-logo, .story-card--panel > .story-card-name')];
+
+  // Every build's card image, loaded now, so a month step paints its icon on the first frame.
+  useEffect(() => {
+    if (toggles) builds.forEach((build) => preloadCardImage(build.image?.src));
+    // Once per open: the builds come from content.js and never change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // A month step: fade the current build out, then show the newest target. Steps
+  // taken during the fade just move the target, so fast clicks land on the last one.
+  const showBuild = useCallback((next) => {
+    const at = clampIndex(next, builds.length);
+    if (at === target.current) return;
+    target.current = at;
+    track('suph_app_month_viewed', { month: builds[at].month });
+    if (swapOut.current) return;
+    if (prefersReducedMotion() || !dialog.current) {
+      shownRef.current = at;
+      setShown(at);
+      return;
+    }
+    const outs = swapping().map((element) =>
+      element.animate([{ opacity: 1 }, { opacity: 0 }], { duration: SWAP_OUT_MS, easing: 'ease-in', fill: 'forwards' }),
+    );
+    swapOut.current = outs;
+    const land = () => {
+      if (swapOut.current !== outs) return;
+      if (target.current === shownRef.current) {
+        // Stepped away and back during the fade: nothing to swap, just fade back in.
+        swapOut.current = null;
+        outs.forEach((animation) => animation.reverse());
+        return;
+      }
+      swapped.current = true;
+      shownRef.current = target.current;
+      setShown(target.current);
+    };
+    Promise.all(outs.map((animation) => animation.finished)).then(land, land);
+  }, [builds]);
+
+  // The new build is in the DOM: drop the fade-out and fade it in, before it paints.
+  useLayoutEffect(() => {
+    if (!swapped.current) return;
+    swapped.current = false;
+    (swapOut.current ?? []).forEach((animation) => animation.cancel());
+    swapOut.current = null;
+    for (const element of swapping()) {
+      element.animate([{ opacity: 0 }, { opacity: 1 }], { duration: SWAP_IN_MS, easing: 'ease-out' });
+    }
+  }, [shown]);
 
   // Open: play the FLIP from the list's current positions.
   useLayoutEffect(() => {
@@ -117,11 +190,11 @@ export default function StoryDetail({ chapter, index, originFor, onClosed }) {
     <div
       ref={dialog}
       className="story-detail"
-      style={{ '--accent': accentFor(chapter.color) }}
+      style={{ '--accent': accentFor(view.color) }}
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
-      aria-describedby={metaId}
+      aria-describedby={toggles ? `${metaId} ${monthId}` : metaId}
       tabIndex={-1}
     >
       <div ref={backdrop} className="story-detail-backdrop" aria-hidden="true" />
@@ -140,20 +213,26 @@ export default function StoryDetail({ chapter, index, originFor, onClosed }) {
         </div>
 
         <div className="story-detail-media">
-          <StoryCard chapter={chapter} cardRef={panel} className="story-card--panel" />
+          <StoryCard chapter={view} cardRef={panel} className="story-card--panel" />
         </div>
 
+        {/* For a chapter with builds, `view` is the build on show: its name is the role
+            line and its month the years line (logic.js chapterView). */}
         <div className="story-detail-body" data-fade>
           <div id={metaId}>
-            <p className="story-detail-role">{chapter.role}</p>
-            <p className="story-detail-years">
-              {chapter.location ? `${chapter.period} · ${chapter.location}` : chapter.period}
-            </p>
+            <p className="story-detail-role" data-swap>{view.role}</p>
+            {/* The month toggle takes the years line's place, the month between its buttons. */}
+            {!toggles && (
+              <p className="story-detail-years">
+                {view.location ? `${view.period} · ${view.location}` : view.period}
+              </p>
+            )}
           </div>
-          {chapter.summary && <p className="story-detail-summary">{chapter.summary}</p>}
-          {chapter.links?.length > 0 && (
-            <ul className="story-links">
-              {chapter.links.map((link) => (
+          <StoryMonths builds={builds} index={shown} labelId={monthId} onChange={showBuild} />
+          {view.summary && <p className="story-detail-summary" data-swap>{view.summary}</p>}
+          {view.links?.length > 0 && (
+            <ul className="story-links" data-swap>
+              {view.links.map((link) => (
                 <li key={link.href}>
                   <ExternalLink href={link.href} className="story-link" chapter={chapter.id}>
                     {link.label}

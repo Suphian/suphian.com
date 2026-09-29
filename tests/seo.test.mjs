@@ -8,14 +8,34 @@ import { crawlerResources, escapeHtml, renderSeoHtml, schemaGraph } from '../scr
 const template = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const html = renderSeoHtml(template);
 
+// A chapter's summary and links, or each monthly build's (suph.app).
+const entries = (chapter) => chapter.builds ?? [chapter];
+
 test('initial HTML contains the approved work content and contact without requiring JavaScript', () => {
   assert.ok(html.includes(escapeHtml(story.intro)));
   for (const chapter of story.chapters) {
-    assert.ok(html.includes(escapeHtml(chapter.summary)), `${chapter.id}: initial HTML summary`);
-    for (const link of chapter.links) assert.ok(html.includes(`href="${escapeHtml(link.href)}"`));
+    for (const entry of entries(chapter)) {
+      assert.ok(html.includes(escapeHtml(entry.summary)), `${chapter.id}: initial HTML summary`);
+      for (const link of entry.links) assert.ok(html.includes(`href="${escapeHtml(link.href)}"`));
+    }
   }
   assert.ok(html.includes(`href="mailto:${site.email}"`));
   assert.doesNotMatch(html, /<!-- seo:|JavaScript required|suph\.tweel@gmail\.com/);
+});
+
+test('without JavaScript, suph.app lists every build, newest first, as "Name · Month"', () => {
+  // Suphian 2026-09-28: every project, each with its month. Same order in llms-full.txt.
+  const titles = ['The Toga Is Dead · August 2026', 'Quran Art · July 2026'];
+  const at = (text, needles) => needles.map((needle) => text.indexOf(needle));
+  const inHtml = at(html, titles.map((title) => `<h4>${escapeHtml(title)}</h4>`));
+  assert.ok(inHtml.every((i) => i > 0) && inHtml[0] < inHtml[1], `profile: ${inHtml}`);
+  const full = crawlerResources()['llms-full.txt'];
+  const inText = at(full, titles.map((title) => `#### ${title}\n`));
+  assert.ok(inText.every((i) => i > 0) && inText[0] < inText[1], `llms-full.txt: ${inText}`);
+  // Under the chapter's own line, and inside suph.app's article.
+  assert.ok(full.includes('### suph.app\n\nPlayground · New build every month · Internet\n\n#### The Toga Is Dead · August 2026'));
+  const article = html.slice(html.indexOf('<article id="suph-app">'));
+  assert.ok(article.indexOf('<article id="suph-app-toga">') > 0 && article.indexOf('<article id="suph-app-quran">') > article.indexOf('<article id="suph-app-toga">'));
 });
 
 test('metadata has one stable canonical, honest entity schema and the current social card', () => {
@@ -65,7 +85,7 @@ test('published crawler resources stay synchronized with approved copy', () => {
   }
   assert.match(resources['robots.txt'], /User-agent: OAI-SearchBot\nAllow: \//);
   assert.equal((resources['sitemap.xml'].match(/<loc>/g) ?? []).length, 1);
-  for (const chapter of story.chapters) assert.ok(resources['llms-full.txt'].includes(chapter.summary));
+  for (const entry of story.chapters.flatMap(entries)) assert.ok(resources['llms-full.txt'].includes(entry.summary));
 });
 
 test('HTML and JSON-LD serialization cannot introduce markup from content', () => {

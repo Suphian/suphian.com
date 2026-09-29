@@ -7,7 +7,7 @@ import { accentFor } from './logic.js';
 // Guards for the story index's type and color rules (DESIGN-BRIEF.md and Suphian's
 // 2026-09-26 notes), checked against the stylesheet and components as written.
 const css = readFileSync(new URL('./story.css', import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
-const jsx = ['StoryIndex.jsx', 'StoryDetail.jsx', 'StoryCard.jsx']
+const jsx = ['StoryIndex.jsx', 'StoryDetail.jsx', 'StoryCard.jsx', 'StoryMonths.jsx']
   .map((name) => readFileSync(new URL(`./${name}`, import.meta.url), 'utf8'))
   .join('\n');
 
@@ -63,6 +63,10 @@ test('every white logo reads on its card: at least 3:1, the WCAG contrast for gr
   };
   const onWhite = (hex) => 1.05 / (luminance(hex) + 0.05);
   for (const c of story.chapters) assert.ok(onWhite(c.color) >= 3, `${c.id}: white on ${c.color} is ${onWhite(c.color).toFixed(2)}:1`);
+  // A monthly build may bring its own card color (content.js build.color): the same bar.
+  for (const build of story.chapters.flatMap((c) => c.builds ?? []).filter((b) => b.color)) {
+    assert.ok(onWhite(build.color) >= 3, `${build.slug}: white on ${build.color} is ${onWhite(build.color).toFixed(2)}:1`);
+  }
   // Why suph.app's card is the crown gradient's deep gold, not its lighter gold.
   assert.ok(onWhite('#C19C56') < 3);
 });
@@ -160,6 +164,24 @@ test('hover is a faint lift for a mouse only, never the active white, and never 
   assert.deepEqual(rules.map((r) => r.prelude), ['.story-item:not([data-distance="0"]) .story-button:hover']);
   assert.match(rules[0].body, /color: var\(--ink-muted\)/);
   assert.doesNotMatch(rules[0].body, /var\(--ink\)|#fff|opacity|transform/i);
+});
+
+test('the month toggle is quiet text: no pills, the month holding one width, arrows in the accent', () => {
+  // Suphian 2026-09-28: editorial and minimal, like Back.
+  const step = rule('.story-month-step');
+  assert.match(step, /min-height: 44px/, 'a comfortable target');
+  assert.doesNotMatch(step, /border|background|border-radius/, 'no pill');
+  assert.match(rule('.story-month-arrow'), /color: var\(--accent/);
+  assert.match(rule('.story-month-label'), /min-width: [\d.]+em/, 'Next never moves as the month changes length');
+  assert.match(rule('.story-month-step[aria-disabled="true"]'), /cursor: default/);
+  // The swap is instant under reduced motion: StoryDetail skips the fade, and nothing here eases.
+  const reduced = css.split('@media (prefers-reduced-motion: reduce)')[1];
+  for (const selector of ['.story-card--panel', '.story-month-step', '.story-month-arrow']) assert.ok(reduced.includes(selector), selector);
+  const detail = readFileSync(new URL('./StoryDetail.jsx', import.meta.url), 'utf8');
+  assert.match(detail, /if \(prefersReducedMotion\(\) \|\| !dialog\.current\) \{\s*shownRef\.current = at;\s*setShown\(at\);/);
+  // One event per month step, with the month; the open itself is counted once, in StoryIndex.
+  assert.equal(detail.match(/track\(/g).length, 1);
+  assert.match(detail, /track\('suph_app_month_viewed', \{ month: builds\[at\]\.month \}\)/);
 });
 
 test('a band change restyles the marker and the rail track, not the whole stage', () => {

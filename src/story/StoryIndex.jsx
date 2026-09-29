@@ -9,6 +9,7 @@ import StoryDetail from './StoryDetail.jsx';
 import {
   accentFor,
   chapterGroups,
+  chapterView,
   clampIndex,
   distanceBucket,
   followScroll,
@@ -31,7 +32,9 @@ const STACKED = '(max-width: 800px), (max-height: 560px)';
 const GROUPS = chapterGroups(story.chapters, { work: story.labels.list, side: story.labels.sideProjects });
 const CHAPTERS = GROUPS.flatMap((group) => group.chapters);
 const COUNT = CHAPTERS.length;
-const ACCENTS = CHAPTERS.map((chapter) => accentFor(chapter.color));
+// Each chapter as its rail card shows it: suph.app shows its newest build (chapterView).
+const VIEWS = CHAPTERS.map((chapter) => chapterView(chapter));
+const ACCENTS = VIEWS.map((view) => accentFor(view.color));
 
 // Keyboard focus draws a ring (:focus-visible); the focus a mouse click gives a
 // button (Chrome, Firefox) doesn't. Without :focus-visible support: never.
@@ -293,7 +296,7 @@ export default function StoryIndex() {
           {/* Mouse shortcut only: the lists are the accessible control. */}
           <div className="story-rail" aria-hidden="true">
             <div className="story-rail-track" style={{ '--active': active }}>
-              {CHAPTERS.map((chapter, index) => (
+              {VIEWS.map((chapter, index) => (
                 <RailCard
                   key={chapter.id}
                   chapter={chapter}
