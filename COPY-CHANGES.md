@@ -19,7 +19,7 @@ Suphian's LinkedIn Featured card read "Suphian Tweel / Suphian Tweel" (og:title,
 |---|---|---|
 | og:title, twitter:title | Suphian Tweel | Suphian Tweel · Product, Payments & AI |
 | og:site_name | Suphian Tweel | suphian.com |
-| og:description, twitter:description | Product, payments & AI. Good ideas deserve to get made. | Led payments at YouTube. Founder of Abacus Labs. Good ideas deserve to get made. |
+| og:description, twitter:description | Product, payments & AI. Good ideas deserve to get made. | Currently at Steadily. Led payments at YouTube. Founder of Abacus Labs. (Suphian: "definitely currently at Steadily") |
 
 LinkedIn caches previews: re-scrape at linkedin.com/post-inspector after deploy.
 

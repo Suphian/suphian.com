@@ -354,7 +354,7 @@ export const seo = {
     // 2026-09-28: LinkedIn's card read "Suphian Tweel / Suphian Tweel" (the title, then the
     // site name), so the title says what he does and the site name is the domain.
     ogTitle: HOME_TITLE,
-    ogDescription: 'Led payments at YouTube. Founder of Abacus Labs. Good ideas deserve to get made.',
+    ogDescription: 'Currently at Steadily. Led payments at YouTube. Founder of Abacus Labs.', // Suphian 2026-09-28: "definitely currently at Steadily"
   },
   og: {
     type: 'profile',
