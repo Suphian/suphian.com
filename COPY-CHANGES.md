@@ -11,7 +11,19 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## Studio, not side projects (2026-09-28, latest)
+## Share card text (2026-09-28, latest)
+
+Suphian's LinkedIn Featured card read "Suphian Tweel / Suphian Tweel" (og:title, then og:site_name). "I'd love for it to have something else on there."
+
+| Tag | Was | Now |
+|---|---|---|
+| og:title, twitter:title | Suphian Tweel | Suphian Tweel · Product, Payments & AI |
+| og:site_name | Suphian Tweel | suphian.com |
+| og:description, twitter:description | Product, payments & AI. Good ideas deserve to get made. | Led payments at YouTube. Founder of Abacus Labs. Good ideas deserve to get made. |
+
+LinkedIn caches previews: re-scrape at linkedin.com/post-inspector after deploy.
+
+## Studio, not side projects (2026-09-28)
 
 Suphian had feedback that "side project" undersells it: "I'm the founder of Abacus… I started and built it… we make money on it. We're not scaling it. suph.app is literally just for me to play around with." He chose "Studio" for the divider.
 

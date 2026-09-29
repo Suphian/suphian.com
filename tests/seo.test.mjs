@@ -93,8 +93,12 @@ test('the social card is a PNG small enough for WhatsApp and iMessage link previ
   assert.equal(twitter.readUInt32BE(20), 630);
   assert.ok(twitter.length < 250 * 1024);
   assert.notEqual(seo.twitter.image, seo.og.image);
-  assert.equal(seo.home.ogTitle, 'Suphian Tweel');
-  assert.equal(seo.home.ogDescription, 'Product, payments & AI. Good ideas deserve to get made.');
+  // Suphian 2026-09-28: LinkedIn showed the title and the site name as "Suphian Tweel" twice.
+  assert.equal(seo.home.ogTitle, 'Suphian Tweel · Product, Payments & AI');
+  assert.equal(seo.og.siteName, 'suphian.com');
+  assert.notEqual(seo.home.ogTitle, seo.og.siteName, 'the card never repeats one line');
+  assert.equal(seo.home.ogDescription, 'Led payments at YouTube. Founder of Abacus Labs. Good ideas deserve to get made.');
+  assert.ok(seo.home.ogDescription.length <= 100, 'short enough for LinkedIn and WhatsApp cards');
   for (const tag of ['og:description', 'twitter:description']) {
     assert.ok(html.includes(`="${tag}" content="${escapeHtml(seo.home.ogDescription)}"`));
   }

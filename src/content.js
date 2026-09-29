@@ -350,13 +350,15 @@ export const seo = {
   home: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    // Concise text for a conversation card, kept with the Signature design.
-    ogTitle: 'Suphian Tweel',
-    ogDescription: 'Product, payments & AI. Good ideas deserve to get made.',
+    // Concise text for a conversation card, kept with the Signature design. Suphian
+    // 2026-09-28: LinkedIn's card read "Suphian Tweel / Suphian Tweel" (the title, then the
+    // site name), so the title says what he does and the site name is the domain.
+    ogTitle: HOME_TITLE,
+    ogDescription: 'Led payments at YouTube. Founder of Abacus Labs. Good ideas deserve to get made.',
   },
   og: {
     type: 'profile',
-    siteName: 'Suphian Tweel',
+    siteName: 'suphian.com',
     // Signature's centered full name fits both square thumbnails and wide crops.
     // Change the filename when replacing artwork so clients don't reuse a cached image.
     image: `${ORIGIN}/og/suphian-signature-square-20260927.png`,
