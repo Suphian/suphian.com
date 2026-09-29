@@ -237,6 +237,9 @@
   -webkit-user-drag: none;
 }
 .story-card[data-status="loaded"] .story-card-logo { opacity: 1; }
+/* One cell for everything on a card, so suph.app's outgoing icon (a fading copy,
+   StoryDetail.jsx) sits exactly on the incoming one. */
+.story-card > * { grid-area: 1 / 1; }
 .story-card-name {
   place-self: center;
   max-width: 100%;
@@ -323,42 +326,31 @@
   color: var(--ink);
 }
 .story-detail-years { margin-top: 6px; font-size: 18px; line-height: 1.5; color: var(--ink-muted); }
-/* suph.app's month toggle (StoryMonths.jsx), in the years line's place: two quiet
-   text buttons, like Back, with the month between them. No pills, borders or
-   fills (Suphian 2026-09-28). The month keeps one width, so Next never moves
-   under the pointer as the months change length. */
-.story-months {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0 20px;
-  margin: 2px 0 -6px;
-}
-.story-month-step {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 44px;
-  font-weight: var(--weight-strong);
-  font-size: 17px;
-  line-height: 1.3;
-  color: var(--ink-muted);
-  transition: color .2s ease;
-}
-.story-month-arrow { color: var(--accent, var(--ink)); transition: transform .3s ease; }
-/* At the newest or oldest build: still focusable, visibly at rest. */
-.story-month-step[aria-disabled="true"] { color: var(--ink-far); cursor: default; }
-.story-month-step[aria-disabled="true"] .story-month-arrow { color: inherit; }
-.story-month-label {
-  min-width: 7.6em;
-  font-size: 18px;
-  line-height: 1.5;
-  text-align: center;
-  color: var(--ink);
-}
 /* A build may bring its own color (content.js build.color): the panel eases to it. */
 .story-card--panel { transition: background-color .3s ease; }
 .story-detail-summary { margin-top: 30px; font-size: clamp(18px, 1.3vw, 20px); line-height: 1.6; color: var(--ink-body); }
+/* suph.app opens on its intro line, with no role line above it. */
+.story-detail-body > .story-detail-summary:first-child { margin-top: 0; }
+/* suph.app's builds (StoryBuilds.jsx), listed under its intro and link, newest first
+   (Suphian 2026-09-28: "It should just be a list"). Editorial, not cards: the month
+   in secondary gray, the name like a role line, the summary and the links as in any
+   chapter. One hairline between two builds: the next build's top rule stands in for
+   the last link row's own. */
+.story-builds { margin: 56px 0 0; padding: 0; list-style: none; }
+.story-build + .story-build { padding-top: 44px; border-top: 1px solid var(--hairline); }
+.story-build:not(:last-child) .story-links li:last-child { border-bottom: 0; }
+.story-build-month { font-size: 18px; line-height: 1.5; color: var(--ink-muted); }
+.story-build-name {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-strong);
+  font-size: clamp(21px, 1.7vw, 26px);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.story-build-summary { margin-top: 14px; font-size: clamp(18px, 1.3vw, 20px); line-height: 1.6; color: var(--ink-body); }
+.story-build .story-links { margin-top: 28px; }
 .story-links { margin: 40px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--hairline); }
 .story-links li { border-bottom: 1px solid var(--hairline); }
 .story-link {
@@ -380,9 +372,6 @@
 @media (hover: hover) and (pointer: fine) {
   .story-back:hover { color: var(--ink); }
   .story-back:hover .story-back-arrow { transform: translateX(-4px); }
-  .story-month-step:not([aria-disabled="true"]):hover { color: var(--ink); }
-  .story-month-step:first-child:not([aria-disabled="true"]):hover .story-month-arrow { transform: translateX(-4px); }
-  .story-month-step:last-child:not([aria-disabled="true"]):hover .story-month-arrow { transform: translateX(4px); }
   .story-link:hover { color: #ffffff; }
   .story-link:hover .link-arrow { transform: translate(2px, -2px); }
 }
@@ -440,10 +429,7 @@
   .story-rail .story-card,
   .story-card-logo,
   .story-card--panel,
-  .story-back-arrow,
-  .story-month-step,
-  .story-month-arrow { transition: none; }
+  .story-back-arrow { transition: none; }
   .story-back:hover .story-back-arrow,
-  .story-link:hover .link-arrow,
-  .story-month-step:hover .story-month-arrow { transform: none; }
+  .story-link:hover .link-arrow { transform: none; }
 }

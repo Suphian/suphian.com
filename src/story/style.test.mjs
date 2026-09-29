@@ -7,7 +7,7 @@ import { accentFor } from './logic.js';
 // Guards for the story index's type and color rules (DESIGN-BRIEF.md and Suphian's
 // 2026-09-26 notes), checked against the stylesheet and components as written.
 const css = readFileSync(new URL('./story.css', import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
-const jsx = ['StoryIndex.jsx', 'StoryDetail.jsx', 'StoryCard.jsx', 'StoryMonths.jsx']
+const jsx = ['StoryIndex.jsx', 'StoryDetail.jsx', 'StoryCard.jsx', 'StoryBuilds.jsx']
   .map((name) => readFileSync(new URL(`./${name}`, import.meta.url), 'utf8'))
   .join('\n');
 
@@ -73,7 +73,7 @@ test('every white logo reads on its card: at least 3:1, the WCAG contrast for gr
 
 // One rule's declarations, comments stripped: `.a .b { x: y; }` → "x: y;".
 const rule = (selector) => {
-  const match = new RegExp(`(?:^|\\})\\s*${selector.replace(/[.[\]"()]/g, '\\$&')}\\s*\\{([^}]*)\\}`).exec(css);
+  const match = new RegExp(`(?:^|\\})\\s*${selector.replace(/[.[\]"()+]/g, '\\$&')}\\s*\\{([^}]*)\\}`).exec(css);
   assert.ok(match, `${selector} has a rule`);
   return match[1].replace(/\s+/g, ' ');
 };
@@ -166,22 +166,37 @@ test('hover is a faint lift for a mouse only, never the active white, and never 
   assert.doesNotMatch(rules[0].body, /var\(--ink\)|#fff|opacity|transform/i);
 });
 
-test('the month toggle is quiet text: no pills, the month holding one width, arrows in the accent', () => {
-  // Suphian 2026-09-28: editorial and minimal, like Back.
-  const step = rule('.story-month-step');
-  assert.match(step, /min-height: 44px/, 'a comfortable target');
-  assert.doesNotMatch(step, /border|background|border-radius/, 'no pill');
-  assert.match(rule('.story-month-arrow'), /color: var\(--accent/);
-  assert.match(rule('.story-month-label'), /min-width: [\d.]+em/, 'Next never moves as the month changes length');
-  assert.match(rule('.story-month-step[aria-disabled="true"]'), /cursor: default/);
-  // The swap is instant under reduced motion: StoryDetail skips the fade, and nothing here eases.
-  const reduced = css.split('@media (prefers-reduced-motion: reduce)')[1];
-  for (const selector of ['.story-card--panel', '.story-month-step', '.story-month-arrow']) assert.ok(reduced.includes(selector), selector);
+test('suph.app’s builds are an editorial list: no toggle, no cards or pills, hairlines between', () => {
+  // Suphian 2026-09-28: "Don't want the next arrows… It should just be a list."
+  assert.doesNotMatch(css, /story-month/, 'the retired toggle left no rules behind');
+  assert.doesNotMatch(jsx, /StoryMonths|suph_app_month_viewed|aria-live/);
+  // The month in secondary gray at body size, the name like a role line.
+  assert.match(rule('.story-build-month'), /font-size: 18px/);
+  assert.match(rule('.story-build-month'), /color: var\(--ink-muted\)/);
+  assert.match(rule('.story-build-name'), /font-weight: var\(--weight-strong\)/);
+  assert.match(rule('.story-build-name'), /color: var\(--ink\)/);
+  // One hairline between two builds, the page's own; nothing boxes a build in.
+  assert.match(rule('.story-build + .story-build'), /border-top: 1px solid var\(--hairline\)/);
+  for (const selector of ['.story-builds', '.story-build + .story-build', '.story-build-month', '.story-build-name', '.story-build-summary']) {
+    assert.doesNotMatch(rule(selector), /background|border-radius|box-shadow/, `${selector}: no card or pill`);
+  }
+  // Only a mouse moves the panel's icon, and nothing about a build restyles on hover.
+  const builds = readFileSync(new URL('./StoryBuilds.jsx', import.meta.url), 'utf8');
+  assert.match(builds, /const FINE_POINTER = '\(hover: hover\) and \(pointer: fine\)';/);
+  assert.doesNotMatch(css, /\.story-build[^{]*:hover/);
+});
+
+test('suph.app’s panel crossfades between icons, instantly under reduced motion, and sends no event', () => {
   const detail = readFileSync(new URL('./StoryDetail.jsx', import.meta.url), 'utf8');
-  assert.match(detail, /if \(prefersReducedMotion\(\) \|\| !dialog\.current\) \{\s*shownRef\.current = at;\s*setShown\(at\);/);
-  // One event per month step, with the month; the open itself is counted once, in StoryIndex.
-  assert.equal(detail.match(/track\(/g).length, 1);
-  assert.match(detail, /track\('suph_app_month_viewed', \{ month: builds\[at\]\.month \}\)/);
+  // The fading copy and the fade-in are both skipped under reduced motion.
+  assert.match(detail, /if \(old && !prefersReducedMotion\(\)\) \{/);
+  assert.ok(detail.indexOf('fadeIn.current = true') > detail.indexOf('if (old && !prefersReducedMotion()) {'));
+  const reduced = css.split('@media (prefers-reduced-motion: reduce)')[1];
+  assert.ok(reduced.includes('.story-card--panel'), 'no color transition either');
+  // The copy and the new icon share the card's one grid cell.
+  assert.match(css, /\.story-card > \* \{ grid-area: 1 \/ 1; \}/);
+  // No new analytics: the open is counted once in StoryIndex, the links by ExternalLink.
+  assert.doesNotMatch(jsx.replace(readFileSync(new URL('./StoryIndex.jsx', import.meta.url), 'utf8'), ''), /\btrack(Event)?\(/);
 });
 
 test('a band change restyles the marker and the rail track, not the whole stage', () => {

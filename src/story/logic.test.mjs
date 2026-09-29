@@ -11,12 +11,12 @@ import {
   followScroll,
   formatMonth,
   groupIndexOf,
-  hasMonthToggle,
   indexFromProgress,
   isVisibleRect,
   logoShift,
   logoWidth,
   metaLine,
+  panelBuild,
   stepIndex,
   toTransform,
   trackProgress,
@@ -114,7 +114,7 @@ test('metaLine joins role and period', () => {
 const MONTHLY = {
   id: 'fixture',
   name: 'fixture.app',
-  role: 'Playground',
+  role: 'A new project every month',
   period: 'New build every month',
   location: 'Internet',
   color: '#AC8243',
@@ -138,42 +138,57 @@ test('formatMonth writes a build’s month out in full: "September 2026"', () =>
   for (const bad of ['2026-9', '2026-13', '2026-00', 'September 2026', '2026-09-01', '', null, undefined]) assert.equal(formatMonth(bad), '', String(bad));
 });
 
-test('buildsOf and hasMonthToggle: the toggle needs two or more builds', () => {
+test('buildsOf: a chapter’s builds, or none', () => {
   assert.deepEqual(buildsOf({ id: 'job' }), []);
   assert.deepEqual(buildsOf(null), []);
   assert.equal(buildsOf(MONTHLY), MONTHLY.builds);
-  assert.equal(hasMonthToggle(MONTHLY.builds), true);
-  assert.equal(hasMonthToggle(MONTHLY.builds.slice(0, 1)), false);
-  assert.equal(hasMonthToggle([]), false);
-  assert.equal(hasMonthToggle(undefined), false);
 });
 
-test('chapterView shows one build: the newest unless asked, its name and month as the role and years lines', () => {
+test('chapterView wears one build’s image and color: the newest unless asked', () => {
   const newest = chapterView(MONTHLY);
   assert.equal(newest.id, 'fixture');
   assert.equal(newest.name, 'fixture.app', 'the chapter keeps its own name');
-  assert.equal(newest.role, 'Newer');
-  assert.equal(newest.period, 'October 2026');
-  assert.equal(newest.location, 'Internet');
+  assert.equal(newest.role, 'A new project every month', 'and its own role');
   assert.deepEqual(newest.image, { src: '/work/newer.svg', nudge: 0 });
   assert.equal(newest.color, '#123456', 'a build’s own color wins');
-  assert.equal(newest.summary, 'Newer summary.');
-  assert.deepEqual(newest.links, MONTHLY.builds[0].links);
   const older = chapterView(MONTHLY, 1);
-  assert.equal(older.role, 'Older');
-  assert.equal(older.period, 'August 2026');
+  assert.deepEqual(older.image, { src: '/work/older.svg', nudge: 0.01 });
   assert.equal(older.color, '#AC8243', 'otherwise the chapter’s color');
-  // Out-of-range steps stop at the ends.
-  assert.equal(chapterView(MONTHLY, 9).role, 'Older');
-  assert.equal(chapterView(MONTHLY, -1).role, 'Newer');
+  // Out-of-range indexes stop at the ends.
+  assert.equal(chapterView(MONTHLY, 9).image.src, '/work/older.svg');
+  assert.equal(chapterView(MONTHLY, -1).image.src, '/work/newer.svg');
   // A chapter without builds comes back as it is.
   const job = { id: 'job', role: 'Role', period: 'Years', image: { src: '/work/job.svg', nudge: 0 }, summary: 'S', links: [] };
   assert.equal(chapterView(job), job);
 });
 
-test('metaLine names the newest build, its month and place for a chapter of builds', () => {
-  assert.equal(metaLine(MONTHLY), 'Newer · October 2026 · Internet');
-  assert.equal(metaLine({ ...MONTHLY, location: undefined }), 'Newer · October 2026');
+test('metaLine: a chapter of builds shows its role alone, never a build, month or place', () => {
+  assert.equal(metaLine(MONTHLY), 'A new project every month');
+  assert.doesNotMatch(metaLine(MONTHLY), /Newer|October|Internet|·/);
+});
+
+test('panelBuild: a mouse or keyboard focus picks the build in the panel; a finger never does', () => {
+  const mouse = { pointerType: 'mouse', finePointer: true };
+  // A mouse resting on a build shows it; leaving the list goes back to the newest.
+  assert.equal(panelBuild(0, { type: 'enter', index: 1, ...mouse }), 1);
+  assert.equal(panelBuild(1, { type: 'enter', index: 0, ...mouse }), 0);
+  assert.equal(panelBuild(1, { type: 'leave', ...mouse }), 0);
+  // Touch: the panel stays on the newest, whatever the finger does.
+  assert.equal(panelBuild(0, { type: 'enter', index: 1, pointerType: 'touch', finePointer: true }), 0);
+  assert.equal(panelBuild(0, { type: 'enter', index: 1, pointerType: 'pen', finePointer: false }), 0);
+  // A mouse on a screen without fine hover (a tablet's emulated pointer) doesn't count either.
+  assert.equal(panelBuild(0, { type: 'enter', index: 1, pointerType: 'mouse', finePointer: false }), 0);
+  assert.equal(panelBuild(1, { type: 'leave', pointerType: 'touch', finePointer: false }), 1);
+  // Keyboard focus inside a build shows it; the focus a tap or click leaves doesn't.
+  assert.equal(panelBuild(0, { type: 'focus', index: 1, keyboard: true }), 1);
+  assert.equal(panelBuild(0, { type: 'focus', index: 1, keyboard: false }), 0);
+  // Focus moving within the list keeps the build; leaving the list goes back to the newest.
+  assert.equal(panelBuild(1, { type: 'blur', inside: true }), 1);
+  assert.equal(panelBuild(1, { type: 'blur', inside: false }), 0);
+  // Anything else, or a malformed event, changes nothing.
+  for (const odd of [undefined, null, {}, { type: 'click', index: 1 }, { type: 'enter', ...mouse }, { type: 'focus', keyboard: true }]) {
+    assert.equal(panelBuild(1, odd), 1, JSON.stringify(odd));
+  }
 });
 
 test('chapterGroups: jobs first, then side projects, one continuous index', () => {

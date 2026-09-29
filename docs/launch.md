@@ -46,7 +46,6 @@ Events go to suphian.com/ingest, which vercel.json rewrites to PostHog US ahead 
 
 - $pageview: once per page load.
 - story_chapter_opened { chapter }: a work or side-project chapter opens; chapter is its content.js id, e.g. steadily.
-- suph_app_month_viewed { month }: the month toggle in suph.app's open card moves to another build; month is its content.js month, e.g. 2026-07. Opening the chapter doesn't send it (the open always starts on the newest build).
 - outbound_link_clicked { href, label, chapter? }: a chapter's links, with chapter, and the footer's Email (Gmail), LinkedIn and GitHub links.
 - say_hello_clicked: the SAY HELLO sign-off.
 - contact_opened { source }: the contact sheet opens; source is SayHello, its only opener.

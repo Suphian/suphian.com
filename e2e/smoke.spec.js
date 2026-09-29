@@ -135,58 +135,88 @@ test('story: hover never moves the highlight or the rail; the active card, Enter
   }
 });
 
-// Suphian 2026-09-28: the row always shows the latest project and its month; the open
-// card starts there, and the month toggle steps back through the rest, swapping the icon.
+// Suphian 2026-09-28: the row says "A new project every month"; the open card is the
+// intro, a link to suph.app, then every build by month ("It should just be a list"). The
+// image panel shows the newest build, or the one under a mouse or keyboard focus.
 const press = (locator) => (test.info().project.use.hasTouch ? locator.tap() : locator.click());
 const suphApp = (page) => page.locator('.story-button').nth(CHAPTERS.indexOf('suph.app'));
-
-test('suph.app opens on The Toga Is Dead, August 2026; the month toggle swaps the build and its icon', async ({ page }) => {
+const openSuphApp = async (page) => {
   const row = suphApp(page);
   await row.scrollIntoViewIfNeeded();
-  await expect(row.locator('.story-item-name')).toHaveText('suph.app');
-  await expect(row.locator('.story-item-meta')).toHaveText('The Toga Is Dead · August 2026 · Internet');
   await press(row);
   const detail = page.getByRole('dialog', { name: /suph\.app/ });
   await expect(detail).toBeVisible();
-  const name = detail.locator('.story-detail-role');
-  const month = detail.locator('.story-month-label');
-  const logo = detail.locator('.story-card--panel .story-card-logo');
-  await expect(name).toHaveText('The Toga Is Dead');
-  await expect(month).toHaveText('August 2026');
-  await expect(month).toHaveAttribute('aria-live', 'polite');
-  await expect(logo).toHaveAttribute('src', '/work/suph-app.svg');
-  await expect(detail.getByRole('link', { name: /Play The Toga Is Dead/ })).toHaveAttribute('href', 'https://suph.app');
+  return detail;
+};
+// The panel's current icon (not the fading copy of the last one).
+const panelIcon = (detail) => detail.locator('.story-card--panel .story-card-logo:not([data-leaving])');
+const CROWN = '/work/suph-app.svg';
+const STAR = '/work/quran-art.svg';
 
-  const months = detail.getByRole('group', { name: 'Month' });
-  const previous = months.getByRole('button', { name: 'Previous' });
-  const next = months.getByRole('button', { name: 'Next' });
-  await expect(next).toHaveAttribute('aria-disabled', 'true'); // already on the newest
-  await press(previous);
-  await expect(month).toHaveText('July 2026');
-  await expect(name).toHaveText('Quran Art');
-  await expect(logo).toHaveAttribute('src', '/work/quran-art.svg');
-  await expect(detail.getByRole('link', { name: /See Quran Art on GitHub/ })).toHaveAttribute('href', 'https://github.com/Suphian/quran-art');
-  await expect(detail.getByRole('link', { name: /Play The Toga Is Dead/ })).toHaveCount(0);
-  // The crossfade settles with everything fully shown.
-  await expect.poll(() => logo.evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
-  await expect.poll(() => name.evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
-  await expect(previous).toHaveAttribute('aria-disabled', 'true'); // the oldest
+test('suph.app lists every build by month under its intro and link; the image follows a mouse, never a finger', async ({ page }) => {
+  const row = suphApp(page);
+  await row.scrollIntoViewIfNeeded();
+  await expect(row.locator('.story-item-name')).toHaveText('suph.app');
+  await expect(row.locator('.story-item-meta')).toHaveText('A new project every month');
+  const detail = await openSuphApp(page);
 
-  // Keyboard: Enter on Next goes back to the newest, and focus stays on the button.
-  await next.focus();
-  await page.keyboard.press('Enter');
-  await expect(month).toHaveText('August 2026');
-  await expect(logo).toHaveAttribute('src', '/work/suph-app.svg');
-  await expect(next).toBeFocused();
+  // Heading, the intro line (no role line, no "Internet"), then Visit suph.app.
+  await expect(detail.locator('.story-detail-summary')).toHaveText('A place where I put out a different project every month.');
+  await expect(detail.locator('.story-detail-role, .story-detail-years')).toHaveCount(0);
+  await expect(detail).not.toContainText('Internet');
+  await expect(detail.getByRole('link', { name: /Visit suph\.app/ })).toHaveAttribute('href', 'https://suph.app');
 
-  // Closed on an older month, it opens again on the newest.
-  await press(previous);
-  await expect(month).toHaveText('July 2026');
+  // Both builds, newest first, each with its month and its link. No toggle anywhere.
+  const builds = detail.locator('.story-build');
+  await expect(builds).toHaveCount(2);
+  await expect(builds.locator('.story-build-month')).toHaveText(['August 2026', 'July 2026']);
+  await expect(builds.locator('.story-build-name')).toHaveText(['The Toga Is Dead', 'Quran Art']);
+  await expect(builds.nth(0).getByRole('link', { name: /Play The Toga Is Dead/ })).toHaveAttribute('href', 'https://suph.app');
+  await expect(builds.nth(1).getByRole('link', { name: /See Quran Art on GitHub/ })).toHaveAttribute('href', 'https://github.com/Suphian/quran-art');
+  await expect(detail.getByRole('button')).toHaveText([/Back/]);
+  await expect(detail).not.toContainText(/Previous|Next/);
+
+  // The panel starts on the newest build.
+  const icon = panelIcon(detail);
+  await expect(icon).toHaveAttribute('src', CROWN);
+  const fine = await page.evaluate(() => matchMedia('(hover: hover) and (pointer: fine)').matches);
+  expect(fine, 'the desktop project has a mouse; the phone does not').toBe(!test.info().project.use.hasTouch);
+
+  if (fine) {
+    // A mouse resting on Quran Art shows its star; off the list, the crown is back.
+    await builds.nth(1).hover();
+    await expect(icon).toHaveAttribute('src', STAR);
+    await expect.poll(() => icon.evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
+    await builds.nth(0).hover();
+    await expect(icon).toHaveAttribute('src', CROWN);
+    await builds.nth(1).hover();
+    await expect(icon).toHaveAttribute('src', STAR);
+    await detail.locator('.story-detail-title').hover();
+    await expect(icon).toHaveAttribute('src', CROWN);
+    // The crossfade's outgoing copy cleans up after itself.
+    await expect(detail.locator('[data-leaving]')).toHaveCount(0);
+
+    // Keyboard focus does the same: Tab through Visit suph.app, The Toga Is Dead, Quran Art.
+    const quranLink = builds.nth(1).getByRole('link');
+    for (let step = 0; step < 6 && !(await quranLink.evaluate((el) => el === document.activeElement)); step++) {
+      await page.keyboard.press('Tab');
+    }
+    await expect(quranLink).toBeFocused();
+    await expect(icon).toHaveAttribute('src', STAR);
+    await page.keyboard.press('Shift+Tab');
+    await expect(builds.nth(0).getByRole('link')).toBeFocused();
+    await expect(icon).toHaveAttribute('src', CROWN);
+  } else {
+    // A finger on Quran Art leaves the panel on the newest build.
+    await builds.nth(1).locator('.story-build-summary').tap();
+    await builds.nth(1).hover();
+    await page.waitForTimeout(300);
+    await expect(icon).toHaveAttribute('src', CROWN);
+  }
+
   await page.keyboard.press('Escape');
   await expect(detail).toBeHidden();
   await expectUnlocked(page);
-  await press(row);
-  await expect(page.getByRole('dialog', { name: /suph\.app/ }).locator('.story-month-label')).toHaveText('August 2026');
 });
 
 test('scrolling docks SUPH; the docked SUPH scrolls back to the top', async ({ page }) => {
@@ -273,21 +303,21 @@ test.describe('reduced motion', () => {
     await page.keyboard.press('Escape');
     await expectUnlocked(page);
   });
-  test('suph.app’s month toggle swaps at once, with no fade', async ({ page }) => {
+  test('suph.app’s panel swaps icons at once, with no fade', async ({ page }) => {
     expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches), 'reduced motion is on').toBe(true);
-    const row = suphApp(page);
-    await row.scrollIntoViewIfNeeded();
-    await press(row);
-    const detail = page.getByRole('dialog', { name: /suph\.app/ });
-    await expect(detail).toBeVisible();
-    await press(detail.getByRole('button', { name: 'Previous' }));
-    await expect(detail.locator('.story-month-label')).toHaveText('July 2026');
-    // The moment the new build appears, nothing is fading and it is fully shown
-    // (with motion, a 240ms fade-in would still be running here).
-    expect(await detail.evaluate((el) => el.getAnimations({ subtree: true }).length)).toBe(0);
-    await expect(detail.locator('.story-detail-role')).toHaveText('Quran Art');
-    expect(await detail.locator('.story-detail-role').evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
-    await expect(detail.locator('.story-card--panel .story-card-logo')).toHaveAttribute('src', '/work/quran-art.svg');
+    const detail = await openSuphApp(page);
+    // Keyboard focus picks the icon on every device (a finger never does).
+    const quranLink = detail.locator('.story-build').nth(1).getByRole('link');
+    for (let step = 0; step < 6 && !(await quranLink.evaluate((el) => el === document.activeElement)); step++) {
+      await page.keyboard.press('Tab');
+    }
+    await expect(quranLink).toBeFocused();
+    await expect(panelIcon(detail)).toHaveAttribute('src', STAR);
+    // The moment the new icon shows, nothing is fading and no outgoing copy exists
+    // (with motion, a 200ms crossfade would still be running here).
+    expect(await detail.locator('.story-card--panel').evaluate((el) => el.getAnimations({ subtree: true }).length)).toBe(0);
+    await expect(detail.locator('[data-leaving]')).toHaveCount(0);
+    expect(await panelIcon(detail).evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
   });
 });
 

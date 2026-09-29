@@ -8,8 +8,8 @@ import { crawlerResources, escapeHtml, renderSeoHtml, schemaGraph } from '../scr
 const template = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const html = renderSeoHtml(template);
 
-// A chapter's summary and links, or each monthly build's (suph.app).
-const entries = (chapter) => chapter.builds ?? [chapter];
+// Every chapter's summary and links, and each of suph.app's monthly builds'.
+const entries = (chapter) => [chapter, ...(chapter.builds ?? [])];
 
 test('initial HTML contains the approved work content and contact without requiring JavaScript', () => {
   assert.ok(html.includes(escapeHtml(story.intro)));
@@ -32,10 +32,15 @@ test('without JavaScript, suph.app lists every build, newest first, as "Name · 
   const full = crawlerResources()['llms-full.txt'];
   const inText = at(full, titles.map((title) => `#### ${title}\n`));
   assert.ok(inText.every((i) => i > 0) && inText[0] < inText[1], `llms-full.txt: ${inText}`);
-  // Under the chapter's own line, and inside suph.app's article.
-  assert.ok(full.includes('### suph.app\n\nPlayground · New build every month · Internet\n\n#### The Toga Is Dead · August 2026'));
-  const article = html.slice(html.indexOf('<article id="suph-app">'));
+  // Under the chapter's own line, which is just its role (Suphian 2026-09-28: no build,
+  // month or place there), then its intro and link, as the open card reads.
+  assert.ok(full.includes(
+    '### suph.app\n\nA new project every month\n\nA place where I put out a different project every month.\n\n- [Visit suph.app](https://suph.app)\n\n#### The Toga Is Dead · August 2026',
+  ));
+  const article = html.slice(html.indexOf('<article id="suph-app">'), html.indexOf('</section>', html.indexOf('<article id="suph-app">')));
+  assert.match(article, /<h3>suph\.app<\/h3>\s*<p>A new project every month<\/p>\s*<p>A place where I put out a different project every month\.<\/p>\s*<ul><li><a href="https:\/\/suph\.app">Visit suph\.app<\/a><\/li><\/ul>/);
   assert.ok(article.indexOf('<article id="suph-app-toga">') > 0 && article.indexOf('<article id="suph-app-quran">') > article.indexOf('<article id="suph-app-toga">'));
+  assert.doesNotMatch(article, /Playground|Internet/);
 });
 
 test('metadata has one stable canonical, honest entity schema and the current social card', () => {

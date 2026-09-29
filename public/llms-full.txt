@@ -57,17 +57,21 @@ Abacus turns spreadsheet chaos into a real-time command center for MCA operators
 
 ### suph.app
 
-Playground · New build every month · Internet
+A new project every month
+
+A place where I put out a different project every month.
+
+- [Visit suph.app](https://suph.app)
 
 #### The Toga Is Dead · August 2026
 
-The Toga Is Dead is a 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.
+A 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.
 
 - [Play The Toga Is Dead](https://suph.app)
 
 #### Quran Art · July 2026
 
-Quran Art maps how the Qur’an uses Arabic demonstratives, words like hādhā (“this”), and turns them into simple geometric artwork: one image per surah, gathered in a gallery.
+Simple geometric artwork from how the Qur’an uses Arabic demonstratives, words like hādhā (“this”): one image per surah, gathered in a gallery.
 
 - [See Quran Art on GitHub](https://github.com/Suphian/quran-art)
 

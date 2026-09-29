@@ -73,14 +73,14 @@ export function renderStaticProfile() {
         ${groups.map(([label, chapters]) => `<section><h2>${escapeHtml(label)}</h2>${chapters.map((chapter) => `
           <article id="${escapeHtml(chapter.id)}">
             <h3>${escapeHtml(chapter.name)}</h3>
-            <p>${escapeHtml(chapterMeta(chapter))}</p>${buildsOf(chapter).length ? buildsOf(chapter).map((build) => `
+            <p>${escapeHtml(chapterMeta(chapter))}</p>
+            <p>${escapeHtml(chapter.summary)}</p>
+            <ul>${chapter.links.map((link) => `<li>${linkHtml(link)}</li>`).join('')}</ul>${buildsOf(chapter).map((build) => `
             <article id="${escapeHtml(`${chapter.id}-${build.slug}`)}">
               <h4>${escapeHtml(buildTitle(build))}</h4>
               <p>${escapeHtml(build.summary)}</p>
               <ul>${build.links.map((link) => `<li>${linkHtml(link)}</li>`).join('')}</ul>
-            </article>`).join('') : `
-            <p>${escapeHtml(chapter.summary)}</p>
-            <ul>${chapter.links.map((link) => `<li>${linkHtml(link)}</li>`).join('')}</ul>`}
+            </article>`).join('')}
           </article>`).join('')}</section>`).join('')}
       </section>
       <footer><h2>Contact</h2><p>${linkHtml(footer.email)}</p><ul>${footer.links.filter((link) => link.label !== 'Email').map((link) => `<li>${linkHtml(link)}</li>`).join('')}</ul></footer>
@@ -88,7 +88,9 @@ export function renderStaticProfile() {
 }
 
 // Role, years and, for jobs, the city (Suphian 2026-09-27), as the open card shows them.
+// suph.app's line is its role alone, like its row: each build below carries its own month.
 function chapterMeta(chapter) {
+  if (buildsOf(chapter).length) return chapter.role;
   return [chapter.role, chapter.period, chapter.location].filter(Boolean).join(' · ');
 }
 
@@ -104,12 +106,10 @@ export function crawlerResources() {
   const intro = `# ${site.fullName}\n\n> ${seo.home.description}\n\n${hero.edition.join(' / ')}\n\n${story.intro}\n`;
   const links = `\n## Contact and profiles\n\n- [Email ${site.email}](mailto:${site.email})\n- [LinkedIn](${site.social.linkedin})\n- [GitHub](${site.social.github})\n`;
   const entry = ({ summary, links }) => `${summary}\n\n${links.map(linkLine).join('\n')}`;
-  const chapters = story.chapters.map((chapter) => {
-    const body = buildsOf(chapter).length
-      ? buildsOf(chapter).map((build) => `#### ${buildTitle(build)}\n\n${entry(build)}`).join('\n\n')
-      : entry(chapter);
-    return `### ${chapter.name}\n\n${chapterMeta(chapter)}\n\n${body}`;
-  }).join('\n\n');
+  // A chapter's own summary and links, then (suph.app) each build under it.
+  const chapters = story.chapters.map((chapter) =>
+    [`### ${chapter.name}`, chapterMeta(chapter), entry(chapter), ...buildsOf(chapter).map((build) => `#### ${buildTitle(build)}\n\n${entry(build)}`)].join('\n\n'),
+  ).join('\n\n');
   return {
     'robots.txt': `# Public pages and assets are crawlable. Existing training-crawler access is unchanged.\nUser-agent: *\nAllow: /\n\n# OpenAI search discovery (independent of GPTBot training controls).\nUser-agent: OAI-SearchBot\nAllow: /\n\nSitemap: ${seo.origin}/sitemap.xml\n`,
     'llms.txt': `${intro}\n## Pages\n\n- [Portfolio](${canonical}): Work at Steadily, YouTube, Google and Huge; studio: Abacus Labs, which he founded, and suph.app.\n- [Full text](${seo.origin}/llms-full.txt): The same approved work summaries and reference links.\n${links}`,

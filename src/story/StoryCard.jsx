@@ -9,7 +9,7 @@ const aspectOf = (image) => (image.naturalWidth > 0 && image.naturalHeight > 0 ?
 
 /**
  * Loads a card image ahead of time and records its aspect, so a card that later
- * switches to it (suph.app's month toggle) paints it on the first frame.
+ * switches to it (suph.app's open card, as the pointer moves between builds) paints it on the first frame.
  */
 export function preloadCardImage(src) {
   if (!src || loaded.has(src) || typeof Image === 'undefined') return;
@@ -48,7 +48,7 @@ const initialState = (src) => {
 export default function StoryCard({ chapter, className = '', cardRef, imageLoading, ...rest }) {
   const { src, nudge } = cardImage(chapter.image);
   const [stored, setState] = useState(() => initialState(src));
-  // A new image (suph.app's month toggle): start over from what is known about it.
+  // A new image (suph.app's panel following a build): start over from what is known about it.
   // The card itself stays, so its color can ease to the new build's.
   const state = stored.src === src ? stored : initialState(src);
   if (stored.src !== src) setState(state);

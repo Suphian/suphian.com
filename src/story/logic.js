@@ -92,40 +92,56 @@ export function formatMonth(month) {
 /** A chapter's monthly builds (content.js builds, newest first); [] for a chapter without any. */
 export const buildsOf = (chapter) => (Array.isArray(chapter?.builds) ? chapter.builds : []);
 
-/** The month toggle appears only when there is another month to go to: two or more builds. */
-export const hasMonthToggle = (builds) => Array.isArray(builds) && builds.length > 1;
+/**
+ * Which build suph.app's image panel shows, 0 being the newest (Suphian
+ * 2026-09-28: the image changes with the project). `event` is what the open
+ * card's list reports (StoryBuilds):
+ * - { type: 'enter', index, pointerType, finePointer }: a pointer rests on a build.
+ *   Only a mouse on a fine-pointer screen picks it; a finger never does.
+ * - { type: 'leave', pointerType, finePointer }: that mouse leaves the list: the newest.
+ * - { type: 'focus', index, keyboard }: focus lands inside a build. Only keyboard
+ *   focus picks it, not the focus a tap or click leaves behind.
+ * - { type: 'blur', inside }: focus moves; out of the list (inside false) means the newest.
+ * Anything else keeps `current`.
+ */
+export function panelBuild(current, event) {
+  const mouse = event?.pointerType === 'mouse' && event.finePointer === true;
+  switch (event?.type) {
+    case 'enter':
+      return mouse && Number.isInteger(event.index) ? event.index : current;
+    case 'leave':
+      return mouse ? 0 : current;
+    case 'focus':
+      return event.keyboard === true && Number.isInteger(event.index) ? event.index : current;
+    case 'blur':
+      return event.inside ? current : 0;
+    default:
+      return current;
+  }
+}
 
 /**
- * The chapter as its card and open view show it. A chapter with builds (suph.app)
- * shows one build, the newest unless `index` asks for another: the build's name
- * takes the role line and its month the years line, and its image, summary,
- * links and color (build.color, else the chapter's) fill the rest. Any other
- * chapter comes back as it is.
+ * The chapter as its card shows it. A chapter with builds (suph.app) wears one
+ * build's image and color (build.color, else the chapter's): the newest, unless
+ * `index` asks for another (the open card's panel). Any other chapter comes back
+ * as it is.
  */
 export function chapterView(chapter, index = 0) {
   const builds = buildsOf(chapter);
   if (!builds.length) return chapter;
   const build = builds[clampIndex(index, builds.length)];
-  return {
-    ...chapter,
-    role: build.name,
-    period: formatMonth(build.month),
-    image: build.image,
-    color: build.color || chapter.color,
-    summary: build.summary,
-    links: build.links,
-  };
+  return { ...chapter, image: build.image, color: build.color || chapter.color };
 }
 
 /**
  * The line beside the active item: "Role · Years". A chapter with builds shows
- * its newest build instead, "Name · Month · Place" (Suphian 2026-09-28: "show
- * the month next to it"). Skips empty parts.
+ * its role alone, "A new project every month": the months belong to the builds
+ * (Suphian 2026-09-28: a build's name, month and place there were "way too
+ * unnecessary"). Skips empty parts.
  */
 export function metaLine(chapter) {
-  if (!buildsOf(chapter).length) return [chapter.role, chapter.period].filter(Boolean).join(' · ');
-  const view = chapterView(chapter);
-  return [view.role, view.period, view.location].filter(Boolean).join(' · ');
+  if (buildsOf(chapter).length) return chapter.role ?? '';
+  return [chapter.role, chapter.period].filter(Boolean).join(' · ');
 }
 
 /**

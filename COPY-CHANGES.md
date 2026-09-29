@@ -11,7 +11,27 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## suph.app by month (2026-09-28, latest)
+## suph.app: a list, not a toggle (2026-09-28, latest)
+
+Suphian reviewed the month toggle: "No, you did it wrong. Don't want the next arrows. Remove the next arrows. It should just be a list." On the open card: "Just say suph.app. This is a place where I put a different project out every month. And then you can go to each one of the individual projects", and "It should have a link to the main suph.app homepage as well". On the row: "Why does suph.app have 'The Toga Is Dead · August 2026 · Internet'? Seems way too unnecessary."
+
+The open card now reads, under the "suph.app." heading: the intro line, Visit suph.app ↗, then every build, newest first, each with its month, name, summary and link. The image panel shows the newest build's icon. A mouse resting on a build, or keyboard focus inside it, shows that build's icon instead (a short crossfade, instant with reduced motion); on touch it stays on the newest. The Previous/Next toggle is gone, and so is its `suph_app_month_viewed` event.
+
+| Field | Was | Now |
+|---|---|---|
+| suph.app row meta | The Toga Is Dead · August 2026 · Internet | A new project every month (the chapter's role, with nothing after it) |
+| suph.app role (row, no-JS profile, llms-full.txt) | Playground | A new project every month |
+| Open card, under the heading | The Toga Is Dead / ← Previous · August 2026 · Next → / one build's summary and link | A place where I put out a different project every month. / Visit suph.app ↗ / every build by month |
+| Open card, role and place | Shown | Not shown (no "Internet") |
+| New link | (none) | Visit suph.app → https://suph.app |
+| The Toga Is Dead summary | The Toga Is Dead is a 3D board game you play in the browser: … | A 3D board game you play in the browser: … (its name is printed right above it) |
+| Quran Art summary | Quran Art maps how the Qur’an uses Arabic demonstratives, words like hādhā (“this”), and turns them into simple geometric artwork: one image per surah, gathered in a gallery. | Simple geometric artwork from how the Qur’an uses Arabic demonstratives, words like hādhā (“this”): one image per surah, gathered in a gallery. |
+| Month toggle labels | Previous, Next, Month | Removed |
+| No-JS profile and llms-full.txt, suph.app | Playground · New build every month · Internet, then the builds | A new project every month, the intro line, Visit suph.app, then the builds (unchanged: "Name · Month", summary, link, newest first) |
+
+Unchanged: the meta description, llms.txt and the JSON-LD. The Toga Is Dead's own link also goes to https://suph.app until suph.app/toga exists.
+
+## suph.app by month (2026-09-28, superseded by the list above)
 
 Suphian: "For the suph.app maybe we can just [display] 'The Toga Is Dead' and show the month next to it as well. As I have different [projects], I can show the different months that were there… As you toggle through the months, you can get different icons." And: "When you click the suph.app card you should see all of my projects, and it should say the month. 'Play The Toga Is Dead' should be from last month, and 'the Quran GitHub' should be from the previous month… on the main suphian.com it always shows the latest project."
 
