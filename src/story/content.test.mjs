@@ -54,7 +54,7 @@ test('the headline and intro are Suphian’s own words, exactly', () => {
   assert.equal(`${story.heading.join(' ')}.`, 'Good ideas deserve to get made.');
   assert.equal(
     story.intro,
-    'I’m Suphian. I work in product and like turning ideas into things people can try, use, or enjoy. I care about how they work, how they look, and what happens when they meet the real world. In my free time I build cool stuff with Abacus Labs.',
+    'I’m Suphian. I work in product and like turning ideas into things people can try, use, or enjoy. I care about how they work, how they look, and what happens when they meet the real world. I also founded Abacus Labs, and suph.app is where I play with new ideas.',
   );
 });
 
@@ -69,7 +69,7 @@ test('the old site’s descriptions, in his wording', () => {
   );
   assert.equal(
     chapter('abacus').summary,
-    'Abacus turns spreadsheet chaos into a real-time command center for MCA operators — deals, underwriting, collections, syndication, and compliance in one place. I lead product and engineering.',
+    'Abacus turns spreadsheet chaos into a real-time command center for MCA operators — deals, underwriting, collections, syndication, and compliance in one place. I founded it, built it, and run it for paying customers.',
   );
   // The old YouTube paragraph with "AI-powered" removed and nothing else changed.
   assert.equal(
@@ -84,15 +84,17 @@ test('roles and years match the facts', () => {
     youtube: ['Senior Product Manager', '2020 – 2026'],
     google: ['Principal Analytical Lead', '2018 – 2020'],
     huge: ['Senior Product Analyst', '2014 – 2018'],
-    abacus: ['Side project', 'Current'],
-    'suph-app': ['Side project', 'New build every month'],
+    abacus: ['Founder', 'Current'],
+    'suph-app': ['Playground', 'New build every month'],
   };
   for (const [id, [role, period]] of Object.entries(facts)) {
     assert.equal(chapter(id).role, role, id);
     assert.equal(chapter(id).period, period, id);
   }
-  // A side project's line must not read as a job title.
-  for (const id of SIDE) assert.doesNotMatch(chapter(id).role, /manager|lead|head|founder|ceo|cto/i, id);
+  // A studio line must not read as an employee's title. "Founder" is allowed only because
+  // Suphian confirmed it for Abacus Labs (2026-09-28); nothing claims CEO or CTO.
+  for (const id of SIDE) assert.doesNotMatch(chapter(id).role, /manager|lead|head|ceo|cto/i, id);
+  assert.equal(SIDE.filter((id) => /founder/i.test(chapter(id).role)).join(), 'abacus');
 });
 
 test('side projects are marked as side projects, not jobs (Suphian)', () => {
@@ -100,10 +102,10 @@ test('side projects are marked as side projects, not jobs (Suphian)', () => {
   assert.deepEqual(story.chapters.filter((c) => c.kind === 'side').map((c) => c.id), SIDE);
   for (const id of JOBS) assert.equal(chapter(id).kind, undefined, id);
   // The meta line beside each name, and the role line of the open view.
-  assert.equal(metaLine(chapter('abacus')), 'Side project · Current');
-  assert.equal(metaLine(chapter('suph-app')), 'Side project · New build every month');
+  assert.equal(metaLine(chapter('abacus')), 'Founder · Current');
+  assert.equal(metaLine(chapter('suph-app')), 'Playground · New build every month');
   // The second list's label and its divider: sentence case, not a tiny uppercase label.
-  assert.equal(story.labels.sideProjects, 'Side projects');
+  assert.equal(story.labels.sideProjects, 'Studio'); // Suphian 2026-09-28: not "side projects"
   assert.equal(story.labels.list, 'Work');
 });
 
@@ -113,7 +115,7 @@ test('the list is two labelled lists with one continuous index', () => {
     groups.map((g) => [g.label, g.start, g.chapters.map((c) => c.id)]),
     [
       ['Work', 0, JOBS],
-      ['Side projects', 4, SIDE],
+      ['Studio', 4, SIDE],
     ],
   );
   // The order on screen is the content order: the side projects are already last.

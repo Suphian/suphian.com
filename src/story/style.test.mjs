@@ -88,7 +88,7 @@ test('logos sit inside their cards, with a margin of color', () => {
   assert.match(card, /border: 1px solid/);
 });
 
-test('the "Side projects" divider is a quiet label: readable, sentence case, secondary gray', () => {
+test('the "Studio" divider is a quiet label: readable, sentence case, secondary gray', () => {
   const divider = rule('.story-divider');
   assert.match(divider, /font-size: 16px/);
   assert.match(divider, /font-weight: 400/);

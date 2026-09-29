@@ -99,8 +99,8 @@ export function crawlerResources() {
   ).join('\n\n');
   return {
     'robots.txt': `# Public pages and assets are crawlable. Existing training-crawler access is unchanged.\nUser-agent: *\nAllow: /\n\n# OpenAI search discovery (independent of GPTBot training controls).\nUser-agent: OAI-SearchBot\nAllow: /\n\nSitemap: ${seo.origin}/sitemap.xml\n`,
-    'llms.txt': `${intro}\n## Pages\n\n- [Portfolio](${canonical}): Work at Steadily, YouTube, Google and Huge; side projects at Abacus Labs and suph.app.\n- [Full text](${seo.origin}/llms-full.txt): The same approved work summaries and reference links.\n${links}`,
-    'llms-full.txt': `${intro}\n## Work and side projects\n\n${chapters}\n${links}`,
+    'llms.txt': `${intro}\n## Pages\n\n- [Portfolio](${canonical}): Work at Steadily, YouTube, Google and Huge; studio: Abacus Labs, which he founded, and suph.app.\n- [Full text](${seo.origin}/llms-full.txt): The same approved work summaries and reference links.\n${links}`,
+    'llms-full.txt': `${intro}\n## Work and studio\n\n${chapters}\n${links}`,
     'sitemap.xml': `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${canonical}</loc><lastmod>${seo.lastModified}</lastmod></url>\n</urlset>\n`,
     'humans.txt': `/* TEAM */\nName: ${site.fullName}\nTitle: ${site.title}\nContact: ${site.email}\n\n/* SITE */\nLanguage: English\nBuilt with: React, Vite, CSS\nHosting: Vercel\nContact form: Supabase\n`,
   };

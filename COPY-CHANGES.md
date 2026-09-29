@@ -11,7 +11,23 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## Signature messaging preview (2026-09-27, latest)
+## Studio, not side projects (2026-09-28, latest)
+
+Suphian had feedback that "side project" undersells it: "I'm the founder of Abacus… I started and built it… we make money on it. We're not scaling it. suph.app is literally just for me to play around with." He chose "Studio" for the divider.
+
+| Field | Was | Now |
+|---|---|---|
+| Divider between jobs and his own ventures | Side projects | Studio |
+| Abacus Labs role line | Side project · Current · Internet | Founder · Current · Internet |
+| Abacus Labs summary, last sentence | I lead product and engineering. | I founded it, built it, and run it for paying customers. |
+| suph.app role line | Side project · New build every month · Internet | Playground · New build every month · Internet |
+| Story intro, last sentence | In my free time I build cool stuff with Abacus Labs. | I also founded Abacus Labs, and suph.app is where I play with new ideas. |
+| Meta/OG/Twitter description | … Builds Abacus Labs, a command center for MCA operators, and something new every month at suph.app. | … Founder of Abacus Labs, a command center for MCA operators. Builds something new every month at suph.app. |
+| llms.txt | side projects at Abacus Labs and suph.app | studio: Abacus Labs, which he founded, and suph.app |
+
+The customer count (two) is deliberately not published; the copy says "paying customers".
+
+## Signature messaging preview (2026-09-27)
 
 After a real WhatsApp screenshot showed Editorial cropped into a square thumbnail, Suphian
 chose the full Signature design for both WhatsApp and iMessage. The primary image is now square,

@@ -1,12 +1,12 @@
 # Suphian Tweel
 
-> Product leader. Led payments at YouTube, 2020 – 2026. Builds Abacus Labs, a command center for MCA operators, and something new every month at suph.app.
+> Product leader. Led payments at YouTube, 2020 – 2026. Founder of Abacus Labs, a command center for MCA operators. Builds something new every month at suph.app.
 
 Product / Payments / AI
 
-I’m Suphian. I work in product and like turning ideas into things people can try, use, or enjoy. I care about how they work, how they look, and what happens when they meet the real world. In my free time I build cool stuff with Abacus Labs.
+I’m Suphian. I work in product and like turning ideas into things people can try, use, or enjoy. I care about how they work, how they look, and what happens when they meet the real world. I also founded Abacus Labs, and suph.app is where I play with new ideas.
 
-## Work and side projects
+## Work and studio
 
 ### Steadily
 
@@ -49,15 +49,15 @@ Specialized in site redesigns, A/B testing, and multivariate testing for high-im
 
 ### Abacus Labs
 
-Side project · Current · Internet
+Founder · Current · Internet
 
-Abacus turns spreadsheet chaos into a real-time command center for MCA operators — deals, underwriting, collections, syndication, and compliance in one place. I lead product and engineering.
+Abacus turns spreadsheet chaos into a real-time command center for MCA operators — deals, underwriting, collections, syndication, and compliance in one place. I founded it, built it, and run it for paying customers.
 
 - [Visit abacuslabs.co](https://abacuslabs.co)
 
 ### suph.app
 
-Side project · New build every month · Internet
+Playground · New build every month · Internet
 
 Every month I make something. This month it’s The Toga Is Dead, a 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.
 

@@ -64,25 +64,25 @@ const lists = all(html, /<ol\b([^>]*)>([\s\S]*?)<\/ol>/g).map((m) => ({
 }));
 const dividers = all(html, /<div class="story-divider"([^>]*)>([\s\S]*?)<\/div>/g);
 
-test('the chapters render as two labelled lists: "Work", then "Side projects"', () => {
+test('the chapters render as two labelled lists: "Work", then "Studio"', () => {
   assert.equal(lists.length, 2);
-  assert.deepEqual(lists.map((l) => l.attrs['aria-label']), ['Work', 'Side projects']);
+  assert.deepEqual(lists.map((l) => l.attrs['aria-label']), ['Work', 'Studio']);
   assert.deepEqual(lists.map((l) => l.attrs.role), ['list', 'list']);
   assert.deepEqual(text(lists[0].body, 'story-item-name'), ['Steadily', 'YouTube', 'Google', 'Huge']);
   assert.deepEqual(text(lists[1].body, 'story-item-name'), ['Abacus Labs', 'suph.app']);
 });
 
-test('the side projects’ meta lines say "Side project"', () => {
-  assert.deepEqual(text(lists[1].body, 'story-item-meta'), ['Side project · Current', 'Side project · New build every month']);
+test('the studio’s meta lines say what he is there: "Founder", "Playground" (Suphian 2026-09-28)', () => {
+  assert.deepEqual(text(lists[1].body, 'story-item-meta'), ['Founder · Current', 'Playground · New build every month']);
   for (const meta of text(lists[0].body, 'story-item-meta')) assert.doesNotMatch(meta, /side project/i, meta);
   // Every meta line is the chapter's own role · years.
   assert.deepEqual(text(html, 'story-item-meta'), story.chapters.map(metaLine));
 });
 
-test('the "Side projects" divider renders exactly once, between the lists, and is not a chapter', () => {
+test('the "Studio" divider renders exactly once, between the lists, and is not a chapter', () => {
   assert.equal(dividers.length, 1);
   const [divider] = dividers;
-  assert.equal(decode(divider[2]).trim(), 'Side projects');
+  assert.equal(decode(divider[2]).trim(), 'Studio');
   assert.ok(divider.index >= lists[0].end && divider.index + divider[0].length <= lists[1].start, 'between the two lists');
   // Not a button, not a list item, and hidden from screen readers, which hear the list's label instead.
   assert.doesNotMatch(divider[0], /<button|<li|tabindex/);

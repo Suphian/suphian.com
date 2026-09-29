@@ -56,7 +56,7 @@ const HOME_TITLE = 'Suphian Tweel · Product, Payments & AI';
 // title and edition): never a claim about YouTube, and no Abacus AI facts are supplied yet, so none here.
 // "Command center for MCA operators" is the Abacus chapter's own wording. 152 characters.
 const HOME_DESCRIPTION =
-  'Product leader. Led payments at YouTube, 2020 – 2026. Builds Abacus Labs, a command center for MCA operators, and something new every month at suph.app.';
+  'Product leader. Led payments at YouTube, 2020 – 2026. Founder of Abacus Labs, a command center for MCA operators. Builds something new every month at suph.app.';
 
 // ---------------------------------------------------------------------------
 // Site
@@ -108,19 +108,20 @@ export const story = {
   // Suphian's own headline and intro (2026-09-26). Use exactly; the UI adds the red period.
   heading: ['Good ideas deserve', 'to get made'],
   intro:
-    'I’m Suphian. I work in product and like turning ideas into things people can try, use, or enjoy. I care about how they work, how they look, and what happens when they meet the real world. In my free time I build cool stuff with Abacus Labs.',
+    'I’m Suphian. I work in product and like turning ideas into things people can try, use, or enjoy. I care about how they work, how they look, and what happens when they meet the real world. I also founded Abacus Labs, and suph.app is where I play with new ideas.',
   // No actions beside the intro (Suphian removed "Request resume", 2026-09-26).
   labels: {
-    // The two lists' names: the jobs, then the side projects. sideProjects is also the
-    // divider shown between them (Suphian: mark the side projects, 2026-09-26).
+    // The two lists' names: the jobs, then his own ventures. sideProjects is also the
+    // divider shown between them. Suphian 2026-09-28: not "side projects" (Abacus Labs is a
+    // company he founded and earns from), so the divider reads "Studio".
     list: 'Work',
-    sideProjects: 'Side projects',
+    sideProjects: 'Studio',
     back: 'Back',
   },
-  // Jobs first, newest to oldest, then the side projects at the bottom (Suphian, 2026-09-26).
-  // kind: 'side' marks a side project, not a job (Suphian: "these aren't my professional
-  // projects, but rather my side projects"). Side projects are listed under a "Side projects"
-  // divider and their role line reads "Side project". Every other chapter is a job.
+  // Jobs first, newest to oldest, then his own ventures at the bottom (Suphian, 2026-09-26).
+  // kind: 'side' marks one of his own ventures, not a job. They are listed under the
+  // "Studio" divider, and each role line says what he is there: Founder of Abacus Labs,
+  // and suph.app is his playground (Suphian 2026-09-28). Every other chapter is a job.
   // Each chapter's open view is role, years, a summary and its links, in that order, and
   // nothing else (Suphian, 2026-09-26).
   // summary: the description from the old site (suphian.com ExperienceSection.tsx and
@@ -223,28 +224,30 @@ export const story = {
         { label: 'Apple: Beats case study', href: 'https://elephant.is/case-study/beats/' },
       ],
     },
-    // Side projects (kind: 'side'), below the jobs.
+    // His own ventures (kind: 'side'), below the jobs, under "Studio".
     {
       id: 'abacus',
       name: 'Abacus Labs',
-      // His free-time project, not a job (see the intro line): the role line says so.
+      // Suphian 2026-09-28: "I'm the founder of Abacus… I started and built it… we make
+      // money on it." An MCA tool with paying customers; he isn't scaling it.
       kind: 'side',
-      role: 'Side project',
+      role: 'Founder',
       period: 'Current',
-      location: 'Internet', // Suphian: the side projects' location "can be internet"
+      location: 'Internet', // Suphian: the studio's location "can be internet"
       // A raster mark with even 4px margins on every side and no descender: nothing to nudge.
       image: { src: '/work/abacus-white.png', nudge: 0 },
       color: '#000000', // Abacus Labs black: the card's fill (Suphian: company colors)
       summary:
-        'Abacus turns spreadsheet chaos into a real-time command center for MCA operators — deals, underwriting, collections, syndication, and compliance in one place. I lead product and engineering.',
+        'Abacus turns spreadsheet chaos into a real-time command center for MCA operators — deals, underwriting, collections, syndication, and compliance in one place. I founded it, built it, and run it for paying customers.',
       links: [{ label: 'Visit abacuslabs.co', href: 'https://abacuslabs.co' }],
     },
     {
       id: 'suph-app',
       name: 'suph.app',
-      // Suphian: "Every month I make something." A side project, not a job.
+      // Suphian: "Every month I make something." 2026-09-28: "literally just for me to play
+      // around with and do interesting stuff", so the role line reads "Playground".
       kind: 'side',
-      role: 'Side project',
+      role: 'Playground',
       period: 'New build every month',
       location: 'Internet',
       // The game's crown emblem as a white mark, like the other logos (Suphian: "just put the crown logo").
