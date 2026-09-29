@@ -204,7 +204,9 @@ test.describe('a load opens at the top', () => {
 });
 
 test.describe('reduced motion', () => {
-  test.use({ reducedMotion: 'reduce' });
+  // A context option, not a fixture: `test.use({ reducedMotion })` alone is silently ignored
+  // by @playwright/test (found 2026-09-28; until then this block ran with full motion).
+  test.use({ contextOptions: { reducedMotion: 'reduce' } });
   test('contact sheet and a story chapter still work', async ({ page }) => {
     await openContact(page);
     await contactDialog(page);
