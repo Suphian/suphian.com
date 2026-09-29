@@ -19,14 +19,16 @@
  * nav            { skip, home }
  * hero           { srTitle, edition: [3], cue: [2], cueHref }
  * story          { id, heading: [lines], intro, labels: { list, sideProjects, back },
- *                  chapters: [{ id, name, kind?, role, period, location, image: { src, nudge }, color, summary,
- *                  links: [{ label, href }] }] }
+ *                  chapters: [{ id, name, kind?, role?, period, location, image: { src, nudge }, color, accent?,
+ *                  summary, links: [{ label, href }] }] }
  *                  (replaces about, work and projects, 2026-09-26; jobs newest first, then the side
  *                  projects, kind: 'side')
- *                  A chapter made of monthly builds (suph.app, 2026-09-28) has builds instead of an image:
+ *                  A chapter made of builds (suph.app's projects, 2026-09-28) has builds instead of an image:
  *                  builds: [{ month: 'YYYY-MM', slug, name, summary, image: { src, nudge }, color?, links }],
- *                  newest first. The open card lists every build, one line each; the chapter's own
- *                  summary and links are for the no-JavaScript profile and llms-full.txt.
+ *                  newest first. Its open card is the usual role (if any), years and summary, then one
+ *                  row per build in place of the links; its own links are for the no-JavaScript profile
+ *                  and llms-full.txt. accent: the marks' color when the card color is too dark to see on
+ *                  the page (logic.js accentOf).
  * contact        { title, signoff: { label }, requiredMark, optionalMark,
  *                  fields: { name|email|phone|message: { label, placeholder, required } },
  *                  validation: {...}, submit, sending, toasts: { success|rateLimited|error|blocked: { title, description } } }
@@ -58,9 +60,11 @@ const HOME_TITLE = 'Suphian Tweel · Product, Payments & AI';
 // Search text leads with who he is: a product leader, payments at YouTube, then what he
 // builds. Steadily stays a work chapter and the JSON-LD employer. AI is the site's positioning (the
 // title and edition): never a claim about YouTube, and no Abacus AI facts are supplied yet, so none here.
-// "Command center for MCA operators" is the Abacus chapter's own wording. 152 characters.
+// "Command center for MCA operators" is the Abacus chapter's own wording. suph.app makes no
+// monthly promise (Suphian 2026-09-28: weekend experiments he doesn't plan to support).
+// 153 characters.
 const HOME_DESCRIPTION =
-  'Product leader. Led payments at YouTube, 2020 – 2026. Founder of Abacus Labs, a command center for MCA operators. Builds something new every month at suph.app.';
+  'Product leader. Led payments at YouTube, 2020 – 2026. Founder of Abacus Labs, a command center for MCA operators. Shares weekend experiments at suph.app.';
 
 // ---------------------------------------------------------------------------
 // Site
@@ -124,10 +128,11 @@ export const story = {
   },
   // Jobs first, newest to oldest, then his own ventures at the bottom (Suphian, 2026-09-26).
   // kind: 'side' marks one of his own ventures, not a job. They are listed under the
-  // "Studio" divider, and each role line says what he is there: Founder of Abacus Labs,
-  // and suph.app is his playground (Suphian 2026-09-28). Every other chapter is a job.
+  // "Studio" divider. Abacus Labs' role line says what he is there, Founder; suph.app has no
+  // role at all (Suphian 2026-09-28: "Maybe I don't need a title on it"). Every other chapter is a job.
   // Each chapter's open view is role, years, a summary and its links, in that order, and
-  // nothing else (Suphian, 2026-09-26).
+  // nothing else (Suphian, 2026-09-26). suph.app skips the role and lists its projects in
+  // place of the links.
   // summary: the description from the old site (suphian.com ExperienceSection.tsx and
   // ProjectsSection.tsx) in his wording, with every AI claim about YouTube removed.
   // links: the old site's links, minus any that tie AI to YouTube.
@@ -248,32 +253,36 @@ export const story = {
     {
       id: 'suph-app',
       name: 'suph.app',
-      // Suphian: "Every month I make something." 2026-09-28: "literally just for me to play
-      // around with and do interesting stuff". The role is the chapter's whole line in the list
-      // row, the no-JavaScript profile and llms-full.txt, with no period or place after it
-      // (Suphian 2026-09-28: the build name, month and place there were "way too unnecessary").
-      // The open card shows no role line at all.
+      // Suphian 2026-09-28: "With the same format as Abacus Labs, like founder, current,
+      // internet. I like that format", then "Maybe I don't need a title on it". So no role: the
+      // row reads "Current", and the open card is the years line and the summary like every
+      // chapter (no role line), with the projects in place of its links.
       kind: 'side',
-      role: 'A new project every month',
-      period: 'New build every month', // not shown: each build carries its own month
-      location: 'Internet', // not shown for suph.app
-      color: '#AC8243', // the deep gold from the game's own crown gradient: every build's card unless it sets its own
-      // Suphian 2026-09-28: "This is a place where I put a different project out every month."
-      // The summary and the link to suph.app are for the no-JavaScript profile and llms-full.txt
-      // only. The open card shows just the projects ("Even get rid of that"; "You can even get
-      // rid of suph.app as well, like the Visit suph.app link. Just keep the projects").
-      summary: 'A place where I put out a different project every month.',
+      period: 'Current',
+      location: 'Internet',
+      // Suphian 2026-09-28: "maybe green, the kind of forest green that the Quran website uses"
+      // (suph.app/quran's --ink). The card's fill, and every project token's unless it sets its own.
+      color: '#243F39',
+      // That green is too dark to see as a mark on the near-black page (about 1.7:1), so the marks
+      // take the Quran site's pale sage instead (9.7:1 on #080808).
+      accent: '#AAB8A7',
+      // His words, lightly tightened (Suphian 2026-09-28). No monthly promise: he doesn't want to
+      // commit to a project every month, and he doesn't plan to support them.
+      summary:
+        'Small things I build to explore. When a new model or tool comes out, I like to spend a weekend with it and use it to solve a real problem. I don’t plan to support them; they’re experiments I think are worth sharing.',
+      // For the no-JavaScript profile and llms-full.txt: the open card shows the projects instead
+      // (Suphian: "Just keep the projects").
       links: [{ label: 'Visit suph.app', href: 'https://suph.app' }],
       // Suphian 2026-09-28: "When you click the suph.app card you should see all of my projects,
-      // and it should say the month… on the main suphian.com it always shows the latest project."
-      // One entry per monthly build, newest first. The rail card shows the newest build's icon.
-      // The open card lists every build, one line each (Suphian: "Condense"), and its image panel
-      // shows the newest, or the build under a mouse or keyboard focus. The no-JavaScript
-      // profile and llms-full.txt list them all too, with their summaries.
+      // and it should say the month." One entry per project, newest first; month is when it was
+      // made, not a schedule. The rail card shows the newest project's icon. The open card lists
+      // every project, one line each (Suphian: "Condense"), and its image panel shows the newest,
+      // or the project under a mouse or keyboard focus. The no-JavaScript profile and
+      // llms-full.txt list them all too, with their summaries.
       //
-      // Adding a new month: put a new build at the TOP of this list:
+      // Adding a project: put it at the TOP of this list:
       //   { month: 'YYYY-MM', slug, name, summary, image: { src, nudge }, color?, links: [{ label, href }] }
-      // - month: the month it shipped. The site writes it out ("October 2026").
+      // - month: the month he made it. The site writes it out ("October 2026").
       // - slug: short, lowercase and unique. suph.app (live 2026-09-28) has one page per build at
       //   suph.app/<slug> (suph.app/toga, suph.app/quran); a new build links to its page there.
       // - image: a white mark in public/work with a viewBox tight to its ink (assets-src/work/README.txt);
@@ -399,7 +408,7 @@ export const seo = {
   // The homepage's last real content or metadata change: the sitemap <lastmod> and the
   // ProfilePage dateModified. Bump it with the copy, never on every build (Google only
   // trusts lastmod that stays accurate).
-  lastModified: '2026-09-27',
+  lastModified: '2026-09-28', // the meta description changed (suph.app: no monthly promise)
   home: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,

@@ -15,7 +15,7 @@ const strings = (value) =>
 const chapter = (id) => story.chapters.find((c) => c.id === id);
 const JOBS = ['steadily', 'youtube', 'google', 'huge'];
 const SIDE = ['abacus', 'suph-app'];
-// Everything that carries a card image: a chapter, or each of its monthly builds.
+// Everything that carries a card image: a chapter, or each of its builds.
 const cards = (c) => (buildsOf(c).length ? buildsOf(c).map((build) => ({ ...build, id: `${c.id}/${build.slug}` })) : [c]);
 // Everything that carries a summary and links: every chapter, and each of its builds.
 const entries = (c) => [c, ...buildsOf(c).map((build) => ({ ...build, id: `${c.id}/${build.slug}` }))];
@@ -27,20 +27,24 @@ test('jobs run newest to oldest, then the side projects: Steadily → YouTube �
 
 test('each chapter is only role, years, place, summary and links (plus its card, and the side-project flag)', () => {
   for (const c of story.chapters) {
-    const optional = ['kind'].filter((key) => key in c);
-    // A chapter of monthly builds (suph.app) carries them in place of its own card; its
-    // summary and links introduce the list.
+    // Optional: the side-project flag, an accent for a card color too dark to see as a mark,
+    // and the role (suph.app has none: "Maybe I don't need a title on it", Suphian 2026-09-28).
+    const optional = ['kind', 'accent', 'role'].filter((key) => key in c);
+    // A chapter of builds (suph.app) carries them in place of its own card.
     const own = 'builds' in c ? ['builds'] : ['image'];
     assert.deepEqual(
       Object.keys(c).sort(),
-      ['color', 'id', 'links', 'location', 'name', 'period', 'role', 'summary', ...own, ...optional].sort(),
+      ['color', 'id', 'links', 'location', 'name', 'period', 'summary', ...own, ...optional].sort(),
       `${c.id} has extra or missing fields`,
     );
     // The flag takes one value: a side project.
     if ('kind' in c) assert.equal(c.kind, 'side', `${c.id}.kind`);
     // The card wears the company's color (Suphian's pick), as a hex the white logo sits on.
     assert.match(c.color, /^#[0-9A-F]{6}$/i, `${c.id} needs a company color`);
-    for (const key of ['name', 'role', 'period']) assert.ok(c[key], `${c.id}.${key}`);
+    if ('accent' in c) assert.match(c.accent, /^#[0-9A-F]{6}$/i, `${c.id}.accent`);
+    for (const key of ['name', 'period']) assert.ok(c[key], `${c.id}.${key}`);
+    // Every chapter but suph.app has a role line.
+    if (c.id !== 'suph-app') assert.ok(c.role, `${c.id}.role`);
     for (const e of cards(c)) {
       // Every card is a logo, and the logo and its optical nudge travel together
       // (logo-geometry.test.mjs checks the values).
@@ -122,26 +126,28 @@ test('roles and years match the facts', () => {
     google: ['Principal Analytical Lead', '2018 – 2020'],
     huge: ['Senior Product Analyst', '2014 – 2018'],
     abacus: ['Founder', 'Current'],
-    'suph-app': ['A new project every month', 'New build every month'], // the period isn't shown
+    // Abacus Labs' format, without a title (Suphian 2026-09-28: "Maybe I don't need a title on it").
+    'suph-app': [undefined, 'Current'],
   };
   for (const [id, [role, period]] of Object.entries(facts)) {
     assert.equal(chapter(id).role, role, id);
     assert.equal(chapter(id).period, period, id);
   }
+  assert.ok(!('role' in chapter('suph-app')), 'suph.app has no role at all, not an empty one');
   // A studio line must not read as an employee's title. "Founder" is allowed only because
   // Suphian confirmed it for Abacus Labs (2026-09-28); nothing claims CEO or CTO.
-  for (const id of SIDE) assert.doesNotMatch(chapter(id).role, /manager|lead|head|ceo|cto/i, id);
-  assert.equal(SIDE.filter((id) => /founder/i.test(chapter(id).role)).join(), 'abacus');
+  for (const id of SIDE) assert.doesNotMatch(chapter(id).role ?? '', /manager|lead|head|ceo|cto/i, id);
+  assert.equal(SIDE.filter((id) => /founder/i.test(chapter(id).role ?? '')).join(), 'abacus');
 });
 
 test('side projects are marked as side projects, not jobs (Suphian)', () => {
   // The flag: exactly Abacus Labs and suph.app; the four jobs carry none.
   assert.deepEqual(story.chapters.filter((c) => c.kind === 'side').map((c) => c.id), SIDE);
   for (const id of JOBS) assert.equal(chapter(id).kind, undefined, id);
-  // The meta line beside each name. suph.app's is its role alone: no build, month or place
-  // (Suphian 2026-09-28: "way too unnecessary").
+  // The meta line beside each name, in one format (Suphian 2026-09-28: "the same format as
+  // Abacus Labs"). suph.app has no role, so it reads just its years, with no stray separator.
   assert.equal(metaLine(chapter('abacus')), 'Founder · Current');
-  assert.equal(metaLine(chapter('suph-app')), 'A new project every month');
+  assert.equal(metaLine(chapter('suph-app')), 'Current');
   // The second list's label and its divider: sentence case, not a tiny uppercase label.
   assert.equal(story.labels.sideProjects, 'Studio'); // Suphian 2026-09-28: not "side projects"
   assert.equal(story.labels.list, 'Work');
@@ -173,14 +179,21 @@ test('keyboard stepping crosses the divider: Huge ↓ Abacus Labs, Abacus Labs �
   assert.equal(order[stepIndex(count - 1, 'Home', count)], 'steadily');
 });
 
-test('suph.app: Suphian’s monthly builds, with his facts only', () => {
+test('suph.app: Suphian’s projects, with his facts only', () => {
   const app = chapter('suph-app');
   assert.equal(app.name, 'suph.app');
-  // Every build's card is the crown's deep gold unless the build sets its own; none does yet.
-  assert.equal(app.color, '#AC8243');
-  // Suphian's line and a link to suph.app, for the no-JavaScript profile and llms-full.txt only:
-  // the open card shows just the projects ("Even get rid of that"; "Just keep the projects").
-  assert.equal(app.summary, 'A place where I put out a different project every month.');
+  // The Quran site's forest green fills the card and every project token unless a build sets
+  // its own (none does); its pale sage is the accent (Suphian 2026-09-28: "maybe green, the
+  // kind of forest green that the Quran website uses").
+  assert.equal(app.color, '#243F39');
+  assert.equal(app.accent, '#AAB8A7');
+  // His paragraph, lightly tightened: the card's summary, like any chapter's.
+  assert.equal(
+    app.summary,
+    'Small things I build to explore. When a new model or tool comes out, I like to spend a weekend with it and use it to solve a real problem. I don’t plan to support them; they’re experiments I think are worth sharing.',
+  );
+  // A link to suph.app for the no-JavaScript profile and llms-full.txt; the card lists the
+  // projects in its place ("Just keep the projects").
   assert.deepEqual(app.links, [{ label: 'Visit suph.app', href: 'https://suph.app' }]);
   // Every build is in the card: no cap, no setting for one.
   assert.equal(content.BUILDS_IN_CARD, undefined);
@@ -209,6 +222,14 @@ test('suph.app: Suphian’s monthly builds, with his facts only', () => {
   // suph.app went live 2026-09-28 with a page per build at suph.app/<slug> (suph.app/toga,
   // suph.app/quran): every build's first link, the one its card row opens, is exactly that page.
   for (const build of app.builds) assert.equal(build.links[0].href, `https://suph.app/${build.slug}`, build.slug);
+});
+
+test('suph.app promises no schedule: nothing says "every month" any more', () => {
+  // Suphian 2026-09-28: he doesn't want to commit to a project every month. The builds keep
+  // their month, which says when each was made, not when the next one is due.
+  const published = strings({ site: content.site, hero, story, seo: content.seo, structuredData: content.structuredData });
+  for (const text of published) assert.doesNotMatch(text, /every month|each month|monthly|new build/i, text);
+  assert.match(content.seo.home.description, /Shares weekend experiments at suph\.app\.$/);
 });
 
 test('AI is never tied to YouTube', () => {

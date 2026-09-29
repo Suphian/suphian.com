@@ -8,7 +8,7 @@ import { crawlerResources, escapeHtml, renderSeoHtml, schemaGraph } from '../scr
 const template = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const html = renderSeoHtml(template);
 
-// Every chapter's summary and links, and each of suph.app's monthly builds'.
+// Every chapter's summary and links, and each of suph.app's builds'.
 const entries = (chapter) => [chapter, ...(chapter.builds ?? [])];
 
 test('initial HTML contains the approved work content and contact without requiring JavaScript', () => {
@@ -32,20 +32,24 @@ test('without JavaScript, suph.app lists every build, newest first, as "Name · 
   const full = crawlerResources()['llms-full.txt'];
   const inText = at(full, titles.map((title) => `#### ${title}\n`));
   assert.ok(inText.every((i) => i > 0) && inText[0] < inText[1], `llms-full.txt: ${inText}`);
-  // Under the chapter's own line, which is just its role (Suphian 2026-09-28: no build,
-  // month or place there), then its intro and link, as the open card reads.
+  // Under the chapter's own line, in every chapter's format (Suphian 2026-09-28: "the same
+  // format as Abacus Labs", with no title), then its summary and a link to suph.app.
+  const suph = story.chapters.find((c) => c.id === 'suph-app');
   assert.ok(full.includes(
-    '### suph.app\n\nA new project every month\n\nA place where I put out a different project every month.\n\n- [Visit suph.app](https://suph.app)\n\n#### The Toga Is Dead · August 2026',
+    `### suph.app\n\nCurrent · Internet\n\n${suph.summary}\n\n- [Visit suph.app](https://suph.app)\n\n#### The Toga Is Dead · August 2026`,
   ));
   const article = html.slice(html.indexOf('<article id="suph-app">'), html.indexOf('</section>', html.indexOf('<article id="suph-app">')));
-  assert.match(article, /<h3>suph\.app<\/h3>\s*<p>A new project every month<\/p>\s*<p>A place where I put out a different project every month\.<\/p>\s*<ul><li><a href="https:\/\/suph\.app">Visit suph\.app<\/a><\/li><\/ul>/);
-  // Every build, newest first, each "Name · Month" with its own page (the card shows only the newest three).
+  assert.ok(
+    article.includes(`<h3>suph.app</h3>\n            <p>Current · Internet</p>\n            <p>${escapeHtml(suph.summary)}</p>\n            <ul><li><a href="https://suph.app">Visit suph.app</a></li></ul>`),
+    article.slice(0, 400),
+  );
+  // Every build, newest first, each "Name · Month" with its own page.
   assert.deepEqual(
     [...article.matchAll(/<h4>([^<]+)<\/h4>\s*<p>[^<]*<\/p>\s*<ul><li><a href="([^"]+)">/g)].map((m) => [m[1], m[2]]),
     [['The Toga Is Dead · August 2026', 'https://suph.app/toga'], ['Quran Art · July 2026', 'https://suph.app/quran']],
   );
   assert.ok(article.indexOf('<article id="suph-app-toga">') > 0 && article.indexOf('<article id="suph-app-quran">') > article.indexOf('<article id="suph-app-toga">'));
-  assert.doesNotMatch(article, /Playground|Internet/);
+  assert.doesNotMatch(article, /Playground|Maker|every month/i);
 });
 
 test('metadata has one stable canonical, honest entity schema and the current social card', () => {

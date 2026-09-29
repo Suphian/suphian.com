@@ -174,7 +174,7 @@ test('every logo’s viewBox is tight to its ink, so the box centre is the ink c
 });
 
 test('content.js stores exactly the measured nudge for every logo card', () => {
-  // A chapter's card, or each of suph.app's monthly builds' cards.
+  // A chapter's card, or each of suph.app's builds' cards.
   const cards = story.chapters.flatMap((chapter) =>
     chapter.builds ? chapter.builds.map((build) => [`${chapter.id}/${build.slug}`, build.image]) : [[chapter.id, chapter.image]],
   );

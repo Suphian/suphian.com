@@ -81,6 +81,14 @@ export function accentFor(color, fallback = '#FFFFFF') {
   return luminance < 0.02 ? fallback : color;
 }
 
+/**
+ * The accent a chapter (or its card view) actually uses: its own `accent` when
+ * content.js sets one, else accentFor its color. suph.app's forest green is too
+ * dark to see as a mark on the page, but not dark enough for accentFor's white
+ * fallback, so it names the Quran site's pale sage instead (Suphian 2026-09-28).
+ */
+export const accentOf = (view) => view?.accent ?? accentFor(view?.color);
+
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 /** A build's month, 'YYYY-MM', as the site writes it: "September 2026" (en-US, never abbreviated). Anything else: ''. */
@@ -89,7 +97,7 @@ export function formatMonth(month) {
   return match ? `${MONTHS[Number(match[2]) - 1]} ${match[1]}` : '';
 }
 
-/** A chapter's monthly builds (content.js builds, newest first); [] for a chapter without any. */
+/** A chapter's builds (suph.app's projects, newest first); [] for a chapter without any. */
 export const buildsOf = (chapter) => (Array.isArray(chapter?.builds) ? chapter.builds : []);
 
 /**
@@ -134,15 +142,11 @@ export function chapterView(chapter, index = 0) {
 }
 
 /**
- * The line beside the active item: "Role · Years". A chapter with builds shows
- * its role alone, "A new project every month": the months belong to the builds
- * (Suphian 2026-09-28: a build's name, month and place there were "way too
- * unnecessary"). Skips empty parts.
+ * The line beside the active item: "Role · Years", the same for every chapter
+ * (Suphian 2026-09-28: suph.app takes Abacus Labs' format). Skips empty parts,
+ * so suph.app, which has no role, reads just "Current".
  */
-export function metaLine(chapter) {
-  if (buildsOf(chapter).length) return chapter.role ?? '';
-  return [chapter.role, chapter.period].filter(Boolean).join(' · ');
-}
+export const metaLine = (chapter) => [chapter.role, chapter.period].filter(Boolean).join(' · ');
 
 /**
  * The chapters as the list shows them: two labelled lists, the jobs ('work')

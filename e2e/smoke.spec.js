@@ -136,9 +136,10 @@ test('story: hover never moves the highlight or the rail; the active card, Enter
   }
 });
 
-// Suphian 2026-09-28: the row says "A new project every month"; the open card is just the
-// projects, one line each, newest first, each a link to its page ("Condense… Just keep the
-// projects"). The image panel shows the newest build, or the one under a mouse or keyboard focus.
+// Suphian 2026-09-28: suph.app reads like Abacus Labs, without a title: the row says "Current";
+// the open card is "Current · Internet", his paragraph, then the projects in the links' place,
+// one line each, newest first, each a link to its page. The image panel shows the newest
+// build, or the one under a mouse or keyboard focus.
 const press = (locator) => (test.info().project.use.hasTouch ? locator.tap() : locator.click());
 const suphApp = (page) => page.locator('.story-button').nth(CHAPTERS.indexOf('suph.app'));
 const openSuphApp = async (page) => {
@@ -154,18 +155,26 @@ const panelIcon = (detail) => detail.locator('.story-card--panel .story-card-log
 const CROWN = '/work/suph-app.svg';
 const STAR = '/work/quran-art.svg';
 
-test('suph.app’s card is its projects, one line and one link each; the image follows a mouse, never a finger', async ({ page }) => {
+test('suph.app’s card: years, his paragraph, then one line and one link per project; the image follows a mouse, never a finger', async ({ page }) => {
   const row = suphApp(page);
   await row.scrollIntoViewIfNeeded();
   await expect(row.locator('.story-item-name')).toHaveText('suph.app');
-  await expect(row.locator('.story-item-meta')).toHaveText('A new project every month');
+  await expect(row.locator('.story-item-meta')).toHaveText('Current');
   const detail = await openSuphApp(page);
 
-  // Just the heading and the projects: no intro, role, place, suph.app link, toggle or summary.
-  await expect(detail.locator('.story-detail-summary, .story-detail-role, .story-detail-years, .story-links')).toHaveCount(0);
-  await expect(detail).not.toContainText(/A place where|Internet|Visit suph\.app|All projects|Previous|Next/);
+  // Like every chapter, minus the title: the years line (the dialog's description), the
+  // summary, then the projects where the links would be. No role line, no "Visit suph.app".
+  await expect(detail.locator('.story-detail-role')).toHaveCount(0);
+  await expect(detail.locator('.story-detail-years')).toHaveText('Current · Internet');
+  await expect(detail).toHaveAccessibleDescription('Current · Internet');
+  await expect(detail.locator('.story-detail-summary')).toHaveText(/^Small things I build to explore\. .* experiments I think are worth sharing\.$/);
+  await expect(detail.locator('.story-links')).toHaveCount(0);
+  await expect(detail).not.toContainText(/every month|Visit suph\.app|Maker|Previous|Next/);
   await expect(detail.getByRole('button')).toHaveText([/Back/]);
   await expect(detail.getByText(/3D board game/)).toBeHidden();
+  // Suphian 2026-09-28: the Quran site's forest green, with its pale sage for the marks.
+  expect(await detail.evaluate((el) => getComputedStyle(el).getPropertyValue('--accent').trim().toUpperCase())).toBe('#AAB8A7');
+  await expect(detail.locator('.story-card--panel')).toHaveCSS('background-color', 'rgb(36, 63, 57)');
 
   // Both builds, newest first: one link per row, to the build's page, showing its name and month.
   const builds = detail.locator('.story-build');

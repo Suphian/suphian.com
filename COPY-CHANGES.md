@@ -11,7 +11,26 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## suph.app condensed: one line each, just the projects (2026-09-28, latest)
+## suph.app: Abacus Labs' format, weekend experiments, forest green (2026-09-28, latest)
+
+Suphian: "With the same format as Abacus Labs, like founder, current, internet. I like that format." Then: "Maybe I don't need a title on it." On the paragraph (his words, lightly tightened), he doesn't want to promise a project every month. On colour: "I don't know if I love the mustard colour… maybe green, the kind of forest green that the Quran website uses."
+
+The open card now reads like every other chapter, without a role line: the "suph.app." heading, "Current · Internet", the paragraph, then one row per project where the links would be. The rows, icon tokens, image-panel swap and spacing stay as they were.
+
+| Field | Was | Now |
+|---|---|---|
+| suph.app row meta | A new project every month | Current |
+| suph.app role | A new project every month | None ("Maybe I don't need a title on it") |
+| suph.app years line (card, no-JS profile, llms-full.txt) | Not shown in the card; "A new project every month" in the profile | Current · Internet |
+| suph.app summary (card, no-JS profile, llms-full.txt) | A place where I put out a different project every month. (profile only) | Small things I build to explore. When a new model or tool comes out, I like to spend a weekend with it and use it to solve a real problem. I don’t plan to support them; they’re experiments I think are worth sharing. |
+| Meta/OG/Twitter/JSON-LD description, manifest, llms.txt | … Builds something new every month at suph.app. | … Shares weekend experiments at suph.app. (153 characters) |
+| `seo.lastModified` (sitemap, ProfilePage) | 2026-09-27 | 2026-09-28 |
+| suph.app card and project tokens | Gold #AC8243 | Forest green #243F39 (suph.app/quran's --ink; white marks at 11.4:1) |
+| suph.app accent (period, arrows, list marker) | Gold #AC8243 | Pale sage #AAB8A7 (the Quran site's; 9.7:1 on the page, where the green would be 1.7:1) |
+
+Each project keeps its month (August 2026, July 2026). That records when it was made; it isn't a schedule. The no-JS profile and llms-full.txt still end the chapter with Visit suph.app.
+
+## suph.app condensed: one line each, just the projects (2026-09-28)
 
 Suphian: "Condense. What happens when I have 12 months of projects? Is it scroll? Maybe you don't need the description… Is there a better way to represent that information?" On the intro line: "Even get rid of that." On the suph.app link: "You can even get rid of suph.app as well, like the Visit suph.app link. Just keep the project[s]." And: "Figure out the spacing where it makes sense please."
 

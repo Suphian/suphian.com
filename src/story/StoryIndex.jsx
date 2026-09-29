@@ -7,7 +7,7 @@ import { afterFirstPaint } from '../lib/afterFirstPaint.js';
 import StoryCard from './StoryCard.jsx';
 import StoryDetail from './StoryDetail.jsx';
 import {
-  accentFor,
+  accentOf,
   chapterGroups,
   chapterView,
   clampIndex,
@@ -34,7 +34,7 @@ const CHAPTERS = GROUPS.flatMap((group) => group.chapters);
 const COUNT = CHAPTERS.length;
 // Each chapter as its rail card shows it: suph.app shows its newest build (chapterView).
 const VIEWS = CHAPTERS.map((chapter) => chapterView(chapter));
-const ACCENTS = VIEWS.map((view) => accentFor(view.color));
+const ACCENTS = VIEWS.map(accentOf);
 
 // Keyboard focus draws a ring (:focus-visible); the focus a mouse click gives a
 // button (Chrome, Firefox) doesn't. Without :focus-visible support: never.
@@ -122,7 +122,7 @@ const RailCard = memo(function RailCard({ chapter, index, isActive, hidden, imag
  *   keyboard focus on a row highlights it, so the ring and the highlight agree.
  * - ≤ 800px wide (or ≤ 560px tall): a plain single-column list, no pinning; a
  *   tap opens the chapter full screen.
- * - Every mark takes its chapter's accent (accentFor), never a fixed red.
+ * - Every mark takes its chapter's accent (accentOf), never a fixed red.
  */
 export default function StoryIndex() {
   const [active, setActive] = useState(0);

@@ -87,14 +87,13 @@ export function renderStaticProfile() {
     </main>`;
 }
 
-// Role, years and, for jobs, the city (Suphian 2026-09-27), as the open card shows them.
-// suph.app's line is its role alone, like its row: each build below carries its own month.
+// Role, years and place (Suphian 2026-09-27), as the open card shows them, the same for every
+// chapter: suph.app, which has no role, reads "Current · Internet" (Suphian 2026-09-28).
 function chapterMeta(chapter) {
-  if (buildsOf(chapter).length) return chapter.role;
   return [chapter.role, chapter.period, chapter.location].filter(Boolean).join(' · ');
 }
 
-// suph.app lists every monthly build, newest first, as "Name · Month" (Suphian 2026-09-28).
+// suph.app lists every project, newest first, as "Name · Month" (Suphian 2026-09-28).
 const buildTitle = (build) => `${build.name} · ${formatMonth(build.month)}`;
 
 export function renderSeoHtml(template) {

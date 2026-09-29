@@ -28,7 +28,7 @@ async function load() {
     await esbuild.build({
       stdin: {
         contents:
-          "export { default as StoryIndex } from './StoryIndex.jsx'; export { default as StoryCard } from './StoryCard.jsx'; export { default as StoryBuilds } from './StoryBuilds.jsx';",
+          "export { default as StoryIndex } from './StoryIndex.jsx'; export { default as StoryCard } from './StoryCard.jsx'; export { default as StoryBuilds } from './StoryBuilds.jsx'; export { ChapterBody } from './StoryDetail.jsx';",
         resolveDir: fileURLToPath(new URL('./', import.meta.url)),
         loader: 'js',
       },
@@ -46,7 +46,7 @@ async function load() {
     rmSync(dir, { recursive: true, force: true });
   }
 }
-const { StoryIndex, StoryCard, StoryBuilds } = await load();
+const { StoryIndex, StoryCard, StoryBuilds, ChapterBody } = await load();
 const render = (Component, props = {}) => renderToStaticMarkup(React.createElement(Component, props));
 
 const decode = (text) =>
@@ -73,10 +73,11 @@ test('the chapters render as two labelled lists: "Work", then "Studio"', () => {
   assert.deepEqual(text(lists[1].body, 'story-item-name'), ['Abacus Labs', 'suph.app']);
 });
 
-test('the studio’s meta lines: "Founder", and suph.app’s "A new project every month" (Suphian 2026-09-28)', () => {
-  assert.deepEqual(text(lists[1].body, 'story-item-meta'), ['Founder · Current', 'A new project every month']);
-  // No build name, month or place on suph.app's row: "way too unnecessary".
-  assert.doesNotMatch(text(lists[1].body, 'story-item-meta')[1], /Toga|August|Internet|·/);
+test('the studio’s meta lines share one format: "Founder · Current", and suph.app’s "Current" (Suphian 2026-09-28)', () => {
+  // "With the same format as Abacus Labs", then "Maybe I don't need a title on it": no role,
+  // so just the years, with no stray separator, build name or month.
+  assert.deepEqual(text(lists[1].body, 'story-item-meta'), ['Founder · Current', 'Current']);
+  assert.doesNotMatch(text(lists[1].body, 'story-item-meta')[1], /·|Toga|August|Internet/);
   assert.deepEqual(text(lists[1].body, 'story-item-name'), ['Abacus Labs', 'suph.app']);
   for (const meta of text(lists[0].body, 'story-item-meta')) assert.doesNotMatch(meta, /side project/i, meta);
   // Every meta line is the chapter's own role · years.
@@ -140,9 +141,9 @@ test('a card with no image sets the name in type, never a broken image', () => {
   }
 });
 
-// suph.app's open card below its heading (StoryBuilds): the real content, and fixtures
-// for the list's shape (nothing in the fixtures is published). StoryDetail itself is a
-// portal, so the part that differs from other chapters is rendered on its own.
+// suph.app's open card: the real content, and fixtures for the list's shape (nothing in the
+// fixtures is published). StoryDetail itself is a portal, so its text column (ChapterBody)
+// and the rows (StoryBuilds) are rendered on their own.
 const build = (month, name) => ({
   month,
   slug: name.toLowerCase(),
@@ -151,18 +152,22 @@ const build = (month, name) => ({
   image: { src: `/work/${name.toLowerCase()}.svg`, nudge: 0 },
   links: [{ label: `Open ${name}`, href: `https://example.com/${name.toLowerCase()}` }],
 });
+// Shaped like suph.app: no role, the years and place, a summary and its own link.
 const fixture = (builds) => ({
   id: 'fixture',
   name: 'fixture.app',
-  role: 'A new project every month',
-  color: '#AC8243',
-  summary: 'Fixture intro.',
+  period: 'Current',
+  location: 'Internet',
+  color: '#243F39',
+  accent: '#AAB8A7',
+  summary: 'Fixture summary.',
   links: [{ label: 'Visit fixture.app', href: 'https://example.com/' }],
   builds,
 });
 // Five builds, newest first.
 const FIVE = [build('2026-12', 'Dec'), build('2026-11', 'Nov'), build('2026-10', 'Oct'), build('2026-09', 'Sep'), build('2026-08', 'Aug')];
-const card = (chapter) => render(StoryBuilds, { chapter });
+const rowsMarkup = (chapter) => render(StoryBuilds, { chapter });
+const body = (chapter) => render(ChapterBody, { chapter, metaId: 'meta' });
 // Each row: its <li>, the links inside it, and what the one link shows.
 const rowsOf = (markup) =>
   all(markup, /<li class="story-build">([\s\S]*?)<\/li>/g).map((m) => {
@@ -178,27 +183,56 @@ const rowsOf = (markup) =>
       hidden: /<span id="([^"]+)" hidden="">([^<]*)<\/span>/.exec(m[1])?.slice(1),
     };
   });
-// Just the projects: the list is the whole card body, with no link row, intro, toggle or arrows
-// but the rows' own ↗ (Suphian 2026-09-28: "Just keep the projects").
-const onlyProjects = (markup, chapter) => {
+// The rows are just the rows: one list, no toggle, no arrows but each link's own ↗.
+const onlyRows = (markup) => {
   assert.match(markup, /^<ol class="story-builds" role="list">[\s\S]*<\/ol>$/);
-  assert.doesNotMatch(markup, /story-links|story-detail-(summary|role|years)|Internet/);
-  for (const link of chapter.links) assert.ok(!markup.includes(link.label), `no "${link.label}" row`);
-  assert.ok(!markup.includes(chapter.summary), 'no intro line');
   assert.doesNotMatch(markup, /<button|story-month-|aria-live|Previous|Next/, 'no toggle');
   assert.doesNotMatch(markup, /[←→]/, 'no arrows but the links’ own ↗');
 };
+const escapeText = (value) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-test('suph.app’s open card: every build, one line each, each a link to its own page, and nothing else', () => {
+test('suph.app’s open card reads like Abacus Labs’, without a title: years, summary, then its projects in the links’ place', () => {
   const app = story.chapters.find((c) => c.id === 'suph-app');
-  const markup = card(app);
-  onlyProjects(markup, app);
+  const markup = body(app);
+  // Suphian 2026-09-28: "the same format as Abacus Labs, like founder, current, internet",
+  // then "Maybe I don't need a title on it": no role line at all, not an empty one.
+  assert.ok(
+    markup.startsWith(`<div id="meta"><p class="story-detail-years">Current · Internet</p></div><p class="story-detail-summary">${escapeText(app.summary)}</p><ol class="story-builds" role="list">`),
+    markup.slice(0, 300),
+  );
+  assert.doesNotMatch(markup, /story-detail-role/);
+  // The projects replace the links: no "Visit suph.app" row in the card, and nothing after the list.
+  assert.doesNotMatch(markup, /class="story-links"|Visit suph\.app/);
+  assert.ok(markup.endsWith('</ol>'));
+  assert.deepEqual(rowsOf(markup).map((r) => [r.name, r.month[1], r.href]), [
+    ['The Toga Is Dead', 'August 2026', 'https://suph.app/toga'],
+    ['Quran Art', 'July 2026', 'https://suph.app/quran'],
+  ]);
+});
+
+test('every other chapter keeps its role line and its links, and no rows', () => {
+  const youtube = story.chapters.find((c) => c.id === 'youtube');
+  const markup = body(youtube);
+  assert.ok(
+    markup.startsWith('<div id="meta"><p class="story-detail-role">Senior Product Manager</p><p class="story-detail-years">2020 – 2026 · New York City</p></div><p class="story-detail-summary">'),
+    markup.slice(0, 200),
+  );
+  assert.equal(all(markup, /<a class="story-link" /g).length, youtube.links.length);
+  assert.doesNotMatch(markup, /story-builds|story-build-/);
+  // A role is optional, never suppressed: a chapter of builds that has one shows it.
+  assert.match(body({ ...fixture([build('2026-10', 'Only')]), role: 'Maker' }), /^<div id="meta"><p class="story-detail-role">Maker<\/p><p class="story-detail-years">Current · Internet<\/p><\/div>/);
+});
+
+test('suph.app’s projects: one line each, each a link to its own page, on the forest green', () => {
+  const app = story.chapters.find((c) => c.id === 'suph-app');
+  const markup = rowsMarkup(app);
+  onlyRows(markup);
   assert.deepEqual(rowsOf(markup), [
     {
       anchors: 1,
       href: 'https://suph.app/toga',
       describedBy: 'story-build-suph-app-toga',
-      token: ['#AC8243', '/work/suph-app.svg'],
+      token: ['#243F39', '/work/suph-app.svg'],
       name: 'The Toga Is Dead',
       month: ['2026-08', 'August 2026'],
       hidden: ['story-build-suph-app-toga', app.builds[0].summary],
@@ -207,16 +241,16 @@ test('suph.app’s open card: every build, one line each, each a link to its own
       anchors: 1,
       href: 'https://suph.app/quran',
       describedBy: 'story-build-suph-app-quran',
-      token: ['#AC8243', '/work/quran-art.svg'],
+      token: ['#243F39', '/work/quran-art.svg'],
       name: 'Quran Art',
       month: ['2026-07', 'July 2026'],
       hidden: ['story-build-suph-app-quran', app.builds[1].summary],
     },
   ]);
-  // The summaries aren't shown ("Maybe you don't need the description"): each is only the
-  // hidden description of its row's link, for screen readers.
+  // The projects' summaries aren't shown ("Maybe you don't need the description"): each is
+  // only the hidden description of its row's link, for screen readers.
   for (const b of app.builds) {
-    const escaped = b.summary.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
+    const escaped = escapeText(b.summary);
     assert.equal(markup.split(escaped).length - 1, 1, `${b.slug}: summary appears once`);
     assert.ok(markup.includes(`hidden="">${escaped}</span>`), `${b.slug}: summary only in the hidden description`);
   }
@@ -224,8 +258,7 @@ test('suph.app’s open card: every build, one line each, each a link to its own
 });
 
 test('with five builds all five render, newest first, each one link to its page (no cap)', () => {
-  const chapter = fixture(FIVE);
-  const markup = card(chapter);
+  const markup = rowsMarkup(fixture(FIVE));
   assert.deepEqual(rowsOf(markup).map((r) => [r.name, r.month[1], r.href, r.anchors]), [
     ['Dec', 'December 2026', 'https://example.com/dec', 1],
     ['Nov', 'November 2026', 'https://example.com/nov', 1],
@@ -233,12 +266,11 @@ test('with five builds all five render, newest first, each one link to its page 
     ['Sep', 'September 2026', 'https://example.com/sep', 1],
     ['Aug', 'August 2026', 'https://example.com/aug', 1],
   ]);
-  onlyProjects(markup, chapter);
+  onlyRows(markup);
 });
 
 test('with one build it is a one-row list', () => {
-  const chapter = fixture([build('2026-10', 'Only')]);
-  const markup = card(chapter);
+  const markup = rowsMarkup(fixture([build('2026-10', 'Only')]));
   assert.deepEqual(rowsOf(markup).map((r) => [r.name, r.month[1], r.anchors]), [['Only', 'October 2026', 1]]);
-  onlyProjects(markup, chapter);
+  onlyRows(markup);
 });

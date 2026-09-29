@@ -15,11 +15,11 @@ const isKeyboardFocus = (element) => {
 };
 
 /**
- * suph.app's open card, under its heading: every build, newest first, one line
- * each, and nothing else. Suphian 2026-09-28: "Condense. What happens when I
- * have 12 months of projects?… Maybe you don't need the description"; of the
- * intro line, "Even get rid of that"; and of the link to suph.app, "Just keep
- * the projects". One line each keeps twelve months short (about 56px a row).
+ * suph.app's projects in its open card, where other chapters list their links
+ * (ChapterBody): every build, newest first, one line each. Suphian 2026-09-28:
+ * "Condense. What happens when I have 12 months of projects?… Maybe you don't
+ * need the description", and "Just keep the projects". One line each keeps a
+ * long list short (about 56px a row).
  * Each row is a single link to the build's page (its first link): a small icon
  * token on the build's color, the name, the month and ↗. The summary isn't
  * shown; screen readers get it as the link's description.

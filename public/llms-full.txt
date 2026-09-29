@@ -1,6 +1,6 @@
 # Suphian Tweel
 
-> Product leader. Led payments at YouTube, 2020 – 2026. Founder of Abacus Labs, a command center for MCA operators. Builds something new every month at suph.app.
+> Product leader. Led payments at YouTube, 2020 – 2026. Founder of Abacus Labs, a command center for MCA operators. Shares weekend experiments at suph.app.
 
 Product / Payments / AI
 
@@ -57,9 +57,9 @@ Abacus turns spreadsheet chaos into a real-time command center for MCA operators
 
 ### suph.app
 
-A new project every month
+Current · Internet
 
-A place where I put out a different project every month.
+Small things I build to explore. When a new model or tool comes out, I like to spend a weekend with it and use it to solve a real problem. I don’t plan to support them; they’re experiments I think are worth sharing.
 
 - [Visit suph.app](https://suph.app)
 

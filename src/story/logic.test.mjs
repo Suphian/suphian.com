@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  accentFor,
+  accentOf,
   buildsOf,
   cardImage,
   chapterGroups,
@@ -103,21 +105,23 @@ test('logoShift turns the nudge into a translate of the logo’s own height', ()
   assert.equal(logoShift(NaN), undefined);
 });
 
-test('metaLine joins role and period', () => {
+test('metaLine joins role and period, skipping an empty part', () => {
   assert.equal(metaLine({ role: 'Senior Product Manager', period: '2020 – 2026' }), 'Senior Product Manager · 2020 – 2026');
-  assert.equal(metaLine({ role: 'Side project', period: 'Current' }), 'Side project · Current');
-  assert.equal(metaLine({ role: 'Side project', period: 'New build every month' }), 'Side project · New build every month');
+  assert.equal(metaLine({ role: 'Founder', period: 'Current' }), 'Founder · Current');
   assert.equal(metaLine({ role: 'Role' }), 'Role');
+  // No role (suph.app): just the years, with no stray separator.
+  assert.equal(metaLine({ period: 'Current' }), 'Current');
+  assert.equal(metaLine({ role: '', period: 'Current' }), 'Current');
 });
 
-// A made-up chapter of monthly builds: fixtures only, nothing here is published.
-const MONTHLY = {
+// A made-up chapter of builds, shaped like suph.app (no role): fixtures only, nothing here is published.
+const WITH_BUILDS = {
   id: 'fixture',
   name: 'fixture.app',
-  role: 'A new project every month',
-  period: 'New build every month',
+  period: 'Current',
   location: 'Internet',
   color: '#AC8243',
+  accent: '#AAB8A7',
   builds: [
     { month: '2026-10', slug: 'newer', name: 'Newer', summary: 'Newer summary.', image: { src: '/work/newer.svg', nudge: 0 }, color: '#123456', links: [{ label: 'Newer', href: 'https://example.com/newer' }] },
     { month: '2026-08', slug: 'older', name: 'Older', summary: 'Older summary.', image: { src: '/work/older.svg', nudge: 0.01 }, links: [{ label: 'Older', href: 'https://example.com/older' }] },
@@ -141,30 +145,47 @@ test('formatMonth writes a build’s month out in full: "September 2026"', () =>
 test('buildsOf: a chapter’s builds, or none', () => {
   assert.deepEqual(buildsOf({ id: 'job' }), []);
   assert.deepEqual(buildsOf(null), []);
-  assert.equal(buildsOf(MONTHLY), MONTHLY.builds);
+  assert.equal(buildsOf(WITH_BUILDS), WITH_BUILDS.builds);
 });
 
 test('chapterView wears one build’s image and color: the newest unless asked', () => {
-  const newest = chapterView(MONTHLY);
+  const newest = chapterView(WITH_BUILDS);
   assert.equal(newest.id, 'fixture');
   assert.equal(newest.name, 'fixture.app', 'the chapter keeps its own name');
-  assert.equal(newest.role, 'A new project every month', 'and its own role');
+  assert.equal(newest.period, 'Current', 'and its own years');
+  assert.equal(newest.accent, '#AAB8A7', 'and its accent');
   assert.deepEqual(newest.image, { src: '/work/newer.svg', nudge: 0 });
   assert.equal(newest.color, '#123456', 'a build’s own color wins');
-  const older = chapterView(MONTHLY, 1);
+  const older = chapterView(WITH_BUILDS, 1);
   assert.deepEqual(older.image, { src: '/work/older.svg', nudge: 0.01 });
   assert.equal(older.color, '#AC8243', 'otherwise the chapter’s color');
   // Out-of-range indexes stop at the ends.
-  assert.equal(chapterView(MONTHLY, 9).image.src, '/work/older.svg');
-  assert.equal(chapterView(MONTHLY, -1).image.src, '/work/newer.svg');
+  assert.equal(chapterView(WITH_BUILDS, 9).image.src, '/work/older.svg');
+  assert.equal(chapterView(WITH_BUILDS, -1).image.src, '/work/newer.svg');
   // A chapter without builds comes back as it is.
   const job = { id: 'job', role: 'Role', period: 'Years', image: { src: '/work/job.svg', nudge: 0 }, summary: 'S', links: [] };
   assert.equal(chapterView(job), job);
 });
 
-test('metaLine: a chapter of builds shows its role alone, never a build, month or place', () => {
-  assert.equal(metaLine(MONTHLY), 'A new project every month');
-  assert.doesNotMatch(metaLine(MONTHLY), /Newer|October|Internet|·/);
+test('metaLine: a chapter of builds reads like any other, never a build or its month', () => {
+  // Suphian 2026-09-28: suph.app takes Abacus Labs' format ("founder, current, internet"), without a title.
+  assert.equal(metaLine(WITH_BUILDS), 'Current');
+  assert.equal(metaLine({ ...WITH_BUILDS, role: 'Maker' }), 'Maker · Current');
+  assert.doesNotMatch(metaLine(WITH_BUILDS), /Newer|October|Internet/);
+});
+
+test('accentOf: a chapter’s own accent, else its color’s (accentFor)', () => {
+  // suph.app: the forest green fill is too dark as a mark on the page, so its accent is the pale sage.
+  assert.equal(accentOf({ color: '#243F39', accent: '#AAB8A7' }), '#AAB8A7');
+  // Without one, the color's own accent: the color itself, or white when too dark to see.
+  assert.equal(accentOf({ color: '#FF0000' }), '#FF0000');
+  assert.equal(accentOf({ color: '#000000' }), '#FFFFFF');
+  assert.equal(accentOf({ color: '#243F39' }), accentFor('#243F39'));
+  assert.equal(accentOf({}), '#FFFFFF');
+  assert.equal(accentOf(undefined), '#FFFFFF');
+  // chapterView keeps the chapter's accent, whatever build it shows.
+  assert.equal(accentOf(chapterView(WITH_BUILDS, 1)), '#AAB8A7');
+  assert.equal(accentOf(chapterView({ ...WITH_BUILDS, accent: undefined }, 1)), '#AC8243');
 });
 
 test('panelBuild: a mouse or keyboard focus picks the build in the panel; a finger never does', () => {

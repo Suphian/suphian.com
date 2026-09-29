@@ -6,7 +6,7 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { prefersReducedMotion } from '../lib/scroll.js';
 import StoryBuilds from './StoryBuilds.jsx';
 import StoryCard, { preloadCardImage } from './StoryCard.jsx';
-import { accentFor, buildsOf, chapterView, clampIndex, flipDelta, panelBuild, toTransform } from './logic.js';
+import { accentOf, buildsOf, chapterView, clampIndex, flipDelta, panelBuild, toTransform } from './logic.js';
 
 const EASE = 'cubic-bezier(.2, .8, .2, 1)';
 const OPEN_MS = 680;
@@ -25,13 +25,12 @@ const cardScale = (first, last) => (first.width > 0 && last.width > 0 ? first.wi
  * in. Reduced motion: no animation, same structure. Escape or Back closes, and
  * focus returns to the chapter in the list (StoryIndex).
  *
- * A chapter made of monthly builds (suph.app) lists its newest ones under its
- * heading, one line each, then the link to all of them (StoryBuilds; Suphian
- * 2026-09-28: "It should just be a list", then "Condense").
- * The image panel shows the newest build's icon, or the build under a mouse
- * pointer or keyboard focus, crossfading between them (instant under reduced
- * motion); touch leaves it on the newest. No event beyond the open and the
- * links' own outbound_link_clicked.
+ * A chapter made of builds (suph.app) reads like any other (ChapterBody), with
+ * one row per build where the links would be (StoryBuilds). The image panel
+ * shows the newest build's icon, or the build under a mouse pointer or keyboard
+ * focus, crossfading between them (instant under reduced motion); touch leaves
+ * it on the newest. No event beyond the open and the links' own
+ * outbound_link_clicked.
  */
 export default function StoryDetail({ chapter, index, originFor, onClosed }) {
   const dialog = useRef(null);
@@ -175,11 +174,11 @@ export default function StoryDetail({ chapter, index, originFor, onClosed }) {
     <div
       ref={dialog}
       className="story-detail"
-      style={{ '--accent': accentFor(chapterView(chapter).color) }}
+      style={{ '--accent': accentOf(chapterView(chapter)) }}
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
-      aria-describedby={builds.length ? undefined : metaId}
+      aria-describedby={metaId}
       tabIndex={-1}
     >
       <div ref={backdrop} className="story-detail-backdrop" aria-hidden="true" />
@@ -202,34 +201,48 @@ export default function StoryDetail({ chapter, index, originFor, onClosed }) {
         </div>
 
         <div className="story-detail-body" data-fade>
-          {builds.length > 0 ? (
-            // suph.app: its newest builds, then all of them on suph.app (no role, years or intro line).
-            <StoryBuilds chapter={chapter} onBuildEvent={onBuildEvent} />
-          ) : (
-            <>
-              <div id={metaId}>
-                <p className="story-detail-role">{chapter.role}</p>
-                <p className="story-detail-years">
-                  {chapter.location ? `${chapter.period} · ${chapter.location}` : chapter.period}
-                </p>
-              </div>
-              {chapter.summary && <p className="story-detail-summary">{chapter.summary}</p>}
-              {chapter.links?.length > 0 && (
-                <ul className="story-links">
-                  {chapter.links.map((link) => (
-                    <li key={link.href}>
-                      <ExternalLink href={link.href} className="story-link" chapter={chapter.id}>
-                        {link.label}
-                      </ExternalLink>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </>
-          )}
+          <ChapterBody chapter={chapter} metaId={metaId} onBuildEvent={onBuildEvent} />
         </div>
       </div>
     </div>,
     document.body,
+  );
+}
+
+/**
+ * The open card's text under the heading, the same for every chapter: the role
+ * line (when there is one: suph.app has none, Suphian 2026-09-28: "Maybe I
+ * don't need a title on it"), the years line, the summary, then the links. A
+ * chapter made of builds (suph.app) lists one row per build in the links'
+ * place (StoryBuilds), with the links' top margin. Rendered on its own by
+ * render.test.mjs, which can't render the portal.
+ */
+export function ChapterBody({ chapter, metaId, onBuildEvent }) {
+  const builds = buildsOf(chapter);
+  return (
+    <>
+      <div id={metaId}>
+        {chapter.role && <p className="story-detail-role">{chapter.role}</p>}
+        <p className="story-detail-years">
+          {chapter.location ? `${chapter.period} · ${chapter.location}` : chapter.period}
+        </p>
+      </div>
+      {chapter.summary && <p className="story-detail-summary">{chapter.summary}</p>}
+      {builds.length > 0 ? (
+        <StoryBuilds chapter={chapter} onBuildEvent={onBuildEvent} />
+      ) : (
+        chapter.links?.length > 0 && (
+          <ul className="story-links">
+            {chapter.links.map((link) => (
+              <li key={link.href}>
+                <ExternalLink href={link.href} className="story-link" chapter={chapter.id}>
+                  {link.label}
+                </ExternalLink>
+              </li>
+            ))}
+          </ul>
+        )
+      )}
+    </>
   );
 }

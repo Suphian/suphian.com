@@ -2,7 +2,20 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { story } from '../content.js';
-import { accentFor } from './logic.js';
+import { accentFor, accentOf, chapterView } from './logic.js';
+
+// WCAG relative luminance and contrast; PAGE is the story's near-black.
+const PAGE = '#080808';
+const luminance = (hex) => {
+  const [r, g, b] = [1, 3, 5]
+    .map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+    .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a, b) => {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+};
 
 // Guards for the story index's type and color rules (DESIGN-BRIEF.md and Suphian's
 // 2026-09-26 notes), checked against the stylesheet and components as written.
@@ -42,33 +55,38 @@ test('no story mark is hard-coded red: marks take the chapter accent', () => {
   assert.match(css, /\.story-item-arrow\s*\{[^}]*color\s*:\s*var\(--item-accent/);
 });
 
-test('each chapter’s accent is its company color, or white when too dark to see', () => {
-  const accents = Object.fromEntries(story.chapters.map((c) => [c.id, accentFor(c.color)]));
+test('each chapter’s accent is its company color, white when too dark to see, or its own', () => {
+  const accents = Object.fromEntries(story.chapters.map((c) => [c.id, accentOf(chapterView(c))]));
   assert.deepEqual(accents, {
     steadily: '#6C1D72',
     youtube: '#FF0000',
     google: '#4285F4',
     huge: '#FF0090',
     abacus: '#FFFFFF',
-    'suph-app': '#AC8243',
+    // The Quran site's pale sage: its forest green fill would be a 1.7:1 mark on the page.
+    'suph-app': '#AAB8A7',
   });
+  const suph = story.chapters.find((c) => c.id === 'suph-app');
+  assert.equal(accentFor(suph.color), suph.color, 'accentFor alone would keep the dark green');
+  assert.ok(contrast(suph.color, PAGE) < 2, `${contrast(suph.color, PAGE).toFixed(2)}:1`);
+  assert.ok(contrast(suph.accent, PAGE) >= 3, `the sage is ${contrast(suph.accent, PAGE).toFixed(2)}:1 on the page`);
+  // Both call sites use accentOf: the list's marks and the open card's.
+  assert.match(jsx, /const ACCENTS = VIEWS\.map\(accentOf\);/);
+  assert.match(jsx, /'--accent': accentOf\(chapterView\(chapter\)\)/);
+  assert.doesNotMatch(jsx, /accentFor\(/, 'no call site skips a chapter’s own accent');
 });
 
 test('every white logo reads on its card: at least 3:1, the WCAG contrast for graphics', () => {
-  const luminance = (hex) => {
-    const [r, g, b] = [1, 3, 5]
-      .map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
-      .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  };
-  const onWhite = (hex) => 1.05 / (luminance(hex) + 0.05);
+  const onWhite = (hex) => contrast(hex, '#FFFFFF');
   for (const c of story.chapters) assert.ok(onWhite(c.color) >= 3, `${c.id}: white on ${c.color} is ${onWhite(c.color).toFixed(2)}:1`);
-  // A monthly build may bring its own card color (content.js build.color): the same bar.
+  // A build may bring its own card color (content.js build.color): the same bar.
   for (const build of story.chapters.flatMap((c) => c.builds ?? []).filter((b) => b.color)) {
     assert.ok(onWhite(build.color) >= 3, `${build.slug}: white on ${build.color} is ${onWhite(build.color).toFixed(2)}:1`);
   }
-  // Why suph.app's card is the crown gradient's deep gold, not its lighter gold.
-  assert.ok(onWhite('#C19C56') < 3);
+  // Why suph.app's card is the Quran site's forest green and its sage only the accent:
+  // white on the sage would be about 2:1.
+  assert.ok(onWhite('#243F39') >= 3);
+  assert.ok(onWhite('#AAB8A7') < 3);
 });
 
 // One rule's declarations, comments stripped: `.a .b { x: y; }` → "x: y;".
@@ -170,8 +188,15 @@ test('suph.app’s builds are one-line rows in the links’ rhythm: no toggle, n
   // Suphian 2026-09-28: "It should just be a list", then "Condense… Maybe you don't need the description".
   assert.doesNotMatch(css, /story-month|story-build-summary/, 'the retired toggle and summaries left no rules behind');
   assert.doesNotMatch(jsx, /StoryMonths|suph_app_month_viewed|aria-live/);
-  // Hairlines above the first row and under every row, as .story-links has them.
+  // Hairlines above the first row and under every row, as .story-links has them, and the
+  // links' place: the same top margin under the summary (Suphian 2026-09-28: the rows sit
+  // where other chapters' links do).
   assert.match(rule('.story-builds'), /border-top: 1px solid var\(--hairline\)/);
+  const topMargin = (selector) => /margin: (\d+px) 0 0/.exec(rule(selector))?.[1];
+  assert.equal(topMargin('.story-builds'), '40px');
+  assert.equal(topMargin('.story-builds'), topMargin('.story-links'));
+  // suph.app has no role line: its years line starts where a role line would.
+  assert.match(rule('.story-detail-years:first-child'), /margin-top: 0/);
   assert.match(rule('.story-build'), /border-bottom: 1px solid var\(--hairline\)/);
   // A 56px row (a 40px token and 8px above and below), never under a 44px tap target.
   assert.match(rule('.story-link.story-build-link'), /min-height: 56px; padding: 8px 0;/);
