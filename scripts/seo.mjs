@@ -1,4 +1,5 @@
 import { site, hero, story, seo, structuredData, footer } from '../src/content.js';
+import { buildsOf, formatMonth } from '../src/story/logic.js';
 
 export const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -72,9 +73,14 @@ export function renderStaticProfile() {
         ${groups.map(([label, chapters]) => `<section><h2>${escapeHtml(label)}</h2>${chapters.map((chapter) => `
           <article id="${escapeHtml(chapter.id)}">
             <h3>${escapeHtml(chapter.name)}</h3>
-            <p>${escapeHtml(chapterMeta(chapter))}</p>
+            <p>${escapeHtml(chapterMeta(chapter))}</p>${buildsOf(chapter).length ? buildsOf(chapter).map((build) => `
+            <article id="${escapeHtml(`${chapter.id}-${build.slug}`)}">
+              <h4>${escapeHtml(buildTitle(build))}</h4>
+              <p>${escapeHtml(build.summary)}</p>
+              <ul>${build.links.map((link) => `<li>${linkHtml(link)}</li>`).join('')}</ul>
+            </article>`).join('') : `
             <p>${escapeHtml(chapter.summary)}</p>
-            <ul>${chapter.links.map((link) => `<li>${linkHtml(link)}</li>`).join('')}</ul>
+            <ul>${chapter.links.map((link) => `<li>${linkHtml(link)}</li>`).join('')}</ul>`}
           </article>`).join('')}</section>`).join('')}
       </section>
       <footer><h2>Contact</h2><p>${linkHtml(footer.email)}</p><ul>${footer.links.filter((link) => link.label !== 'Email').map((link) => `<li>${linkHtml(link)}</li>`).join('')}</ul></footer>
@@ -86,6 +92,9 @@ function chapterMeta(chapter) {
   return [chapter.role, chapter.period, chapter.location].filter(Boolean).join(' · ');
 }
 
+// suph.app lists every monthly build, newest first, as "Name · Month" (Suphian 2026-09-28).
+const buildTitle = (build) => `${build.name} · ${formatMonth(build.month)}`;
+
 export function renderSeoHtml(template) {
   return template.replace('<!-- seo:head -->', renderSeoHead()).replace('<!-- seo:profile -->', renderStaticProfile());
 }
@@ -94,9 +103,13 @@ export function crawlerResources() {
   const linkLine = ({ label, href }) => `- [${label}](${href})`;
   const intro = `# ${site.fullName}\n\n> ${seo.home.description}\n\n${hero.edition.join(' / ')}\n\n${story.intro}\n`;
   const links = `\n## Contact and profiles\n\n- [Email ${site.email}](mailto:${site.email})\n- [LinkedIn](${site.social.linkedin})\n- [GitHub](${site.social.github})\n`;
-  const chapters = story.chapters.map((chapter) =>
-    `### ${chapter.name}\n\n${chapterMeta(chapter)}\n\n${chapter.summary}\n\n${chapter.links.map(linkLine).join('\n')}`,
-  ).join('\n\n');
+  const entry = ({ summary, links }) => `${summary}\n\n${links.map(linkLine).join('\n')}`;
+  const chapters = story.chapters.map((chapter) => {
+    const body = buildsOf(chapter).length
+      ? buildsOf(chapter).map((build) => `#### ${buildTitle(build)}\n\n${entry(build)}`).join('\n\n')
+      : entry(chapter);
+    return `### ${chapter.name}\n\n${chapterMeta(chapter)}\n\n${body}`;
+  }).join('\n\n');
   return {
     'robots.txt': `# Public pages and assets are crawlable. Existing training-crawler access is unchanged.\nUser-agent: *\nAllow: /\n\n# OpenAI search discovery (independent of GPTBot training controls).\nUser-agent: OAI-SearchBot\nAllow: /\n\nSitemap: ${seo.origin}/sitemap.xml\n`,
     'llms.txt': `${intro}\n## Pages\n\n- [Portfolio](${canonical}): Work at Steadily, YouTube, Google and Huge; studio: Abacus Labs, which he founded, and suph.app.\n- [Full text](${seo.origin}/llms-full.txt): The same approved work summaries and reference links.\n${links}`,

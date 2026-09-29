@@ -135,7 +135,9 @@ test('the real logos: Huge and Google descend and move down a little; YouTube, S
   assert.equal(nudge('youtube'), 0);
   assert.equal(nudge('steadily'), 0);
   // suph.app's crown is a mark, not a word: nothing descends, so it is centred like the rest.
+  // So is Quran Art's star.
   assert.equal(nudge('suph-app'), 0);
+  assert.equal(nudge('quran-art'), 0);
 });
 
 test('the suph.app crown reads as the game’s emblem: one white mark with its details knocked out', () => {
@@ -153,7 +155,7 @@ test('the suph.app crown reads as the game’s emblem: one white mark with its d
 });
 
 test('every logo’s viewBox is tight to its ink, so the box centre is the ink centre', () => {
-  for (const id of ['huge', 'google', 'youtube', 'steadily', 'suph-app']) {
+  for (const id of ['huge', 'google', 'youtube', 'steadily', 'suph-app', 'quran-art']) {
     const { viewBox, glyphs } = svgGlyphs(read(`/work/${id}.svg`));
     const ink = {
       left: Math.min(...glyphs.map((g) => g.left)),
@@ -172,12 +174,31 @@ test('every logo’s viewBox is tight to its ink, so the box centre is the ink c
 });
 
 test('content.js stores exactly the measured nudge for every logo card', () => {
-  for (const chapter of story.chapters) {
-    const { src, nudge } = chapter.image;
+  // A chapter's card, or each of suph.app's monthly builds' cards.
+  const cards = story.chapters.flatMap((chapter) =>
+    chapter.builds ? chapter.builds.map((build) => [`${chapter.id}/${build.slug}`, build.image]) : [[chapter.id, chapter.image]],
+  );
+  assert.ok(cards.some(([, image]) => image.src === '/work/quran-art.svg'), 'the builds are measured too');
+  for (const [id, { src, nudge }] of cards) {
     // Every card is a logo card, suph.app's crown included: each stores its measured nudge.
     // SVGs are measured from their paths. The Abacus PNG is a symmetric mark with even
     // 4px margins on every side and no descender, so its nudge is 0.
     const measured = src.endsWith('.svg') ? opticalNudge(read(src)) : 0;
-    assert.equal(nudge, measured, `${chapter.id}: stored ${nudge}, measured ${measured}`);
+    assert.equal(nudge, measured, `${id}: stored ${nudge}, measured ${measured}`);
   }
+});
+
+test('Quran Art’s placeholder star: one white mark, two squares with a round knockout', () => {
+  // Placeholder until Suphian supplies artwork (content.js). An eight-point star, the union
+  // of a 70.71 square and the same square turned 45°, with a circle (r 9) knocked out.
+  const { viewBox, glyphs } = svgGlyphs(read('/work/quran-art.svg'));
+  assert.deepEqual(viewBox, { x: 0, y: 0, width: 100, height: 100 });
+  assert.equal(glyphs.length, 1);
+  assert.equal(glyphs[0].rule, 'evenodd');
+  // Two squares of 5000 overlap in a regular octagon of 8 · 35.355² · tan 22.5°.
+  const side = 50 / Math.SQRT2;
+  const expected = 2 * 5000 - 8 * side * side * Math.tan(Math.PI / 8) - Math.PI * 81;
+  const { mass, centre } = inkMass(glyphs, { from: 0, to: 100 });
+  near(mass, expected, expected * 1e-3);
+  near(centre, 50, 0.05); // symmetric: nothing to nudge
 });

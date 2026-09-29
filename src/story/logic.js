@@ -81,8 +81,52 @@ export function accentFor(color, fallback = '#FFFFFF') {
   return luminance < 0.02 ? fallback : color;
 }
 
-/** "Role · Years" (the line beside the active item). Skips empty parts. */
-export const metaLine = (chapter) => [chapter.role, chapter.period].filter(Boolean).join(' · ');
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+/** A build's month, 'YYYY-MM', as the site writes it: "September 2026" (en-US, never abbreviated). Anything else: ''. */
+export function formatMonth(month) {
+  const match = /^(\d{4})-(0[1-9]|1[0-2])$/.exec(month ?? '');
+  return match ? `${MONTHS[Number(match[2]) - 1]} ${match[1]}` : '';
+}
+
+/** A chapter's monthly builds (content.js builds, newest first); [] for a chapter without any. */
+export const buildsOf = (chapter) => (Array.isArray(chapter?.builds) ? chapter.builds : []);
+
+/** The month toggle appears only when there is another month to go to: two or more builds. */
+export const hasMonthToggle = (builds) => Array.isArray(builds) && builds.length > 1;
+
+/**
+ * The chapter as its card and open view show it. A chapter with builds (suph.app)
+ * shows one build, the newest unless `index` asks for another: the build's name
+ * takes the role line and its month the years line, and its image, summary,
+ * links and color (build.color, else the chapter's) fill the rest. Any other
+ * chapter comes back as it is.
+ */
+export function chapterView(chapter, index = 0) {
+  const builds = buildsOf(chapter);
+  if (!builds.length) return chapter;
+  const build = builds[clampIndex(index, builds.length)];
+  return {
+    ...chapter,
+    role: build.name,
+    period: formatMonth(build.month),
+    image: build.image,
+    color: build.color || chapter.color,
+    summary: build.summary,
+    links: build.links,
+  };
+}
+
+/**
+ * The line beside the active item: "Role · Years". A chapter with builds shows
+ * its newest build instead, "Name · Month · Place" (Suphian 2026-09-28: "show
+ * the month next to it"). Skips empty parts.
+ */
+export function metaLine(chapter) {
+  if (!buildsOf(chapter).length) return [chapter.role, chapter.period].filter(Boolean).join(' · ');
+  const view = chapterView(chapter);
+  return [view.role, view.period, view.location].filter(Boolean).join(' · ');
+}
 
 /**
  * The chapters as the list shows them: two labelled lists, the jobs ('work')

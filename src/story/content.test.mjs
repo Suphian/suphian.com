@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 import test from 'node:test';
 import * as content from '../content.js';
-import { chapterGroups, groupIndexOf, metaLine, stepIndex } from './logic.js';
+import { buildsOf, chapterGroups, formatMonth, groupIndexOf, metaLine, stepIndex } from './logic.js';
 
 const { story, hero } = content;
 const publicDir = new URL('../../public/', import.meta.url);
@@ -15,6 +15,8 @@ const strings = (value) =>
 const chapter = (id) => story.chapters.find((c) => c.id === id);
 const JOBS = ['steadily', 'youtube', 'google', 'huge'];
 const SIDE = ['abacus', 'suph-app'];
+// Everything that carries a card image, a summary and links: a chapter, or each of its monthly builds.
+const entries = (c) => (buildsOf(c).length ? buildsOf(c).map((build) => ({ ...build, id: `${c.id}/${build.slug}` })) : [c]);
 
 test('jobs run newest to oldest, then the side projects: Steadily → YouTube → Google → Huge → Abacus Labs → suph.app', () => {
   assert.deepEqual(story.chapters.map((c) => c.id), ['steadily', 'youtube', 'google', 'huge', 'abacus', 'suph-app']);
@@ -24,22 +26,52 @@ test('jobs run newest to oldest, then the side projects: Steadily → YouTube �
 test('each chapter is only role, years, place, summary and links (plus its card, and the side-project flag)', () => {
   for (const c of story.chapters) {
     const optional = ['kind'].filter((key) => key in c);
+    // A chapter of monthly builds (suph.app) carries them in place of its own card, summary and links.
+    const own = 'builds' in c ? ['builds'] : ['image', 'links', 'summary'];
     assert.deepEqual(
       Object.keys(c).sort(),
-      ['color', 'id', 'image', 'links', 'location', 'name', 'period', 'role', 'summary', ...optional].sort(),
+      ['color', 'id', 'location', 'name', 'period', 'role', ...own, ...optional].sort(),
       `${c.id} has extra or missing fields`,
     );
     // The flag takes one value: a side project.
     if ('kind' in c) assert.equal(c.kind, 'side', `${c.id}.kind`);
     // The card wears the company's color (Suphian's pick), as a hex the white logo sits on.
     assert.match(c.color, /^#[0-9A-F]{6}$/i, `${c.id} needs a company color`);
-    // Every card is a logo, and the logo and its optical nudge travel together
-    // (logo-geometry.test.mjs checks the values).
-    assert.deepEqual(Object.keys(c.image).sort(), ['nudge', 'src'], `${c.id}.image`);
-    assert.ok(Number.isFinite(c.image.nudge) && Math.abs(c.image.nudge) <= 0.2, `${c.id}.image.nudge`);
-    for (const key of ['name', 'role', 'period', 'summary']) assert.ok(c[key], `${c.id}.${key}`);
-    assert.ok(c.links.length > 0, `${c.id} links`);
+    for (const key of ['name', 'role', 'period']) assert.ok(c[key], `${c.id}.${key}`);
+    for (const e of entries(c)) {
+      // Every card is a logo, and the logo and its optical nudge travel together
+      // (logo-geometry.test.mjs checks the values).
+      assert.deepEqual(Object.keys(e.image).sort(), ['nudge', 'src'], `${e.id}.image`);
+      assert.ok(Number.isFinite(e.image.nudge) && Math.abs(e.image.nudge) <= 0.2, `${e.id}.image.nudge`);
+      assert.ok(e.summary, `${e.id}.summary`);
+      assert.ok(e.links.length > 0, `${e.id} links`);
+    }
   }
+});
+
+test('suph.app’s builds: newest first, one per month, each with its own slug, name, card and links', () => {
+  const builds = chapter('suph-app').builds;
+  // Suphian 2026-09-28: The Toga Is Dead "from last month", Quran Art "from the previous month".
+  assert.deepEqual(builds.map((b) => [b.month, b.slug, b.name]), [
+    ['2026-08', 'toga', 'The Toga Is Dead'],
+    ['2026-07', 'quran', 'Quran Art'],
+  ]);
+  for (const build of builds) {
+    const optional = ['color'].filter((key) => key in build);
+    assert.deepEqual(Object.keys(build).sort(), ['image', 'links', 'month', 'name', 'slug', 'summary', ...optional].sort(), build.month);
+    assert.match(build.month, /^\d{4}-(0[1-9]|1[0-2])$/, `${build.name}: month is YYYY-MM`);
+    assert.ok(formatMonth(build.month), build.month);
+    // One path per build is the plan (suph.app/<slug>): short, lowercase, URL-safe.
+    assert.match(build.slug, /^[a-z0-9]+(-[a-z0-9]+)*$/, `${build.name}: slug`);
+    if ('color' in build) assert.match(build.color, /^#[0-9A-F]{6}$/i, `${build.name}.color`);
+  }
+  // Newest first, and never two builds in one month or on one slug.
+  const months = builds.map((b) => b.month);
+  assert.deepEqual(months, [...months].sort().reverse(), 'newest first');
+  assert.equal(new Set(months).size, months.length, 'one build per month');
+  assert.equal(new Set(builds.map((b) => b.slug)).size, builds.length, 'unique slugs');
+  // Only suph.app is made of builds.
+  assert.deepEqual(story.chapters.filter((c) => 'builds' in c).map((c) => c.id), ['suph-app']);
 });
 
 test('no rules, receipts or placeholders anywhere in the story', () => {
@@ -101,9 +133,10 @@ test('side projects are marked as side projects, not jobs (Suphian)', () => {
   // The flag: exactly Abacus Labs and suph.app; the four jobs carry none.
   assert.deepEqual(story.chapters.filter((c) => c.kind === 'side').map((c) => c.id), SIDE);
   for (const id of JOBS) assert.equal(chapter(id).kind, undefined, id);
-  // The meta line beside each name, and the role line of the open view.
+  // The meta line beside each name. suph.app's names its newest build and month
+  // (Suphian 2026-09-28: "show the month next to it").
   assert.equal(metaLine(chapter('abacus')), 'Founder · Current');
-  assert.equal(metaLine(chapter('suph-app')), 'Playground · New build every month');
+  assert.equal(metaLine(chapter('suph-app')), 'The Toga Is Dead · August 2026 · Internet');
   // The second list's label and its divider: sentence case, not a tiny uppercase label.
   assert.equal(story.labels.sideProjects, 'Studio'); // Suphian 2026-09-28: not "side projects"
   assert.equal(story.labels.list, 'Work');
@@ -135,18 +168,36 @@ test('keyboard stepping crosses the divider: Huge ↓ Abacus Labs, Abacus Labs �
   assert.equal(order[stepIndex(count - 1, 'Home', count)], 'steadily');
 });
 
-test('suph.app: Suphian’s monthly build, with his facts only', () => {
+test('suph.app: Suphian’s monthly builds, with his facts only', () => {
   const app = chapter('suph-app');
   assert.equal(app.name, 'suph.app');
-  // The game's crown as a white logo on the crown's deep gold, like every other card
-  // (Suphian: "just put the crown logo"), not a screenshot.
+  // Every build's card is the crown's deep gold unless the build sets its own; none does yet.
   assert.equal(app.color, '#AC8243');
-  assert.deepEqual(app.image, { src: '/work/suph-app.svg', nudge: 0 });
+  const [toga, quran] = app.builds;
+  // The game's crown as a white logo, like every other card (Suphian: "just put the crown
+  // logo"), not a screenshot. Facts from the game's README (dev/ceoisdead/README.md).
+  assert.deepEqual(toga.image, { src: '/work/suph-app.svg', nudge: 0 });
+  assert.equal(toga.color, undefined);
   assert.equal(
-    app.summary,
-    'Every month I make something. This month it’s The Toga Is Dead, a 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.',
+    toga.summary,
+    'The Toga Is Dead is a 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.',
   );
-  assert.deepEqual(app.links, [{ label: 'Play The Toga Is Dead', href: 'https://suph.app' }]);
+  // suph.app itself serves the game; suph.app/toga does not exist yet.
+  assert.deepEqual(toga.links, [{ label: 'Play The Toga Is Dead', href: 'https://suph.app' }]);
+  // Quran Art: from its README only, without the dataset attribution (it looks wrong).
+  // Its star is a placeholder until Suphian supplies artwork.
+  assert.deepEqual(quran.image, { src: '/work/quran-art.svg', nudge: 0 });
+  assert.equal(quran.color, undefined);
+  assert.equal(
+    quran.summary,
+    'Quran Art maps how the Qur’an uses Arabic demonstratives, words like hādhā (“this”), and turns them into simple geometric artwork: one image per surah, gathered in a gallery.',
+  );
+  assert.doesNotMatch(quran.summary, /Qatar|Oxford|corpus|dataset/i);
+  assert.deepEqual(quran.links, [{ label: 'See Quran Art on GitHub', href: 'https://github.com/Suphian/quran-art' }]);
+  // Suphian's planned suph.app/<slug> paths 404 today: no build links to one yet.
+  for (const build of app.builds) {
+    for (const link of build.links) assert.doesNotMatch(link.href, /^https:\/\/suph\.app\/./, link.href);
+  }
 });
 
 test('AI is never tied to YouTube', () => {
@@ -176,18 +227,20 @@ test('Abacus links to abacuslabs.co only', () => {
 });
 
 test('links are absolute https with labels', () => {
-  for (const c of story.chapters) {
-    for (const link of c.links) {
-      assert.ok(link.label, `${c.id} link label`);
+  for (const e of story.chapters.flatMap(entries)) {
+    for (const link of e.links) {
+      assert.ok(link.label, `${e.id} link label`);
       assert.match(link.href, /^https:\/\//, link.href);
     }
   }
 });
 
-test('every card image exists in public/', () => {
-  for (const c of story.chapters) {
-    assert.match(c.image.src, /^\/work\/[\w-]+\.(svg|png|webp|jpe?g)$/, c.image.src);
-    assert.ok(existsSync(new URL(c.image.src.slice(1), publicDir)), `${c.image.src} is missing`);
+test('every card image exists in public/, each build’s included', () => {
+  const images = story.chapters.flatMap(entries).map((e) => e.image.src);
+  assert.ok(images.includes('/work/quran-art.svg'), 'the builds are checked too');
+  for (const src of images) {
+    assert.match(src, /^\/work\/[\w-]+\.(svg|png|webp|jpe?g)$/, src);
+    assert.ok(existsSync(new URL(src.slice(1), publicDir)), `${src} is missing`);
   }
 });
 

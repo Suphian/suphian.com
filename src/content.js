@@ -18,11 +18,14 @@
  * site           { fullName, title, email, social: { linkedin, github } }
  * nav            { skip, home }
  * hero           { srTitle, edition: [3], cue: [2], cueHref }
- * story          { id, heading: [lines], intro, labels: { list, sideProjects, back },
+ * story          { id, heading: [lines], intro, labels: { list, sideProjects, back, months, previousMonth, nextMonth },
  *                  chapters: [{ id, name, kind?, role, period, location, image: { src, nudge }, color, summary,
  *                  links: [{ label, href }] }] }
  *                  (replaces about, work and projects, 2026-09-26; jobs newest first, then the side
  *                  projects, kind: 'side')
+ *                  A chapter made of monthly builds (suph.app, 2026-09-28) has builds instead of image,
+ *                  summary and links: builds: [{ month: 'YYYY-MM', slug, name, summary, image: { src, nudge },
+ *                  color?, links }], newest first.
  * contact        { title, signoff: { label }, requiredMark, optionalMark,
  *                  fields: { name|email|phone|message: { label, placeholder, required } },
  *                  validation: {...}, submit, sending, toasts: { success|rateLimited|error|blocked: { title, description } } }
@@ -117,6 +120,11 @@ export const story = {
     list: 'Work',
     sideProjects: 'Studio',
     back: 'Back',
+    // suph.app's month toggle in the open card (Suphian 2026-09-28): "Previous" steps back to
+    // an older build, "Next" forward to a newer one. `months` names the control for screen readers.
+    months: 'Month',
+    previousMonth: 'Previous',
+    nextMonth: 'Next',
   },
   // Jobs first, newest to oldest, then his own ventures at the bottom (Suphian, 2026-09-26).
   // kind: 'side' marks one of his own ventures, not a job. They are listed under the
@@ -246,19 +254,60 @@ export const story = {
       name: 'suph.app',
       // Suphian: "Every month I make something." 2026-09-28: "literally just for me to play
       // around with and do interesting stuff", so the role line reads "Playground".
+      // The list row and the open card show a build instead (logic.js chapterView); role and
+      // period still head the chapter in the no-JavaScript profile and llms-full.txt.
       kind: 'side',
       role: 'Playground',
       period: 'New build every month',
       location: 'Internet',
-      // The game's crown emblem as a white mark, like the other logos (Suphian: "just put the crown logo").
-      // A mark with no descender: its measured nudge is 0.
-      image: { src: '/work/suph-app.svg', nudge: 0 },
-      color: '#AC8243', // the deep gold from the game's own crown gradient
-      // Facts from Suphian's note and the game's README (dev/ceoisdead/README.md); nothing else.
-      // "This month" names the current build: update the sentence when a new one ships.
-      summary:
-        'Every month I make something. This month it’s The Toga Is Dead, a 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.',
-      links: [{ label: 'Play The Toga Is Dead', href: 'https://suph.app' }],
+      color: '#AC8243', // the deep gold from the game's own crown gradient: every build's card unless it sets its own
+      // Suphian 2026-09-28: "show the month next to it… As I have different [projects], I can
+      // show the different months that were there." And: "on the main suphian.com it always
+      // shows the latest project." One entry per monthly build, newest first. The row and the
+      // rail card show the newest build and its month; the open card starts on it, and a month
+      // toggle (two or more builds) steps back through the rest, swapping the card's icon.
+      //
+      // Adding a new month: put a new build at the TOP of this list:
+      //   { month: 'YYYY-MM', slug, name, summary, image: { src, nudge }, color?, links: [{ label, href }] }
+      // - month: the month it shipped. The site writes it out ("October 2026").
+      // - slug: short, lowercase and unique. Suphian's plan (2026-09-28) is one path per build,
+      //   suph.app/<slug>. Those paths don't exist yet, so links point at what works today; when
+      //   suph.app/<slug> goes live, point that build's link there.
+      // - image: a white mark in public/work with a viewBox tight to its ink (assets-src/work/README.txt);
+      //   `node --test src/story/` measures its nudge. color: optional, the card's fill (white must reach 3:1 on it).
+      // - summary and links: only facts Suphian has confirmed.
+      // Then log the copy in COPY-CHANGES.md, run `node scripts/sync-seo.mjs` and `npm test`.
+      builds: [
+        {
+          // Suphian 2026-09-28: "'Play The Toga Is Dead' should be from last month", August 2026.
+          month: '2026-08',
+          slug: 'toga',
+          name: 'The Toga Is Dead',
+          // Facts from Suphian's note and the game's README (dev/ceoisdead/README.md); nothing else.
+          summary:
+            'The Toga Is Dead is a 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.',
+          // The game's crown emblem as a white mark, like the other logos (Suphian: "just put the crown logo").
+          // A mark with no descender: its measured nudge is 0.
+          image: { src: '/work/suph-app.svg', nudge: 0 },
+          // suph.app itself serves the game today; suph.app/toga does not exist yet.
+          links: [{ label: 'Play The Toga Is Dead', href: 'https://suph.app' }],
+        },
+        {
+          // Suphian 2026-09-28: "'the Quran GitHub' should be from the previous month", July 2026.
+          // His month, not the repo's commit dates (github.com/Suphian/quran-art).
+          month: '2026-07',
+          slug: 'quran',
+          name: 'Quran Art',
+          // From the repo's README only. Its dataset attribution looks wrong, so the source isn't named.
+          summary:
+            'Quran Art maps how the Qur’an uses Arabic demonstratives, words like hādhā (“this”), and turns them into simple geometric artwork: one image per surah, gathered in a gallery.',
+          // placeholder icon until Suphian supplies artwork: an eight-point star of two squares,
+          // with no descender (nudge 0).
+          image: { src: '/work/quran-art.svg', nudge: 0 },
+          // suph.app/quran does not exist yet: the code on GitHub is what works today.
+          links: [{ label: 'See Quran Art on GitHub', href: 'https://github.com/Suphian/quran-art' }],
+        },
+      ],
     },
   ],
 };

@@ -5,6 +5,26 @@ import { cardImage, logoShift, logoWidth } from './logic.js';
 // for the same chapter (the open view's panel) paints its image on the first frame.
 const loaded = new Map();
 
+const aspectOf = (image) => (image.naturalWidth > 0 && image.naturalHeight > 0 ? image.naturalWidth / image.naturalHeight : null);
+
+/**
+ * Loads a card image ahead of time and records its aspect, so a card that later
+ * switches to it (suph.app's month toggle) paints it on the first frame.
+ */
+export function preloadCardImage(src) {
+  if (!src || loaded.has(src) || typeof Image === 'undefined') return;
+  const image = new Image();
+  image.decoding = 'async';
+  image.onload = () => loaded.set(src, aspectOf(image));
+  image.src = src;
+}
+
+const initialState = (src) => {
+  if (!src) return { src, status: 'missing', aspect: null };
+  if (loaded.has(src)) return { src, status: 'loaded', aspect: loaded.get(src) };
+  return { src, status: 'loading', aspect: null };
+};
+
 /**
  * One chapter's card, in the rail and (sized up) as the open view's image
  * panel: the chapter's white logo centred on its company color. Every chapter
@@ -27,19 +47,18 @@ const loaded = new Map();
  */
 export default function StoryCard({ chapter, className = '', cardRef, imageLoading, ...rest }) {
   const { src, nudge } = cardImage(chapter.image);
-  const [state, setState] = useState(() => {
-    if (!src) return { status: 'missing', aspect: null };
-    if (loaded.has(src)) return { status: 'loaded', aspect: loaded.get(src) };
-    return { status: 'loading', aspect: null };
-  });
+  const [stored, setState] = useState(() => initialState(src));
+  // A new image (suph.app's month toggle): start over from what is known about it.
+  // The card itself stays, so its color can ease to the new build's.
+  const state = stored.src === src ? stored : initialState(src);
+  if (stored.src !== src) setState(state);
 
   const onLoad = (event) => {
-    const { naturalWidth: width, naturalHeight: height } = event.currentTarget;
-    const aspect = width > 0 && height > 0 ? width / height : null;
+    const aspect = aspectOf(event.currentTarget);
     loaded.set(src, aspect);
-    setState({ status: 'loaded', aspect });
+    setState({ src, status: 'loaded', aspect });
   };
-  const onError = () => setState({ status: 'missing', aspect: null });
+  const onError = () => setState({ src, status: 'missing', aspect: null });
 
   return (
     <div ref={cardRef} className={`story-card ${className}`} data-status={state.status} aria-hidden="true"
@@ -48,6 +67,7 @@ export default function StoryCard({ chapter, className = '', cardRef, imageLoadi
         <span className="story-card-name">{`${chapter.name}.`}</span>
       ) : (
         <img
+          key={src}
           className="story-card-logo"
           src={src}
           alt=""
