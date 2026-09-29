@@ -130,7 +130,7 @@ Both tools run only on suphian.com production builds; local builds and previews 
 - **Brand:** [DESIGN-BRIEF.md](DESIGN-BRIEF.md) is the source of truth and wins over older notes. Only the SUPHIAN/SUPH wordmark and the SAY HELLO art are bubbly; everything else is refined ("highbrow, not bubbly"). Type is PP Neue Montreal with body text around 18px and no tiny or uppercase labels. Colors are red, near-black and white. The bouncy SUPH dock stays.
 - **Fonts:** `public/fonts/` has Regular, Italic and Semibold. Semibold stands in for Medium until a licensed Medium file is supplied. The license PDF stays in `assets-src/font-license/`.
 - **Copy:** edit `src/content.js` (its header comment lists the conventions) and keep every fact true. Log each change in [COPY-CHANGES.md](COPY-CHANGES.md), newest first. Then run `node scripts/sync-seo.mjs`. If homepage copy or metadata changed, set `seo.lastModified` to the deploy date, since it feeds the sitemap and the JSON-LD. Finish with `npm test`.
-- **A new suph.app month:** add a build at the top of the suph.app chapter's `builds` in `src/content.js` (the comment above `builds` lists the fields), with a white mark in `public/work/`. The rail card shows the newest build's icon, and the open card lists every build by month, newest first.
+- **A new suph.app month:** add a build at the top of the suph.app chapter's `builds` in `src/content.js` (the comment above `builds` lists the fields), with a white mark in `public/work/`. The rail card shows the newest build's icon, and the open card lists every build, newest first, one line each, linking to https://suph.app/<slug>.
 - **Review:** Suphian reviews changes himself at http://127.0.0.1:4173. Verify with builds and tests, not browser automation.
 
 ## More docs

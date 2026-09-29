@@ -149,73 +149,96 @@ const build = (month, name) => ({
   name,
   summary: `${name} summary.`,
   image: { src: `/work/${name.toLowerCase()}.svg`, nudge: 0 },
-  links: [{ label: `See ${name}`, href: `https://example.com/${name.toLowerCase()}` }],
+  links: [{ label: `Open ${name}`, href: `https://example.com/${name.toLowerCase()}` }],
 });
 const fixture = (builds) => ({
   id: 'fixture',
   name: 'fixture.app',
   role: 'A new project every month',
+  color: '#AC8243',
   summary: 'Fixture intro.',
   links: [{ label: 'Visit fixture.app', href: 'https://example.com/' }],
   builds,
 });
-const card = (chapter) => render(StoryBuilds, { chapter, introId: 'intro' });
-const entriesOf = (markup) =>
-  all(markup, /<li class="story-build">([\s\S]*?)<\/li><\/ul><\/li>/g).map((m) => ({
-    month: /<time dateTime="([^"]+)">([^<]*)<\/time>/.exec(m[1]).slice(1),
-    name: text(m[1], 'story-build-name')[0],
-    summary: text(m[1], 'story-build-summary')[0],
-    links: all(m[1], /<a [^>]*href="([^"]+)"[^>]*><span>([^<]*)<\/span>/g).map((l) => [decode(l[2]), decode(l[1])]),
-  }));
-const noToggle = (markup) => {
-  assert.doesNotMatch(markup, /<button|story-month|aria-live|Previous|Next/, 'no toggle');
+// Five builds, newest first.
+const FIVE = [build('2026-12', 'Dec'), build('2026-11', 'Nov'), build('2026-10', 'Oct'), build('2026-09', 'Sep'), build('2026-08', 'Aug')];
+const card = (chapter) => render(StoryBuilds, { chapter });
+// Each row: its <li>, the links inside it, and what the one link shows.
+const rowsOf = (markup) =>
+  all(markup, /<li class="story-build">([\s\S]*?)<\/li>/g).map((m) => {
+    const anchors = all(m[1], /<a\b([^>]*)>([\s\S]*?)<\/a>/g);
+    const [anchor] = anchors;
+    return {
+      anchors: anchors.length,
+      href: attrs(anchor[1]).href,
+      describedBy: attrs(anchor[1])['aria-describedby'],
+      token: /<span class="story-build-token" aria-hidden="true" style="--token-color:([^"]+)"><img src="([^"]+)" alt=""/.exec(anchor[2])?.slice(1),
+      name: text(anchor[2], 'story-build-name')[0],
+      month: /<time class="story-build-month" dateTime="([^"]+)">([^<]*)<\/time>/.exec(anchor[2])?.slice(1),
+      hidden: /<span id="([^"]+)" hidden="">([^<]*)<\/span>/.exec(m[1])?.slice(1),
+    };
+  });
+// Just the projects: the list is the whole card body, with no link row, intro, toggle or arrows
+// but the rows' own ↗ (Suphian 2026-09-28: "Just keep the projects").
+const onlyProjects = (markup, chapter) => {
+  assert.match(markup, /^<ol class="story-builds" role="list">[\s\S]*<\/ol>$/);
+  assert.doesNotMatch(markup, /story-links|story-detail-(summary|role|years)|Internet/);
+  for (const link of chapter.links) assert.ok(!markup.includes(link.label), `no "${link.label}" row`);
+  assert.ok(!markup.includes(chapter.summary), 'no intro line');
+  assert.doesNotMatch(markup, /<button|story-month-|aria-live|Previous|Next/, 'no toggle');
   assert.doesNotMatch(markup, /[←→]/, 'no arrows but the links’ own ↗');
 };
 
-test('suph.app’s open card: the intro line, Visit suph.app, then every build, newest first', () => {
+test('suph.app’s open card: every build, one line each, each a link to its own page, and nothing else', () => {
   const app = story.chapters.find((c) => c.id === 'suph-app');
   const markup = card(app);
-  // No role line: the intro is the first thing under the heading (Suphian 2026-09-28).
-  assert.match(markup, /^<p id="intro" class="story-detail-summary">A place where I put out a different project every month\.<\/p>/);
-  assert.doesNotMatch(markup, /story-detail-role|story-detail-years|Internet|Playground/);
-  // Then the link to suph.app itself, above the builds.
-  const visit = markup.indexOf('>Visit suph.app<');
-  const list = markup.indexOf('<ol class="story-builds"');
-  assert.ok(visit > 0 && visit < list, 'Visit suph.app sits between the intro and the builds');
-  assert.match(markup.slice(0, list), /<ul class="story-links"><li><a class="story-link" href="https:\/\/suph\.app" target="_blank" rel="noopener noreferrer">/);
-  // Every build: its month, name, summary and link, newest first.
-  assert.deepEqual(entriesOf(markup), [
+  onlyProjects(markup, app);
+  assert.deepEqual(rowsOf(markup), [
     {
-      month: ['2026-08', 'August 2026'],
+      anchors: 1,
+      href: 'https://suph.app/toga',
+      describedBy: 'story-build-suph-app-toga',
+      token: ['#AC8243', '/work/suph-app.svg'],
       name: 'The Toga Is Dead',
-      summary: app.builds[0].summary,
-      links: [['Play The Toga Is Dead', 'https://suph.app/Toga']],
+      month: ['2026-08', 'August 2026'],
+      hidden: ['story-build-suph-app-toga', app.builds[0].summary],
     },
     {
-      month: ['2026-07', 'July 2026'],
+      anchors: 1,
+      href: 'https://suph.app/quran',
+      describedBy: 'story-build-suph-app-quran',
+      token: ['#AC8243', '/work/quran-art.svg'],
       name: 'Quran Art',
-      summary: app.builds[1].summary,
-      links: [['See Quran Art', 'https://suph.app/Quran']],
+      month: ['2026-07', 'July 2026'],
+      hidden: ['story-build-suph-app-quran', app.builds[1].summary],
     },
   ]);
-  noToggle(markup);
+  // The summaries aren't shown ("Maybe you don't need the description"): each is only the
+  // hidden description of its row's link, for screen readers.
+  for (const b of app.builds) {
+    const escaped = b.summary.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
+    assert.equal(markup.split(escaped).length - 1, 1, `${b.slug}: summary appears once`);
+    assert.ok(markup.includes(`hidden="">${escaped}</span>`), `${b.slug}: summary only in the hidden description`);
+  }
+  assert.doesNotMatch(markup, /story-build-summary/);
 });
 
-test('with two builds both render, newest first, each with its month and links', () => {
-  const markup = card(fixture([build('2026-10', 'Newer'), build('2026-09', 'Older')]));
-  assert.deepEqual(entriesOf(markup), [
-    { month: ['2026-10', 'October 2026'], name: 'Newer', summary: 'Newer summary.', links: [['See Newer', 'https://example.com/newer']] },
-    { month: ['2026-09', 'September 2026'], name: 'Older', summary: 'Older summary.', links: [['See Older', 'https://example.com/older']] },
+test('with five builds all five render, newest first, each one link to its page (no cap)', () => {
+  const chapter = fixture(FIVE);
+  const markup = card(chapter);
+  assert.deepEqual(rowsOf(markup).map((r) => [r.name, r.month[1], r.href, r.anchors]), [
+    ['Dec', 'December 2026', 'https://example.com/dec', 1],
+    ['Nov', 'November 2026', 'https://example.com/nov', 1],
+    ['Oct', 'October 2026', 'https://example.com/oct', 1],
+    ['Sep', 'September 2026', 'https://example.com/sep', 1],
+    ['Aug', 'August 2026', 'https://example.com/aug', 1],
   ]);
-  // The list is a real list, and each build's name is a heading under the chapter's h2.
-  assert.match(markup, /<ol class="story-builds" role="list">/);
-  assert.equal(all(markup, /<h3 class="story-build-name">/g).length, 2);
-  noToggle(markup);
+  onlyProjects(markup, chapter);
 });
 
-test('with one build it is a one-item list: no toggle, no arrows', () => {
-  const markup = card(fixture([build('2026-10', 'Only')]));
-  assert.deepEqual(entriesOf(markup).map((e) => [e.month[1], e.name]), [['October 2026', 'Only']]);
-  assert.equal(all(markup, /<li class="story-build">/g).length, 1);
-  noToggle(markup);
+test('with one build it is a one-row list', () => {
+  const chapter = fixture([build('2026-10', 'Only')]);
+  const markup = card(chapter);
+  assert.deepEqual(rowsOf(markup).map((r) => [r.name, r.month[1], r.anchors]), [['Only', 'October 2026', 1]]);
+  onlyProjects(markup, chapter);
 });

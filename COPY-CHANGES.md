@@ -11,7 +11,24 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## suph.app pages live (2026-09-28, latest)
+## suph.app condensed: one line each, just the projects (2026-09-28, latest)
+
+Suphian: "Condense. What happens when I have 12 months of projects? Is it scroll? Maybe you don't need the description… Is there a better way to represent that information?" On the intro line: "Even get rid of that." On the suph.app link: "You can even get rid of suph.app as well, like the Visit suph.app link. Just keep the project[s]." And: "Figure out the spacing where it makes sense please."
+
+The open card is now the "suph.app." heading and one row per build, newest first, with nothing else. Each row is a single link to the build's page: a 40px icon token (the build's white mark on its color), the name, the month in gray, and ↗. Rows are 56px on desktop, so twelve months come to about 670px. On phones the month sits under the name. There's no cap, because nothing else links to the older builds. The image panel still follows a mouse or keyboard focus.
+
+| Field | Was | Now |
+|---|---|---|
+| Open card intro line | A place where I put out a different project every month. | Not shown (kept in the no-JS profile and llms-full.txt) |
+| Open card "Visit suph.app" row | Shown under the intro | Not shown (kept in the no-JS profile and llms-full.txt) |
+| Build summaries in the card | Shown under each name | Not shown; each row's link carries its summary as its screen-reader description |
+| Build rows | Month, name, summary, link row | One line: icon, name, month, ↗ (the whole row links) |
+| The Toga Is Dead link | https://suph.app/Toga | https://suph.app/toga (Suphian: "suph.app/quran is live"; both lowercase paths return 200) |
+| Quran Art link | https://suph.app/Quran | https://suph.app/quran |
+
+Unchanged: the row ("suph.app · A new project every month"), the no-JS profile and llms-full.txt (every build as "Name · Month" with its summary and link, plus Visit suph.app), the meta description, llms.txt and the JSON-LD.
+
+## suph.app pages live (2026-09-28)
 
 Suphian: "App is live with the three different projects." suph.app is now a hub (the third card is "Coming soon", not listed here).
 

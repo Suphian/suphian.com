@@ -178,11 +178,12 @@ test('suph.app: Suphian’s monthly builds, with his facts only', () => {
   assert.equal(app.name, 'suph.app');
   // Every build's card is the crown's deep gold unless the build sets its own; none does yet.
   assert.equal(app.color, '#AC8243');
-  // The open card: one intro line in Suphian's words, then a link to suph.app itself
-  // (Suphian 2026-09-28: "This is a place where I put a different project out every month",
-  // and "It should have a link to the main suph.app homepage as well").
+  // Suphian's line and a link to suph.app, for the no-JavaScript profile and llms-full.txt only:
+  // the open card shows just the projects ("Even get rid of that"; "Just keep the projects").
   assert.equal(app.summary, 'A place where I put out a different project every month.');
   assert.deepEqual(app.links, [{ label: 'Visit suph.app', href: 'https://suph.app' }]);
+  // Every build is in the card: no cap, no setting for one.
+  assert.equal(content.BUILDS_IN_CARD, undefined);
   const [toga, quran] = app.builds;
   // The game's crown as a white logo, like every other card (Suphian: "just put the crown
   // logo"), not a screenshot. Facts from the game's README (dev/ceoisdead/README.md). Each
@@ -193,8 +194,7 @@ test('suph.app: Suphian’s monthly builds, with his facts only', () => {
     toga.summary,
     'A 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.',
   );
-  // suph.app itself serves the game; suph.app/toga does not exist yet.
-  assert.deepEqual(toga.links, [{ label: 'Play The Toga Is Dead', href: 'https://suph.app/Toga' }]);
+  assert.deepEqual(toga.links, [{ label: 'Play The Toga Is Dead', href: 'https://suph.app/toga' }]);
   // Quran Art: from its README only, without the dataset attribution (it looks wrong).
   // Its star is a placeholder until Suphian supplies artwork.
   assert.deepEqual(quran.image, { src: '/work/quran-art.svg', nudge: 0 });
@@ -205,12 +205,10 @@ test('suph.app: Suphian’s monthly builds, with his facts only', () => {
   );
   for (const build of app.builds) assert.ok(!build.summary.includes(build.name), `${build.slug}: the summary repeats the name`);
   assert.doesNotMatch(quran.summary, /Qatar|Oxford|corpus|dataset/i);
-  assert.deepEqual(quran.links, [{ label: 'See Quran Art', href: 'https://suph.app/Quran' }]);
-  // suph.app went live 2026-09-28 with a page per build (suph.app/Toga, suph.app/Quran):
-  // every build links to its own page, matched by slug.
-  for (const build of app.builds) {
-    assert.ok(build.links.some((link) => link.href.toLowerCase() === `https://suph.app/${build.slug}`), build.slug);
-  }
+  assert.deepEqual(quran.links, [{ label: 'See Quran Art', href: 'https://suph.app/quran' }]);
+  // suph.app went live 2026-09-28 with a page per build at suph.app/<slug> (suph.app/toga,
+  // suph.app/quran): every build's first link, the one its card row opens, is exactly that page.
+  for (const build of app.builds) assert.equal(build.links[0].href, `https://suph.app/${build.slug}`, build.slug);
 });
 
 test('AI is never tied to YouTube', () => {

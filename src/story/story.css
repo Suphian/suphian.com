@@ -329,28 +329,37 @@
 /* A build may bring its own color (content.js build.color): the panel eases to it. */
 .story-card--panel { transition: background-color .3s ease; }
 .story-detail-summary { margin-top: 30px; font-size: clamp(18px, 1.3vw, 20px); line-height: 1.6; color: var(--ink-body); }
-/* suph.app opens on its intro line, with no role line above it. */
-.story-detail-body > .story-detail-summary:first-child { margin-top: 0; }
-/* suph.app's builds (StoryBuilds.jsx), listed under its intro and link, newest first
-   (Suphian 2026-09-28: "It should just be a list"). Editorial, not cards: the month
-   in secondary gray, the name like a role line, the summary and the links as in any
-   chapter. One hairline between two builds: the next build's top rule stands in for
-   the last link row's own. */
-.story-builds { margin: 56px 0 0; padding: 0; list-style: none; }
-.story-build + .story-build { padding-top: 44px; border-top: 1px solid var(--hairline); }
-.story-build:not(:last-child) .story-links li:last-child { border-bottom: 0; }
-.story-build-month { font-size: 18px; line-height: 1.5; color: var(--ink-muted); }
+/* suph.app's builds (StoryBuilds.jsx), the whole open card under its heading: every
+   build, one line each (Suphian 2026-09-28: "Condense… Just keep the projects"). The
+   links' rhythm: a hairline above the first row and under every row. Each row is one
+   56px link, the build's white mark on its color centred on the name, the month in
+   secondary gray set right, and the link's own arrow. The list starts where any other
+   chapter's role line does (the body's top padding), so twelve months are ~670px. */
+.story-builds { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--hairline); }
+.story-build { border-bottom: 1px solid var(--hairline); }
+.story-link.story-build-link { min-height: 56px; padding: 8px 0; }
+.story-build-link > span:first-child { display: flex; flex: 1; align-items: center; gap: 16px; min-width: 0; }
+.story-build-token {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 6px;
+  background: var(--token-color, #080808);
+}
+.story-build-token img { display: block; width: 58%; height: 50%; object-fit: contain; user-select: none; -webkit-user-drag: none; }
 .story-build-name {
-  margin: 4px 0 0;
+  min-width: 0;
   font-family: var(--font-display);
   font-weight: var(--weight-strong);
-  font-size: clamp(21px, 1.7vw, 26px);
-  line-height: 1.25;
-  letter-spacing: -0.015em;
+  font-size: 18px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
   color: var(--ink);
 }
-.story-build-summary { margin-top: 14px; font-size: clamp(18px, 1.3vw, 20px); line-height: 1.6; color: var(--ink-body); }
-.story-build .story-links { margin-top: 28px; }
+.story-build-month { flex: none; margin-left: auto; font-weight: 400; font-size: 17px; line-height: 1.3; white-space: nowrap; color: var(--ink-muted); }
 .story-links { margin: 40px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--hairline); }
 .story-links li { border-bottom: 1px solid var(--hairline); }
 .story-link {
@@ -413,12 +422,24 @@
   .story-head { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 64px 0 48px; }
   .story-heading { font-size: clamp(48px, 13vw, 76px); }
 
-  .story-detail-grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "top" "media" "body"; padding: 0 24px; }
+  /* align-content: start: a short chapter (suph.app's rows) keeps its rhythm instead of
+     spreading its rows over the full-height grid. */
+  .story-detail-grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "top" "media" "body"; align-content: start; padding: 0 24px; }
   .story-detail-top { padding-top: calc(16px + var(--safe-top)); }
   .story-detail-title { margin-top: 28px; font-size: clamp(44px, 12vw, 64px); }
   .story-detail-media { position: static; height: auto; display: block; padding: 28px 0 0; }
   .story-card--panel { width: 100%; aspect-ratio: 16 / 10; }
   .story-detail-body { max-width: none; padding: 32px 0 calc(72px + env(safe-area-inset-bottom, 0px)); }
+  /* suph.app's rows: the month under the name, both beside the token, so they never collide. */
+  .story-build-link > span:first-child {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 0 16px;
+    align-items: center;
+  }
+  .story-build-token { grid-row: 1 / span 2; }
+  .story-build-name { grid-column: 2; align-self: end; }
+  .story-build-month { grid-column: 2; align-self: start; margin-left: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

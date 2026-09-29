@@ -166,20 +166,31 @@ test('hover is a faint lift for a mouse only, never the active white, and never 
   assert.doesNotMatch(rules[0].body, /var\(--ink\)|#fff|opacity|transform/i);
 });
 
-test('suph.app’s builds are an editorial list: no toggle, no cards or pills, hairlines between', () => {
-  // Suphian 2026-09-28: "Don't want the next arrows… It should just be a list."
-  assert.doesNotMatch(css, /story-month/, 'the retired toggle left no rules behind');
+test('suph.app’s builds are one-line rows in the links’ rhythm: no toggle, no summaries, no pills', () => {
+  // Suphian 2026-09-28: "It should just be a list", then "Condense… Maybe you don't need the description".
+  assert.doesNotMatch(css, /story-month|story-build-summary/, 'the retired toggle and summaries left no rules behind');
   assert.doesNotMatch(jsx, /StoryMonths|suph_app_month_viewed|aria-live/);
-  // The month in secondary gray at body size, the name like a role line.
-  assert.match(rule('.story-build-month'), /font-size: 18px/);
-  assert.match(rule('.story-build-month'), /color: var\(--ink-muted\)/);
+  // Hairlines above the first row and under every row, as .story-links has them.
+  assert.match(rule('.story-builds'), /border-top: 1px solid var\(--hairline\)/);
+  assert.match(rule('.story-build'), /border-bottom: 1px solid var\(--hairline\)/);
+  // A 56px row (a 40px token and 8px above and below), never under a 44px tap target.
+  assert.match(rule('.story-link.story-build-link'), /min-height: 56px; padding: 8px 0;/);
+  const token = rule('.story-build-token');
+  assert.match(token, /width: 40px; height: 40px;/);
+  assert.match(token, /border-radius: 6px/, 'a small square, the cards’ own corners');
+  assert.match(token, /background: var\(--token-color/, 'the build’s own color');
+  // The name strong like a link, the month in secondary gray set right on a wide screen.
   assert.match(rule('.story-build-name'), /font-weight: var\(--weight-strong\)/);
   assert.match(rule('.story-build-name'), /color: var\(--ink\)/);
-  // One hairline between two builds, the page's own; nothing boxes a build in.
-  assert.match(rule('.story-build + .story-build'), /border-top: 1px solid var\(--hairline\)/);
-  for (const selector of ['.story-builds', '.story-build + .story-build', '.story-build-month', '.story-build-name', '.story-build-summary']) {
+  assert.match(rule('.story-build-month'), /margin-left: auto/);
+  assert.match(rule('.story-build-month'), /color: var\(--ink-muted\)/);
+  for (const selector of ['.story-builds', '.story-build', '.story-build-name', '.story-build-month']) {
     assert.doesNotMatch(rule(selector), /background|border-radius|box-shadow/, `${selector}: no card or pill`);
   }
+  // Phones: the month drops under the name, so the two never collide.
+  const phone = blocks(css).find((b) => b.prelude === '@media (max-width: 800px)').body;
+  assert.match(phone, /\.story-build-token \{ grid-row: 1 \/ span 2; \}/);
+  assert.match(phone, /\.story-build-month \{ grid-column: 2; align-self: start; margin-left: 0; \}/);
   // Only a mouse moves the panel's icon, and nothing about a build restyles on hover.
   const builds = readFileSync(new URL('./StoryBuilds.jsx', import.meta.url), 'utf8');
   assert.match(builds, /const FINE_POINTER = '\(hover: hover\) and \(pointer: fine\)';/);

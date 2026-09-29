@@ -25,8 +25,9 @@ const cardScale = (first, last) => (first.width > 0 && last.width > 0 ? first.wi
  * in. Reduced motion: no animation, same structure. Escape or Back closes, and
  * focus returns to the chapter in the list (StoryIndex).
  *
- * A chapter made of monthly builds (suph.app) lists them all under its heading,
- * newest first (StoryBuilds; Suphian 2026-09-28: "It should just be a list").
+ * A chapter made of monthly builds (suph.app) lists its newest ones under its
+ * heading, one line each, then the link to all of them (StoryBuilds; Suphian
+ * 2026-09-28: "It should just be a list", then "Condense").
  * The image panel shows the newest build's icon, or the build under a mouse
  * pointer or keyboard focus, crossfading between them (instant under reduced
  * motion); touch leaves it on the newest. No event beyond the open and the
@@ -178,7 +179,7 @@ export default function StoryDetail({ chapter, index, originFor, onClosed }) {
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
-      aria-describedby={metaId}
+      aria-describedby={builds.length ? undefined : metaId}
       tabIndex={-1}
     >
       <div ref={backdrop} className="story-detail-backdrop" aria-hidden="true" />
@@ -202,8 +203,8 @@ export default function StoryDetail({ chapter, index, originFor, onClosed }) {
 
         <div className="story-detail-body" data-fade>
           {builds.length > 0 ? (
-            // suph.app: its intro line, its own link, then every build (no role or years line).
-            <StoryBuilds chapter={chapter} introId={metaId} onBuildEvent={onBuildEvent} />
+            // suph.app: its newest builds, then all of them on suph.app (no role, years or intro line).
+            <StoryBuilds chapter={chapter} onBuildEvent={onBuildEvent} />
           ) : (
             <>
               <div id={metaId}>

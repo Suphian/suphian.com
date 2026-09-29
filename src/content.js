@@ -25,7 +25,8 @@
  *                  projects, kind: 'side')
  *                  A chapter made of monthly builds (suph.app, 2026-09-28) has builds instead of an image:
  *                  builds: [{ month: 'YYYY-MM', slug, name, summary, image: { src, nudge }, color?, links }],
- *                  newest first. Its own summary and links introduce the list in the open card.
+ *                  newest first. The open card lists every build, one line each; the chapter's own
+ *                  summary and links are for the no-JavaScript profile and llms-full.txt.
  * contact        { title, signoff: { label }, requiredMark, optionalMark,
  *                  fields: { name|email|phone|message: { label, placeholder, required } },
  *                  validation: {...}, submit, sending, toasts: { success|rateLimited|error|blocked: { title, description } } }
@@ -256,29 +257,30 @@ export const story = {
       role: 'A new project every month',
       period: 'New build every month', // not shown: each build carries its own month
       location: 'Internet', // not shown for suph.app
-
       color: '#AC8243', // the deep gold from the game's own crown gradient: every build's card unless it sets its own
-      // The open card's intro line, then a link to suph.app itself, above the list of builds.
-      // Suphian 2026-09-28: "Just say suph.app. This is a place where I put a different project
-      // out every month. And then you can go to each one of the individual projects." And: "It
-      // should have a link to the main suph.app homepage as well."
+      // Suphian 2026-09-28: "This is a place where I put a different project out every month."
+      // The summary and the link to suph.app are for the no-JavaScript profile and llms-full.txt
+      // only. The open card shows just the projects ("Even get rid of that"; "You can even get
+      // rid of suph.app as well, like the Visit suph.app link. Just keep the projects").
       summary: 'A place where I put out a different project every month.',
       links: [{ label: 'Visit suph.app', href: 'https://suph.app' }],
       // Suphian 2026-09-28: "When you click the suph.app card you should see all of my projects,
       // and it should say the month… on the main suphian.com it always shows the latest project."
-      // One entry per monthly build, newest first. The row and the rail card show the newest
-      // build and its month. The open card lists every build (no toggle: "It should just be a
-      // list"), and its image panel shows the newest, or the build under a mouse or keyboard focus.
+      // One entry per monthly build, newest first. The rail card shows the newest build's icon.
+      // The open card lists every build, one line each (Suphian: "Condense"), and its image panel
+      // shows the newest, or the build under a mouse or keyboard focus. The no-JavaScript
+      // profile and llms-full.txt list them all too, with their summaries.
       //
       // Adding a new month: put a new build at the TOP of this list:
       //   { month: 'YYYY-MM', slug, name, summary, image: { src, nudge }, color?, links: [{ label, href }] }
       // - month: the month it shipped. The site writes it out ("October 2026").
-      // - slug: short, lowercase and unique. suph.app (live 2026-09-28) has one page per build, at a
-      //   capitalized path (suph.app/Toga, suph.app/Quran); a new build links to its page there.
+      // - slug: short, lowercase and unique. suph.app (live 2026-09-28) has one page per build at
+      //   suph.app/<slug> (suph.app/toga, suph.app/quran); a new build links to its page there.
       // - image: a white mark in public/work with a viewBox tight to its ink (assets-src/work/README.txt);
       //   `node --test src/story/` measures its nudge. color: optional, the card's fill (white must reach 3:1 on it).
-      // - summary: only facts Suphian has confirmed, without repeating the name printed above it.
-      // - links: its page on suph.app.
+      // - summary: only facts Suphian has confirmed, without repeating the name. The open card
+      //   doesn't show it (screen readers hear it); the no-JS profile and llms-full.txt do.
+      // - links: its page, https://suph.app/<slug>. The card's row links to the first one.
       // Then log the copy in COPY-CHANGES.md, run `node scripts/sync-seo.mjs` and `npm test`.
       builds: [
         {
@@ -292,9 +294,8 @@ export const story = {
           // The game's crown emblem as a white mark, like the other logos (Suphian: "just put the crown logo").
           // A mark with no descender: its measured nudge is 0.
           image: { src: '/work/suph-app.svg', nudge: 0 },
-          // suph.app itself serves the game today; suph.app/toga does not exist yet.
           // Suphian 2026-09-28: suph.app is now a hub with a page per project.
-          links: [{ label: 'Play The Toga Is Dead', href: 'https://suph.app/Toga' }],
+          links: [{ label: 'Play The Toga Is Dead', href: 'https://suph.app/toga' }],
         },
         {
           // Suphian 2026-09-28: "'the Quran GitHub' should be from the previous month", July 2026.
@@ -308,8 +309,7 @@ export const story = {
           // placeholder icon until Suphian supplies artwork: an eight-point star of two squares,
           // with no descender (nudge 0).
           image: { src: '/work/quran-art.svg', nudge: 0 },
-          // suph.app/quran does not exist yet: the code on GitHub is what works today.
-          links: [{ label: 'See Quran Art', href: 'https://suph.app/Quran' }],
+          links: [{ label: 'See Quran Art', href: 'https://suph.app/quran' }],
         },
       ],
     },

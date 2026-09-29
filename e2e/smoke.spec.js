@@ -84,7 +84,8 @@ for (const [index, name] of CHAPTERS.entries()) {
     else await button.click();
     const detail = page.getByRole('dialog', { name: new RegExp(name) });
     await expect(detail).toBeVisible();
-    await expect(detail.locator('.story-detail-summary')).not.toBeEmpty();
+    // A job's summary, or suph.app's project rows (it has no summary in the card).
+    await expect(detail.locator('.story-detail-summary, .story-build').first()).not.toBeEmpty();
     await page.keyboard.press('Escape');
     await expect(detail).toBeHidden();
     await expectUnlocked(page);
@@ -135,9 +136,9 @@ test('story: hover never moves the highlight or the rail; the active card, Enter
   }
 });
 
-// Suphian 2026-09-28: the row says "A new project every month"; the open card is the
-// intro, a link to suph.app, then every build by month ("It should just be a list"). The
-// image panel shows the newest build, or the one under a mouse or keyboard focus.
+// Suphian 2026-09-28: the row says "A new project every month"; the open card is just the
+// projects, one line each, newest first, each a link to its page ("Condense… Just keep the
+// projects"). The image panel shows the newest build, or the one under a mouse or keyboard focus.
 const press = (locator) => (test.info().project.use.hasTouch ? locator.tap() : locator.click());
 const suphApp = (page) => page.locator('.story-button').nth(CHAPTERS.indexOf('suph.app'));
 const openSuphApp = async (page) => {
@@ -153,28 +154,35 @@ const panelIcon = (detail) => detail.locator('.story-card--panel .story-card-log
 const CROWN = '/work/suph-app.svg';
 const STAR = '/work/quran-art.svg';
 
-test('suph.app lists every build by month under its intro and link; the image follows a mouse, never a finger', async ({ page }) => {
+test('suph.app’s card is its projects, one line and one link each; the image follows a mouse, never a finger', async ({ page }) => {
   const row = suphApp(page);
   await row.scrollIntoViewIfNeeded();
   await expect(row.locator('.story-item-name')).toHaveText('suph.app');
   await expect(row.locator('.story-item-meta')).toHaveText('A new project every month');
   const detail = await openSuphApp(page);
 
-  // Heading, the intro line (no role line, no "Internet"), then Visit suph.app.
-  await expect(detail.locator('.story-detail-summary')).toHaveText('A place where I put out a different project every month.');
-  await expect(detail.locator('.story-detail-role, .story-detail-years')).toHaveCount(0);
-  await expect(detail).not.toContainText('Internet');
-  await expect(detail.getByRole('link', { name: /Visit suph\.app/ })).toHaveAttribute('href', 'https://suph.app');
+  // Just the heading and the projects: no intro, role, place, suph.app link, toggle or summary.
+  await expect(detail.locator('.story-detail-summary, .story-detail-role, .story-detail-years, .story-links')).toHaveCount(0);
+  await expect(detail).not.toContainText(/A place where|Internet|Visit suph\.app|All projects|Previous|Next/);
+  await expect(detail.getByRole('button')).toHaveText([/Back/]);
+  await expect(detail.getByText(/3D board game/)).toBeHidden();
 
-  // Both builds, newest first, each with its month and its link. No toggle anywhere.
+  // Both builds, newest first: one link per row, to the build's page, showing its name and month.
   const builds = detail.locator('.story-build');
   await expect(builds).toHaveCount(2);
-  await expect(builds.locator('.story-build-month')).toHaveText(['August 2026', 'July 2026']);
+  await expect(detail.getByRole('link')).toHaveCount(2);
   await expect(builds.locator('.story-build-name')).toHaveText(['The Toga Is Dead', 'Quran Art']);
-  await expect(builds.nth(0).getByRole('link', { name: /Play The Toga Is Dead/ })).toHaveAttribute('href', 'https://suph.app/Toga');
-  await expect(builds.nth(1).getByRole('link', { name: /See Quran Art/ })).toHaveAttribute('href', 'https://suph.app/Quran');
-  await expect(detail.getByRole('button')).toHaveText([/Back/]);
-  await expect(detail).not.toContainText(/Previous|Next/);
+  await expect(builds.locator('.story-build-month')).toHaveText(['August 2026', 'July 2026']);
+  const toga = builds.nth(0).getByRole('link');
+  const quran = builds.nth(1).getByRole('link');
+  await expect(toga).toHaveAttribute('href', 'https://suph.app/toga');
+  await expect(quran).toHaveAttribute('href', 'https://suph.app/quran');
+  await expect(toga).toHaveAccessibleName(/The Toga Is Dead.*August 2026/);
+  // The summary isn't shown; a screen reader hears it as the link's description.
+  await expect(toga).toHaveAccessibleDescription(/^A 3D board game you play in the browser/);
+  // The icon token shows each build's mark.
+  await expect(builds.locator('.story-build-token img')).toHaveCount(2);
+  await expect(builds.nth(1).locator('.story-build-token img')).toHaveAttribute('src', STAR);
 
   // The panel starts on the newest build.
   const icon = panelIcon(detail);
@@ -196,19 +204,18 @@ test('suph.app lists every build by month under its intro and link; the image fo
     // The crossfade's outgoing copy cleans up after itself.
     await expect(detail.locator('[data-leaving]')).toHaveCount(0);
 
-    // Keyboard focus does the same: Tab through Visit suph.app, The Toga Is Dead, Quran Art.
-    const quranLink = builds.nth(1).getByRole('link');
-    for (let step = 0; step < 6 && !(await quranLink.evaluate((el) => el === document.activeElement)); step++) {
+    // Keyboard focus does the same: Tab to The Toga Is Dead, then Quran Art.
+    for (let step = 0; step < 6 && !(await quran.evaluate((el) => el === document.activeElement)); step++) {
       await page.keyboard.press('Tab');
     }
-    await expect(quranLink).toBeFocused();
+    await expect(quran).toBeFocused();
     await expect(icon).toHaveAttribute('src', STAR);
     await page.keyboard.press('Shift+Tab');
-    await expect(builds.nth(0).getByRole('link')).toBeFocused();
+    await expect(toga).toBeFocused();
     await expect(icon).toHaveAttribute('src', CROWN);
   } else {
-    // A finger on Quran Art leaves the panel on the newest build.
-    await builds.nth(1).locator('.story-build-summary').tap();
+    // A finger resting on Quran Art (without opening it) leaves the panel on the newest build.
+    await builds.nth(1).dispatchEvent('pointerover', { pointerType: 'touch', isPrimary: true, bubbles: true });
     await builds.nth(1).hover();
     await page.waitForTimeout(300);
     await expect(icon).toHaveAttribute('src', CROWN);

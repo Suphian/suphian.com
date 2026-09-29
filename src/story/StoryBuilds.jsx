@@ -1,6 +1,6 @@
 import React from 'react';
 import ExternalLink from '../components/ExternalLink.jsx';
-import { buildsOf, formatMonth } from './logic.js';
+import { buildsOf, cardImage, formatMonth, logoShift } from './logic.js';
 
 // A mouse, not a finger: only then does the pointer pick the panel's icon.
 const FINE_POINTER = '(hover: hover) and (pointer: fine)';
@@ -14,58 +14,52 @@ const isKeyboardFocus = (element) => {
   }
 };
 
-const Links = ({ links, chapter }) =>
-  links?.length > 0 && (
-    <ul className="story-links">
-      {links.map((link) => (
-        <li key={link.href}>
-          <ExternalLink href={link.href} className="story-link" chapter={chapter}>
-            {link.label}
-          </ExternalLink>
-        </li>
-      ))}
-    </ul>
-  );
-
 /**
- * suph.app's open card, under its heading (Suphian 2026-09-28: "It should just
- * be a list… Have them listed below"): the intro line, the link to suph.app
- * itself, then every build, newest first, each its month, name, summary and
- * links, split by hairlines. No toggle, no arrows beyond the links' own.
+ * suph.app's open card, under its heading: every build, newest first, one line
+ * each, and nothing else. Suphian 2026-09-28: "Condense. What happens when I
+ * have 12 months of projects?… Maybe you don't need the description"; of the
+ * intro line, "Even get rid of that"; and of the link to suph.app, "Just keep
+ * the projects". One line each keeps twelve months short (about 56px a row).
+ * Each row is a single link to the build's page (its first link): a small icon
+ * token on the build's color, the name, the month and ↗. The summary isn't
+ * shown; screen readers get it as the link's description.
  *
  * `onBuildEvent` tells StoryDetail where a mouse pointer or keyboard focus is,
  * so the image panel can show that build's icon (logic.js panelBuild decides);
  * a touch never moves it off the newest.
  */
-export default function StoryBuilds({ chapter, introId, onBuildEvent = () => {} }) {
+export default function StoryBuilds({ chapter, onBuildEvent = () => {} }) {
   const builds = buildsOf(chapter);
   const pointer = (event, fields) => onBuildEvent({ ...fields, pointerType: event.pointerType, finePointer: finePointer() });
   return (
-    <>
-      <p id={introId} className="story-detail-summary">{chapter.summary}</p>
-      <Links links={chapter.links} chapter={chapter.id} />
-      <ol
-        className="story-builds"
-        role="list"
-        onPointerLeave={(event) => pointer(event, { type: 'leave' })}
-        onBlur={(event) => onBuildEvent({ type: 'blur', inside: event.currentTarget.contains(event.relatedTarget) })}
-      >
-        {builds.map((build, index) => (
+    <ol
+      className="story-builds"
+      role="list"
+      onPointerLeave={(event) => pointer(event, { type: 'leave' })}
+      onBlur={(event) => onBuildEvent({ type: 'blur', inside: event.currentTarget.contains(event.relatedTarget) })}
+    >
+      {builds.map((build, index) => {
+        const [link] = build.links;
+        const { src, nudge } = cardImage(build.image);
+        const summaryId = `story-build-${chapter.id}-${build.slug}`;
+        return (
           <li
             key={build.slug}
             className="story-build"
             onPointerEnter={(event) => pointer(event, { type: 'enter', index })}
             onFocus={(event) => onBuildEvent({ type: 'focus', index, keyboard: isKeyboardFocus(event.target) })}
           >
-            <p className="story-build-month">
-              <time dateTime={build.month}>{formatMonth(build.month)}</time>
-            </p>
-            <h3 className="story-build-name">{build.name}</h3>
-            <p className="story-build-summary">{build.summary}</p>
-            <Links links={build.links} chapter={chapter.id} />
+            <ExternalLink href={link.href} label={link.label} className="story-link story-build-link" chapter={chapter.id} aria-describedby={summaryId}>
+              <span className="story-build-token" aria-hidden="true" style={{ '--token-color': build.color || chapter.color }}>
+                {src && <img src={src} alt="" decoding="async" draggable="false" style={{ transform: logoShift(nudge) }} />}
+              </span>
+              <span className="story-build-name">{build.name}</span>
+              <time className="story-build-month" dateTime={build.month}>{formatMonth(build.month)}</time>
+            </ExternalLink>
+            <span id={summaryId} hidden>{build.summary}</span>
           </li>
-        ))}
-      </ol>
-    </>
+        );
+      })}
+    </ol>
   );
 }
