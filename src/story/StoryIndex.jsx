@@ -8,6 +8,8 @@ import StoryCard from './StoryCard.jsx';
 import StoryDetail from './StoryDetail.jsx';
 import {
   accentOf,
+  bandOffset,
+  buildsOf,
   chapterGroups,
   chapterView,
   clampIndex,
@@ -50,10 +52,39 @@ const isKeyboardFocus = (element) => {
  * One chapter row. Memoised, like RailCard: a band change re-renders only the
  * rows whose distance from the active chapter changed (at most four) and the
  * two cards that swap is-active, not the whole list and rail.
+ *
+ * The row's id is its chapter's, so a /#youtube link finds it. Under the button,
+ * the chapter's summary and links (and suph.app's projects' links), never shown:
+ * the rendered page keeps the words the no-JavaScript profile had, for search
+ * engines that read it. React writes hidden="" (display: none: no box, no tab
+ * stop, nothing for a screen reader); once mounted it becomes hidden="until-found",
+ * just as invisible, but find-in-page and a link to a phrase can reach it, and a
+ * match opens the chapter. Plain links, not ExternalLink: nobody clicks them, so
+ * nothing is tracked.
  */
 const StoryRow = memo(function StoryRow({ chapter, index, distance, hidden, buttons, titles, onOpen, onStep, onKeyboardFocus }) {
+  const detail = useRef(null);
+  useEffect(() => {
+    const node = detail.current;
+    node.setAttribute('hidden', 'until-found');
+    let frame = 0;
+    // The browser removes hidden right after this event, to show the match. The open
+    // view shows the same words, so the row folds its copy away again on the next frame.
+    const onMatch = () => {
+      onOpen(index);
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => node.setAttribute('hidden', 'until-found'));
+    };
+    node.addEventListener('beforematch', onMatch);
+    return () => {
+      cancelAnimationFrame(frame);
+      node.removeEventListener('beforematch', onMatch);
+    };
+  }, [index, onOpen]);
+
   return (
     <li
+      id={chapter.id}
       className="story-item"
       style={{ '--item-accent': ACCENTS[index] }}
       data-distance={distance}
@@ -88,6 +119,16 @@ const StoryRow = memo(function StoryRow({ chapter, index, distance, hidden, butt
         )}
         <span className="story-item-arrow" aria-hidden="true">→</span>
       </button>
+      <div ref={detail} className="story-item-detail" hidden>
+        <p>{chapter.summary}</p>
+        <ul>
+          {[...chapter.links, ...buildsOf(chapter).flatMap((build) => build.links)].map((link) => (
+            <li key={link.href}>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </li>
   );
 });
@@ -190,6 +231,19 @@ export default function StoryIndex() {
       window.removeEventListener('resize', schedule);
       media.removeEventListener('change', schedule);
     };
+  }, []);
+
+  // A /#youtube link. App.jsx has scrolled the row into view (its layout effect runs
+  // before this one), which is right for the stacked list. Pinned, the rows sit in the
+  // sticky stage and the scroll position picks the chapter, so land in the middle of
+  // that chapter's band; the scroll listener above then highlights it.
+  useEffect(() => {
+    const index = CHAPTERS.findIndex((chapter) => `#${chapter.id}` === window.location.hash);
+    const node = track.current;
+    if (index < 0 || !node || window.matchMedia(STACKED).matches) return;
+    const rect = node.getBoundingClientRect();
+    const top = window.scrollY + rect.top + bandOffset(rect.height, window.innerHeight, index, COUNT);
+    window.scrollTo({ top: Math.round(top), left: 0, behavior: 'instant' });
   }, []);
 
   // After the open view unmounts (and the page is interactive again), focus

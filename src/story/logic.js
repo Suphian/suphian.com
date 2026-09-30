@@ -31,6 +31,18 @@ export function indexFromProgress(progress, count) {
 }
 
 /**
+ * The way back from a chapter to the scroll: how far past the top of a pinned
+ * track to scroll so its band for `index` is the one in view (a /#youtube link).
+ * The middle of the band, so rounding never tips it into a neighbour; the inverse
+ * of trackProgress and indexFromProgress. A track with no travel: 0.
+ */
+export function bandOffset(height, viewport, index, count) {
+  const travel = height - viewport;
+  if (!(travel > 0) || !(count > 0)) return 0;
+  return ((clampIndex(index, count) + 0.5) / count) * travel;
+}
+
+/**
  * Scroll only takes over when the band changes, so a chapter picked with the
  * keyboard survives small scrolls inside the same band. (Hover never picks:
  * Suphian 2026-09-27.)
