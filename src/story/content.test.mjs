@@ -95,7 +95,7 @@ test('the headline and intro are Suphian’s own words, exactly', () => {
   assert.equal(`${story.heading.join(' ')}.`, 'Good ideas deserve to get made.');
   assert.equal(
     story.intro,
-    'I’m Suphian. I work in product and like turning ideas into things people can try, use, or enjoy. I care about how they work, how they look, and what happens when they meet the real world. I also founded Abacus Labs, and suph.app is where I play with new ideas.',
+    'I’m Suphian. I work in product and I like to turn ideas into things people can try, use, and enjoy. I care about how they work, how they look, and what happens when they meet the real world. I also founded Abacus Labs, and suph.app is where I play with new ideas.',
   );
 });
 
