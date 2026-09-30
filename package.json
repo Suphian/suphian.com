@@ -6,12 +6,13 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 4173 --strictPort",
     "build": "vite build",
+    "postbuild": "node scripts/upload-sourcemaps.mjs",
     "logos": "node scripts/export-logos.mjs",
     "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort",
     "test": "node --test tests/ \"src/favicon/*.test.mjs\" \"src/sayhello/*.test.mjs\" \"src/components/*.test.mjs\" \"src/story/*.test.mjs\" \"src/lib/*.test.mjs\"",
     "e2e": "playwright test",
     "e2e:hmr": "playwright test --config e2e/configs/hmr.config.js",
-    "e2e:prod": "vite build && playwright test --config e2e/configs/prod.config.js",
+    "e2e:prod": "npm run build && playwright test --config e2e/configs/prod.config.js",
     "images:work": "node scripts/optimize-work-images.mjs",
     "lhci": "lhci autorun"
   },

@@ -82,6 +82,13 @@ export default defineConfig(({ mode }) => ({
   server: address,
   preview: { ...address, headers: vercelHeaders },
   plugins: [staticSeo(), preloadFonts(), injectServiceWorkerBuildId(), notFoundPage()],
+  build: {
+    // Source maps for PostHog Error Tracking only: written without a
+    // sourceMappingURL comment, uploaded by scripts/upload-sourcemaps.mjs
+    // (postbuild) when POSTHOG_CLI_API_KEY is set, then deleted either way, so
+    // no .map is ever deployed.
+    sourcemap: 'hidden',
+  },
   esbuild: {
     // console.error survives production so real failures stay observable.
     drop: mode === 'production' ? ['debugger'] : [],
