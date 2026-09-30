@@ -154,6 +154,31 @@ export const { track, trackOnce, captureException } = tracker;
 let started = false;
 
 /**
+ * Loads posthog-js and the exceptions extension side by side and inits
+ * PostHog. The slim build: capture, $pageleave, scroll depth and beacon sends,
+ * without the extensions this config turns off (autocapture, replay, web vitals
+ * and more). The one extension it gets is exceptions, which captureException
+ * needs (posthogExceptions.js), through posthog-js's own __extensionClasses
+ * option (lib/src/types.d.ts:65), which @posthog/types' PostHogConfig leaves
+ * out, so it is added here rather than in posthogConfig. The extension is
+ * optional: if its chunk fails to load, PostHog starts without it and
+ * captureException does nothing (lib/src/posthog-core.js:3753), so a missing
+ * chunk costs the errors, never the visit. Rejects only if posthog-js itself
+ * fails. The loaders are parameters for the tests.
+ */
+export async function initPostHog({
+  debug: debugging = false,
+  loadPostHog = () => import('posthog-js/dist/module.slim.js'),
+  loadExceptions = () => import('./posthogExceptions.js'),
+} = {}) {
+  const [{ default: posthog }, extension] = await Promise.all([loadPostHog(), loadExceptions().catch(() => null)]);
+  const config = posthogConfig({ debug: debugging });
+  const exceptions = extension?.PostHogExceptions;
+  posthog.init(POSTHOG_KEY, exceptions ? { ...config, __extensionClasses: { exceptions } } : config);
+  return posthog;
+}
+
+/**
  * Queues the one $pageview, then loads posthog-js once the first paint is done
  * (afterFirstPaint: load and first contentful paint, then idle, 2 s at most),
  * without waiting for an interaction, so a visit that never scrolls or clicks
@@ -170,17 +195,8 @@ export function startAnalytics() {
   const load = () => {
     if (loading) return;
     loading = true;
-    // The slim build: capture, $pageleave, scroll depth and beacon sends, without
-    // the extensions this config turns off (autocapture, replay, web vitals and
-    // more). The one extension it gets is exceptions, which captureException
-    // needs (posthogExceptions.js). __extensionClasses is posthog-js's own
-    // option for this (lib/src/types.d.ts:65), outside @posthog/types'
-    // PostHogConfig, so it is added here rather than in posthogConfig.
-    Promise.all([import('posthog-js/dist/module.slim.js'), import('./posthogExceptions.js')])
-      .then(([{ default: posthog }, { PostHogExceptions }]) => {
-        posthog.init(POSTHOG_KEY, { ...posthogConfig({ debug }), __extensionClasses: { exceptions: PostHogExceptions } });
-        tracker.ready(posthog);
-      })
+    initPostHog({ debug })
+      .then((posthog) => tracker.ready(posthog))
       .catch(() => tracker.ready(null)); // Empties the queue: nothing else would send it.
   };
   afterFirstPaint(load);

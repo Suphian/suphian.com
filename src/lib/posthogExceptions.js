@@ -23,6 +23,18 @@ import {
   getInjectedReleaseId,
 } from '@posthog/core/error-tracking';
 
+// Sources (the source property) of errors nothing handled: errors.js's error
+// and unhandledrejection, main.jsx's mount, and the React boundaries' react and
+// lazy-chunk. posthog.captureException marks every exception handled
+// (lib/src/posthog-core.js:3757), so these are set back to unhandled. Anything
+// else, such as a deliberate captureException, stays handled.
+const UNHANDLED_SOURCES = new Set(['error', 'unhandledrejection', 'mount', 'react', 'lazy-chunk']);
+
+const unhandled = (properties) =>
+  UNHANDLED_SOURCES.has(properties.source) && Array.isArray(properties.$exception_list)
+    ? { ...properties, $exception_list: properties.$exception_list.map((exception) => ({ ...exception, mechanism: { ...exception.mechanism, handled: false } })) }
+    : properties;
+
 export class PostHogExceptions {
   constructor(instance) {
     this.instance = instance;
@@ -51,9 +63,10 @@ export class PostHogExceptions {
 
   /** Sends the $exception the way PostHog's own extension does: whole, in its own batch. */
   sendExceptionEvent(properties) {
+    const event = unhandled(properties);
     // Set by posthog-cli sourcemap inject, when the build ran it.
     const releaseId = getInjectedReleaseId();
-    return this.instance.capture('$exception', releaseId ? { ...properties, $release_id: releaseId } : properties, {
+    return this.instance.capture('$exception', releaseId ? { ...event, $release_id: releaseId } : event, {
       _noTruncate: true,
       _batchKey: 'exceptionEvent',
       _originatedFromCaptureException: true,

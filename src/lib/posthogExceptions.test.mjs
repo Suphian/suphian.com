@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import test from 'node:test';
+import { initPostHog, posthogConfig } from './analytics.js';
 import { PostHogExceptions } from './posthogExceptions.js';
 
 const require = createRequire(import.meta.url);
@@ -48,9 +49,30 @@ test('coerces rejection reasons that are not Errors', () => {
 
 test('sends $exception whole, in its own batch, flagged as from captureException', () => {
   const { calls, exceptions } = extension();
-  const properties = { ...exceptions.buildProperties(thrown(), { handled: true }), source: 'error' };
+  const properties = { ...exceptions.buildProperties(thrown(), { handled: true }), source: 'manual' };
   exceptions.sendExceptionEvent(properties);
   assert.deepEqual(calls, [['$exception', properties, { _noTruncate: true, _batchKey: 'exceptionEvent', _originatedFromCaptureException: true }]]);
+});
+
+test('errors nothing handled go out as unhandled; a deliberate capture stays handled', () => {
+  const { calls, exceptions } = extension();
+  const error = new Error('outer', { cause: new TypeError('inner') });
+  for (const source of ['error', 'unhandledrejection', 'mount', 'react', 'lazy-chunk', 'manual', undefined]) {
+    // What posthog.captureException passes: handled true, whatever happened (posthog-core.js:3757).
+    exceptions.sendExceptionEvent({ ...exceptions.buildProperties(error, { handled: true }), source });
+  }
+  const handled = calls.map(([, properties]) => [properties.source, properties.$exception_list.map((exception) => exception.mechanism.handled)]);
+  assert.deepEqual(handled, [
+    ['error', [false, false]],
+    ['unhandledrejection', [false, false]],
+    ['mount', [false, false]],
+    ['react', [false, false]],
+    ['lazy-chunk', [false, false]],
+    ['manual', [true, undefined]],
+    [undefined, [true, undefined]],
+  ]);
+  const [[, first]] = calls;
+  assert.equal(first.$exception_list[1].mechanism.type, 'chained', 'the rest of the mechanism is kept');
 });
 
 test('with posthog-cli sourcemap inject, frames carry chunk ids and the event a release id', (t) => {
@@ -83,14 +105,39 @@ test('has every method posthog-js calls on its exceptions extension', () => {
   for (const method of called) assert.equal(typeof PostHogExceptions.prototype[method], 'function', method);
 });
 
-test('analytics.js hands it to the slim build as __extensionClasses.exceptions, an option posthog-js declares', () => {
+// A stand-in posthog-js module: records init.
+function fakePostHog() {
+  const inits = [];
+  return { inits, load: async () => ({ default: { init: (...args) => inits.push(args) } }) };
+}
+
+test('initPostHog hands the slim build this extension as __extensionClasses.exceptions, an option posthog-js declares', async () => {
   // The slim bundle has no exceptions extension unless config supplies one
   // (lib/src/posthog-core.js:346-347 and _initExtensions, 867-868), and
   // captureException is a no-op without it (3753).
-  const analytics = readFileSync(new URL('./analytics.js', import.meta.url), 'utf8');
-  assert.match(analytics, /__extensionClasses: \{ exceptions: PostHogExceptions \}/);
-  assert.match(analytics, /import\('\.\/posthogExceptions\.js'\)/);
+  const posthog = fakePostHog();
+  await initPostHog({ debug: true, loadPostHog: posthog.load });
+  const [[key, config]] = posthog.inits;
+  assert.match(key, /^phc_/);
+  assert.equal(config.__extensionClasses.exceptions, PostHogExceptions, 'the default loader imports ./posthogExceptions.js');
+  const { __extensionClasses, ...rest } = config;
+  assert.deepEqual(rest, posthogConfig({ debug: true }));
+  assert.match(readFileSync(new URL('./analytics.js', import.meta.url), 'utf8'), /loadExceptions = \(\) => import\('\.\/posthogExceptions\.js'\)/);
   // lib/src/types.d.ts:65-66: __extensionClasses?: { exceptions?: ExtensionConstructor<PostHogExceptions> ...
   assert.match(sdkSource('types.d.ts'), /__extensionClasses\?: \{\s+exceptions\?: ExtensionConstructor<PostHogExceptions>;/);
   assert.match(sdkSource('posthog-core.js'), /if \(ext\.exceptions\) \{\s+this\._extensions\.push\(\(this\.exceptions = /);
+});
+
+test('if the exceptions chunk fails to load, PostHog still starts, without it', async () => {
+  const posthog = fakePostHog();
+  const client = await initPostHog({ loadPostHog: posthog.load, loadExceptions: () => Promise.reject(new TypeError('Failed to fetch dynamically imported module')) });
+  assert.ok(client, 'the visit still has a client');
+  assert.equal(posthog.inits.length, 1);
+  assert.deepEqual(posthog.inits[0][1], posthogConfig(), 'no __extensionClasses: captureException becomes a no-op');
+});
+
+test('if posthog-js itself fails to load, initPostHog rejects (startAnalytics then empties the queue)', async () => {
+  await assert.rejects(initPostHog({ loadPostHog: () => Promise.reject(new TypeError('Failed to fetch dynamically imported module')) }), TypeError);
+  const analytics = readFileSync(new URL('./analytics.js', import.meta.url), 'utf8');
+  assert.match(analytics, /initPostHog\(\{ debug \}\)\s+\.then\(\(posthog\) => tracker\.ready\(posthog\)\)\s+\.catch\(\(\) => tracker\.ready\(null\)\)/);
 });
