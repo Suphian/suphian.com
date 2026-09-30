@@ -85,7 +85,7 @@ npm run lhci                      # Lighthouse, after a build
 - analytics wiring: the PostHog config, the `$web_vitals` shape, the `/ingest` proxy, the CSP and the service worker
 - error tracking: the noise filter, dedupe, cap and queue (`src/lib/errors.js`), the error boundaries' reports, the `$exception` shape, an end-to-end run through the real posthog-js (`src/lib/posthogExceptions.integration.test.mjs`), and the source-map upload script
 
-**Lighthouse:** `npm run lhci` (after a build; config in `lighthouserc.cjs`) asserts performance at least 0.95 locally. CI runs the median of 3 with a 0.85 floor and a 2x CPU slowdown (`LHCI_PERF_MIN`, `LHCI_CPU_SLOWDOWN`) because shared runners are slow, while bytes (400 KB), console errors, accessibility, best-practices and SEO stay hard everywhere.
+**Lighthouse:** `npm run lhci` (runs the pinned `@lhci/cli@0.15.1` via npx on demand, so it is not a devDependency and stays out of `npm audit`; after a build; config in `lighthouserc.cjs`) asserts performance at least 0.95 locally. CI runs the median of 3 with a 0.85 floor and a 2x CPU slowdown (`LHCI_PERF_MIN`, `LHCI_CPU_SLOWDOWN`) because shared runners are slow, while bytes (400 KB), console errors, accessibility, best-practices and SEO stay hard everywhere.
 
 **CI** (`.github/workflows/ci.yml`) runs on pull requests and pushes to `main` with Node 24: `npm ci`, `npm test`, Chromium install, `npm run e2e:prod`, then `npm run lhci`. CI never uploads source maps (only Vercel does), and `e2e:prod` fails if its build left a `.map` in `dist/`.
 
