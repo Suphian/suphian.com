@@ -3,6 +3,11 @@
 // loads; posthogExceptions.js turns them into $exception events). Noise that
 // says nothing about this site is dropped, repeats are folded, and a page sends
 // at most MAX_PER_PAGE, so one broken loop can't flood the project.
+//
+// React error boundaries catch render errors before any window error event (in
+// production React only logs them), so ErrorBoundary.jsx and SayHelloSlot.jsx's
+// KeepBox report theirs with boundaryReport, and lazy chunks that fail to load
+// are marked by importWithRetry so those reports say lazy-chunk.
 
 // The same message and stack again within this window is the same failure.
 const DEDUPE_MS = 60 * 1000;
@@ -14,8 +19,9 @@ const MAX_PER_PAGE = 10;
 const RESIZE_OBSERVER = /^ResizeObserver loop/;
 const CROSS_ORIGIN = /^Script error\.?$/;
 // Browser extensions run their own scripts in the page. PostHog drops these too
-// (posthog-js lib/src/posthog-exceptions.js EXTENSION_URL_PREFIXES).
-const EXTENSION_FRAME = /\b(chrome|moz)-extension:\/\//;
+// (posthog-js lib/src/posthog-exceptions.js EXTENSION_URL_PREFIXES; Safari's
+// safari-extension: and safari-web-extension: have no //).
+const EXTENSION_FRAME = /\b(chrome|moz)-extension:\/\/|\bsafari-(web-)?extension:/;
 
 const text = (value) => {
   if (typeof value === 'string') return value;
@@ -96,4 +102,35 @@ export function installErrorTracking(capture, deps) {
     target.removeEventListener('error', onEvent);
     target.removeEventListener('unhandledrejection', onEvent);
   };
+}
+
+// Errors from lazy chunks that failed to load, so a boundary can tell them from render errors.
+const chunkErrors = new WeakSet();
+
+/** Marks error as a failed chunk load (boundaryReport then says lazy-chunk) and returns it. */
+export function markChunkError(error) {
+  if (error !== null && (typeof error === 'object' || typeof error === 'function')) chunkErrors.add(error);
+  return error;
+}
+
+/**
+ * A lazy chunk's import(), retried once after a pause (flaky networks, a deploy
+ * mid-session). If the retry fails too, it rejects with the error marked as a
+ * chunk load failure. wait is the pause, which the tests replace.
+ */
+export function importWithRetry(load, { delay = 1500, wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) } = {}) {
+  return load()
+    .catch(() => wait(delay).then(load))
+    .catch((error) => {
+      throw markChunkError(error);
+    });
+}
+
+/**
+ * captureException's arguments for an error a React error boundary caught:
+ * source lazy-chunk for a chunk that failed to load (importWithRetry), react
+ * for anything else, with React's component stack.
+ */
+export function boundaryReport(error, info) {
+  return [error, { source: chunkErrors.has(error) ? 'lazy-chunk' : 'react', componentStack: info?.componentStack ?? undefined }];
 }

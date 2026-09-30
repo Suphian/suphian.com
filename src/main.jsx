@@ -67,8 +67,9 @@ try {
 } catch (error) {
   console.error('Failed to mount React app:', error);
   // Caught here, so the error listener never sees it. startAnalytics may not
-  // have run yet; it runs once, so calling it again is safe.
-  captureException(error, { source: 'mount' });
+  // have run yet (it runs once, so calling it again is safe); it goes first so
+  // the $pageview is queued ahead of the $exception, which then carries its id.
   startAnalytics();
+  captureException(error, { source: 'mount' });
   showLoadError(error);
 }

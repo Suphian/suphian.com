@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { mock, test } from 'node:test';
 import { createTracker } from './analytics.js';
-import { installErrorTracking, isNoise, normalizeErrorEvent } from './errors.js';
+import { boundaryReport, importWithRetry, installErrorTracking, isNoise, markChunkError, normalizeErrorEvent } from './errors.js';
 
 // installErrorTracking on a fake window (a plain EventTarget) with a mocked clock.
 function setup(capture) {
@@ -67,6 +68,10 @@ test('noise is dropped: ResizeObserver loops, stackless cross-origin Script erro
   throwError(errorWithStack('ext', 'Error: ext\n    at x (chrome-extension://abcdef/content.js:1:1)'));
   throwError(errorWithStack('ext', 'Error: ext\n    at x (https://suphian.com/assets/index-abc.js:1:1)\n    at y (moz-extension://1234/inject.js:2:2)'));
   fire('error', { message: 'Uncaught Error: injected', filename: 'chrome-extension://abcdef/inject.js', lineno: 3 });
+  // Safari's extension frames, as posthog-js's stack parser writes them.
+  throwError(errorWithStack('safari', 'Error: safari\n    at x (safari-extension:(//com.example.ext/abc/content.js):1:1)'));
+  throwError(errorWithStack('safari web', 'Error: safari web\n    at x (safari-web-extension://ABC-123/content.js:1:1)'));
+  fire('error', { message: 'Uncaught Error: injected', filename: 'safari-web-extension://ABC-123/inject.js', lineno: 3 });
   assert.deepEqual(captured, []);
 
   // A "Script error." that does carry a stack is this site's, and is kept.
@@ -182,4 +187,45 @@ test('normalizeErrorEvent and isNoise read message, stack and file', () => {
   assert.equal(normalizeErrorEvent({ type: 'unhandledrejection', reason: undefined }).message, 'undefined');
   assert.equal(isNoise({ message: 'boom', stack: error.stack, filename: '' }), false);
   assert.equal(isNoise({ message: 'Script error.', stack: '', filename: '' }), true);
+});
+
+test('a $pageview queued before an exception is delivered first, so the exception carries its page view', () => {
+  const tracker = createTracker({ enabled: true });
+  tracker.trackOnce('$pageview');
+  tracker.captureException(new Error('mount failed'), { source: 'mount' });
+  const calls = [];
+  tracker.ready({
+    capture: (event) => calls.push(event),
+    captureException: (error, props) => calls.push(`captureException ${props.source}`),
+  });
+  assert.deepEqual(calls, ['$pageview', 'captureException mount']);
+});
+
+test("main.jsx's mount failure starts analytics before it captures", () => {
+  const main = readFileSync(new URL('../main.jsx', import.meta.url), 'utf8');
+  assert.match(main, /startAnalytics\(\);\s*captureException\(error, \{ source: 'mount' \}\);/);
+});
+
+test('importWithRetry retries once, and marks a chunk that still fails so boundaries report lazy-chunk', async () => {
+  const waits = [];
+  const wait = async (ms) => { waits.push(ms); };
+  let attempts = 0;
+  const flaky = () => (attempts++ === 0 ? Promise.reject(new TypeError('Failed to fetch dynamically imported module')) : Promise.resolve('chunk'));
+  assert.equal(await importWithRetry(flaky, { wait }), 'chunk');
+  assert.deepEqual(waits, [1500]);
+
+  const failure = new TypeError('Failed to fetch dynamically imported module: /assets/SayHello-abc.js');
+  let calls = 0;
+  const error = await importWithRetry(() => { calls += 1; return Promise.reject(failure); }, { wait }).catch((caught) => caught);
+  assert.equal(error, failure);
+  assert.equal(calls, 2);
+  assert.deepEqual(boundaryReport(error, { componentStack: '\n    at SayHelloSlot' }), [failure, { source: 'lazy-chunk', componentStack: '\n    at SayHelloSlot' }]);
+});
+
+test('boundaryReport says react for render errors, and survives a missing info or a thrown primitive', () => {
+  const error = new Error('render failed');
+  assert.deepEqual(boundaryReport(error, { componentStack: '\n    at Home' }), [error, { source: 'react', componentStack: '\n    at Home' }]);
+  assert.deepEqual(boundaryReport(error), [error, { source: 'react', componentStack: undefined }]);
+  assert.equal(markChunkError('a string'), 'a string');
+  assert.deepEqual(boundaryReport('a string', null), ['a string', { source: 'react', componentStack: undefined }]);
 });

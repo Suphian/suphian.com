@@ -1,11 +1,12 @@
 import React, { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
 import { track } from '../lib/analytics.js';
+import { importWithRetry } from '../lib/errors.js';
 import Toasts from './Toasts.jsx';
 import { UIContext } from './uiContext.js';
 
-// Retry a failed chunk once (flaky networks, a deploy mid-session).
-const lazyWithRetry = (load) =>
-  lazy(() => load().catch(() => new Promise((resolve) => setTimeout(resolve, 1500)).then(load)));
+// Retry a failed chunk once (flaky networks, a deploy mid-session). A second
+// failure reaches App's ErrorBoundary marked, so Error Tracking says lazy-chunk.
+const lazyWithRetry = (load) => lazy(() => importWithRetry(load));
 
 const ContactSheet = lazyWithRetry(() => import('./ContactSheet.jsx'));
 
