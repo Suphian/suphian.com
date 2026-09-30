@@ -11,7 +11,9 @@
     "test": "node --test tests/ \"src/favicon/*.test.mjs\" \"src/sayhello/*.test.mjs\" \"src/components/*.test.mjs\" \"src/story/*.test.mjs\" \"src/lib/*.test.mjs\"",
     "e2e": "playwright test",
     "e2e:hmr": "playwright test --config e2e/configs/hmr.config.js",
-    "e2e:prod": "vite build && playwright test --config e2e/configs/prod.config.js"
+    "e2e:prod": "vite build && playwright test --config e2e/configs/prod.config.js",
+    "images:work": "node scripts/optimize-work-images.mjs",
+    "lhci": "lhci autorun"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",
@@ -21,6 +23,7 @@
     "web-vitals": "^6.2.2"
   },
   "devDependencies": {
+    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.58.2",
     "sharp": "0.35.5",
     "vite": "7.3.6"

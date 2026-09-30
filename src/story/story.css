@@ -244,6 +244,10 @@
 /* One cell for everything on a card, so suph.app's outgoing icon (a fading copy,
    StoryDetail.jsx) sits exactly on the incoming one. */
 .story-card > * { grid-area: 1 / 1; }
+/* The <picture> around a PNG logo (AVIF/WebP sources) generates no box of its own, so the img
+   stays the card's grid item, in the same cell, exactly as before. */
+.story-card picture { display: contents; }
+.story-card picture > img { grid-area: 1 / 1; }
 .story-card-name {
   place-self: center;
   max-width: 100%;
