@@ -222,6 +222,10 @@
   overflow: hidden;
   container-type: inline-size;
   display: grid;
+  /* An explicit 1fr cell, not the implicit auto one: the open panel's height comes from
+     aspect-ratio, and an auto row doesn't stretch to it, so the logo centred in a
+     content-sized row instead of in the card. */
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   place-items: center;
   border: 1px solid rgba(255, 255, 255, .12);
   border-radius: 6px;
