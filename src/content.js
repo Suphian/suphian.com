@@ -152,7 +152,7 @@ export const story = {
       period: '2026 – Present',
       // Where he worked, shown in the open card after the years (Suphian, 2026-09-27).
       location: 'Austin, Texas',
-      image: { src: '/work/steadily.svg', nudge: 0 },
+      image: { src: '/work/steadily.svg', width: 547.58, height: 68.91, nudge: 0 },
       color: '#6C1D72', // Steadily purple: the card's fill (Suphian: company colors)
       // Not on the old site. Only the title, start date, Steadily's own description and the
       // link are confirmed; don't add scope, team, metrics or launches until Suphian supplies them.
@@ -165,7 +165,7 @@ export const story = {
       role: 'Senior Product Manager',
       period: '2020 – 2026',
       location: 'New York City',
-      image: { src: '/work/youtube.svg', nudge: 0 },
+      image: { src: '/work/youtube.svg', width: 89.58, height: 20, nudge: 0 },
       color: '#FF0000', // YouTube red: the card's fill (Suphian: company colors)
       // Past role, past tense. He did NOT do AI at YouTube: "AI-powered payment system" → "payment system".
       summary:
@@ -198,7 +198,7 @@ export const story = {
       role: 'Principal Analytical Lead',
       period: '2018 – 2020',
       location: 'Ann Arbor, Michigan',
-      image: { src: '/work/google.svg', nudge: 0.018 },
+      image: { src: '/work/google.svg', width: 269.63, height: 88.76, nudge: 0.018 },
       color: '#4285F4', // Google blue: the card's fill (Suphian: company colors)
       summary:
         'Served as an in-house analytics advisor for CapitalG portfolio companies and high-growth D2C brands. Led incrementality testing and optimization strategies to improve marketing efficiency and scale growth across platforms like Duolingo and Chewy.com.',
@@ -219,7 +219,7 @@ export const story = {
       role: 'Senior Product Analyst',
       period: '2014 – 2018',
       location: 'DUMBO, Brooklyn',
-      image: { src: '/work/huge.svg', nudge: 0.026 },
+      image: { src: '/work/huge.svg', width: 98.42, height: 41.6, nudge: 0.026 },
       color: '#FF0090', // Huge magenta: the card's fill (Suphian: company colors)
       summary:
         'Specialized in site redesigns, A/B testing, and multivariate testing for high-impact brands. Helped improve UX and conversion for companies like Hulu, Apple and AMC Theaters.',
@@ -244,7 +244,7 @@ export const story = {
       period: 'Current',
       location: 'Internet', // Suphian: the studio's location "can be internet"
       // A raster mark with even 4px margins on every side and no descender: nothing to nudge.
-      image: { src: '/work/abacus-white.png', nudge: 0 },
+      image: { src: '/work/abacus-white.png', width: 748, height: 467, nudge: 0 },
       color: '#000000', // Abacus Labs black: the card's fill (Suphian: company colors)
       summary:
         'Abacus turns spreadsheet chaos into a real-time command center for MCA operators — deals, underwriting, collections, syndication, and compliance in one place. I founded it, built it, and run it for paying customers.',
@@ -302,7 +302,7 @@ export const story = {
             'A 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.',
           // The game's crown emblem as a white mark, like the other logos (Suphian: "just put the crown logo").
           // A mark with no descender: its measured nudge is 0.
-          image: { src: '/work/suph-app.svg', nudge: 0 },
+          image: { src: '/work/suph-app.svg', width: 76, height: 59, nudge: 0 },
           // Suphian 2026-09-28: suph.app is now a hub with a page per project.
           links: [{ label: 'Play The Toga Is Dead', href: 'https://suph.app/toga' }],
         },
@@ -317,7 +317,7 @@ export const story = {
             'Simple geometric artwork from how the Qur’an uses Arabic demonstratives, words like hādhā (“this”): one image per surah, gathered in a gallery.',
           // placeholder icon until Suphian supplies artwork: an eight-point star of two squares,
           // with no descender (nudge 0).
-          image: { src: '/work/quran-art.svg', nudge: 0 },
+          image: { src: '/work/quran-art.svg', width: 100, height: 100, nudge: 0 },
           links: [{ label: 'See Quran Art', href: 'https://suph.app/quran' }],
         },
       ],
