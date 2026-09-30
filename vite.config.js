@@ -48,6 +48,25 @@ const notFoundPage = () => ({
   },
 });
 
+// The two font files are imported by src/fonts.css, so Vite emits them hashed into /assets.
+// Preload both (Regular for the first paint, Semibold for the headings) from the built bundle,
+// where the hashed names are known. Replaces the `<!-- fonts:preload -->` marker in index.html.
+const preloadFonts = () => ({
+  name: 'preload-fonts',
+  apply: 'build',
+  transformIndexHtml: {
+    order: 'post',
+    handler(html, ctx) {
+      const names = Object.keys(ctx.bundle ?? {})
+        .filter((file) => /PPNeueMontreal-(Regular|Semibold)-[\w-]+\.woff2$/.test(file))
+        .sort();
+      if (names.length !== 2) throw new Error(`preload-fonts: expected Regular and Semibold in the bundle, found ${names.length}`);
+      const links = names.map((file) => `<link rel="preload" href="/${file}" as="font" type="font/woff2" crossorigin />`);
+      return html.replace('<!-- fonts:preload -->', links.join('\n    '));
+    },
+  },
+});
+
 // Same address as the package.json scripts, which also pass these as flags.
 const address = { host: '127.0.0.1', port: 4173, strictPort: true };
 
@@ -62,7 +81,7 @@ const vercelHeaders = Object.fromEntries(
 export default defineConfig(({ mode }) => ({
   server: address,
   preview: { ...address, headers: vercelHeaders },
-  plugins: [staticSeo(), injectServiceWorkerBuildId(), notFoundPage()],
+  plugins: [staticSeo(), preloadFonts(), injectServiceWorkerBuildId(), notFoundPage()],
   esbuild: {
     // console.error survives production so real failures stay observable.
     drop: mode === 'production' ? ['debugger'] : [],

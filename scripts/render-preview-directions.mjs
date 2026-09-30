@@ -9,7 +9,7 @@ import { createLogoSvg } from '../src/wordmark/lettering.js';
 // Run from any working directory: node scripts/render-preview-directions.mjs
 const out = new URL('../design/social-preview/assets/', import.meta.url);
 await mkdir(out, { recursive: true });
-const font = async (name) => `data:font/woff2;base64,${(await readFile(new URL(`../public/fonts/${name}`, import.meta.url))).toString('base64')}`;
+const font = async (name) => `data:font/woff2;base64,${(await readFile(new URL(`../src/fonts/${name}`, import.meta.url))).toString('base64')}`;
 const logo = `data:image/svg+xml;base64,${Buffer.from(createLogoSvg({ idPrefix: 'preview-' })).toString('base64')}`;
 const [regular, semibold] = await Promise.all([font('PPNeueMontreal-Regular.woff2'), font('PPNeueMontreal-Semibold.woff2')]);
 const common = `
