@@ -63,6 +63,15 @@ test('metadata has one stable canonical, honest entity schema and the current so
   assert.equal(graph[0].worksFor.name, 'Steadily');
   assert.deepEqual(graph[0].affiliation, [{ '@type': 'Organization', name: 'Abacus Labs', url: 'https://abacuslabs.co' }]);
   assert.equal(graph[0].email, site.email);
+  // His earlier employers, as organizations with their https homes.
+  assert.deepEqual(graph[0].alumniOf, [
+    { '@type': 'Organization', name: 'YouTube', url: 'https://www.youtube.com' },
+    { '@type': 'Organization', name: 'Google', url: 'https://www.google.com' },
+    { '@type': 'Organization', name: 'Huge', url: 'https://www.hugeinc.com' },
+  ]);
+  // No portrait exists, so the image is the social card's artwork, never an invented photo.
+  assert.equal(graph[0].image, seo.og.image);
+  assert.deepEqual(graph[0].sameAs, ['https://www.linkedin.com/in/suphian/', 'https://github.com/Suphian', 'https://suph.app']);
   assert.equal(graph[2].mainEntity['@id'], graph[0]['@id']);
   // Every entity names the one canonical URL, and every @id reference resolves inside the graph.
   for (const node of graph) assert.equal(node.url, 'https://suphian.com/', `${node['@type']}.url`);
@@ -98,6 +107,15 @@ test('published crawler resources stay synchronized with approved copy', () => {
     assert.doesNotMatch(contents, /suph\.tweel@gmail\.com|AI-powered|AI-driven|annually|annual music|deployed ML/i);
   }
   assert.match(resources['robots.txt'], /User-agent: OAI-SearchBot\nAllow: \//);
+  // Every AI search and training crawler is allowed by name, and nothing anywhere is disallowed.
+  const bots = ['OAI-SearchBot', 'GPTBot', 'ClaudeBot', 'Claude-Web', 'PerplexityBot', 'Google-Extended', 'Applebot-Extended', 'CCBot', 'Bytespider'];
+  for (const bot of bots) {
+    assert.equal(resources['robots.txt'].split(`User-agent: ${bot}\n`).length - 1, 1, `${bot}: one group`);
+    assert.ok(resources['robots.txt'].includes(`\nUser-agent: ${bot}\nAllow: /\n\n`), `${bot}: its own Allow: / block`);
+  }
+  assert.doesNotMatch(resources['robots.txt'], /Disallow/i);
+  assert.ok(resources['robots.txt'].startsWith('# Public pages and assets are crawlable.\nUser-agent: *\nAllow: /\n\n'), 'the * block stays first');
+  assert.ok(resources['robots.txt'].endsWith(`\nSitemap: ${seo.origin}/sitemap.xml\n`));
   assert.equal((resources['sitemap.xml'].match(/<loc>/g) ?? []).length, 1);
   for (const entry of story.chapters.flatMap(entries)) assert.ok(resources['llms-full.txt'].includes(entry.summary));
 });
@@ -138,6 +156,10 @@ test('the social card is a PNG small enough for WhatsApp and iMessage link previ
   }
   assert.equal((html.match(/property="og:image" /g) ?? []).length, 1, 'one unambiguous primary image');
   assert.ok(html.includes(`<meta name="twitter:image" content="${seo.twitter.image}"`));
+  // The card's site account, like its creator: his own handle.
+  assert.equal((html.match(/name="twitter:site" /g) ?? []).length, 1);
+  assert.ok(html.includes('<meta name="twitter:site" content="@suphian" />'));
+  assert.ok(html.includes('<meta name="twitter:creator" content="@suphian" />'));
   assert.match(html, /<meta property="og:image:type" content="image\/png"/);
   assert.match(html, new RegExp(`<meta property="og:image:width" content="${seo.og.imageWidth}"`));
 });

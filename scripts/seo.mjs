@@ -18,6 +18,7 @@ export function schemaGraph() {
         '@type': 'Person', '@id': `${canonical}#person`, ...person,
         worksFor: organization(person.worksFor),
         affiliation: person.affiliation.map(organization),
+        alumniOf: person.alumniOf.map(organization),
       },
       {
         '@type': 'WebSite', '@id': `${canonical}#website`, ...structuredData.website,
@@ -47,7 +48,7 @@ export function renderSeoHead() {
     meta('og:image:alt', seo.og.imageAlt, true),
     meta('profile:first_name', structuredData.person.givenName, true),
     meta('profile:last_name', structuredData.person.familyName, true),
-    meta('twitter:card', seo.twitter.card), meta('twitter:title', seo.home.ogTitle),
+    meta('twitter:card', seo.twitter.card), meta('twitter:site', seo.twitter.handle), meta('twitter:title', seo.home.ogTitle),
     meta('twitter:description', seo.home.ogDescription), meta('twitter:image', seo.twitter.image),
     meta('twitter:image:alt', seo.twitter.imageAlt), meta('twitter:creator', seo.twitter.handle),
     `<link rel="canonical" href="${canonical}" />`,
@@ -100,6 +101,10 @@ export function renderSeoHtml(template) {
   return template.replace('<!-- seo:head -->', renderSeoHead()).replace('<!-- seo:profile -->', renderStaticProfile());
 }
 
+// AI search and training crawlers, each named with its own Allow block. The * block already
+// lets them in; a crawler that reads only its own group finds an explicit yes.
+const AI_CRAWLERS = ['OAI-SearchBot', 'GPTBot', 'ClaudeBot', 'Claude-Web', 'PerplexityBot', 'Google-Extended', 'Applebot-Extended', 'CCBot', 'Bytespider'];
+
 export function crawlerResources() {
   const linkLine = ({ label, href }) => `- [${label}](${href})`;
   const intro = `# ${site.fullName}\n\n> ${seo.home.description}\n\n${hero.edition.join(' / ')}\n\n${story.intro}\n`;
@@ -110,7 +115,7 @@ export function crawlerResources() {
     [`### ${chapter.name}`, chapterMeta(chapter), entry(chapter), ...buildsOf(chapter).map((build) => `#### ${buildTitle(build)}\n\n${entry(build)}`)].join('\n\n'),
   ).join('\n\n');
   return {
-    'robots.txt': `# Public pages and assets are crawlable. Existing training-crawler access is unchanged.\nUser-agent: *\nAllow: /\n\n# OpenAI search discovery (independent of GPTBot training controls).\nUser-agent: OAI-SearchBot\nAllow: /\n\nSitemap: ${seo.origin}/sitemap.xml\n`,
+    'robots.txt': `# Public pages and assets are crawlable.\nUser-agent: *\nAllow: /\n\n# AI search and training crawlers: allowed, each by name.\n${AI_CRAWLERS.map((bot) => `User-agent: ${bot}\nAllow: /\n\n`).join('')}Sitemap: ${seo.origin}/sitemap.xml\n`,
     'llms.txt': `${intro}\n## Pages\n\n- [Portfolio](${canonical}): Work at Steadily, YouTube, Google and Huge; studio: Abacus Labs, which he founded, and suph.app.\n- [Full text](${seo.origin}/llms-full.txt): The same approved work summaries and reference links.\n${links}`,
     'llms-full.txt': `${intro}\n## Work and studio\n\n${chapters}\n${links}`,
     'sitemap.xml': `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${canonical}</loc><lastmod>${seo.lastModified}</lastmod></url>\n</urlset>\n`,

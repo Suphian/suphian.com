@@ -451,16 +451,25 @@ export const structuredData = {
     givenName: 'Suphian',
     familyName: 'Tweel',
     description: HOME_DESCRIPTION,
+    // The social card's square Signature artwork. There is no portrait photo, so none is claimed.
+    image: seo.og.image,
     // His current role, stated accurately; it no longer leads the description (Suphian 2026-09-27).
     jobTitle: 'Principal Product Manager',
     worksFor: { name: 'Steadily', url: 'https://steadily.com' },
     // The side project he leads product and engineering for (the Abacus chapter). Affiliation
     // only: no founder, owner or employer claim.
     affiliation: [{ name: 'Abacus Labs', url: 'https://abacuslabs.co' }],
+    // His earlier jobs, the work chapters before Steadily.
+    alumniOf: [
+      { name: 'YouTube', url: 'https://www.youtube.com' },
+      { name: 'Google', url: 'https://www.google.com' },
+      { name: 'Huge', url: 'https://www.hugeinc.com' },
+    ],
     // The canonical homepage URL, trailing slash included, like the ProfilePage and <link rel="canonical">.
     url: `${ORIGIN}/`,
     email: EMAIL,
-    sameAs: [LINKEDIN, GITHUB],
+    // His profiles, and suph.app, where he shares his weekend experiments.
+    sameAs: [LINKEDIN, GITHUB, 'https://suph.app'],
     knowsAbout: ['Product Management', 'Payments', 'Artificial Intelligence', 'Fraud Detection', 'Data Analytics'],
   },
   website: {
