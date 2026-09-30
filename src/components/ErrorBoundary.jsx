@@ -1,5 +1,7 @@
 import React from 'react';
 import { errors } from '../content.js';
+import { captureException } from '../lib/analytics.js';
+import { boundaryReport } from '../lib/errors.js';
 
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -13,6 +15,9 @@ export default class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, info) {
     console.error('Uncaught error:', error, info);
+    // Caught here, so in production no window error event reaches errors.js.
+    // A no-op where analytics is off.
+    captureException(...boundaryReport(error, info));
   }
 
   render() {

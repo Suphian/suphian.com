@@ -179,7 +179,13 @@ test('suph.app’s card: years, his paragraph, then one line and one link per pr
   // Both builds, newest first: one link per row, to the build's page, showing its name and month.
   const builds = detail.locator('.story-build');
   await expect(builds).toHaveCount(2);
-  await expect(detail.getByRole('link')).toHaveCount(2);
+  // The title is the homepage link (Suphian 2026-09-30), so three links: it, then one per project.
+  const home = detail.locator('.story-detail-title a.story-title-link');
+  await expect(home).toHaveAttribute('href', 'https://suph.app');
+  await expect(home).toHaveAttribute('target', '_blank');
+  await expect(home).toHaveAccessibleName('suph.app, opens the suph.app homepage');
+  await expect(home.locator('.link-arrow')).toHaveText('↗');
+  await expect(detail.getByRole('link')).toHaveCount(3);
   await expect(builds.locator('.story-build-name')).toHaveText(['The Toga Is Dead', 'Quran Art']);
   await expect(builds.locator('.story-build-month')).toHaveText(['August 2026', 'July 2026']);
   const toga = builds.nth(0).getByRole('link');
@@ -300,6 +306,80 @@ test.describe('a load opens at the top', () => {
     await expect(page.locator('.hero')).toBeAttached();
     await expect.poll(() => page.locator('#work').evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBeLessThan(120);
     expect(await scrollY(page)).toBeGreaterThan(300);
+  });
+
+  // Every row is its chapter's anchor once React renders, as each <article> was in the
+  // no-JS profile. Pinned, the scroll picks the chapter, so /#youtube lands in its band.
+  test('a /#youtube link opens at YouTube: highlighted in the pinned list, at the top of the stacked one', async ({ page }) => {
+    await page.goto('about:blank');
+    await page.goto('/#youtube');
+    await expect(page.locator('.hero')).toBeAttached();
+    const row = page.locator('li#youtube');
+    await expect(row).toHaveCount(1);
+    const stacked = await page.evaluate(() => matchMedia('(max-width: 800px), (max-height: 560px)').matches);
+    expect(stacked, 'the phone stacks the list; the desktop pins it').toBe(test.info().project.name === 'mobile');
+    if (stacked) {
+      // Just below the fixed header, not under it (.story-item's scroll-margin-top).
+      const belowHeader = () => page.evaluate(() => Math.round(
+        document.getElementById('youtube').getBoundingClientRect().top - document.querySelector('.header').getBoundingClientRect().bottom,
+      ));
+      await expect.poll(belowHeader).toBeGreaterThanOrEqual(0);
+      expect(await belowHeader(), 'near the top').toBeLessThan(40);
+    } else {
+      await expect(highlighted(page)).toHaveText('YouTube');
+      await expect(row).toHaveAttribute('data-distance', '0');
+      await expect(row.locator('.story-button')).toBeInViewport();
+      await settle(page);
+      await expect(highlighted(page), 'the highlight stays on YouTube').toHaveText('YouTube');
+    }
+    expect(await scrollY(page)).toBeGreaterThan(300);
+  });
+});
+
+// Search engines read the page after React has replaced the no-JS profile, so each row
+// keeps its chapter's summary and links: hidden, taking no space, no tab stop and nothing
+// for a screen reader, but find-in-page and links to a phrase can reach it (Chromium).
+test.describe('the chapters’ words stay in the rendered page, unseen', () => {
+  const details = (page) => page.locator('.story-item-detail');
+
+  test('every row keeps its summary and links, hidden until found', async ({ page }) => {
+    await expect(details(page)).toHaveCount(CHAPTERS.length);
+    await expect.poll(() => details(page).evaluateAll((els) => els.map((el) => el.getAttribute('hidden')))).toEqual(CHAPTERS.map(() => 'until-found'));
+    for (const detail of await details(page).all()) {
+      await expect(detail).toBeHidden();
+      expect(await detail.evaluate((el) => el.getBoundingClientRect().height), 'no layout').toBe(0);
+    }
+    await expect(page.locator('li#youtube .story-item-detail p')).toHaveText(/royalty scam covered by Billboard\.$/);
+    const billboard = page.locator('a[href*="billboard.com"]');
+    await expect(billboard).toHaveCount(1);
+    await expect(billboard).toBeHidden();
+    // No new tab stops: none of the hidden links can take focus.
+    const links = page.locator('.story-item-detail a');
+    expect(await links.count()).toBeGreaterThan(CHAPTERS.length);
+    expect(await links.evaluateAll((els) => els.filter((el) => { el.focus(); return document.activeElement === el; }).length)).toBe(0);
+    // Nothing for a screen reader: the summary is not in the accessibility tree.
+    const cdp = await page.context().newCDPSession(page);
+    const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+    const exposed = (pattern) => nodes.filter((node) => !node.ignored && pattern.test(node.name?.value ?? '')).map((node) => node.role?.value);
+    expect(exposed(/meet the real world/).length, 'the intro, on screen, is in the tree').toBeGreaterThan(0);
+    expect(exposed(/royalty scam/)).toEqual([]);
+  });
+
+  test('a find-in-page match opens its chapter, and the row folds its copy away again', async ({ page }) => {
+    const detail = page.locator('li#google .story-item-detail');
+    await expect(detail).toHaveAttribute('hidden', 'until-found');
+    // What the browser does on a match: beforematch, then it drops hidden to show the text.
+    await detail.evaluate((el) => {
+      el.dispatchEvent(new Event('beforematch', { bubbles: true }));
+      el.removeAttribute('hidden');
+    });
+    const dialog = page.getByRole('dialog', { name: /Google/ });
+    await expect(dialog).toBeVisible();
+    await expect(detail).toHaveAttribute('hidden', 'until-found');
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await expectUnlocked(page);
+    await expect(detail).toBeHidden();
   });
 });
 

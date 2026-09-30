@@ -4,13 +4,19 @@ import App from './App.jsx';
 import { errors } from './content.js';
 import { registerServiceWorker } from './lib/serviceWorker.js';
 import { reportWebVitals } from './lib/webVitals.js';
-import { startAnalytics } from './lib/analytics.js';
+import { analyticsEnabled, captureException, startAnalytics, track } from './lib/analytics.js';
+import { installErrorTracking } from './lib/errors.js';
 import { afterFirstPaint } from './lib/afterFirstPaint.js';
 import { scrollToTop } from './lib/scroll.js';
 import './fonts.css';
 import './style.css';
 
 const rootElement = document.getElementById('root');
+
+// Uncaught errors and rejections to PostHog Error Tracking, from the start so
+// the first render is covered. Only where analytics runs (suphian.com, or the
+// debug flag); they wait in the queue until PostHog loads.
+if (analyticsEnabled) installErrorTracking(captureException, { target: window, now: () => Date.now() });
 
 // Plain DOM fallback when React cannot mount at all.
 function showLoadError(error) {
@@ -46,19 +52,24 @@ try {
   // The animated favicon never moves before load (its first burst is 450 ms after
   // it), so its chunk loads then. If the chunk fails, the static icon stays.
   afterFirstPaint(() => import('./favicon/favicon.js').then(({ initFavicon }) => initFavicon()).catch(() => {}));
-  // PostHog + GA4 custom events: a no-op without the key, and off suphian.com unless debugging.
+  // PostHog, the only analytics: a no-op without the key, and off suphian.com unless debugging.
   startAnalytics();
 
   if (import.meta.env.PROD) {
-    // Core Web Vitals to GA4 (only where index.html loaded gtag), then caching.
+    // Core Web Vitals to PostHog (wherever analytics runs), then caching.
     // Both wait for the first paint: the metrics are buffered, and the service
     // worker's install only helps the next visit.
     afterFirstPaint(() => {
-      reportWebVitals();
+      if (analyticsEnabled) reportWebVitals(track);
       registerServiceWorker().catch((error) => console.warn('Service worker registration failed:', error));
     });
   }
 } catch (error) {
   console.error('Failed to mount React app:', error);
+  // Caught here, so the error listener never sees it. startAnalytics may not
+  // have run yet (it runs once, so calling it again is safe); it goes first so
+  // the $pageview is queued ahead of the $exception, which then carries its id.
+  startAnalytics();
+  captureException(error, { source: 'mount' });
   showLoadError(error);
 }

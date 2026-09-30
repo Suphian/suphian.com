@@ -26,7 +26,7 @@ npx vite build design/social-preview --config design/social-preview/vite.config.
 
 In Windows PowerShell, use `npm.cmd` and `npx.cmd` if script execution is restricted.
 
-The local studio is at `http://127.0.0.1:4180`. Build output is in `design/social-preview/dist/`; that self-contained directory can be deployed as a separate static Vercel project. The gallery is independent of the main site's production build and includes `noindex, nofollow` metadata. Fonts are reused from `public/fonts/` and bundled into the gallery build.
+The local studio is at `http://127.0.0.1:4180`. Build output is in `design/social-preview/dist/`; that self-contained directory can be deployed as a separate static Vercel project. The gallery is independent of the main site's production build and includes `noindex, nofollow` metadata. Fonts (Regular and Semibold) are reused from `src/fonts/` and bundled into the gallery build.
 
 Direction links support `?direction=signature`, `?direction=editorial`, or `?direction=contrast`. The iMessage and WhatsApp examples are layout mockups, not native-app captures or guarantees of platform rendering. The compact WhatsApp example simulates a square center crop: Signature uses its square messaging export, while the saved wide Editorial and Contrast designs show their actual clipping. The wide iMessage and WhatsApp mockups also center-crop that same square Signature image.
 

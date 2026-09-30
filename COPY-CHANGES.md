@@ -11,7 +11,15 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## Studio rows: no line beside the name (2026-09-28, latest)
+## Intro: "I like to turn ideas into things" (2026-09-29, latest)
+
+Suphian reworded the intro's opening. He chose "things" over "apps", "products" or "something", and the plain "I care about" over "The other thing is that…". The last two sentences are unchanged. It shows under the heading, in the no-JavaScript profile, llms.txt and llms-full.txt; `seo.lastModified` moves to 2026-09-29 (the sitemap `<lastmod>` and the ProfilePage `dateModified`).
+
+| Field | Was | Now |
+|---|---|---|
+| Intro | I’m Suphian. I work in product and like turning ideas into things people can try, use, or enjoy. I care about how they work, … | I’m Suphian. I work in product and I like to turn ideas into things people can try, use, and enjoy. I care about how they work, how they look, and what happens when they meet the real world. I also founded Abacus Labs, and suph.app is where I play with new ideas. |
+
+## Studio rows: no line beside the name (2026-09-28)
 
 Suphian: "On the studio I don't need to say 'Current'… I don't need to say anything for Abacus Labs and suph.app on the homepage." The list rows for Abacus Labs and suph.app show only the name; the jobs keep "Role · Years". The open cards keep "Founder" / "Current · Internet".
 

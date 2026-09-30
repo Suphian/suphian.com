@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { story } from '../content.js';
-import { chapterGroups, chapterView, metaLine } from './logic.js';
+import { buildsOf, chapterGroups, chapterView, metaLine } from './logic.js';
 
 // Renders the real StoryIndex and StoryCard to static HTML with react-dom/server,
 // so these tests read the markup a visitor gets, without a browser. esbuild
@@ -28,7 +28,7 @@ async function load() {
     await esbuild.build({
       stdin: {
         contents:
-          "export { default as StoryIndex } from './StoryIndex.jsx'; export { default as StoryCard } from './StoryCard.jsx'; export { default as StoryBuilds } from './StoryBuilds.jsx'; export { ChapterBody } from './StoryDetail.jsx';",
+          "export { default as StoryIndex } from './StoryIndex.jsx'; export { default as StoryCard } from './StoryCard.jsx'; export { default as StoryBuilds } from './StoryBuilds.jsx'; export { ChapterBody, ChapterName } from './StoryDetail.jsx';",
         resolveDir: fileURLToPath(new URL('./', import.meta.url)),
         loader: 'js',
       },
@@ -46,7 +46,7 @@ async function load() {
     rmSync(dir, { recursive: true, force: true });
   }
 }
-const { StoryIndex, StoryCard, StoryBuilds, ChapterBody } = await load();
+const { StoryIndex, StoryCard, StoryBuilds, ChapterBody, ChapterName } = await load();
 const render = (Component, props = {}) => renderToStaticMarkup(React.createElement(Component, props));
 
 const decode = (text) =>
@@ -210,6 +210,20 @@ test('suph.app’s open card reads like Abacus Labs’, without a title: years, 
   ]);
 });
 
+test('suph.app’s card title is the link to suph.app, ended by the rows’ own ↗; Abacus’s stays plain text', () => {
+  const app = story.chapters.find((c) => c.id === 'suph-app');
+  assert.equal(app.home, 'https://suph.app');
+  const markup = render(ChapterName, { chapter: app });
+  assert.match(markup, /^<a class="story-title-link" href="https:\/\/suph\.app" target="_blank" rel="noopener noreferrer" aria-label="suph\.app, opens the suph\.app homepage">/);
+  // The whole "suph.app." (period included) is inside the link, then the arrow, as the rows have it.
+  assert.match(markup, /<span>suph\.app<span class="story-detail-period" data-fade="true">\.<\/span><\/span>/);
+  assert.match(markup, /<span class="link-arrow" aria-hidden="true">↗<\/span><\/a>$/);
+  const abacus = story.chapters.find((c) => c.id === 'abacus');
+  assert.equal(abacus.home, undefined);
+  assert.equal(render(ChapterName, { chapter: abacus }), `${escapeText(abacus.name)}<span class="story-detail-period" data-fade="true">.</span>`);
+  assert.doesNotMatch(render(ChapterName, { chapter: abacus }), /<a /);
+});
+
 test('every other chapter keeps its role line and its links, and no rows', () => {
   const youtube = story.chapters.find((c) => c.id === 'youtube');
   const markup = body(youtube);
@@ -273,4 +287,32 @@ test('with one build it is a one-row list', () => {
   const markup = rowsMarkup(fixture([build('2026-10', 'Only')]));
   assert.deepEqual(rowsOf(markup).map((r) => [r.name, r.month[1], r.anchors]), [['Only', 'October 2026', 1]]);
   onlyRows(markup);
+});
+
+// The rendered page keeps what the no-JavaScript profile said (search engines read the
+// page after React has replaced the profile): every row is its chapter's /#id, with the
+// summary and links under the button, hidden (React writes hidden=""; StoryRow makes it
+// hidden="until-found" once mounted). Plain links: no tracking, no new-tab text, no arrow.
+test('every row is its chapter’s anchor and keeps its summary and links, hidden', () => {
+  const order = chapterGroups(story.chapters).flatMap((g) => g.chapters);
+  const rowStarts = all(html, /<li id="([^"]+)" class="story-item"/g);
+  assert.deepEqual(rowStarts.map((m) => m[1]), order.map((c) => c.id));
+  for (const [i, chapter] of order.entries()) {
+    assert.equal(html.split(`id="${chapter.id}"`).length - 1, 1, `${chapter.id}: one element with that id`);
+    // The row runs to the next row or the end of its list, whichever comes first.
+    const start = rowStarts[i].index;
+    const row = html.slice(start, Math.min(rowStarts[i + 1]?.index ?? Infinity, html.indexOf('</ol>', start)));
+    const detail = /<\/button><div class="story-item-detail"( hidden="")>([\s\S]*?)<\/div><\/li>$/.exec(row);
+    assert.ok(detail, `${chapter.id}: the hidden detail follows the button: ${row.slice(-300)}`);
+    const hrefs = [...chapter.links, ...buildsOf(chapter).flatMap((build) => build.links)];
+    assert.equal(
+      detail[2],
+      `<p>${escapeText(chapter.summary)}</p><ul>${hrefs.map((l) => `<li><a href="${escapeText(l.href)}">${escapeText(l.label)}</a></li>`).join('')}</ul>`,
+      chapter.id,
+    );
+    // Every link the chapter (and each of suph.app's projects) names, the Billboard story included.
+    for (const link of hrefs) assert.ok(detail[2].includes(`href="${escapeText(link.href)}"`), `${chapter.id}: ${link.href}`);
+  }
+  assert.equal(all(html, /class="story-item-detail" hidden=""/g).length, story.chapters.length);
+  assert.equal(all(html, /href="https:\/\/www\.billboard\.com\//g).length, 1);
 });

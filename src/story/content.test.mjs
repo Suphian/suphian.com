@@ -28,8 +28,8 @@ test('jobs run newest to oldest, then the side projects: Steadily → YouTube �
 test('each chapter is only role, years, place, summary and links (plus its card, and the side-project flag)', () => {
   for (const c of story.chapters) {
     // Optional: the side-project flag, an accent for a card color too dark to see as a mark,
-    // and the role (suph.app has none: "Maybe I don't need a title on it", Suphian 2026-09-28).
-    const optional = ['kind', 'accent', 'role'].filter((key) => key in c);
+    // the venture's homepage (`home`: the open card's title links to it), and the role (suph.app has none: "Maybe I don't need a title on it", Suphian 2026-09-28).
+    const optional = ['kind', 'accent', 'role', 'home'].filter((key) => key in c);
     // A chapter of builds (suph.app) carries them in place of its own card.
     const own = 'builds' in c ? ['builds'] : ['image'];
     assert.deepEqual(
@@ -48,7 +48,7 @@ test('each chapter is only role, years, place, summary and links (plus its card,
     for (const e of cards(c)) {
       // Every card is a logo, and the logo and its optical nudge travel together
       // (logo-geometry.test.mjs checks the values).
-      assert.deepEqual(Object.keys(e.image).sort(), ['nudge', 'src'], `${e.id}.image`);
+      assert.deepEqual(Object.keys(e.image).sort(), ['height', 'nudge', 'src', 'width'], `${e.id}.image`);
       assert.ok(Number.isFinite(e.image.nudge) && Math.abs(e.image.nudge) <= 0.2, `${e.id}.image.nudge`);
     }
     for (const e of entries(c)) {
@@ -95,7 +95,7 @@ test('the headline and intro are Suphian’s own words, exactly', () => {
   assert.equal(`${story.heading.join(' ')}.`, 'Good ideas deserve to get made.');
   assert.equal(
     story.intro,
-    'I’m Suphian. I work in product and like turning ideas into things people can try, use, or enjoy. I care about how they work, how they look, and what happens when they meet the real world. I also founded Abacus Labs, and suph.app is where I play with new ideas.',
+    'I’m Suphian. I work in product and I like to turn ideas into things people can try, use, and enjoy. I care about how they work, how they look, and what happens when they meet the real world. I also founded Abacus Labs, and suph.app is where I play with new ideas.',
   );
 });
 
@@ -202,7 +202,7 @@ test('suph.app: Suphian’s projects, with his facts only', () => {
   // The game's crown as a white logo, like every other card (Suphian: "just put the crown
   // logo"), not a screenshot. Facts from the game's README (dev/ceoisdead/README.md). Each
   // summary sits under its build's name, so it doesn't repeat it.
-  assert.deepEqual(toga.image, { src: '/work/suph-app.svg', nudge: 0 });
+  assert.deepEqual(toga.image, { src: '/work/suph-app.svg', width: 76, height: 59, nudge: 0 });
   assert.equal(toga.color, undefined);
   assert.equal(
     toga.summary,
@@ -211,7 +211,7 @@ test('suph.app: Suphian’s projects, with his facts only', () => {
   assert.deepEqual(toga.links, [{ label: 'Play The Toga Is Dead', href: 'https://suph.app/toga' }]);
   // Quran Art: from its README only, without the dataset attribution (it looks wrong).
   // Its star is a placeholder until Suphian supplies artwork.
-  assert.deepEqual(quran.image, { src: '/work/quran-art.svg', nudge: 0 });
+  assert.deepEqual(quran.image, { src: '/work/quran-art.svg', width: 100, height: 100, nudge: 0 });
   assert.equal(quran.color, undefined);
   assert.equal(
     quran.summary,

@@ -2,13 +2,12 @@ import React, { Component, Suspense, lazy, useEffect, useRef, useState } from 'r
 import { useSectionViewed } from '../hooks/useSectionViewed.js';
 import { useUI } from '../hooks/useUI.js';
 import { afterFirstPaint } from '../lib/afterFirstPaint.js';
+import { captureException } from '../lib/analytics.js';
+import { boundaryReport, importWithRetry } from '../lib/errors.js';
 import '../sayhello/sayhello.css';
 
 // Retry a failed chunk once (flaky networks, a deploy mid-session), as UIProvider does.
-const SayHello = lazy(() => {
-  const load = () => import('./SayHello.jsx');
-  return load().catch(() => new Promise((resolve) => setTimeout(resolve, 1500)).then(load));
-});
+const SayHello = lazy(() => importWithRetry(() => import('./SayHello.jsx')));
 
 // SAY HELLO's box with nothing in it (sayhello.css): .say-hello-lettering's
 // aspect-ratio gives it the lettering's exact height, so nothing moves when the
@@ -20,8 +19,9 @@ const placeholder = (
 );
 
 // A chunk that never loads leaves the empty box, not the page's error screen;
-// the footer still has the email link.
-class KeepBox extends Component {
+// the footer still has the email link. Whatever it catches still goes to Error
+// Tracking: lazy-chunk for the chunk, react for a render error.
+export class KeepBox extends Component {
   constructor(props) {
     super(props);
     this.state = { failed: false };
@@ -29,6 +29,10 @@ class KeepBox extends Component {
 
   static getDerivedStateFromError() {
     return { failed: true };
+  }
+
+  componentDidCatch(error, info) {
+    captureException(...boundaryReport(error, info));
   }
 
   render() {

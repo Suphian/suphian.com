@@ -16,7 +16,7 @@ export function makeConfig({ preview = false, hmr = false } = {}) {
   const baseURL = remoteURL ? new URL(remoteURL).origin : preview ? 'http://127.0.0.1:4174' : 'http://127.0.0.1:4173';
   return defineConfig({
     testDir: E2E_DIR,
-    testMatch: hmr ? ['hmr.spec.js'] : ['smoke.spec.js', 'responsive.spec.js'],
+    testMatch: hmr ? ['hmr.spec.js'] : ['smoke.spec.js', 'responsive.spec.js', 'assets.spec.js'],
     outputDir: `${ROOT}qa/e2e-results`,
     fullyParallel: true,
     retries: 0,

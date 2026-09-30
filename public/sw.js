@@ -27,7 +27,7 @@ const CACHE_STRATEGIES = {
     // Never serve cached API / third-party data — always go to network.
     maxAge: 0,
     networkFirst: true,
-    patterns: [/\/api\//, /supabase\.co/, /googletagmanager\.com/, /google-analytics\.com/]
+    patterns: [/\/api\//, /supabase\.co/]
   },
   html: {
     maxAge: 0, // Always fetch fresh HTML
@@ -78,7 +78,8 @@ self.addEventListener('fetch', event => {
 });
 
 // Only cache successful, same-origin ("basic") responses; cross-origin
-// (fonts, supabase, analytics) are left to the browser's HTTP cache.
+// (fonts, supabase) are left to the browser's HTTP cache. Analytics goes through
+// /ingest, which is same-origin and skipped by the fetch handler above.
 async function putInCache(request, response) {
   if (response && response.status === 200 && response.type === 'basic') {
     const cache = await caches.open(CACHE_NAME);

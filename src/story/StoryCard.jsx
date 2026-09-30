@@ -19,10 +19,18 @@ export function preloadCardImage(src) {
   image.src = src;
 }
 
-const initialState = (src) => {
+// content.js stores each logo's intrinsic size (image.width/height); it gives the img explicit
+// dimensions (no layout shift) and seeds the aspect before the file has loaded.
+const dimensionsOf = (image) => {
+  const width = Number(image?.width);
+  const height = Number(image?.height);
+  return width > 0 && height > 0 ? { width, height } : null;
+};
+
+const initialState = (src, dims) => {
   if (!src) return { src, status: 'missing', aspect: null };
   if (loaded.has(src)) return { src, status: 'loaded', aspect: loaded.get(src) };
-  return { src, status: 'loading', aspect: null };
+  return { src, status: 'loading', aspect: dims ? dims.width / dims.height : null };
 };
 
 /**
@@ -47,10 +55,11 @@ const initialState = (src) => {
  */
 export default function StoryCard({ chapter, className = '', cardRef, imageLoading, ...rest }) {
   const { src, nudge } = cardImage(chapter.image);
-  const [stored, setState] = useState(() => initialState(src));
+  const dims = dimensionsOf(chapter.image);
+  const [stored, setState] = useState(() => initialState(src, dims));
   // A new image (suph.app's panel following a build): start over from what is known about it.
   // The card itself stays, so its color can ease to the new build's.
-  const state = stored.src === src ? stored : initialState(src);
+  const state = stored.src === src ? stored : initialState(src, dims);
   if (stored.src !== src) setState(state);
 
   const onLoad = (event) => {
@@ -66,18 +75,23 @@ export default function StoryCard({ chapter, className = '', cardRef, imageLoadi
       {state.status === 'missing' ? (
         <span className="story-card-name">{`${chapter.name}.`}</span>
       ) : (
-        <img
-          key={src}
-          className="story-card-logo"
-          src={src}
-          alt=""
-          loading={imageLoading}
-          decoding="async"
-          draggable="false"
-          style={{ width: `${logoWidth(state.aspect)}%`, transform: logoShift(nudge) }}
-          onLoad={onLoad}
-          onError={onError}
-        />
+        <picture key={src}>
+          {src.endsWith('.png') && <source srcSet={src.replace(/\.png$/, '.avif')} type="image/avif" />}
+          {src.endsWith('.png') && <source srcSet={src.replace(/\.png$/, '.webp')} type="image/webp" />}
+          <img
+            className="story-card-logo"
+            src={src}
+            width={dims?.width}
+            height={dims?.height}
+            alt=""
+            loading={imageLoading}
+            decoding="async"
+            draggable="false"
+            style={{ width: `${logoWidth(state.aspect)}%`, transform: logoShift(nudge) }}
+            onLoad={onLoad}
+            onError={onError}
+          />
+        </picture>
       )}
     </div>
   );

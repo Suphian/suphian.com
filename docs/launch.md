@@ -38,13 +38,16 @@ The owner confirmed the font license. The supplied Semibold remains in place of 
 
 ## Analytics
 
-GA4 (G-8S5FL37K8X, index.html) and PostHog run side by side. src/lib/analytics.js sends each custom event below to PostHog and, where gtag has loaded, to GA4 under the same name and properties. Both run on suphian.com only (not dev, previews or local builds) and load after the first interaction or 3s, so neither touches first paint.
+PostHog is the only analytics; GA4 (G-8S5FL37K8X) has been removed. src/lib/analytics.js sends every event below to PostHog. It runs on suphian.com only (not dev, previews or local builds). posthog-js loads after the first paint (load, first contentful paint, then idle, 2s at most), so it never touches first paint, and it does not wait for an interaction, so visits that never scroll or click are counted. It loads once the page has finished loading and the browser is idle (the idle wait is capped at 2s), so visits that end before that point are not counted, and on a slow connection that takes longer.
 
-PostHog is live since 2026-09-27 (main f053793): POSTHOG_KEY in src/lib/analytics.js holds the key for the Suph.ai org's project 631302 (US), kept separate from the Honest Funding project. Emptying that one line switches it off again; with it empty nothing loads and nothing is sent, the GA4 copies of these events included. For an EU project, also set POSTHOG_REGION to 'eu' and point the three /ingest rewrites in vercel.json at eu-assets.i.posthog.com and eu.i.posthog.com; npm test checks the two agree.
+PostHog is live since 2026-09-27 (main f053793): POSTHOG_KEY in src/lib/analytics.js holds the key for the Suph.ai org's project 631302 (US), kept separate from the Honest Funding project. Emptying that one line switches it off again; with it empty nothing loads and nothing is sent. For an EU project, also set POSTHOG_REGION to 'eu' and point the three /ingest rewrites in vercel.json at eu-assets.i.posthog.com and eu.i.posthog.com; npm test checks the two agree.
 
-Events go to suphian.com/ingest, which vercel.json rewrites to PostHog US ahead of the SPA fallback, so ad blockers keep them and the CSP needs no PostHog host. The service worker never touches /ingest. posthog-js is a lazy chunk with autocapture, page-leave, heatmaps, web vitals (GA4 has them), session replay, surveys, remote config and remote scripts all off; person profiles are created only for identified visitors, which is nobody today.
+Events go to suphian.com/ingest, which vercel.json rewrites to PostHog US ahead of the SPA fallback, so ad blockers keep them and the CSP needs no PostHog host. The CSP's report-uri sends violation reports to /ingest/report/, PostHog's CSP tracking. The service worker never touches /ingest. posthog-js is a lazy chunk, its slim build, with autocapture, heatmaps, session replay, surveys, remote config and remote scripts all off. Its own web vitals need remote config and a remote script, so src/lib/webVitals.js sends $web_vitals in the same format instead. Person profiles are created only for identified visitors, which is nobody today.
 
-- $pageview: once per page load.
+- $pageview: once per page load, with the time the page loaded.
+- $pageleave: when the visitor leaves; $prev_pageview_duration is the seconds on the page and $prev_pageview_max_scroll_percentage the deepest scroll.
+- $web_vitals: CLS, FCP, INP and LCP as $web_vitals_<NAME>_value and $web_vitals_<NAME>_event, sent 5s after the first metric, once all four are in, or when the page is hidden. CLS and INP usually arrive on hide, in a second event.
+- $exception { $exception_list, source, componentStack? }: source is error (uncaught error), unhandledrejection, react (a React error boundary caught a render error; with the component stack), lazy-chunk (a lazy chunk failed to load after its retry) or mount (React could not mount). See Error tracking below.
 - story_chapter_opened { chapter }: a work or side-project chapter opens; chapter is its content.js id, e.g. steadily.
 - outbound_link_clicked { href, label, chapter? }: a chapter's links, with chapter, and the footer's Email (Gmail), LinkedIn and GitHub links.
 - say_hello_clicked: the SAY HELLO sign-off.
@@ -53,6 +56,19 @@ Events go to suphian.com/ingest, which vercel.json rewrites to PostHog US ahead 
 - email_link_clicked: the footer's hello@suphian.com mailto link.
 - section_viewed { section }: story, say_hello or footer, once each per load, when half the section (or half the screen, for a taller one) is in view.
 
-GA4 reports can break events down by chapter, href, label, source, status and section once those are registered as event-scoped custom dimensions in the GA4 admin.
-
 To watch events anywhere, run localStorage.setItem('analytics-debug', '1') in the browser console and reload: analytics then runs on any host, the key still required, and PostHog logs each event to the console. localStorage.removeItem('analytics-debug') turns it off. Vercel deployments, previews included, proxy /ingest to PostHog for real; locally those requests 404. PostHog drops automated browsers (navigator.webdriver), so Playwright runs never reach it.
+
+### Error tracking
+
+Wherever analytics runs (suphian.com, or the debug flag), errors go to PostHog as $exception events through posthog.captureException, with the error type, message and stack frames, all marked unhandled. See them in PostHog under Error Tracking (project 631302). What is captured, by source:
+
+- error and unhandledrejection: src/lib/errors.js listens on window from the start of src/main.jsx. It drops browser noise: ResizeObserver loop warnings, a cross-origin "Script error." with no stack, and anything with a chrome-extension://, moz-extension://, safari-extension: or safari-web-extension: frame. The same message and stack is sent at most once a minute, and a page sends at most 10.
+- react: a render error caught by a React error boundary, App's ErrorBoundary or SAY HELLO's KeepBox, with React's component stack. In production React only logs these, so no window error event would carry them.
+- lazy-chunk: the SAY HELLO or contact sheet chunk still failing after its one retry (importWithRetry in src/lib/errors.js).
+- mount: React failing to mount at all, when src/main.jsx shows its plain error screen.
+
+Not captured: dev, preview and local builds unless the debug flag is on; the noise and the repeats past the limits above; errors the code catches and handles itself (a failed contact submission, which contact_submitted reports as error; the service worker not registering; the favicon or web-vitals chunk failing to load, which the page shrugs off); console.error calls; images, fonts or stylesheets that fail to load; errors inside the service worker; anything before src/main.jsx runs. If the small posthogExceptions chunk fails to load, PostHog still starts and the visit's events still go out, but its errors do not. Errors from before PostHog loads wait in the queue and go out once it does, stamped with that time rather than when they happened.
+
+posthog-js's own exception autocapture (capture_exceptions) needs a remote script, so it stays off. The slim build also ships without the extension captureException needs, so src/lib/posthogExceptions.js supplies a small one built on PostHog's @posthog/core error builder.
+
+Source maps: the build writes hidden source maps, and the postbuild step (scripts/upload-sourcemaps.mjs) uploads them with posthog-cli when POSTHOG_CLI_API_KEY is set, then deletes every .map in dist, so none is deployed. Without the key it prints "uploads skipped" and stack traces in PostHog stay minified. vercel.json pins Vercel's buildCommand to npm run build, so postbuild always runs there, and e2e:prod (which CI runs) fails if its build left a .map in dist. The one owner step: in PostHog, create a personal API key with the error_tracking:write, organization:read and project:read scopes, then add it as POSTHOG_CLI_API_KEY in Vercel's environment variables, for Production and Preview. Only Vercel uploads, since its builds are the ones that deploy: do not add it to GitHub Actions, whose pull-request builds are merge commits that never deploy. Never commit it. The next deploy after that uploads its maps.

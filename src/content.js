@@ -19,12 +19,13 @@
  * nav            { skip, home }
  * hero           { srTitle, edition: [3], cue: [2], cueHref }
  * story          { id, heading: [lines], intro, labels: { list, sideProjects, back },
- *                  chapters: [{ id, name, kind?, role?, period, location, image: { src, nudge }, color, accent?,
- *                  summary, links: [{ label, href }] }] }
+ *                  chapters: [{ id, name, kind?, role?, period, location, image: { src, width, height, nudge }, color, accent?,
+ *                  summary, links: [{ label, href }], home? }] }
+ *                  home: the venture's homepage; the open card's title links to it (suph.app)
  *                  (replaces about, work and projects, 2026-09-26; jobs newest first, then the side
  *                  projects, kind: 'side')
  *                  A chapter made of builds (suph.app's projects, 2026-09-28) has builds instead of an image:
- *                  builds: [{ month: 'YYYY-MM', slug, name, summary, image: { src, nudge }, color?, links }],
+ *                  builds: [{ month: 'YYYY-MM', slug, name, summary, image: { src, width, height, nudge }, color?, links }],
  *                  newest first. Its open card is the usual role (if any), years and summary, then one
  *                  row per build in place of the links; its own links are for the no-JavaScript profile
  *                  and llms-full.txt. accent: the marks' color when the card color is too dark to see on
@@ -113,10 +114,10 @@ export const hero = {
 export const story = {
   // Section id: the hero cue scrolls here.
   id: 'work',
-  // Suphian's own headline and intro (2026-09-26). Use exactly; the UI adds the red period.
+  // Suphian's own headline and intro (2026-09-26, intro reworded 2026-09-29). Use exactly; the UI adds the red period.
   heading: ['Good ideas deserve', 'to get made'],
   intro:
-    'I’m Suphian. I work in product and like turning ideas into things people can try, use, or enjoy. I care about how they work, how they look, and what happens when they meet the real world. I also founded Abacus Labs, and suph.app is where I play with new ideas.',
+    'I’m Suphian. I work in product and I like to turn ideas into things people can try, use, and enjoy. I care about how they work, how they look, and what happens when they meet the real world. I also founded Abacus Labs, and suph.app is where I play with new ideas.',
   // No actions beside the intro (Suphian removed "Request resume", 2026-09-26).
   labels: {
     // The two lists' names: the jobs, then his own ventures. sideProjects is also the
@@ -152,7 +153,7 @@ export const story = {
       period: '2026 – Present',
       // Where he worked, shown in the open card after the years (Suphian, 2026-09-27).
       location: 'Austin, Texas',
-      image: { src: '/work/steadily.svg', nudge: 0 },
+      image: { src: '/work/steadily.svg', width: 547.58, height: 68.91, nudge: 0 },
       color: '#6C1D72', // Steadily purple: the card's fill (Suphian: company colors)
       // Not on the old site. Only the title, start date, Steadily's own description and the
       // link are confirmed; don't add scope, team, metrics or launches until Suphian supplies them.
@@ -165,7 +166,7 @@ export const story = {
       role: 'Senior Product Manager',
       period: '2020 – 2026',
       location: 'New York City',
-      image: { src: '/work/youtube.svg', nudge: 0 },
+      image: { src: '/work/youtube.svg', width: 89.58, height: 20, nudge: 0 },
       color: '#FF0000', // YouTube red: the card's fill (Suphian: company colors)
       // Past role, past tense. He did NOT do AI at YouTube: "AI-powered payment system" → "payment system".
       summary:
@@ -198,7 +199,7 @@ export const story = {
       role: 'Principal Analytical Lead',
       period: '2018 – 2020',
       location: 'Ann Arbor, Michigan',
-      image: { src: '/work/google.svg', nudge: 0.018 },
+      image: { src: '/work/google.svg', width: 269.63, height: 88.76, nudge: 0.018 },
       color: '#4285F4', // Google blue: the card's fill (Suphian: company colors)
       summary:
         'Served as an in-house analytics advisor for CapitalG portfolio companies and high-growth D2C brands. Led incrementality testing and optimization strategies to improve marketing efficiency and scale growth across platforms like Duolingo and Chewy.com.',
@@ -219,7 +220,7 @@ export const story = {
       role: 'Senior Product Analyst',
       period: '2014 – 2018',
       location: 'DUMBO, Brooklyn',
-      image: { src: '/work/huge.svg', nudge: 0.026 },
+      image: { src: '/work/huge.svg', width: 98.42, height: 41.6, nudge: 0.026 },
       color: '#FF0090', // Huge magenta: the card's fill (Suphian: company colors)
       summary:
         'Specialized in site redesigns, A/B testing, and multivariate testing for high-impact brands. Helped improve UX and conversion for companies like Hulu, Apple and AMC Theaters.',
@@ -244,7 +245,7 @@ export const story = {
       period: 'Current',
       location: 'Internet', // Suphian: the studio's location "can be internet"
       // A raster mark with even 4px margins on every side and no descender: nothing to nudge.
-      image: { src: '/work/abacus-white.png', nudge: 0 },
+      image: { src: '/work/abacus-white.png', width: 748, height: 467, nudge: 0 },
       color: '#000000', // Abacus Labs black: the card's fill (Suphian: company colors)
       summary:
         'Abacus turns spreadsheet chaos into a real-time command center for MCA operators — deals, underwriting, collections, syndication, and compliance in one place. I founded it, built it, and run it for paying customers.',
@@ -260,6 +261,9 @@ export const story = {
       kind: 'side',
       period: 'Current',
       location: 'Internet',
+      // The open card's title links here (Suphian 2026-09-30: "a little arrow ... that can take you
+      // to the suph.app homepage"). The card has no "Visit suph.app" line (removed 2026-09-28).
+      home: 'https://suph.app',
       // Suphian 2026-09-28: "maybe green, the kind of forest green that the Quran website uses"
       // (suph.app/quran's --ink). The card's fill, and every project token's unless it sets its own.
       color: '#243F39',
@@ -281,11 +285,12 @@ export const story = {
       // llms-full.txt list them all too, with their summaries.
       //
       // Adding a project: put it at the TOP of this list:
-      //   { month: 'YYYY-MM', slug, name, summary, image: { src, nudge }, color?, links: [{ label, href }] }
+      //   { month: 'YYYY-MM', slug, name, summary, image: { src, width, height, nudge }, color?, links: [{ label, href }] }
       // - month: the month he made it. The site writes it out ("October 2026").
       // - slug: short, lowercase and unique. suph.app (live 2026-09-28) has one page per build at
       //   suph.app/<slug> (suph.app/toga, suph.app/quran); a new build links to its page there.
       // - image: a white mark in public/work with a viewBox tight to its ink (assets-src/work/README.txt);
+      //   width and height are the file's natural pixel size (an SVG's viewBox size), so the card reserves its box;
       //   `node --test src/story/` measures its nudge. color: optional, the card's fill (white must reach 3:1 on it).
       // - summary: only facts Suphian has confirmed, without repeating the name. The open card
       //   doesn't show it (screen readers hear it); the no-JS profile and llms-full.txt do.
@@ -302,7 +307,7 @@ export const story = {
             'A 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.',
           // The game's crown emblem as a white mark, like the other logos (Suphian: "just put the crown logo").
           // A mark with no descender: its measured nudge is 0.
-          image: { src: '/work/suph-app.svg', nudge: 0 },
+          image: { src: '/work/suph-app.svg', width: 76, height: 59, nudge: 0 },
           // Suphian 2026-09-28: suph.app is now a hub with a page per project.
           links: [{ label: 'Play The Toga Is Dead', href: 'https://suph.app/toga' }],
         },
@@ -317,7 +322,7 @@ export const story = {
             'Simple geometric artwork from how the Qur’an uses Arabic demonstratives, words like hādhā (“this”): one image per surah, gathered in a gallery.',
           // placeholder icon until Suphian supplies artwork: an eight-point star of two squares,
           // with no descender (nudge 0).
-          image: { src: '/work/quran-art.svg', nudge: 0 },
+          image: { src: '/work/quran-art.svg', width: 100, height: 100, nudge: 0 },
           links: [{ label: 'See Quran Art', href: 'https://suph.app/quran' }],
         },
       ],
@@ -408,7 +413,7 @@ export const seo = {
   // The homepage's last real content or metadata change: the sitemap <lastmod> and the
   // ProfilePage dateModified. Bump it with the copy, never on every build (Google only
   // trusts lastmod that stays accurate).
-  lastModified: '2026-09-28', // the meta description changed (suph.app: no monthly promise)
+  lastModified: '2026-09-30', // merge/deploy date; last content change: the intro ("I like to turn ideas into things…")
   home: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
@@ -451,16 +456,25 @@ export const structuredData = {
     givenName: 'Suphian',
     familyName: 'Tweel',
     description: HOME_DESCRIPTION,
+    // The social card's square Signature artwork. There is no portrait photo, so none is claimed.
+    image: seo.og.image,
     // His current role, stated accurately; it no longer leads the description (Suphian 2026-09-27).
     jobTitle: 'Principal Product Manager',
     worksFor: { name: 'Steadily', url: 'https://steadily.com' },
     // The side project he leads product and engineering for (the Abacus chapter). Affiliation
-    // only: no founder, owner or employer claim.
+    // only (schema.org affiliation, not founder or owner); the intro says he founded it.
     affiliation: [{ name: 'Abacus Labs', url: 'https://abacuslabs.co' }],
+    // His earlier jobs, the work chapters before Steadily.
+    alumniOf: [
+      { name: 'YouTube', url: 'https://www.youtube.com' },
+      { name: 'Google', url: 'https://www.google.com' },
+      { name: 'Huge', url: 'https://www.hugeinc.com' },
+    ],
     // The canonical homepage URL, trailing slash included, like the ProfilePage and <link rel="canonical">.
     url: `${ORIGIN}/`,
     email: EMAIL,
-    sameAs: [LINKEDIN, GITHUB],
+    // His profiles, and suph.app, where he shares his weekend experiments.
+    sameAs: [LINKEDIN, GITHUB, 'https://suph.app'],
     knowsAbout: ['Product Management', 'Payments', 'Artificial Intelligence', 'Fraud Detection', 'Data Analytics'],
   },
   website: {

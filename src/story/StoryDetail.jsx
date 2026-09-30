@@ -190,8 +190,7 @@ export default function StoryDetail({ chapter, index, originFor, onClosed }) {
           </button>
           <h2 id={titleId} ref={heading} className="story-detail-title" tabIndex={-1}>
             <span ref={name} className="story-detail-name">
-              {chapter.name}
-              <span className="story-detail-period" data-fade>.</span>
+              <ChapterName chapter={chapter} />
             </span>
           </h2>
         </div>
@@ -206,6 +205,33 @@ export default function StoryDetail({ chapter, index, originFor, onClosed }) {
       </div>
     </div>,
     document.body,
+  );
+}
+
+/**
+ * The heading's text: the name and its accent period. A chapter with a `home` (suph.app) makes
+ * the whole "suph.app." the link to that homepage, ExternalLink's own ↗ after it (the same arrow
+ * the project rows end in) as the affordance; the tracked label is the plain name.
+ * Exported for render.test.mjs, which can't render the portal.
+ */
+export function ChapterName({ chapter }) {
+  const text = (
+    <>
+      {chapter.name}
+      <span className="story-detail-period" data-fade>.</span>
+    </>
+  );
+  if (!chapter.home) return text;
+  return (
+    <ExternalLink
+      href={chapter.home}
+      chapter={chapter.id}
+      label={chapter.name}
+      className="story-title-link"
+      aria-label={`${chapter.name}, opens the ${chapter.name} homepage`}
+    >
+      {text}
+    </ExternalLink>
   );
 }
 
