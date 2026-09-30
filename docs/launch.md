@@ -38,13 +38,15 @@ The owner confirmed the font license. The supplied Semibold remains in place of 
 
 ## Analytics
 
-GA4 (G-8S5FL37K8X, index.html) and PostHog run side by side. src/lib/analytics.js sends each custom event below to PostHog and, where gtag has loaded, to GA4 under the same name and properties. Both run on suphian.com only (not dev, previews or local builds) and load after the first interaction or 3s, so neither touches first paint.
+PostHog is the only analytics; GA4 (G-8S5FL37K8X) has been removed. src/lib/analytics.js sends every event below to PostHog. It runs on suphian.com only (not dev, previews or local builds). posthog-js loads after the first paint (load, first contentful paint, then idle, 2s at most), so it never touches first paint, and it does not wait for an interaction, so visits that never scroll or click are counted. Visits that end before it loads, within about 2s, are not.
 
-PostHog is live since 2026-09-27 (main f053793): POSTHOG_KEY in src/lib/analytics.js holds the key for the Suph.ai org's project 631302 (US), kept separate from the Honest Funding project. Emptying that one line switches it off again; with it empty nothing loads and nothing is sent, the GA4 copies of these events included. For an EU project, also set POSTHOG_REGION to 'eu' and point the three /ingest rewrites in vercel.json at eu-assets.i.posthog.com and eu.i.posthog.com; npm test checks the two agree.
+PostHog is live since 2026-09-27 (main f053793): POSTHOG_KEY in src/lib/analytics.js holds the key for the Suph.ai org's project 631302 (US), kept separate from the Honest Funding project. Emptying that one line switches it off again; with it empty nothing loads and nothing is sent. For an EU project, also set POSTHOG_REGION to 'eu' and point the three /ingest rewrites in vercel.json at eu-assets.i.posthog.com and eu.i.posthog.com; npm test checks the two agree.
 
-Events go to suphian.com/ingest, which vercel.json rewrites to PostHog US ahead of the SPA fallback, so ad blockers keep them and the CSP needs no PostHog host. The service worker never touches /ingest. posthog-js is a lazy chunk with autocapture, page-leave, heatmaps, web vitals (GA4 has them), session replay, surveys, remote config and remote scripts all off; person profiles are created only for identified visitors, which is nobody today.
+Events go to suphian.com/ingest, which vercel.json rewrites to PostHog US ahead of the SPA fallback, so ad blockers keep them and the CSP needs no PostHog host. The CSP's report-uri sends violation reports to /ingest/report/, PostHog's CSP tracking. The service worker never touches /ingest. posthog-js is a lazy chunk, its slim build, with autocapture, heatmaps, session replay, surveys, remote config and remote scripts all off. Its own web vitals need remote config and a remote script, so src/lib/webVitals.js sends $web_vitals in the same format instead. Person profiles are created only for identified visitors, which is nobody today.
 
-- $pageview: once per page load.
+- $pageview: once per page load, with the time the page loaded.
+- $pageleave: when the visitor leaves; $prev_pageview_duration is the seconds on the page and $prev_pageview_max_scroll_percentage the deepest scroll.
+- $web_vitals: CLS, FCP, INP and LCP as $web_vitals_<NAME>_value and $web_vitals_<NAME>_event, sent 5s after the first metric, once all four are in, or when the page is hidden. CLS and INP usually arrive on hide, in a second event.
 - story_chapter_opened { chapter }: a work or side-project chapter opens; chapter is its content.js id, e.g. steadily.
 - outbound_link_clicked { href, label, chapter? }: a chapter's links, with chapter, and the footer's Email (Gmail), LinkedIn and GitHub links.
 - say_hello_clicked: the SAY HELLO sign-off.
@@ -52,7 +54,5 @@ Events go to suphian.com/ingest, which vercel.json rewrites to PostHog US ahead 
 - contact_submitted { status }: sent, rate_limited, error, dry_run (local) or blocked (honeypot). Never the message, name, email or phone.
 - email_link_clicked: the footer's hello@suphian.com mailto link.
 - section_viewed { section }: story, say_hello or footer, once each per load, when half the section (or half the screen, for a taller one) is in view.
-
-GA4 reports can break events down by chapter, href, label, source, status and section once those are registered as event-scoped custom dimensions in the GA4 admin.
 
 To watch events anywhere, run localStorage.setItem('analytics-debug', '1') in the browser console and reload: analytics then runs on any host, the key still required, and PostHog logs each event to the console. localStorage.removeItem('analytics-debug') turns it off. Vercel deployments, previews included, proxy /ingest to PostHog for real; locally those requests 404. PostHog drops automated browsers (navigator.webdriver), so Playwright runs never reach it.

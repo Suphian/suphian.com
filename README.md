@@ -5,7 +5,7 @@ The source for [suphian.com](https://suphian.com), Suphian Tweel's personal site
 - **App:** Vite 7 and React 18 in plain JavaScript (JSX, no TypeScript). One route, `/`.
 - **Hosting:** Vercel project `suph/suphian.com`, connected to [Suphian/suphian.com](https://github.com/Suphian/suphian.com). `main` is production.
 - **Contact form:** the browser calls Supabase directly (a rate-limit RPC, then an insert into `contact_submissions`, using the public anon key under row-level security), then the `notify-contact-submit` edge function sends two emails through Resend.
-- **Analytics:** GA4 and PostHog, on the production domain only.
+- **Analytics:** PostHog, on the production domain only.
 
 ## Run it locally
 
@@ -48,7 +48,7 @@ npm run e2e:hmr                   # dev-server hot-reload regression; run it on 
 - story content, rendering and style rules (type tokens, no labels under 16px, no uppercase)
 - the generated SEO output: initial HTML, JSON-LD, and the public/ crawler files matching `src/content.js`
 - both contact emails
-- analytics wiring: the `/ingest` proxy, the CSP and the service worker
+- analytics wiring: the PostHog config, the `$web_vitals` shape, the `/ingest` proxy, the CSP and the service worker
 
 **Browser suites** (`e2e/`, Playwright, headless Chromium) run `smoke.spec.js` and `responsive.spec.js` on a desktop (1440×900) and a mobile (Pixel 7) project. The 11-viewport responsive matrix runs once. `e2e/guard.js` fails any test that logs a console error, throws, or shows the error screen. It also stubs every Supabase request, so no suite ever writes a row or sends an email, even against a production build.
 
@@ -70,7 +70,7 @@ npm run e2e:hmr                   # dev-server hot-reload regression; run it on 
 | Path | What it is |
 |---|---|
 | `src/content.js` | Every user-facing string, plus the SEO metadata and JSON-LD source. Edit copy here, not in components or `index.html`. |
-| `index.html` | The page template and the GA4 snippet. `<!-- seo:head -->` and `<!-- seo:profile -->` are filled from `content.js` at dev and build time, which gives no-JavaScript visitors and crawlers a readable profile. |
+| `index.html` | The page template. `<!-- seo:head -->` and `<!-- seo:profile -->` are filled from `content.js` at dev and build time, which gives no-JavaScript visitors and crawlers a readable profile. |
 | `scripts/seo.mjs` | Renders the head tags, JSON-LD, static profile and crawler files (`robots.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt`, `humans.txt`). `vite.config.js` calls it; the build writes the crawler files into `dist/`. |
 | `scripts/sync-seo.mjs` | Writes the same crawler files into `public/` and syncs the name and description in `public/site.webmanifest`. |
 | `src/wordmark/` | The physics wordmark: `lettering.js` (the approved traced artwork), `physics.js`, `geometry.js`, `motion.js` (every tuning constant), `dockfx.js` (pointer hover and press effects on the docked SUPH and the hero), `TuningPanel.jsx` (`?tune`). |
@@ -117,11 +117,10 @@ Keep JWT verification on (the default; see `supabase/config.toml`) and keep the 
 
 ## Analytics
 
-Both tools run only on suphian.com production builds; local builds and previews send nothing.
+PostHog is the only analytics (GA4 is gone). It runs only on suphian.com production builds; local builds and previews send nothing.
 
-- **GA4:** measurement ID `G-8S5FL37K8X`, in the inline script in `index.html`. It loads after the first interaction or 3 seconds after load. `src/lib/webVitals.js` sends Core Web Vitals to it.
-- **PostHog:** `POSTHOG_KEY` in `src/lib/analytics.js` is the project key for the Suph.ai org (project 631302, US cloud). It is public by design. PostHog gets custom events only: no autocapture, session replay or surveys. An empty key turns PostHog off, along with the GA4 copies of the custom events.
-- **`/ingest` proxy:** `vercel.json` rewrites `/ingest/*` to PostHog's US hosts, so events stay first-party and the CSP needs no PostHog host. The proxy exists only on Vercel; locally `/ingest` returns 404. To move to the EU cloud, change `POSTHOG_REGION` and the three rewrites together; `npm test` checks that they agree.
+- **PostHog:** `POSTHOG_KEY` in `src/lib/analytics.js` is the project key for the Suph.ai org (project 631302, US cloud). It is public by design. PostHog gets `$pageview`, `$pageleave` (time on page and scroll depth), `$web_vitals` (Core Web Vitals from `src/lib/webVitals.js`) and the custom events: no autocapture, session replay or surveys. posthog-js (its slim build) loads after the first paint without waiting for an interaction, so a visit that never scrolls or clicks still counts; one that ends within about 2 seconds does not. An empty key turns it off.
+- **`/ingest` proxy:** `vercel.json` rewrites `/ingest/*` to PostHog's US hosts, so events stay first-party and the CSP needs no PostHog host. The CSP's `report-uri` sends violation reports the same way, to PostHog's CSP tracking. The proxy exists only on Vercel; locally `/ingest` returns 404. To move to the EU cloud, change `POSTHOG_REGION` and the three rewrites together; `npm test` checks that they agree.
 - **Events:** the list and properties are in [docs/launch.md](docs/launch.md#analytics). Send new ones with `track()` or `trackOnce()` from `src/lib/analytics.js`, and add them to that list. `contact_submitted` carries the outcome only, never what the visitor typed; a test enforces this.
 - **Debugging:** in the browser console, run `localStorage.setItem('analytics-debug', '1')` and reload. Analytics then runs on any host (the key is still required) and PostHog logs each event to the console. `localStorage.removeItem('analytics-debug')` turns it off. PostHog drops automated browsers, so Playwright runs never reach it.
 

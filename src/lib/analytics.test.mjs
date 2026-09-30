@@ -1,5 +1,6 @@
-// PostHog + GA4 custom events (analytics.js), the /ingest proxy in vercel.json,
-// and the service worker leaving that proxy alone.
+// PostHog, the only analytics: events (analytics.js), $web_vitals (webVitals.js),
+// the /ingest proxy and CSP in vercel.json, and the service worker leaving that
+// proxy alone.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -14,17 +15,15 @@ import {
   shouldTrack,
   viewThreshold,
 } from './analytics.js';
+import { webVitalsProperties } from './webVitals.js';
 
 const read = (file) => readFileSync(new URL(file, import.meta.url), 'utf8');
 const vercel = JSON.parse(read('../../vercel.json'));
 
 function recorder() {
-  const gtagCalls = [];
   const captures = [];
   return {
-    gtagCalls,
     captures,
-    gtag: () => (...args) => gtagCalls.push(args),
     posthog: { capture: (...args) => captures.push(args) },
   };
 }
@@ -47,11 +46,9 @@ test('tracking needs a key, and then suphian.com in production or the debug flag
 });
 
 test('with the committed key, a preview deployment stays silent', async () => {
-  const gtagCalls = [];
   globalThis.window = {
     location: { hostname: 'suphian-abc123-suph.vercel.app' },
     localStorage: { getItem: () => null },
-    gtag: (...args) => gtagCalls.push(args),
   };
   try {
     // A fresh copy of the module, evaluated under the fake window.
@@ -60,34 +57,31 @@ test('with the committed key, a preview deployment stays silent', async () => {
     assert.equal(fresh.analyticsEnabled, false);
     fresh.track('say_hello_clicked');
     fresh.trackOnce('section_viewed', { section: 'story' });
-    fresh.startAnalytics(); // Would touch document if it did anything.
-    assert.deepEqual(gtagCalls, []);
+    fresh.startAnalytics(); // Would touch document (undefined here) if it did anything.
   } finally {
     delete globalThis.window;
   }
 });
 
-test('a disabled tracker never queues or forwards', () => {
+test('a disabled tracker never queues or sends', () => {
   const r = recorder();
-  const tracker = createTracker({ enabled: false, gtag: r.gtag });
+  const tracker = createTracker({ enabled: false });
   tracker.track('contact_opened', { source: 'SayHello' });
   tracker.ready(r.posthog);
   tracker.track('contact_opened', { source: 'SayHello' });
   assert.equal(tracker.queued, 0);
   assert.deepEqual(r.captures, []);
-  assert.deepEqual(r.gtagCalls, []);
 });
 
 test('events queue until PostHog loads, then flush in order with their original times', () => {
   const r = recorder();
-  const tracker = createTracker({ enabled: true, gtag: r.gtag });
+  const tracker = createTracker({ enabled: true });
   const before = Date.now();
   tracker.trackOnce('$pageview');
   tracker.track('story_chapter_opened', { chapter: 'steadily' });
   tracker.track('outbound_link_clicked', { href: 'https://steadily.com', label: 'Visit steadily.com', chapter: undefined });
   assert.equal(tracker.queued, 3);
   assert.deepEqual(r.captures, [], 'nothing sent before ready');
-  assert.deepEqual(r.gtagCalls, [], 'GA4 waits with the queue');
 
   tracker.ready(r.posthog);
   assert.equal(tracker.queued, 0);
@@ -107,37 +101,18 @@ test('events queue until PostHog loads, then flush in order with their original 
   assert.deepEqual(r.captures[3], ['email_link_clicked', {}]);
 });
 
-test('GA4 gets the same custom events, but not $pageview (gtag config already sends page_view)', () => {
-  const r = recorder();
-  const tracker = createTracker({ enabled: true, gtag: r.gtag });
-  tracker.trackOnce('$pageview');
-  tracker.track('contact_submitted', { status: 'sent' });
-  tracker.ready(r.posthog);
-  tracker.track('section_viewed', { section: 'footer' });
-  assert.deepEqual(r.gtagCalls, [
-    ['event', 'contact_submitted', { status: 'sent' }],
-    ['event', 'section_viewed', { section: 'footer' }],
-  ]);
-});
-
-test('no gtag on the page is fine, and if PostHog fails to load GA4 still gets the queue', () => {
-  const noGtag = recorder();
-  const withoutGa = createTracker({ enabled: true, gtag: () => undefined });
-  withoutGa.track('say_hello_clicked');
-  withoutGa.ready(noGtag.posthog);
-  assert.equal(noGtag.captures.length, 1);
-
-  const r = recorder();
-  const withoutPostHog = createTracker({ enabled: true, gtag: r.gtag });
-  withoutPostHog.track('say_hello_clicked');
-  withoutPostHog.ready(null);
-  withoutPostHog.track('contact_opened', { source: 'SayHello' });
-  assert.deepEqual(r.gtagCalls.map(([, event]) => event), ['say_hello_clicked', 'contact_opened']);
+test('if PostHog fails to load, the queue empties and later events are dropped', () => {
+  const tracker = createTracker({ enabled: true });
+  tracker.track('say_hello_clicked');
+  tracker.ready(null);
+  assert.equal(tracker.queued, 0);
+  assert.doesNotThrow(() => tracker.track('contact_opened', { source: 'SayHello' }));
+  assert.equal(tracker.queued, 0, 'nothing waits for a client that never comes');
 });
 
 test('trackOnce sends a given event and props once per page load', () => {
   const r = recorder();
-  const tracker = createTracker({ enabled: true, gtag: r.gtag });
+  const tracker = createTracker({ enabled: true });
   tracker.ready(r.posthog);
   for (let i = 0; i < 3; i += 1) {
     tracker.trackOnce('section_viewed', { section: 'story' });
@@ -146,33 +121,60 @@ test('trackOnce sends a given event and props once per page load', () => {
   assert.deepEqual(r.captures.map(([, props]) => props.section), ['story', 'say_hello']);
 });
 
-test('tracking never throws, whatever PostHog or gtag do', () => {
-  const r = recorder();
-  const tracker = createTracker({ enabled: true, gtag: () => () => { throw new Error('gtag broke'); } });
+test('tracking never throws, whatever PostHog does', () => {
+  const tracker = createTracker({ enabled: true });
   tracker.ready({ capture: () => { throw new Error('posthog broke'); } });
   assert.doesNotThrow(() => tracker.track('say_hello_clicked'));
   const circular = {};
   circular.self = circular;
   assert.doesNotThrow(() => tracker.trackOnce('section_viewed', circular));
-
-  const brokenGtagGetter = createTracker({ enabled: true, gtag: () => { throw new Error('no window'); } });
-  brokenGtagGetter.ready(r.posthog);
-  assert.doesNotThrow(() => brokenGtagGetter.track('say_hello_clicked'));
-  assert.equal(r.captures.length, 1, 'PostHog still gets it');
 });
 
-test('PostHog runs on custom events only, through the proxy, with nothing remote to load', () => {
+test('PostHog runs on custom events, $pageview and $pageleave only, through the proxy, with nothing remote to load', () => {
   const config = posthogConfig();
   assert.equal(config.api_host, '/ingest');
   assert.equal(config.ui_host, `https://${POSTHOG_REGION}.posthog.com`);
   assert.equal(config.person_profiles, 'identified_only');
-  for (const key of ['autocapture', 'capture_pageview', 'capture_pageleave', 'rageclick', 'capture_dead_clicks', 'capture_heatmaps', 'capture_performance', 'capture_exceptions']) {
+  for (const key of ['autocapture', 'capture_pageview', 'rageclick', 'capture_dead_clicks', 'capture_heatmaps', 'capture_performance', 'capture_exceptions']) {
     assert.equal(config[key], false, key);
   }
-  for (const key of ['disable_session_recording', 'disable_surveys', 'disable_external_dependency_loading', 'advanced_disable_flags']) {
+  for (const key of ['capture_pageleave', 'disable_session_recording', 'disable_surveys', 'disable_external_dependency_loading', 'advanced_disable_flags']) {
     assert.equal(config[key], true, key);
   }
   assert.equal(posthogConfig({ debug: true }).debug, true);
+});
+
+test('posthog-js loads as the slim build after the first paint, not on a first interaction', () => {
+  const source = read('./analytics.js');
+  assert.match(source, /import\('posthog-js\/dist\/module\.slim\.js'\)/);
+  assert.match(source, /afterFirstPaint\(load\)/);
+  assert.doesNotMatch(source, /'mousedown'/);
+});
+
+test("$web_vitals carries each metric the way posthog-js's own web vitals extension does", () => {
+  const metric = (name, value) => ({
+    name,
+    value,
+    rating: 'good',
+    delta: value,
+    id: `v6-${name}`,
+    navigationType: 'navigate',
+    navigationId: 1,
+    entries: [{}],
+    $current_url: 'https://suphian.com/',
+    timestamp: 1790000000000,
+  });
+  const event = (name, value) => ({ name, value, rating: 'good', delta: value, id: `v6-${name}`, navigationType: 'navigate', $current_url: 'https://suphian.com/', timestamp: 1790000000000 });
+  assert.deepEqual(webVitalsProperties([metric('LCP', 1712.5), metric('CLS', 0.02)]), {
+    $web_vitals_LCP_event: event('LCP', 1712.5),
+    $web_vitals_LCP_value: 1712.5,
+    $web_vitals_CLS_event: event('CLS', 0.02),
+    $web_vitals_CLS_value: 0.02,
+  });
+});
+
+test('GA4 is gone from the page', () => {
+  assert.doesNotMatch(read('../../index.html'), /gtag|googletagmanager|G-8S5FL37K8X/);
 });
 
 test('every PostHog option is one the installed posthog-js declares (no silently ignored typos)', () => {
@@ -213,7 +215,7 @@ test('vercel.json proxies /ingest to PostHog, and no catch-all rewrite swallows 
   assert.deepEqual(order, [...order].sort((a, b) => a - b));
 });
 
-test('the CSP already allows the same-origin proxy and bundled SDK, and no PostHog host directly', () => {
+test('the CSP already allows the same-origin proxy and bundled SDK, and no PostHog or Google host directly', () => {
   const csp = vercel.headers
     .find((rule) => rule.source === '/(.*)')
     .headers.find((header) => header.key === 'Content-Security-Policy').value;
@@ -221,6 +223,9 @@ test('the CSP already allows the same-origin proxy and bundled SDK, and no PostH
   assert.ok(directive('connect-src').includes("'self'"), 'connect-src covers /ingest');
   assert.ok(directive('script-src').includes("'self'"), 'script-src covers the posthog-js chunk');
   assert.doesNotMatch(csp, /posthog/, 'the browser only ever talks to suphian.com/ingest');
+  assert.doesNotMatch(csp, /google/, 'no GA4 hosts');
+  // Violation reports go to PostHog's CSP reporting through the same proxy.
+  assert.deepEqual(directive('report-uri'), [`${POSTHOG_API_HOST}/report/?token=${POSTHOG_KEY}`]);
 });
 
 test('the service worker never caches or intercepts the analytics proxy', () => {

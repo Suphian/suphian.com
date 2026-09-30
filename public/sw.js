@@ -27,7 +27,7 @@ const CACHE_STRATEGIES = {
     // Never serve cached API / third-party data — always go to network.
     maxAge: 0,
     networkFirst: true,
-    patterns: [/\/api\//, /supabase\.co/, /googletagmanager\.com/, /google-analytics\.com/]
+    patterns: [/\/api\//, /supabase\.co/]
   },
   html: {
     maxAge: 0, // Always fetch fresh HTML
