@@ -409,6 +409,9 @@ test.describe('reduced motion', () => {
     }
     await expect(quranLink).toBeFocused();
     await expect(panelIcon(detail)).toHaveAttribute('src', STAR);
+    // The logo stays at opacity 0 until its file loads (story.css: .story-card[data-status="loaded"]),
+    // so wait for the load; on a slow CI runner it can land after the src swap.
+    await expect(detail.locator('.story-card--panel')).toHaveAttribute('data-status', 'loaded');
     // The moment the new icon shows, nothing is fading and no outgoing copy exists
     // (with motion, a 200ms crossfade would still be running here).
     expect(await detail.locator('.story-card--panel').evaluate((el) => el.getAnimations({ subtree: true }).length)).toBe(0);
