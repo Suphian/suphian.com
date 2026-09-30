@@ -313,9 +313,12 @@ test.describe('a load opens at the top', () => {
     const stacked = await page.evaluate(() => matchMedia('(max-width: 800px), (max-height: 560px)').matches);
     expect(stacked, 'the phone stacks the list; the desktop pins it').toBe(test.info().project.name === 'mobile');
     if (stacked) {
-      const top = () => row.evaluate((el) => Math.round(el.getBoundingClientRect().top));
-      await expect.poll(top).toBeLessThan(120);
-      expect(await top()).toBeGreaterThanOrEqual(-1);
+      // Just below the fixed header, not under it (.story-item's scroll-margin-top).
+      const belowHeader = () => page.evaluate(() => Math.round(
+        document.getElementById('youtube').getBoundingClientRect().top - document.querySelector('.header').getBoundingClientRect().bottom,
+      ));
+      await expect.poll(belowHeader).toBeGreaterThanOrEqual(0);
+      expect(await belowHeader(), 'near the top').toBeLessThan(40);
     } else {
       await expect(highlighted(page)).toHaveText('YouTube');
       await expect(row).toHaveAttribute('data-distance', '0');

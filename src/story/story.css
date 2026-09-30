@@ -135,6 +135,10 @@
   background: var(--hairline);
 }
 .story-item { height: var(--story-row); }
+/* A /#youtube link (App.jsx scrollToId) stops the row just below the fixed header
+   (86px, 80px on phones, plus the notch) instead of under it. Anchor scrolling only:
+   no layout. Pinned, StoryIndex then scrolls to the chapter's band. */
+.story-item { scroll-margin-top: calc(86px + var(--safe-top) + 8px); }
 .story-button {
   display: flex;
   flex-wrap: wrap;
