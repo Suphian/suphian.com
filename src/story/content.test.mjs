@@ -28,8 +28,8 @@ test('jobs run newest to oldest, then the side projects: Steadily â†’ YouTube â†
 test('each chapter is only role, years, place, summary and links (plus its card, and the side-project flag)', () => {
   for (const c of story.chapters) {
     // Optional: the side-project flag, an accent for a card color too dark to see as a mark,
-    // and the role (suph.app has none: "Maybe I don't need a title on it", Suphian 2026-09-28).
-    const optional = ['kind', 'accent', 'role'].filter((key) => key in c);
+    // the venture's homepage (`home`: the open card's title links to it), and the role (suph.app has none: "Maybe I don't need a title on it", Suphian 2026-09-28).
+    const optional = ['kind', 'accent', 'role', 'home'].filter((key) => key in c);
     // A chapter of builds (suph.app) carries them in place of its own card.
     const own = 'builds' in c ? ['builds'] : ['image'];
     assert.deepEqual(
