@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   accentFor,
   accentOf,
+  bandOffset,
   buildsOf,
   cardImage,
   chapterGroups,
@@ -55,6 +56,27 @@ test('indexFromProgress splits progress into equal, finite bands', () => {
   assert.equal(indexFromProgress(-0.2, 5), 0);
   assert.equal(indexFromProgress(NaN, 5), 0);
   assert.equal(indexFromProgress(0.5, 0), 0);
+});
+
+test('bandOffset scrolls a /#chapter link into the middle of that chapter’s band', () => {
+  // Track 3000px tall in a 1000px viewport, 5 chapters: 2000px of travel, 400px bands.
+  assert.deepEqual([0, 1, 2, 3, 4].map((i) => bandOffset(3000, 1000, i, 5)), [200, 600, 1000, 1400, 1800]);
+  // The way back: scrolled that far past the track's top, the band picks that chapter,
+  // for the site's six chapters at a phone-landscape, laptop and 4K height.
+  for (const viewport of [561, 900, 2160]) {
+    const height = viewport + 6 * 0.36 * viewport; // .story-track: 100svh + 6 bands of 36svh
+    for (let i = 0; i < 6; i++) {
+      const top = -Math.round(bandOffset(height, viewport, i, 6));
+      assert.equal(indexFromProgress(trackProgress(top, height, viewport), 6), i, `${viewport}px, chapter ${i}`);
+    }
+  }
+  // Out-of-range indexes land on the nearest chapter's band.
+  assert.equal(bandOffset(3000, 1000, -2, 5), 200);
+  assert.equal(bandOffset(3000, 1000, 9, 5), 1800);
+  // No travel (the stacked layout, or a track no taller than the window), or no chapters: 0.
+  assert.equal(bandOffset(800, 1000, 2, 5), 0);
+  assert.equal(bandOffset(NaN, 1000, 2, 5), 0);
+  assert.equal(bandOffset(3000, 1000, 2, 0), 0);
 });
 
 // Suphian 2026-09-27: scroll alone picks the chapter; hover no longer does, and

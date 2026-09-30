@@ -1,9 +1,33 @@
-# Public pages and assets are crawlable. Existing training-crawler access is unchanged.
+# Public pages and assets are crawlable.
 User-agent: *
 Allow: /
 
-# OpenAI search discovery (independent of GPTBot training controls).
+# AI search and training crawlers: allowed, each by name.
 User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
 Allow: /
 
 Sitemap: https://suphian.com/sitemap.xml

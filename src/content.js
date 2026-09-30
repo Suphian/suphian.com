@@ -113,10 +113,10 @@ export const hero = {
 export const story = {
   // Section id: the hero cue scrolls here.
   id: 'work',
-  // Suphian's own headline and intro (2026-09-26). Use exactly; the UI adds the red period.
+  // Suphian's own headline and intro (2026-09-26, intro reworded 2026-09-29). Use exactly; the UI adds the red period.
   heading: ['Good ideas deserve', 'to get made'],
   intro:
-    'I’m Suphian. I work in product and like turning ideas into things people can try, use, or enjoy. I care about how they work, how they look, and what happens when they meet the real world. I also founded Abacus Labs, and suph.app is where I play with new ideas.',
+    'I’m Suphian. I work in product and I like to turn ideas into things people can try, use, and enjoy. I care about how they work, how they look, and what happens when they meet the real world. I also founded Abacus Labs, and suph.app is where I play with new ideas.',
   // No actions beside the intro (Suphian removed "Request resume", 2026-09-26).
   labels: {
     // The two lists' names: the jobs, then his own ventures. sideProjects is also the
@@ -408,7 +408,7 @@ export const seo = {
   // The homepage's last real content or metadata change: the sitemap <lastmod> and the
   // ProfilePage dateModified. Bump it with the copy, never on every build (Google only
   // trusts lastmod that stays accurate).
-  lastModified: '2026-09-28', // the meta description changed (suph.app: no monthly promise)
+  lastModified: '2026-09-29', // the intro changed ("I like to turn ideas into things…")
   home: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
@@ -451,16 +451,25 @@ export const structuredData = {
     givenName: 'Suphian',
     familyName: 'Tweel',
     description: HOME_DESCRIPTION,
+    // The social card's square Signature artwork. There is no portrait photo, so none is claimed.
+    image: seo.og.image,
     // His current role, stated accurately; it no longer leads the description (Suphian 2026-09-27).
     jobTitle: 'Principal Product Manager',
     worksFor: { name: 'Steadily', url: 'https://steadily.com' },
     // The side project he leads product and engineering for (the Abacus chapter). Affiliation
     // only: no founder, owner or employer claim.
     affiliation: [{ name: 'Abacus Labs', url: 'https://abacuslabs.co' }],
+    // His earlier jobs, the work chapters before Steadily.
+    alumniOf: [
+      { name: 'YouTube', url: 'https://www.youtube.com' },
+      { name: 'Google', url: 'https://www.google.com' },
+      { name: 'Huge', url: 'https://www.hugeinc.com' },
+    ],
     // The canonical homepage URL, trailing slash included, like the ProfilePage and <link rel="canonical">.
     url: `${ORIGIN}/`,
     email: EMAIL,
-    sameAs: [LINKEDIN, GITHUB],
+    // His profiles, and suph.app, where he shares his weekend experiments.
+    sameAs: [LINKEDIN, GITHUB, 'https://suph.app'],
     knowsAbout: ['Product Management', 'Payments', 'Artificial Intelligence', 'Fraud Detection', 'Data Analytics'],
   },
   website: {
