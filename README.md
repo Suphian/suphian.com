@@ -1,11 +1,33 @@
+<div align="center">
+
 # suphian.com
 
-The source for [suphian.com](https://suphian.com), Suphian Tweel's personal site: a red SUPHIAN wordmark that compresses into SUPH as you scroll, a six-chapter work index (four jobs, two side projects), a SAY HELLO sign-off and a contact form.
+**Suphian Tweel's personal site: a Vite + React single page with a spring-physics wordmark and a scroll-driven story.**
 
-- **App:** Vite 7 and React 18 in plain JavaScript (JSX, no TypeScript). One route, `/`.
-- **Hosting:** Vercel project `suph/suphian.com`, connected to [Suphian/suphian.com](https://github.com/Suphian/suphian.com). `main` is production.
-- **Contact form:** the browser calls Supabase directly (a rate-limit RPC, then an insert into `contact_submissions`, using the public anon key under row-level security), then the `notify-contact-submit` edge function sends two emails through Resend.
-- **Analytics:** PostHog, on the production domain only.
+[![CI](https://github.com/Suphian/suphian.com/actions/workflows/ci.yml/badge.svg)](https://github.com/Suphian/suphian.com/actions/workflows/ci.yml)
+[![Live: suphian.com](https://img.shields.io/badge/live-suphian.com-111?style=flat-square)](https://suphian.com)
+[![Lighthouse budget in CI](https://img.shields.io/badge/lighthouse-budget%20in%20CI-111?style=flat-square)](#tests)
+[![Analytics: PostHog](https://img.shields.io/badge/analytics-PostHog%20via%20%2Fingest-111?style=flat-square)](#analytics)
+
+<img src="public/og/suphian-signature-wide-20260927.png" alt="The red, rounded SUPHIAN wordmark on a near-black background, the site's share card" width="720">
+
+</div>
+
+The source for [suphian.com](https://suphian.com): a red SUPHIAN wordmark that compresses into SUPH as you scroll, a six-chapter work index (four jobs, two side projects), a SAY HELLO sign-off and a contact form.
+
+## At a glance
+
+| | |
+|---|---|
+| **Stack** | Vite 7 and React 18 in plain JavaScript (JSX, no TypeScript). One route, `/`. |
+| **Rendering** | A static profile is injected into `index.html` at build from `src/content.js`, then React hydrates. No-JavaScript visitors and crawlers get a readable page. Story summaries stay in the DOM (`hidden="until-found"`), and `/#chapter` deep links work. |
+| **Analytics** | PostHog only (GA4 is gone), through the first-party `/ingest` proxy, on the production domain only. Captured: `$pageview`, `$pageleave`, `$web_vitals` and a few custom events. Not captured: autocapture, session replay, surveys, or anything a visitor types. |
+| **Security** | Enforcing CSP with a `report-uri`, plus the other security headers, all in `vercel.json`. No PostHog host in the CSP. |
+| **Performance** | Hashed fonts in `src/fonts/` with both faces preloaded, the Abacus logo as AVIF/WebP/PNG, a Lighthouse budget in CI (`npm run lhci`). |
+| **SEO and LLMs** | JSON-LD (Person, WebSite, ProfilePage), sitemap, `robots.txt` that names AI crawlers, and generated `llms.txt` and `llms-full.txt`. |
+| **Tests** | `npm test` (unit, no browser), `npm run e2e:prod` (Playwright against the production build), `npm run lhci` (Lighthouse). CI runs all three. |
+| **Hosting** | Vercel project `suph/suphian.com`, connected to [Suphian/suphian.com](https://github.com/Suphian/suphian.com). `main` is production. |
+| **Contact form** | The browser calls Supabase directly (a rate-limit RPC, then an insert into `contact_submissions`, using the public anon key under row-level security), then the `notify-contact-submit` edge function sends two emails through Resend. |
 
 ## Run it locally
 
@@ -19,6 +41,17 @@ npm run preview   # serves dist/ at http://127.0.0.1:4173 with vercel.json's hea
 ```
 
 `dev` and `preview` both bind 127.0.0.1:4173 with `strictPort`, so stop one before starting the other. A busy port is an error; Vite will not move to another port.
+
+| Script | What it does |
+|---|---|
+| `npm run dev` / `build` / `preview` | Dev server, production build into `dist/`, preview of `dist/` with the real headers and CSP |
+| `npm test` | Unit tests (`node --test`), no browser |
+| `npm run e2e` | Playwright against the dev server, which must already be running on :4173 |
+| `npm run e2e:prod` | Builds, serves `dist/` on :4174 and tests that (what CI runs) |
+| `npm run e2e:hmr` | Dev-server hot-reload regression; run it on its own |
+| `npm run lhci` | Mobile Lighthouse against `dist/` (run a build first; see [Tests](#tests)) |
+| `npm run logos` | Rewrites `public/logos/*.svg` from `src/wordmark/lettering.js` |
+| `npm run images:work` | Writes the Abacus logo as AVIF, WebP and PNG (`scripts/optimize-work-images.mjs`) |
 
 ### Contact form: dry run or live
 
@@ -39,6 +72,7 @@ npx playwright install chromium   # once, before the browser suites
 npm run e2e                       # against the dev server, which must already be running on :4173
 npm run e2e:prod                  # builds, serves dist/ on :4174, tests that (what CI runs)
 npm run e2e:hmr                   # dev-server hot-reload regression; run it on its own
+npm run lhci                      # Lighthouse, after a build
 ```
 
 **`npm test`** runs `tests/` plus the `*.test.mjs` files in `src/favicon`, `src/sayhello`, `src/components`, `src/story` and `src/lib`. The script names those folders, so add a new folder there if you put a test file elsewhere. The tests cover:
@@ -49,6 +83,13 @@ npm run e2e:hmr                   # dev-server hot-reload regression; run it on 
 - the generated SEO output: initial HTML, JSON-LD, and the public/ crawler files matching `src/content.js`
 - both contact emails
 - analytics wiring: the PostHog config, the `$web_vitals` shape, the `/ingest` proxy, the CSP and the service worker
+
+**Lighthouse:** `npm run lhci` (after a build; config in `lighthouserc.cjs`) asserts performance at least 0.95 locally. CI runs the median of 3 with a 0.85 floor and a 2x CPU slowdown (`LHCI_PERF_MIN`, `LHCI_CPU_SLOWDOWN`) because shared runners are slow, while bytes (400 KB), console errors, accessibility, best-practices and SEO stay hard everywhere.
+
+**CI** (`.github/workflows/ci.yml`) runs on pull requests and pushes to `main` with Node 24: `npm ci`, `npm test`, Chromium install, `npm run e2e:prod`, then `npm run lhci`.
+
+<details>
+<summary>Browser suites and environment switches</summary>
 
 **Browser suites** (`e2e/`, Playwright, headless Chromium) run `smoke.spec.js` and `responsive.spec.js` on a desktop (1440×900) and a mobile (Pixel 7) project. The 11-viewport responsive matrix runs once. `e2e/guard.js` fails any test that logs a console error, throws, or shows the error screen. It also stubs every Supabase request, so no suite ever writes a row or sends an email, even against a production build.
 
@@ -63,7 +104,7 @@ npm run e2e:hmr                   # dev-server hot-reload regression; run it on 
 - **`e2e:hmr`** needs the dev server running. It edits `src/components/UIProvider.jsx` and restores it.
 - **Output:** results go to `qa/e2e-results/` (traces and screenshots on failure) and matrix screenshots to `qa/responsive/`. `qa/` is gitignored.
 
-**CI** (`.github/workflows/ci.yml`) runs on pull requests and pushes to `main` with Node 24: `npm ci`, `npm test`, Chromium install, `npm run e2e:prod`.
+</details>
 
 ## Where things live
 
@@ -78,18 +119,21 @@ npm run e2e:hmr                   # dev-server hot-reload regression; run it on 
 | `src/sayhello/` | The SAY HELLO sign-off art and its motion. `src/components/SayHello.jsx` renders it and opens the contact sheet. |
 | `src/components/` | Header, footer, contact sheet and form, toasts, UI context, `DryRunBadge`. |
 | `src/lib/` | `backend.js` (Supabase client, `LIVE` switch), `contactSubmit.js`, `analytics.js`, `webVitals.js`, `serviceWorker.js`, validation, sanitizing and rate limiting. |
+| `src/fonts/` | PP Neue Montreal Regular and Semibold, hashed by Vite and both preloaded. |
 | `src/favicon/` | The animated SUPH favicon. `WIRING.md` describes its variants and timing (its wiring steps are already applied). |
-| `public/` | Ships to the CDN as-is: fonts, icons, logos, the social card, work logos, `sw.js`, crawler files. Keep license documents, originals and credentials out. |
+| `public/` | Ships to the CDN as-is: icons, logos, the social cards in `og/`, work logos, `sw.js`, crawler files. Keep license documents, originals and credentials out. |
 | `assets-src/` | Design masters, retired artwork and the font license PDF. Committed, but `.vercelignore` keeps it out of deployments. |
 | `supabase/functions/notify-contact-submit/` | `index.ts` is the Deno handler (Resend, per-IP limit). `emails.ts` holds both emails, HTML and plain text, written so Node can load it too. |
 | `supabase/migrations/` | Database history, including `contact_submissions` and `check_rate_limit`. |
 
-### Regenerating files
+<details>
+<summary>Regenerating files</summary>
 
 | Command | Writes |
 |---|---|
 | `node scripts/sync-seo.mjs` | `public/` crawler files and manifest text. Run it after editing `src/content.js`; `npm test` fails until `public/` matches. |
 | `npm run logos` | `public/logos/*.svg` from `src/wordmark/lettering.js` |
+| `npm run images:work` | The Abacus logo as AVIF, WebP and PNG (`scripts/optimize-work-images.mjs`) |
 | `node src/favicon/build-icons.mjs` | `public/favicon-suph.svg` and `public/icons/*.png` (no browser needed) |
 | `node src/favicon/qa-favicon.mjs` | Favicon QA sheets in `qa/` |
 | `node scripts/trace-say-hello.mjs` | `public/contact/say-hello.svg` from `src/sayhello/lettering.js` |
@@ -99,13 +143,23 @@ npm run e2e:hmr                   # dev-server hot-reload regression; run it on 
 
 On Windows with `core.autocrlf`, a regenerated file can show as modified when only its line endings changed. If `git diff` is empty, `git checkout -- public` clears it.
 
+</details>
+
 ## Deploying
 
-**Site.** Vercel builds every pushed branch as a preview behind Vercel Authentication, and builds `main` as production for suphian.com. Never merge to `main` without Suphian's explicit approval.
+**Never merge to `main` without Suphian's explicit approval.** Vercel builds every pushed branch as a preview behind Vercel Authentication, and builds `main` as production for suphian.com.
+
+<details>
+<summary>Site: redirects, headers, CSP and 404s</summary>
 
 `vercel.json` holds the host redirects (suph.ai, www.suph.ai and www.suphian.com to suphian.com; `/podcast` to `/`), the security headers and CSP, cache rules, and the `/ingest` rewrites. There is no catch-all rewrite. The build copies `index.html` to `dist/404.html` (`vite.config.js`), so Vercel answers unknown paths with a real 404 and the full page, and the app then sends visitors home. `vite preview` answers 200 for unknown paths, so check 404s on a deployment. A new third-party host needs a CSP change in `vercel.json`; `e2e:prod` runs under the same CSP.
 
-**Contact function.** Deploys separately; Vercel never touches it.
+</details>
+
+<details>
+<summary>Contact function (deploys separately)</summary>
+
+Vercel never touches the function.
 
 ```sh
 npx supabase functions deploy notify-contact-submit --project-ref ujughujunixnwlmtdsxd --use-api
@@ -113,7 +167,14 @@ npx supabase functions deploy notify-contact-submit --project-ref ujughujunixnwl
 
 Keep JWT verification on (the default; see `supabase/config.toml`) and keep the existing secrets, including `RESEND_API_KEY`. The emails load their logo from https://suphian.com/icons/apple-touch-icon.png, so ship a changed icon to the site before deploying the function. CONTRIBUTING.md covers how to verify a real send.
 
-**Rollback.** Use Vercel's Instant Rollback: in the dashboard, open the project's Deployments, pick the last good production deployment and choose Instant Rollback. From a directory linked to `suph/suphian.com`, `vercel rollback <deployment-url>` does the same. Look up the target when you need it rather than reusing IDs from old notes. Then revert the bad commit on `main` so the next production build doesn't bring it back. To roll the function back, redeploy it from the earlier commit.
+</details>
+
+<details>
+<summary>Rollback</summary>
+
+Use Vercel's Instant Rollback: in the dashboard, open the project's Deployments, pick the last good production deployment and choose Instant Rollback. From a directory linked to `suph/suphian.com`, `vercel rollback <deployment-url>` does the same. Look up the target when you need it rather than reusing IDs from old notes. Then revert the bad commit on `main` so the next production build doesn't bring it back. To roll the function back, redeploy it from the earlier commit.
+
+</details>
 
 ## Analytics
 
@@ -128,15 +189,15 @@ PostHog is the only analytics (GA4 is gone). It runs only on suphian.com product
 
 - **Brand:** [DESIGN-BRIEF.md](DESIGN-BRIEF.md) is the source of truth and wins over older notes. Only the SUPHIAN/SUPH wordmark and the SAY HELLO art are bubbly; everything else is refined ("highbrow, not bubbly"). Type is PP Neue Montreal with body text around 18px and no tiny or uppercase labels. Colors are red, near-black and white. The bouncy SUPH dock stays.
 - **Fonts:** `src/fonts/` has Regular and Semibold (Vite hashes them; `vite.config.js` preloads both). There is no italic. Subsetting is off the table: the EULA in `assets-src/font-license/` is silent on modification. Semibold stands in for Medium until a licensed Medium file is supplied. The license PDF stays in `assets-src/font-license/`.
-- **Lighthouse:** `npm run lhci` (after a build) asserts performance at least 0.95 locally; CI runs the median of 3 with a 0.85 floor and a 2x CPU slowdown (`LHCI_PERF_MIN`, `LHCI_CPU_SLOWDOWN`) because shared runners are slow, while bytes (400 KB), console errors, accessibility, best-practices and SEO stay hard everywhere.
 - **Copy:** edit `src/content.js` (its header comment lists the conventions) and keep every fact true. Log each change in [COPY-CHANGES.md](COPY-CHANGES.md), newest first. Then run `node scripts/sync-seo.mjs`. If homepage copy or metadata changed, set `seo.lastModified` to the deploy date, since it feeds the sitemap and the JSON-LD. Finish with `npm test`.
-- **A new suph.app project:** add a build at the top of the suph.app chapter's `builds` in `src/content.js` (the comment above `builds` lists the fields; `month` is when he made it, not a schedule), with a white mark in `public/work/`. The rail card shows the newest build's icon, and the open card lists every build under its summary, newest first, one line each, linking to https://suph.app/<slug>.
+- **A new suph.app project:** add a build at the top of the suph.app chapter's `builds` in `src/content.js` (the comment above `builds` lists the fields; `month` is when he made it, not a schedule), with a white mark in `public/work/`. The rail card shows the newest build's icon, and the open card lists every build under its summary, newest first, one line each, linking to https://suph.app/<slug>. The open card's title links to suph.app.
 - **Review:** Suphian reviews changes himself at http://127.0.0.1:4173. Verify with builds and tests, not browser automation.
 
 ## More docs
 
 - [CONTRIBUTING.md](CONTRIBUTING.md): checks before pushing, previews, rollback, the function deploy, and what never goes in `public/`.
-- [DESIGN-BRIEF.md](DESIGN-BRIEF.md) and [COPY-CHANGES.md](COPY-CHANGES.md): brand rules and the copy log.
+- [DESIGN-BRIEF.md](DESIGN-BRIEF.md): brand rules.
+- [COPY-CHANGES.md](COPY-CHANGES.md): the copy log.
 - [docs/launch.md](docs/launch.md): the launch record, verification and analytics events.
 - [docs/seo-plan.md](docs/seo-plan.md): search and AI discoverability, the production audit and owner follow-ups.
 - [docs/archive/](docs/archive/): the completed launch checklist.
