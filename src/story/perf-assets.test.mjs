@@ -48,6 +48,20 @@ test('the <picture> adds no box, so the logo lays out as the bare img did', () =
 test('every card image carries its intrinsic width and height', async () => {
   const { story } = await import('../content.js');
   const images = story.chapters.flatMap((c) => (c.builds ? c.builds.map((b) => b.image) : [c.image]));
-  assert.equal(images.length, 7);
+  assert.ok(images.length > 0);
+  assert.equal(images.length, story.chapters.reduce((n, c) => n + (c.builds ? c.builds.length : c.image ? 1 : 0), 0));
   for (const image of images) assert.ok(image.width > 0 && image.height > 0, image.src);
+});
+
+test('every PNG in content has AVIF and WebP siblings under public/ (StoryCard emits both sources)', async () => {
+  const { story } = await import('../content.js');
+  const images = story.chapters.flatMap((c) => (c.builds ? c.builds.map((b) => b.image) : [c.image]));
+  const pngs = images.filter((image) => image.src.endsWith('.png'));
+  assert.ok(pngs.length > 0);
+  for (const { src } of pngs) {
+    for (const ext of ['avif', 'webp']) {
+      const sibling = src.replace(/\.png$/, '.' + ext);
+      assert.ok(fs.existsSync(new URL('../../public' + sibling, import.meta.url)), src + ' needs ' + sibling);
+    }
+  }
 });

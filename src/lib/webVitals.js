@@ -23,38 +23,56 @@ export function webVitalsProperties(metrics) {
 }
 
 /**
- * Buffers CLS, FCP, INP and LCP from the bundled web-vitals package and hands
- * capture one $web_vitals event for them: 5 s after the first metric, as soon
- * as all four are in, or when the page is hidden, whichever comes first. A
- * metric reported after that (CLS and INP report on hide) starts the next one.
+ * Buffers CLS, FCP, INP and LCP and hands capture one $web_vitals event for
+ * them: 5 s after the first metric, as soon as all four are in, or when the
+ * page is hidden, whichever comes first. A metric reported after that (CLS and
+ * INP report on hide) starts the next one. Everything it touches is in deps
+ * (the web-vitals callbacks, the clock, the timer, the document and the page
+ * URL), which the tests replace.
  */
+export function collectWebVitals(capture, deps) {
+  const { onCLS, onFCP, onINP, onLCP, now, setTimeout: schedule, clearTimeout: cancel, document: doc, href } = deps;
+  const buffer = new Map();
+  let timer;
+  const flush = () => {
+    cancel(timer);
+    timer = undefined;
+    if (!buffer.size) return;
+    capture('$web_vitals', webVitalsProperties([...buffer.values()]));
+    buffer.clear();
+  };
+  const add = (metric) => {
+    if (metric.value >= MAX_VALUE) return;
+    buffer.set(metric.name, { ...metric, $current_url: href(), timestamp: now() });
+    if (buffer.size === METRICS.length) flush();
+    else if (timer === undefined) timer = schedule(flush, FLUSH_DELAY);
+  };
+  onCLS(add);
+  onFCP(add);
+  onINP(add);
+  onLCP(add);
+  // web-vitals reports on hide from capture listeners on window, which run
+  // before this one on document, so the flush includes those final values.
+  doc.addEventListener('visibilitychange', () => {
+    if (doc.visibilityState === 'hidden') flush();
+  });
+}
+
+/** Loads the bundled web-vitals package and reports its metrics to capture. */
 export function reportWebVitals(capture) {
   import('web-vitals')
-    .then(({ onCLS, onFCP, onINP, onLCP }) => {
-      const buffer = new Map();
-      let timer;
-      const flush = () => {
-        clearTimeout(timer);
-        timer = undefined;
-        if (!buffer.size) return;
-        capture('$web_vitals', webVitalsProperties([...buffer.values()]));
-        buffer.clear();
-      };
-      const add = (metric) => {
-        if (metric.value >= MAX_VALUE) return;
-        buffer.set(metric.name, { ...metric, $current_url: window.location.href, timestamp: Date.now() });
-        if (buffer.size === METRICS.length) flush();
-        else if (timer === undefined) timer = setTimeout(flush, FLUSH_DELAY);
-      };
-      onCLS(add);
-      onFCP(add);
-      onINP(add);
-      onLCP(add);
-      // web-vitals reports on hide from capture listeners on window, which run
-      // before this one on document, so the flush includes those final values.
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'hidden') flush();
-      });
-    })
+    .then(({ onCLS, onFCP, onINP, onLCP }) =>
+      collectWebVitals(capture, {
+        onCLS,
+        onFCP,
+        onINP,
+        onLCP,
+        now: () => Date.now(),
+        setTimeout: (fn, ms) => setTimeout(fn, ms),
+        clearTimeout: (id) => clearTimeout(id),
+        document,
+        href: () => window.location.href,
+      }),
+    )
     .catch(() => {});
 }

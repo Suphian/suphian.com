@@ -19,12 +19,12 @@
  * nav            { skip, home }
  * hero           { srTitle, edition: [3], cue: [2], cueHref }
  * story          { id, heading: [lines], intro, labels: { list, sideProjects, back },
- *                  chapters: [{ id, name, kind?, role?, period, location, image: { src, nudge }, color, accent?,
+ *                  chapters: [{ id, name, kind?, role?, period, location, image: { src, width, height, nudge }, color, accent?,
  *                  summary, links: [{ label, href }] }] }
  *                  (replaces about, work and projects, 2026-09-26; jobs newest first, then the side
  *                  projects, kind: 'side')
  *                  A chapter made of builds (suph.app's projects, 2026-09-28) has builds instead of an image:
- *                  builds: [{ month: 'YYYY-MM', slug, name, summary, image: { src, nudge }, color?, links }],
+ *                  builds: [{ month: 'YYYY-MM', slug, name, summary, image: { src, width, height, nudge }, color?, links }],
  *                  newest first. Its open card is the usual role (if any), years and summary, then one
  *                  row per build in place of the links; its own links are for the no-JavaScript profile
  *                  and llms-full.txt. accent: the marks' color when the card color is too dark to see on
@@ -281,11 +281,12 @@ export const story = {
       // llms-full.txt list them all too, with their summaries.
       //
       // Adding a project: put it at the TOP of this list:
-      //   { month: 'YYYY-MM', slug, name, summary, image: { src, nudge }, color?, links: [{ label, href }] }
+      //   { month: 'YYYY-MM', slug, name, summary, image: { src, width, height, nudge }, color?, links: [{ label, href }] }
       // - month: the month he made it. The site writes it out ("October 2026").
       // - slug: short, lowercase and unique. suph.app (live 2026-09-28) has one page per build at
       //   suph.app/<slug> (suph.app/toga, suph.app/quran); a new build links to its page there.
       // - image: a white mark in public/work with a viewBox tight to its ink (assets-src/work/README.txt);
+      //   width and height are the file's natural pixel size (an SVG's viewBox size), so the card reserves its box;
       //   `node --test src/story/` measures its nudge. color: optional, the card's fill (white must reach 3:1 on it).
       // - summary: only facts Suphian has confirmed, without repeating the name. The open card
       //   doesn't show it (screen readers hear it); the no-JS profile and llms-full.txt do.
@@ -408,7 +409,7 @@ export const seo = {
   // The homepage's last real content or metadata change: the sitemap <lastmod> and the
   // ProfilePage dateModified. Bump it with the copy, never on every build (Google only
   // trusts lastmod that stays accurate).
-  lastModified: '2026-09-29', // the intro changed ("I like to turn ideas into things…")
+  lastModified: '2026-09-30', // merge/deploy date; last content change: the intro ("I like to turn ideas into things…")
   home: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
@@ -457,7 +458,7 @@ export const structuredData = {
     jobTitle: 'Principal Product Manager',
     worksFor: { name: 'Steadily', url: 'https://steadily.com' },
     // The side project he leads product and engineering for (the Abacus chapter). Affiliation
-    // only: no founder, owner or employer claim.
+    // only (schema.org affiliation, not founder or owner); the intro says he founded it.
     affiliation: [{ name: 'Abacus Labs', url: 'https://abacuslabs.co' }],
     // His earlier jobs, the work chapters before Steadily.
     alumniOf: [

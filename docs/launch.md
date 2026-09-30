@@ -38,7 +38,7 @@ The owner confirmed the font license. The supplied Semibold remains in place of 
 
 ## Analytics
 
-PostHog is the only analytics; GA4 (G-8S5FL37K8X) has been removed. src/lib/analytics.js sends every event below to PostHog. It runs on suphian.com only (not dev, previews or local builds). posthog-js loads after the first paint (load, first contentful paint, then idle, 2s at most), so it never touches first paint, and it does not wait for an interaction, so visits that never scroll or click are counted. Visits that end before it loads, within about 2s, are not.
+PostHog is the only analytics; GA4 (G-8S5FL37K8X) has been removed. src/lib/analytics.js sends every event below to PostHog. It runs on suphian.com only (not dev, previews or local builds). posthog-js loads after the first paint (load, first contentful paint, then idle, 2s at most), so it never touches first paint, and it does not wait for an interaction, so visits that never scroll or click are counted. It loads once the page has finished loading and the browser is idle (the idle wait is capped at 2s), so visits that end before that point are not counted, and on a slow connection that takes longer.
 
 PostHog is live since 2026-09-27 (main f053793): POSTHOG_KEY in src/lib/analytics.js holds the key for the Suph.ai org's project 631302 (US), kept separate from the Honest Funding project. Emptying that one line switches it off again; with it empty nothing loads and nothing is sent. For an EU project, also set POSTHOG_REGION to 'eu' and point the three /ingest rewrites in vercel.json at eu-assets.i.posthog.com and eu.i.posthog.com; npm test checks the two agree.
 
