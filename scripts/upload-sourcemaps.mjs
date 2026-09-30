@@ -1,9 +1,11 @@
 // postbuild (package.json): source maps for PostHog Error Tracking. vite.config.js
-// writes hidden source maps into dist/. With POSTHOG_CLI_API_KEY set (Vercel
-// env, GitHub Actions secret), posthog-cli injects a chunk id into each bundled
-// chunk and uploads its map, so PostHog shows exceptions with the original
-// source. Without it, uploads are skipped and stack traces stay minified. Either
-// way every .map is deleted afterwards: none is ever deployed.
+// writes hidden source maps into dist/. With POSTHOG_CLI_API_KEY set (Vercel's
+// environment only: its builds are the ones that deploy), posthog-cli injects a
+// chunk id into each bundled chunk and uploads its map, so PostHog shows
+// exceptions with the original source. Without it (CI, local builds), uploads
+// are skipped and stack traces stay minified. Either way every .map is deleted
+// afterwards: none is ever deployed. vercel.json pins buildCommand to npm run
+// build so this always runs there, and e2e:prod fails if a .map is left.
 //
 // The key is a personal API key with error_tracking:write, organization:read
 // and project:read (docs/launch.md). It never goes in git.
@@ -41,7 +43,7 @@ export function deleteSourceMaps(dir) {
 export function cliCommands(dir, env) {
   // The deployed commit, so PostHog groups exceptions by release. Without one,
   // posthog-cli derives the version from git.
-  const version = env.VERCEL_GIT_COMMIT_SHA || env.GITHUB_SHA;
+  const version = env.VERCEL_GIT_COMMIT_SHA;
   const release = ['--release-name', RELEASE_NAME, ...(version ? ['--release-version', version] : [])];
   return ['inject', 'upload'].map((step) => ['--yes', CLI, 'sourcemap', step, '--directory', dir, ...release]);
 }

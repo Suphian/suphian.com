@@ -1,4 +1,5 @@
 {
+  "buildCommand": "npm run build",
   "redirects": [
     { "source": "/", "has": [{ "type": "host", "value": "www.suph.ai" }], "destination": "https://suphian.com/", "permanent": true },
     { "source": "/:path*", "has": [{ "type": "host", "value": "www.suph.ai" }], "destination": "https://suphian.com/:path*", "permanent": true },

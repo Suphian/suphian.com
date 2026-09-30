@@ -17,11 +17,9 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npx playwright install --with-deps chromium
-      # Builds (npm run build, whose postbuild uploads source maps to PostHog when
-      # the secret is set and deletes them either way), then runs the e2e suite.
+      # Builds (npm run build: its postbuild deletes the source maps; only Vercel
+      # uploads them), then runs the e2e suite, which fails if a .map is left.
       - run: npm run e2e:prod
-        env:
-          POSTHOG_CLI_API_KEY: ${{ secrets.POSTHOG_CLI_API_KEY }}
       # Lighthouse's 4x CPU slowdown assumes a fast machine (this laptop: benchmarkIndex 4581).
       # Shared runners are several times slower, so slow the CPU less and accept a lower floor.
       # Recalibrate from the uploaded report: multiplier = 4 * environment.benchmarkIndex / 4581.

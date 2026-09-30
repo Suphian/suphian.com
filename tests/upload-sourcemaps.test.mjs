@@ -97,8 +97,12 @@ test('the build writes hidden source maps and postbuild runs the upload script',
   assert.match(scripts['e2e:prod'], /^npm run build && /);
 });
 
-test('CI passes the upload key to the step that builds', () => {
-  const ci = read('../.github/workflows/ci.yml');
-  const step = ci.slice(ci.indexOf('- run: npm run e2e:prod'));
-  assert.match(step.split('\n      - ')[0], /POSTHOG_CLI_API_KEY: \$\{\{ secrets\.POSTHOG_CLI_API_KEY \}\}/);
+test('only Vercel uploads: CI never gets the key, and Vercel always runs npm run build (so postbuild)', () => {
+  // CI's pull_request SHA is a merge commit that never deploys.
+  assert.doesNotMatch(read('../.github/workflows/ci.yml'), /POSTHOG_CLI_API_KEY/);
+  const vercel = JSON.parse(read('../vercel.json'));
+  assert.equal(vercel.buildCommand, 'npm run build');
+  assert.equal('framework' in vercel, false, 'the framework stays auto-detected');
+  // e2e:prod, which CI runs, fails if a .map is left in dist.
+  assert.match(read('../e2e/assets.spec.js'), /no source map is left in dist/);
 });

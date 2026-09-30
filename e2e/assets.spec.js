@@ -1,4 +1,8 @@
+import { readdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { expect, test } from './guard.js';
+
+const DIST = fileURLToPath(new URL('../dist', import.meta.url));
 
 // Fonts and the card logo are what the first paint waits on. These run against the production
 // bundle (npm run e2e:prod): the dev server has no hashed fonts and no preload links.
@@ -35,4 +39,13 @@ test('the Abacus logo is served as AVIF', async ({ page }) => {
   // Explicit dimensions, so the image never shifts the layout.
   await expect(logo).toHaveAttribute('width', '748');
   await expect(logo).toHaveAttribute('height', '467');
+});
+
+// Source maps are for PostHog only: postbuild (scripts/upload-sourcemaps.mjs)
+// deletes them, so none can deploy. Fails the build CI and e2e:prod just made
+// if one is left.
+test('no source map is left in dist', () => {
+  test.skip(Boolean(process.env.E2E_BASE_URL?.trim()), 'checks the dist this run built, not a deployment');
+  const maps = readdirSync(DIST, { recursive: true }).map(String).filter((file) => file.endsWith('.map'));
+  expect(maps).toEqual([]);
 });
