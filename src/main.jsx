@@ -4,13 +4,19 @@ import App from './App.jsx';
 import { errors } from './content.js';
 import { registerServiceWorker } from './lib/serviceWorker.js';
 import { reportWebVitals } from './lib/webVitals.js';
-import { analyticsEnabled, startAnalytics, track } from './lib/analytics.js';
+import { analyticsEnabled, captureException, startAnalytics, track } from './lib/analytics.js';
+import { installErrorTracking } from './lib/errors.js';
 import { afterFirstPaint } from './lib/afterFirstPaint.js';
 import { scrollToTop } from './lib/scroll.js';
 import './fonts.css';
 import './style.css';
 
 const rootElement = document.getElementById('root');
+
+// Uncaught errors and rejections to PostHog Error Tracking, from the start so
+// the first render is covered. Only where analytics runs (suphian.com, or the
+// debug flag); they wait in the queue until PostHog loads.
+if (analyticsEnabled) installErrorTracking(captureException, { target: window, now: () => Date.now() });
 
 // Plain DOM fallback when React cannot mount at all.
 function showLoadError(error) {
@@ -60,5 +66,9 @@ try {
   }
 } catch (error) {
   console.error('Failed to mount React app:', error);
+  // Caught here, so the error listener never sees it. startAnalytics may not
+  // have run yet; it runs once, so calling it again is safe.
+  captureException(error, { source: 'mount' });
+  startAnalytics();
   showLoadError(error);
 }

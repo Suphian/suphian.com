@@ -1,6 +1,7 @@
 // Product analytics: PostHog is the only tool. $pageview, $pageleave, $web_vitals
-// (webVitals.js) and the custom events all go to it. A silent no-op until
-// POSTHOG_KEY is set, and outside suphian.com unless the debug flag is on.
+// (webVitals.js), $exception (errors.js) and the custom events all go to it. A
+// silent no-op until POSTHOG_KEY is set, and outside suphian.com unless the
+// debug flag is on.
 // docs/launch.md lists the events.
 
 import { afterFirstPaint } from './afterFirstPaint.js';
@@ -21,8 +22,10 @@ export const DEBUG_KEY = 'analytics-debug';
 // Custom events, the one $pageview and $pageleave (time on page and scroll depth)
 // only: no autocapture, replay, surveys or heatmaps. PostHog's own web vitals
 // need remote config and a remote script, so webVitals.js sends $web_vitals
-// instead. No remote scripts and no /flags call either, so nothing loads beyond
-// the bundled chunk and connect-src 'self' covers it all.
+// instead, and its exception autocapture (capture_exceptions) needs a remote
+// script too, so errors.js reports errors through captureException. No remote
+// scripts and no /flags call either, so nothing loads beyond the bundled chunks
+// and connect-src 'self' covers it all.
 export const posthogConfig = ({ debug = false } = {}) => ({
   api_host: POSTHOG_API_HOST,
   ui_host: `https://${POSTHOG_REGION}.posthog.com`,
@@ -53,10 +56,10 @@ export const shouldTrack = ({ key, prod, hostname, debug }) =>
 const defined = (props) => Object.fromEntries(Object.entries(props ?? {}).filter(([, value]) => value !== undefined));
 
 /**
- * The event pipe, apart from the loader so node tests can drive it. Events wait
- * in order until ready() hands over the PostHog client (null if it failed to
- * load), then go to PostHog with their original time. Never throws: analytics
- * must not break a click.
+ * The event pipe, apart from the loader so node tests can drive it. Events and
+ * exceptions wait in order until ready() hands over the PostHog client (null if
+ * it failed to load), then go to PostHog, events with their original time.
+ * Never throws: analytics must not break a click.
  */
 export function createTracker({ enabled }) {
   const queue = [];
@@ -64,23 +67,29 @@ export function createTracker({ enabled }) {
   let posthog = null;
   let ready = false;
 
-  function send({ event, props, timestamp }, queued) {
+  function send({ event, props, timestamp, exception }, queued) {
     try {
+      // captureException takes no time: a queued one is stamped when PostHog
+      // loads, at most a couple of seconds late.
+      if (exception) posthog?.captureException?.(exception.error, props);
       // Any capture options make PostHog skip its batch and send at once, so
       // only events that waited for the load pass their original time.
-      if (queued) posthog?.capture(event, props, { timestamp });
+      else if (queued) posthog?.capture(event, props, { timestamp });
       else posthog?.capture(event, props);
     } catch {
       // Dropped.
     }
   }
 
+  function enqueue(item) {
+    if (ready) send(item, false);
+    else queue.push(item);
+  }
+
   function track(event, props) {
     if (!enabled) return;
     try {
-      const item = { event, props: defined(props), timestamp: new Date() };
-      if (ready) send(item, false);
-      else queue.push(item);
+      enqueue({ event, props: defined(props), timestamp: new Date() });
     } catch {
       // Dropped.
     }
@@ -100,6 +109,15 @@ export function createTracker({ enabled }) {
         return;
       }
       track(event, props);
+    },
+    /** posthog.captureException(error, props), queued like track() until PostHog loads. */
+    captureException(error, props) {
+      if (!enabled) return;
+      try {
+        enqueue({ exception: { error }, props: defined(props) });
+      } catch {
+        // Dropped.
+      }
     },
     ready(client) {
       if (ready) return;
@@ -131,7 +149,7 @@ const tracker = createTracker({
 });
 
 export const analyticsEnabled = tracker.enabled;
-export const { track, trackOnce } = tracker;
+export const { track, trackOnce, captureException } = tracker;
 
 let started = false;
 
@@ -153,10 +171,14 @@ export function startAnalytics() {
     if (loading) return;
     loading = true;
     // The slim build: capture, $pageleave, scroll depth and beacon sends, without
-    // the extensions this config turns off (autocapture, replay, web vitals and more).
-    import('posthog-js/dist/module.slim.js')
-      .then(({ default: posthog }) => {
-        posthog.init(POSTHOG_KEY, posthogConfig({ debug }));
+    // the extensions this config turns off (autocapture, replay, web vitals and
+    // more). The one extension it gets is exceptions, which captureException
+    // needs (posthogExceptions.js). __extensionClasses is posthog-js's own
+    // option for this (lib/src/types.d.ts:65), outside @posthog/types'
+    // PostHogConfig, so it is added here rather than in posthogConfig.
+    Promise.all([import('posthog-js/dist/module.slim.js'), import('./posthogExceptions.js')])
+      .then(([{ default: posthog }, { PostHogExceptions }]) => {
+        posthog.init(POSTHOG_KEY, { ...posthogConfig({ debug }), __extensionClasses: { exceptions: PostHogExceptions } });
         tracker.ready(posthog);
       })
       .catch(() => tracker.ready(null)); // Empties the queue: nothing else would send it.
