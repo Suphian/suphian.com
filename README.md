@@ -21,7 +21,7 @@ The source for [suphian.com](https://suphian.com): a red SUPHIAN wordmark that c
 |---|---|
 | **Stack** | Vite 7 and React 18 in plain JavaScript (JSX, no TypeScript). One route, `/`. |
 | **Rendering** | A static profile is injected into `index.html` at build from `src/content.js`, then React hydrates. No-JavaScript visitors and crawlers get a readable page. Story summaries stay in the DOM (`hidden="until-found"`), and `/#chapter` deep links work. |
-| **Analytics** | PostHog only (GA4 is gone), through the first-party `/ingest` proxy, on the production domain only. Captured: `$pageview`, `$pageleave`, `$web_vitals` and a few custom events. Not captured: autocapture, session replay, surveys, or anything a visitor types. |
+| **Analytics** | PostHog only (GA4 is gone), through the first-party `/ingest` proxy, on the production domain only. Captured: `$pageview`, `$pageleave`, `$web_vitals`, `$exception` (uncaught errors) and a few custom events. Not captured: autocapture, session replay, surveys, or anything a visitor types. |
 | **Security** | Enforcing CSP with a `report-uri`, plus the other security headers, all in `vercel.json`. No PostHog host in the CSP. |
 | **Performance** | Hashed fonts in `src/fonts/` with both faces preloaded, the Abacus logo as AVIF/WebP/PNG, a Lighthouse budget in CI (`npm run lhci`). |
 | **SEO and LLMs** | JSON-LD (Person, WebSite, ProfilePage), sitemap, `robots.txt` that names AI crawlers, and generated `llms.txt` and `llms-full.txt`. |
@@ -83,10 +83,13 @@ npm run lhci                      # Lighthouse, after a build
 - the generated SEO output: initial HTML, JSON-LD, and the public/ crawler files matching `src/content.js`
 - both contact emails
 - analytics wiring: the PostHog config, the `$web_vitals` shape, the `/ingest` proxy, the CSP and the service worker
+- error tracking: the noise filter, dedupe, cap and queue (`src/lib/errors.js`), the `$exception` shape, and the source-map upload script
 
 **Lighthouse:** `npm run lhci` (after a build; config in `lighthouserc.cjs`) asserts performance at least 0.95 locally. CI runs the median of 3 with a 0.85 floor and a 2x CPU slowdown (`LHCI_PERF_MIN`, `LHCI_CPU_SLOWDOWN`) because shared runners are slow, while bytes (400 KB), console errors, accessibility, best-practices and SEO stay hard everywhere.
 
-**CI** (`.github/workflows/ci.yml`) runs on pull requests and pushes to `main` with Node 24: `npm ci`, `npm test`, Chromium install, `npm run e2e:prod`, then `npm run lhci`.
+**CI** (`.github/workflows/ci.yml`) runs on pull requests and pushes to `main` with Node 24: `npm ci`, `npm test`, Chromium install, `npm run e2e:prod`, then `npm run lhci`. The `e2e:prod` step gets the `POSTHOG_CLI_API_KEY` secret, so its build uploads source maps once the secret exists (see [Analytics](#analytics)).
+
+**Builds:** `npm run build` is `vite build` plus `postbuild` (`scripts/upload-sourcemaps.mjs`), which uploads the source maps to PostHog when `POSTHOG_CLI_API_KEY` is set, prints one "uploads skipped" line when it isn't, and deletes every `dist/**/*.map` either way. `e2e:prod` builds the same way.
 
 <details>
 <summary>Browser suites and environment switches</summary>
@@ -114,11 +117,12 @@ npm run lhci                      # Lighthouse, after a build
 | `index.html` | The page template. `<!-- seo:head -->` and `<!-- seo:profile -->` are filled from `content.js` at dev and build time, which gives no-JavaScript visitors and crawlers a readable profile. |
 | `scripts/seo.mjs` | Renders the head tags, JSON-LD, static profile and crawler files (`robots.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt`, `humans.txt`). `vite.config.js` calls it; the build writes the crawler files into `dist/`. |
 | `scripts/sync-seo.mjs` | Writes the same crawler files into `public/` and syncs the name and description in `public/site.webmanifest`. |
+| `scripts/upload-sourcemaps.mjs` | `postbuild`: uploads the build's source maps to PostHog when `POSTHOG_CLI_API_KEY` is set, then deletes every `.map` in `dist/`. |
 | `src/wordmark/` | The physics wordmark: `lettering.js` (the approved traced artwork), `physics.js`, `geometry.js`, `motion.js` (every tuning constant), `dockfx.js` (pointer hover and press effects on the docked SUPH and the hero), `TuningPanel.jsx` (`?tune`). |
 | `src/story/` | The work index and chapter dialogs. Copy comes from `story` in `content.js`. |
 | `src/sayhello/` | The SAY HELLO sign-off art and its motion. `src/components/SayHello.jsx` renders it and opens the contact sheet. |
 | `src/components/` | Header, footer, contact sheet and form, toasts, UI context, `DryRunBadge`. |
-| `src/lib/` | `backend.js` (Supabase client, `LIVE` switch), `contactSubmit.js`, `analytics.js`, `webVitals.js`, `serviceWorker.js`, validation, sanitizing and rate limiting. |
+| `src/lib/` | `backend.js` (Supabase client, `LIVE` switch), `contactSubmit.js`, `analytics.js`, `webVitals.js`, `errors.js` and `posthogExceptions.js` (error tracking), `serviceWorker.js`, validation, sanitizing and rate limiting. |
 | `src/fonts/` | PP Neue Montreal Regular and Semibold, hashed by Vite and both preloaded. |
 | `src/favicon/` | The animated SUPH favicon. `WIRING.md` describes its variants and timing (its wiring steps are already applied). |
 | `public/` | Ships to the CDN as-is: icons, logos, the social cards in `og/`, work logos, `sw.js`, crawler files. Keep license documents, originals and credentials out. |
@@ -182,6 +186,8 @@ PostHog is the only analytics (GA4 is gone). It runs only on suphian.com product
 
 - **PostHog:** `POSTHOG_KEY` in `src/lib/analytics.js` is the project key for the Suph.ai org (project 631302, US cloud). It is public by design. PostHog gets `$pageview`, `$pageleave` (time on page and scroll depth), `$web_vitals` (Core Web Vitals from `src/lib/webVitals.js`) and the custom events: no autocapture, session replay or surveys. posthog-js (its slim build) loads after the first paint without waiting for an interaction, so a visit that never scrolls or clicks still counts; PostHog loads once the page has finished loading and the browser is idle (the idle wait is capped at 2 seconds), so a visit that ends before that point is not counted, and on a slow connection that takes longer. An empty key turns it off.
 - **`/ingest` proxy:** `vercel.json` rewrites `/ingest/*` to PostHog's US hosts, so events stay first-party and the CSP needs no PostHog host. The CSP's `report-uri` sends violation reports the same way, to PostHog's CSP tracking. The proxy exists only on Vercel; locally `/ingest` returns 404. To move to the EU cloud, change `POSTHOG_REGION` and the three rewrites together; `npm test` checks that they agree.
+- **Errors:** uncaught errors and unhandled promise rejections go to PostHog as `$exception` events (`src/lib/errors.js`, from the start of `src/main.jsx`), where analytics runs. Browser noise is dropped (ResizeObserver loop warnings, cross-origin `Script error.` with no stack, anything from a `chrome-extension://` or `moz-extension://` script), the same message and stack is sent once a minute, and a page sends at most 10. Errors before PostHog loads wait in the queue. See them in PostHog under **Error Tracking** (project 631302). It uses `posthog.captureException`, not PostHog's exception autocapture, which needs a remote script; `src/lib/posthogExceptions.js` gives the slim build the small extension that call needs.
+- **Source maps (one owner step):** builds write hidden source maps, and `postbuild` uploads them with posthog-cli when `POSTHOG_CLI_API_KEY` is set, then deletes them, so no `.map` is deployed. Until the key is set, stack traces in Error Tracking are minified. To set it up: in PostHog, create a personal API key with the `error_tracking:write`, `organization:read` and `project:read` scopes; add it as `POSTHOG_CLI_API_KEY` in the Vercel project's environment variables (Production and Preview); and add it as a GitHub Actions secret named `POSTHOG_CLI_API_KEY`. Never commit the key.
 - **Events:** the list and properties are in [docs/launch.md](docs/launch.md#analytics). Send new ones with `track()` or `trackOnce()` from `src/lib/analytics.js`, and add them to that list. `contact_submitted` carries the outcome only, never what the visitor typed; a test enforces this.
 - **Debugging:** in the browser console, run `localStorage.setItem('analytics-debug', '1')` and reload. Analytics then runs on any host (the key is still required) and PostHog logs each event to the console. `localStorage.removeItem('analytics-debug')` turns it off. PostHog drops automated browsers, so Playwright runs never reach it.
 

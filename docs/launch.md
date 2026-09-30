@@ -47,6 +47,7 @@ Events go to suphian.com/ingest, which vercel.json rewrites to PostHog US ahead 
 - $pageview: once per page load, with the time the page loaded.
 - $pageleave: when the visitor leaves; $prev_pageview_duration is the seconds on the page and $prev_pageview_max_scroll_percentage the deepest scroll.
 - $web_vitals: CLS, FCP, INP and LCP as $web_vitals_<NAME>_value and $web_vitals_<NAME>_event, sent 5s after the first metric, once all four are in, or when the page is hidden. CLS and INP usually arrive on hide, in a second event.
+- $exception { $exception_list, source }: an uncaught error (source error), an unhandled promise rejection (unhandledrejection) or a failed app mount (mount). See Error tracking below.
 - story_chapter_opened { chapter }: a work or side-project chapter opens; chapter is its content.js id, e.g. steadily.
 - outbound_link_clicked { href, label, chapter? }: a chapter's links, with chapter, and the footer's Email (Gmail), LinkedIn and GitHub links.
 - say_hello_clicked: the SAY HELLO sign-off.
@@ -56,3 +57,11 @@ Events go to suphian.com/ingest, which vercel.json rewrites to PostHog US ahead 
 - section_viewed { section }: story, say_hello or footer, once each per load, when half the section (or half the screen, for a taller one) is in view.
 
 To watch events anywhere, run localStorage.setItem('analytics-debug', '1') in the browser console and reload: analytics then runs on any host, the key still required, and PostHog logs each event to the console. localStorage.removeItem('analytics-debug') turns it off. Vercel deployments, previews included, proxy /ingest to PostHog for real; locally those requests 404. PostHog drops automated browsers (navigator.webdriver), so Playwright runs never reach it.
+
+### Error tracking
+
+src/lib/errors.js listens for uncaught errors and unhandled promise rejections from the start of src/main.jsx, wherever analytics runs (suphian.com, or the debug flag), and sends each through posthog.captureException as an $exception event with the error type, message and stack frames. It drops browser noise: ResizeObserver loop warnings, a cross-origin "Script error." with no stack, and anything with a chrome-extension:// or moz-extension:// frame. The same message and stack is sent at most once a minute, and a page sends at most 10. Errors before PostHog loads wait in the queue and go out once it does. See them in PostHog under Error Tracking (project 631302).
+
+posthog-js's own exception autocapture (capture_exceptions) needs a remote script, so it stays off. The slim build also ships without the extension captureException needs, so src/lib/posthogExceptions.js supplies a small one built on PostHog's @posthog/core error builder.
+
+Source maps: the build writes hidden source maps, and the postbuild step (scripts/upload-sourcemaps.mjs) uploads them with posthog-cli when POSTHOG_CLI_API_KEY is set, then deletes every .map in dist, so none is deployed. Without the key it prints "uploads skipped" and stack traces in PostHog stay minified. The one owner step: in PostHog, create a personal API key with the error_tracking:write, organization:read and project:read scopes, then add it as POSTHOG_CLI_API_KEY in Vercel's environment variables (Production and Preview) and as a GitHub Actions secret of the same name. Never commit it. The next deploy after that uploads its maps.
