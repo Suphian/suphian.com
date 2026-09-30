@@ -179,7 +179,13 @@ test('suph.app’s card: years, his paragraph, then one line and one link per pr
   // Both builds, newest first: one link per row, to the build's page, showing its name and month.
   const builds = detail.locator('.story-build');
   await expect(builds).toHaveCount(2);
-  await expect(detail.getByRole('link')).toHaveCount(2);
+  // The title is the homepage link (Suphian 2026-09-30), so three links: it, then one per project.
+  const home = detail.locator('.story-detail-title a.story-title-link');
+  await expect(home).toHaveAttribute('href', 'https://suph.app');
+  await expect(home).toHaveAttribute('target', '_blank');
+  await expect(home).toHaveAccessibleName('suph.app, opens the suph.app homepage');
+  await expect(home.locator('.link-arrow')).toHaveText('↗');
+  await expect(detail.getByRole('link')).toHaveCount(3);
   await expect(builds.locator('.story-build-name')).toHaveText(['The Toga Is Dead', 'Quran Art']);
   await expect(builds.locator('.story-build-month')).toHaveText(['August 2026', 'July 2026']);
   const toga = builds.nth(0).getByRole('link');

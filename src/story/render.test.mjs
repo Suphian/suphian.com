@@ -28,7 +28,7 @@ async function load() {
     await esbuild.build({
       stdin: {
         contents:
-          "export { default as StoryIndex } from './StoryIndex.jsx'; export { default as StoryCard } from './StoryCard.jsx'; export { default as StoryBuilds } from './StoryBuilds.jsx'; export { ChapterBody } from './StoryDetail.jsx';",
+          "export { default as StoryIndex } from './StoryIndex.jsx'; export { default as StoryCard } from './StoryCard.jsx'; export { default as StoryBuilds } from './StoryBuilds.jsx'; export { ChapterBody, ChapterName } from './StoryDetail.jsx';",
         resolveDir: fileURLToPath(new URL('./', import.meta.url)),
         loader: 'js',
       },
@@ -46,7 +46,7 @@ async function load() {
     rmSync(dir, { recursive: true, force: true });
   }
 }
-const { StoryIndex, StoryCard, StoryBuilds, ChapterBody } = await load();
+const { StoryIndex, StoryCard, StoryBuilds, ChapterBody, ChapterName } = await load();
 const render = (Component, props = {}) => renderToStaticMarkup(React.createElement(Component, props));
 
 const decode = (text) =>
@@ -208,6 +208,20 @@ test('suph.app’s open card reads like Abacus Labs’, without a title: years, 
     ['The Toga Is Dead', 'August 2026', 'https://suph.app/toga'],
     ['Quran Art', 'July 2026', 'https://suph.app/quran'],
   ]);
+});
+
+test('suph.app’s card title is the link to suph.app, ended by the rows’ own ↗; Abacus’s stays plain text', () => {
+  const app = story.chapters.find((c) => c.id === 'suph-app');
+  assert.equal(app.home, 'https://suph.app');
+  const markup = render(ChapterName, { chapter: app });
+  assert.match(markup, /^<a class="story-title-link" href="https:\/\/suph\.app" target="_blank" rel="noopener noreferrer" aria-label="suph\.app, opens the suph\.app homepage">/);
+  // The whole "suph.app." (period included) is inside the link, then the arrow, as the rows have it.
+  assert.match(markup, /<span>suph\.app<span class="story-detail-period" data-fade="true">\.<\/span><\/span>/);
+  assert.match(markup, /<span class="link-arrow" aria-hidden="true">↗<\/span><\/a>$/);
+  const abacus = story.chapters.find((c) => c.id === 'abacus');
+  assert.equal(abacus.home, undefined);
+  assert.equal(render(ChapterName, { chapter: abacus }), `${escapeText(abacus.name)}<span class="story-detail-period" data-fade="true">.</span>`);
+  assert.doesNotMatch(render(ChapterName, { chapter: abacus }), /<a /);
 });
 
 test('every other chapter keeps its role line and its links, and no rows', () => {

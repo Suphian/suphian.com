@@ -313,6 +313,20 @@
    Heading's red .heading-period). */
 .story-detail-name { display: inline-block; transform-origin: 0 0; color: var(--ink); }
 .story-detail-period { color: var(--accent, var(--ink)); }
+/* A chapter with a homepage (suph.app): the whole title is the link, ended by the same ↗ the
+   project rows use, small and quiet. Positioned, not baseline-shifted, so the line height holds. */
+.story-title-link { color: inherit; font: inherit; letter-spacing: inherit; text-decoration: none; }
+.story-title-link .link-arrow {
+  position: relative;
+  top: -1em;
+  margin-left: 0.15em;
+  font-size: clamp(21px, 2.6vw, 42px); /* 0.4 of the title's clamp(52px, 6.4vw, 104px) */
+  letter-spacing: 0;
+  line-height: 0;
+  color: var(--accent, var(--ink));
+  transition: none;
+}
+.story-title-link:focus-visible { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.12em; }
 .story-detail-media {
   grid-area: media;
   align-self: start;
@@ -389,6 +403,7 @@
 .story-link:focus-visible { outline-offset: 4px; }
 /* Mouse hovers only: after a tap, iOS would keep them lit. */
 @media (hover: hover) and (pointer: fine) {
+  .story-title-link:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.12em; }
   .story-back:hover { color: var(--ink); }
   .story-back:hover .story-back-arrow { transform: translateX(-4px); }
   .story-link:hover { color: #ffffff; }
@@ -437,6 +452,7 @@
   .story-detail-grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "top" "media" "body"; align-content: start; padding: 0 24px; }
   .story-detail-top { padding-top: calc(16px + var(--safe-top)); }
   .story-detail-title { margin-top: 28px; font-size: clamp(44px, 12vw, 64px); }
+  .story-title-link .link-arrow { font-size: clamp(18px, 4.8vw, 26px); }
   .story-detail-media { position: static; height: auto; display: block; padding: 28px 0 0; }
   .story-card--panel { width: 100%; aspect-ratio: 16 / 10; }
   .story-detail-body { max-width: none; padding: 32px 0 calc(72px + env(safe-area-inset-bottom, 0px)); }

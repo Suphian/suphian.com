@@ -20,7 +20,8 @@
  * hero           { srTitle, edition: [3], cue: [2], cueHref }
  * story          { id, heading: [lines], intro, labels: { list, sideProjects, back },
  *                  chapters: [{ id, name, kind?, role?, period, location, image: { src, nudge }, color, accent?,
- *                  summary, links: [{ label, href }] }] }
+ *                  summary, links: [{ label, href }], home? }] }
+ *                  home: the venture's homepage; the open card's title links to it (suph.app)
  *                  (replaces about, work and projects, 2026-09-26; jobs newest first, then the side
  *                  projects, kind: 'side')
  *                  A chapter made of builds (suph.app's projects, 2026-09-28) has builds instead of an image:
@@ -260,6 +261,9 @@ export const story = {
       kind: 'side',
       period: 'Current',
       location: 'Internet',
+      // The open card's title links here (Suphian 2026-09-30: "a little arrow ... that can take you
+      // to the suph.app homepage"). The card has no "Visit suph.app" line (removed 2026-09-28).
+      home: 'https://suph.app',
       // Suphian 2026-09-28: "maybe green, the kind of forest green that the Quran website uses"
       // (suph.app/quran's --ink). The card's fill, and every project token's unless it sets its own.
       color: '#243F39',
