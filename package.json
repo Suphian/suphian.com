@@ -14,7 +14,7 @@
     "e2e:hmr": "playwright test --config e2e/configs/hmr.config.js",
     "e2e:prod": "npm run build && playwright test --config e2e/configs/prod.config.js",
     "images:work": "node scripts/optimize-work-images.mjs",
-    "lhci": "lhci autorun"
+    "lhci": "npx --yes @lhci/cli@0.15.1 autorun"
   },
   "dependencies": {
     "@posthog/core": "^1.55.2",
@@ -25,7 +25,6 @@
     "web-vitals": "^6.2.2"
   },
   "devDependencies": {
-    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.58.2",
     "sharp": "0.35.5",
     "vite": "7.3.6"
