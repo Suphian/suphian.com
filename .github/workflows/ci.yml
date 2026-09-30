@@ -18,4 +18,18 @@ jobs:
       - run: npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e:prod
+      # Lighthouse's 4x CPU slowdown assumes a fast machine (this laptop: benchmarkIndex 4581).
+      # Shared runners are several times slower, so slow the CPU less and accept a lower floor.
+      # Recalibrate from the uploaded report: multiplier = 4 * environment.benchmarkIndex / 4581.
       - run: npm run lhci
+        env:
+          LHCI_PERF_MIN: '0.85'
+          LHCI_CPU_SLOWDOWN: '2'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report
+          path: |
+            qa/lhci
+            .lighthouseci
+          if-no-files-found: ignore
