@@ -63,6 +63,12 @@ Small things I build to explore. When a new model or tool comes out, I like to s
 
 - [Visit suph.app](https://suph.app)
 
+#### Animated Chess · October 2026
+
+A chess game where every piece is a character with its own attack and death, drawn as pixel art. Claude builds the game and Codex the animation; it’s a work in progress.
+
+- [Play Animated Chess](https://suph.app/chess)
+
 #### The Toga Is Dead · August 2026
 
 A 3D board game you play in the browser: 2–4 players, with solo practice, same-screen play and online invitations, set in a medieval coastal kingdom or the Roman empire.

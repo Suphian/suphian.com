@@ -265,8 +265,12 @@ export const story = {
       // to the suph.app homepage"). The card has no "Visit suph.app" line (removed 2026-09-28).
       home: 'https://suph.app',
       // Suphian 2026-09-28: "maybe green, the kind of forest green that the Quran website uses"
-      // (suph.app/quran's --ink). The card's fill, and every project token's unless it sets its own.
+      // (suph.app/quran's --ink). The card's fill.
       color: '#243F39',
+      // Suphian 2026-10-03: "The suph.app chips should be the same color as my logo. Just keep it more
+      // brand consistent." The project chips (the icon squares in the open card's rows) wear the SUPH
+      // logo red, style.css --red; a build may still set its own color. White marks reach 3.9:1 on it.
+      tokenColor: '#FB2726',
       // That green is too dark to see as a mark on the near-black page (about 1.7:1), so the marks
       // take the Quran site's pale sage instead (9.7:1 on #080808).
       accent: '#AAB8A7',
@@ -297,6 +301,21 @@ export const story = {
       // - links: its page, https://suph.app/<slug>. The card's row links to the first one.
       // Then log the copy in COPY-CHANGES.md, run `node scripts/sync-seo.mjs` and `npm test`.
       builds: [
+        {
+          // Suphian 2026-10-03: a chess game with "characters for every chess piece" and, for every
+          // piece, "an attack sequence and a death sequence"; Codex makes the animations and Claude
+          // the core game. Live at suph.app/chess the same day, still in progress. The name is a
+          // working title until he names it.
+          month: '2026-10',
+          slug: 'chess',
+          name: 'Animated Chess',
+          summary:
+            'A chess game where every piece is a character with its own attack and death, drawn as pixel art. Claude builds the game and Codex the animation; it’s a work in progress.',
+          // A pixel rook (the game's look, and its Fortress Orders cast) with an arrow-slit window.
+          // No descender: nudge 0, confirmed by `node --test src/story/`.
+          image: { src: '/work/chess.svg', width: 80, height: 100, nudge: 0 },
+          links: [{ label: 'Play Animated Chess', href: 'https://suph.app/chess' }],
+        },
         {
           // Suphian 2026-09-28: "'Play The Toga Is Dead' should be from last month", August 2026.
           month: '2026-08',
@@ -413,7 +432,7 @@ export const seo = {
   // The homepage's last real content or metadata change: the sitemap <lastmod> and the
   // ProfilePage dateModified. Bump it with the copy, never on every build (Google only
   // trusts lastmod that stays accurate).
-  lastModified: '2026-09-30', // merge/deploy date; last content change: the intro ("I like to turn ideas into things…")
+  lastModified: '2026-10-03', // merge/deploy date; last content change: suph.app's Animated Chess build
   home: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,

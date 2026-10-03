@@ -25,18 +25,19 @@ test('initial HTML contains the approved work content and contact without requir
 
 test('without JavaScript, suph.app lists every build, newest first, as "Name · Month"', () => {
   // Suphian 2026-09-28: every project, each with its month. Same order in llms-full.txt.
-  const titles = ['The Toga Is Dead · August 2026', 'Quran Art · July 2026'];
+  const titles = ['Animated Chess · October 2026', 'The Toga Is Dead · August 2026', 'Quran Art · July 2026'];
   const at = (text, needles) => needles.map((needle) => text.indexOf(needle));
+  const ascending = (found) => found.every((i, k) => i > 0 && (k === 0 || found[k - 1] < i));
   const inHtml = at(html, titles.map((title) => `<h4>${escapeHtml(title)}</h4>`));
-  assert.ok(inHtml.every((i) => i > 0) && inHtml[0] < inHtml[1], `profile: ${inHtml}`);
+  assert.ok(ascending(inHtml), `profile: ${inHtml}`);
   const full = crawlerResources()['llms-full.txt'];
   const inText = at(full, titles.map((title) => `#### ${title}\n`));
-  assert.ok(inText.every((i) => i > 0) && inText[0] < inText[1], `llms-full.txt: ${inText}`);
+  assert.ok(ascending(inText), `llms-full.txt: ${inText}`);
   // Under the chapter's own line, in every chapter's format (Suphian 2026-09-28: "the same
   // format as Abacus Labs", with no title), then its summary and a link to suph.app.
   const suph = story.chapters.find((c) => c.id === 'suph-app');
   assert.ok(full.includes(
-    `### suph.app\n\nCurrent · Internet\n\n${suph.summary}\n\n- [Visit suph.app](https://suph.app)\n\n#### The Toga Is Dead · August 2026`,
+    `### suph.app\n\nCurrent · Internet\n\n${suph.summary}\n\n- [Visit suph.app](https://suph.app)\n\n#### Animated Chess · October 2026`,
   ));
   const article = html.slice(html.indexOf('<article id="suph-app">'), html.indexOf('</section>', html.indexOf('<article id="suph-app">')));
   assert.ok(
@@ -46,9 +47,13 @@ test('without JavaScript, suph.app lists every build, newest first, as "Name · 
   // Every build, newest first, each "Name · Month" with its own page.
   assert.deepEqual(
     [...article.matchAll(/<h4>([^<]+)<\/h4>\s*<p>[^<]*<\/p>\s*<ul><li><a href="([^"]+)">/g)].map((m) => [m[1], m[2]]),
-    [['The Toga Is Dead · August 2026', 'https://suph.app/toga'], ['Quran Art · July 2026', 'https://suph.app/quran']],
+    [
+      ['Animated Chess · October 2026', 'https://suph.app/chess'],
+      ['The Toga Is Dead · August 2026', 'https://suph.app/toga'],
+      ['Quran Art · July 2026', 'https://suph.app/quran'],
+    ],
   );
-  assert.ok(article.indexOf('<article id="suph-app-toga">') > 0 && article.indexOf('<article id="suph-app-quran">') > article.indexOf('<article id="suph-app-toga">'));
+  assert.ok(ascending(['suph-app-chess', 'suph-app-toga', 'suph-app-quran'].map((id) => article.indexOf(`<article id="${id}">`))));
   assert.doesNotMatch(article, /Playground|Maker|every month/i);
 });
 
