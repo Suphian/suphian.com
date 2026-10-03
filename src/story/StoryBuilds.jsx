@@ -50,7 +50,7 @@ export default function StoryBuilds({ chapter, onBuildEvent = () => {} }) {
             onFocus={(event) => onBuildEvent({ type: 'focus', index, keyboard: isKeyboardFocus(event.target) })}
           >
             <ExternalLink href={link.href} label={link.label} className="story-link story-build-link" chapter={chapter.id} aria-describedby={summaryId}>
-              <span className="story-build-token" aria-hidden="true" style={{ '--token-color': build.color || chapter.color }}>
+              <span className="story-build-token" aria-hidden="true" style={{ '--token-color': build.color || chapter.tokenColor || chapter.color }}>
                 {src && <img src={src} alt="" decoding="async" draggable="false" style={{ transform: logoShift(nudge) }} />}
               </span>
               <span className="story-build-name">{build.name}</span>

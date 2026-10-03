@@ -265,8 +265,12 @@ export const story = {
       // to the suph.app homepage"). The card has no "Visit suph.app" line (removed 2026-09-28).
       home: 'https://suph.app',
       // Suphian 2026-09-28: "maybe green, the kind of forest green that the Quran website uses"
-      // (suph.app/quran's --ink). The card's fill, and every project token's unless it sets its own.
+      // (suph.app/quran's --ink). The card's fill.
       color: '#243F39',
+      // Suphian 2026-10-03: "The suph.app chips should be the same color as my logo. Just keep it more
+      // brand consistent." The project chips (the icon squares in the open card's rows) wear the SUPH
+      // logo red, style.css --red; a build may still set its own color. White marks reach 3.9:1 on it.
+      tokenColor: '#FB2726',
       // That green is too dark to see as a mark on the near-black page (about 1.7:1), so the marks
       // take the Quran site's pale sage instead (9.7:1 on #080808).
       accent: '#AAB8A7',
