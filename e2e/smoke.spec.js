@@ -152,6 +152,7 @@ const openSuphApp = async (page) => {
 };
 // The panel's current icon (not the fading copy of the last one).
 const panelIcon = (detail) => detail.locator('.story-card--panel .story-card-logo:not([data-leaving])');
+const ROOK = '/work/chess.svg'; // Animated Chess, the newest build (2026-10-03)
 const CROWN = '/work/suph-app.svg';
 const STAR = '/work/quran-art.svg';
 
@@ -176,51 +177,54 @@ test('suph.app’s card: years, his paragraph, then one line and one link per pr
   expect(await detail.evaluate((el) => getComputedStyle(el).getPropertyValue('--accent').trim().toUpperCase())).toBe('#AAB8A7');
   await expect(detail.locator('.story-card--panel')).toHaveCSS('background-color', 'rgb(36, 63, 57)');
 
-  // Both builds, newest first: one link per row, to the build's page, showing its name and month.
+  // Every build, newest first: one link per row, to the build's page, showing its name and month.
   const builds = detail.locator('.story-build');
-  await expect(builds).toHaveCount(2);
-  // The title is the homepage link (Suphian 2026-09-30), so three links: it, then one per project.
+  await expect(builds).toHaveCount(3);
+  // The title is the homepage link (Suphian 2026-09-30), so four links: it, then one per project.
   const home = detail.locator('.story-detail-title a.story-title-link');
   await expect(home).toHaveAttribute('href', 'https://suph.app');
   await expect(home).toHaveAttribute('target', '_blank');
   await expect(home).toHaveAccessibleName('suph.app, opens the suph.app homepage');
   await expect(home.locator('.link-arrow')).toHaveText('↗');
-  await expect(detail.getByRole('link')).toHaveCount(3);
-  await expect(builds.locator('.story-build-name')).toHaveText(['The Toga Is Dead', 'Quran Art']);
-  await expect(builds.locator('.story-build-month')).toHaveText(['August 2026', 'July 2026']);
-  const toga = builds.nth(0).getByRole('link');
-  const quran = builds.nth(1).getByRole('link');
+  await expect(detail.getByRole('link')).toHaveCount(4);
+  await expect(builds.locator('.story-build-name')).toHaveText(['Animated Chess', 'The Toga Is Dead', 'Quran Art']);
+  await expect(builds.locator('.story-build-month')).toHaveText(['October 2026', 'August 2026', 'July 2026']);
+  const chess = builds.nth(0).getByRole('link');
+  const toga = builds.nth(1).getByRole('link');
+  const quran = builds.nth(2).getByRole('link');
+  await expect(chess).toHaveAttribute('href', 'https://suph.app/chess');
   await expect(toga).toHaveAttribute('href', 'https://suph.app/toga');
   await expect(quran).toHaveAttribute('href', 'https://suph.app/quran');
   await expect(toga).toHaveAccessibleName(/The Toga Is Dead.*August 2026/);
   // The summary isn't shown; a screen reader hears it as the link's description.
   await expect(toga).toHaveAccessibleDescription(/^A 3D board game you play in the browser/);
   // The icon token shows each build's mark.
-  await expect(builds.locator('.story-build-token img')).toHaveCount(2);
-  await expect(builds.nth(1).locator('.story-build-token img')).toHaveAttribute('src', STAR);
+  await expect(builds.locator('.story-build-token img')).toHaveCount(3);
+  await expect(builds.nth(0).locator('.story-build-token img')).toHaveAttribute('src', ROOK);
+  await expect(builds.nth(2).locator('.story-build-token img')).toHaveAttribute('src', STAR);
 
   // The panel starts on the newest build.
   const icon = panelIcon(detail);
-  await expect(icon).toHaveAttribute('src', CROWN);
+  await expect(icon).toHaveAttribute('src', ROOK);
   const fine = await page.evaluate(() => matchMedia('(hover: hover) and (pointer: fine)').matches);
   expect(fine, 'the desktop project has a mouse; the phone does not').toBe(!test.info().project.use.hasTouch);
 
   if (fine) {
-    // A mouse resting on Quran Art shows its star; off the list, the crown is back.
-    await builds.nth(1).hover();
+    // A mouse resting on Quran Art shows its star; off the list, the newest build's rook is back.
+    await builds.nth(2).hover();
     await expect(icon).toHaveAttribute('src', STAR);
     await expect.poll(() => icon.evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
-    await builds.nth(0).hover();
-    await expect(icon).toHaveAttribute('src', CROWN);
     await builds.nth(1).hover();
+    await expect(icon).toHaveAttribute('src', CROWN);
+    await builds.nth(2).hover();
     await expect(icon).toHaveAttribute('src', STAR);
     await detail.locator('.story-detail-title').hover();
-    await expect(icon).toHaveAttribute('src', CROWN);
+    await expect(icon).toHaveAttribute('src', ROOK);
     // The crossfade's outgoing copy cleans up after itself.
     await expect(detail.locator('[data-leaving]')).toHaveCount(0);
 
-    // Keyboard focus does the same: Tab to The Toga Is Dead, then Quran Art.
-    for (let step = 0; step < 6 && !(await quran.evaluate((el) => el === document.activeElement)); step++) {
+    // Keyboard focus does the same: Tab to Quran Art, then back to The Toga Is Dead.
+    for (let step = 0; step < 8 && !(await quran.evaluate((el) => el === document.activeElement)); step++) {
       await page.keyboard.press('Tab');
     }
     await expect(quran).toBeFocused();
@@ -230,10 +234,10 @@ test('suph.app’s card: years, his paragraph, then one line and one link per pr
     await expect(icon).toHaveAttribute('src', CROWN);
   } else {
     // A finger resting on Quran Art (without opening it) leaves the panel on the newest build.
-    await builds.nth(1).dispatchEvent('pointerover', { pointerType: 'touch', isPrimary: true, bubbles: true });
-    await builds.nth(1).hover();
+    await builds.nth(2).dispatchEvent('pointerover', { pointerType: 'touch', isPrimary: true, bubbles: true });
+    await builds.nth(2).hover();
     await page.waitForTimeout(300);
-    await expect(icon).toHaveAttribute('src', CROWN);
+    await expect(icon).toHaveAttribute('src', ROOK);
   }
 
   await page.keyboard.press('Escape');
@@ -403,8 +407,8 @@ test.describe('reduced motion', () => {
     expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches), 'reduced motion is on').toBe(true);
     const detail = await openSuphApp(page);
     // Keyboard focus picks the icon on every device (a finger never does).
-    const quranLink = detail.locator('.story-build').nth(1).getByRole('link');
-    for (let step = 0; step < 6 && !(await quranLink.evaluate((el) => el === document.activeElement)); step++) {
+    const quranLink = detail.locator('.story-build').nth(2).getByRole('link');
+    for (let step = 0; step < 8 && !(await quranLink.evaluate((el) => el === document.activeElement)); step++) {
       await page.keyboard.press('Tab');
     }
     await expect(quranLink).toBeFocused();

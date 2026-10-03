@@ -298,6 +298,21 @@ export const story = {
       // Then log the copy in COPY-CHANGES.md, run `node scripts/sync-seo.mjs` and `npm test`.
       builds: [
         {
+          // Suphian 2026-10-03: a chess game with "characters for every chess piece" and, for every
+          // piece, "an attack sequence and a death sequence"; Codex makes the animations and Claude
+          // the core game. Live at suph.app/chess the same day, still in progress. The name is a
+          // working title until he names it.
+          month: '2026-10',
+          slug: 'chess',
+          name: 'Animated Chess',
+          summary:
+            'A chess game where every piece is a character with its own attack and death, drawn as pixel art. Claude builds the game and Codex the animation; it’s a work in progress.',
+          // A pixel rook (the game's look, and its Fortress Orders cast) with an arrow-slit window.
+          // No descender: nudge 0, confirmed by `node --test src/story/`.
+          image: { src: '/work/chess.svg', width: 80, height: 100, nudge: 0 },
+          links: [{ label: 'Play Animated Chess', href: 'https://suph.app/chess' }],
+        },
+        {
           // Suphian 2026-09-28: "'Play The Toga Is Dead' should be from last month", August 2026.
           month: '2026-08',
           slug: 'toga',
@@ -413,7 +428,7 @@ export const seo = {
   // The homepage's last real content or metadata change: the sitemap <lastmod> and the
   // ProfilePage dateModified. Bump it with the copy, never on every build (Google only
   // trusts lastmod that stays accurate).
-  lastModified: '2026-09-30', // merge/deploy date; last content change: the intro ("I like to turn ideas into things…")
+  lastModified: '2026-10-03', // merge/deploy date; last content change: suph.app's Animated Chess build
   home: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,

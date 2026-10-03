@@ -120,12 +120,12 @@ test('every card is a sized white logo, the suph.app crown included', () => {
   const cards = all(html, /<div class="story-card[^"]*"([^>]*)>([\s\S]*?)<\/div>/g).map((m) => ({ attrs: attrs(m[1]), body: m[2] }));
   assert.equal(cards.length, story.chapters.length);
   for (const [index, card] of cards.entries()) {
-    // suph.app's rail card is its newest build's: The Toga Is Dead's crown.
+    // suph.app's rail card is its newest build's: Animated Chess's pixel rook.
     const chapter = chapterView(story.chapters[index]);
     const img = attrs(/<img\b([^>]*)>/.exec(card.body)[1]);
     assert.equal(img.alt, '', `${chapter.id}: decorative`);
     assert.equal(img.src, chapter.image.src);
-    if (chapter.id === 'suph-app') assert.equal(img.src, '/work/suph-app.svg');
+    if (chapter.id === 'suph-app') assert.equal(img.src, '/work/chess.svg');
     assert.equal(img.class, 'story-card-logo', chapter.id);
     assert.match(img.style, /^width:[\d.]+%/, `${chapter.id}: a sized logo`);
     // One treatment for every card: the retired screenshot mode left no fit flag behind.
@@ -205,6 +205,7 @@ test('suph.app’s open card reads like Abacus Labs’, without a title: years, 
   assert.doesNotMatch(markup, /class="story-links"|Visit suph\.app/);
   assert.ok(markup.endsWith('</ol>'));
   assert.deepEqual(rowsOf(markup).map((r) => [r.name, r.month[1], r.href]), [
+    ['Animated Chess', 'October 2026', 'https://suph.app/chess'],
     ['The Toga Is Dead', 'August 2026', 'https://suph.app/toga'],
     ['Quran Art', 'July 2026', 'https://suph.app/quran'],
   ]);
@@ -244,12 +245,21 @@ test('suph.app’s projects: one line each, each a link to its own page, on the 
   assert.deepEqual(rowsOf(markup), [
     {
       anchors: 1,
+      href: 'https://suph.app/chess',
+      describedBy: 'story-build-suph-app-chess',
+      token: ['#243F39', '/work/chess.svg'],
+      name: 'Animated Chess',
+      month: ['2026-10', 'October 2026'],
+      hidden: ['story-build-suph-app-chess', app.builds[0].summary],
+    },
+    {
+      anchors: 1,
       href: 'https://suph.app/toga',
       describedBy: 'story-build-suph-app-toga',
       token: ['#243F39', '/work/suph-app.svg'],
       name: 'The Toga Is Dead',
       month: ['2026-08', 'August 2026'],
-      hidden: ['story-build-suph-app-toga', app.builds[0].summary],
+      hidden: ['story-build-suph-app-toga', app.builds[1].summary],
     },
     {
       anchors: 1,
@@ -258,7 +268,7 @@ test('suph.app’s projects: one line each, each a link to its own page, on the 
       token: ['#243F39', '/work/quran-art.svg'],
       name: 'Quran Art',
       month: ['2026-07', 'July 2026'],
-      hidden: ['story-build-suph-app-quran', app.builds[1].summary],
+      hidden: ['story-build-suph-app-quran', app.builds[2].summary],
     },
   ]);
   // The projects' summaries aren't shown ("Maybe you don't need the description"): each is

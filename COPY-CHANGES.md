@@ -11,7 +11,19 @@ Source: `dev/suphian.com` (live site). Output: `src/content.js`.
 
 ---
 
-## Intro: "I like to turn ideas into things" (2026-09-29, latest)
+## suph.app: Animated Chess, the newest build (2026-10-03, latest)
+
+Suphian started a chess game where every piece is a character with an attack and a death, built with Claude (the game) and Codex (the animation). It went live at suph.app/chess the same day, and he asked for it here too: "You can even add it to my personal website as well." It is the newest build, so the suph.app card's rail icon becomes its mark, a pixel rook (`public/work/chess.svg`). The name is a working title until he names the game. `seo.lastModified` moves to 2026-10-03.
+
+| Field | Was | Now |
+|---|---|---|
+| suph.app builds | The Toga Is Dead (August 2026), Quran Art (July 2026) | **Animated Chess (October 2026)**, The Toga Is Dead, Quran Art |
+| Animated Chess summary | — | A chess game where every piece is a character with its own attack and death, drawn as pixel art. Claude builds the game and Codex the animation; it’s a work in progress. |
+| Animated Chess link | — | Play Animated Chess → https://suph.app/chess |
+
+---
+
+## Intro: "I like to turn ideas into things" (2026-09-29)
 
 Suphian reworded the intro's opening. He chose "things" over "apps", "products" or "something", and the plain "I care about" over "The other thing is that…". The last two sentences are unchanged. It shows under the heading, in the no-JavaScript profile, llms.txt and llms-full.txt; `seo.lastModified` moves to 2026-09-29 (the sitemap `<lastmod>` and the ProfilePage `dateModified`).
 

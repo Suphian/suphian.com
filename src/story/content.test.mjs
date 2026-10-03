@@ -61,7 +61,9 @@ test('each chapter is only role, years, place, summary and links (plus its card,
 test('suph.app’s builds: newest first, one per month, each with its own slug, name, card and links', () => {
   const builds = chapter('suph-app').builds;
   // Suphian 2026-09-28: The Toga Is Dead "from last month", Quran Art "from the previous month".
+  // Suphian 2026-10-03: the chess game, live at suph.app/chess ("add it to my personal website").
   assert.deepEqual(builds.map((b) => [b.month, b.slug, b.name]), [
+    ['2026-10', 'chess', 'Animated Chess'],
     ['2026-08', 'toga', 'The Toga Is Dead'],
     ['2026-07', 'quran', 'Quran Art'],
   ]);
@@ -198,7 +200,16 @@ test('suph.app: Suphian’s projects, with his facts only', () => {
   assert.deepEqual(app.links, [{ label: 'Visit suph.app', href: 'https://suph.app' }]);
   // Every build is in the card: no cap, no setting for one.
   assert.equal(content.BUILDS_IN_CARD, undefined);
-  const [toga, quran] = app.builds;
+  const [chess, toga, quran] = app.builds;
+  // Animated Chess: Suphian's own description of the game (2026-10-03). A pixel rook mark,
+  // the game's look and its Fortress Orders cast; no descender, so nudge 0.
+  assert.deepEqual(chess.image, { src: '/work/chess.svg', width: 80, height: 100, nudge: 0 });
+  assert.equal(chess.color, undefined);
+  assert.equal(
+    chess.summary,
+    'A chess game where every piece is a character with its own attack and death, drawn as pixel art. Claude builds the game and Codex the animation; it’s a work in progress.',
+  );
+  assert.deepEqual(chess.links, [{ label: 'Play Animated Chess', href: 'https://suph.app/chess' }]);
   // The game's crown as a white logo, like every other card (Suphian: "just put the crown
   // logo"), not a screenshot. Facts from the game's README (dev/ceoisdead/README.md). Each
   // summary sits under its build's name, so it doesn't repeat it.
